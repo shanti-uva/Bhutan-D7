@@ -1,0 +1,10 @@
+name = Biblio Import Mods
+description = Additions and modifications to the Biblio importer
+package = SHANTI
+core = 7.x
+dependencies[] = biblio
+dependencies[] = og
+version = "7.x-0.1"
+core = "7.x"
+files[] = "biblio_import_mods.module"
+scripts[] = "biblio_import_mods.js"

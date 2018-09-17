@@ -1,0 +1,1 @@
+<div class="field <?php print $class; ?> field-type-text <?php if ($inline) { print 'field-label-inline clearfix '; } ?>"><div class="field-label"><?php print $label; ?><?php if ($inline) { print ": "; }?>&nbsp;</div><div class="field-items"><div class="field-item even"><?php print $value; ?></div></div></div>

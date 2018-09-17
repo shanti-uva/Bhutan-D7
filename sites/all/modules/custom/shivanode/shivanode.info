@@ -1,0 +1,23 @@
+name = SHIVA Visualizations
+description = A custom node module for creating and managing visualizations in Drupal through the SHANTI Interactive Visualization Application (SHIVA)
+package = SHIVA
+core = 7.x
+dependencies[] = lightbox2
+dependencies[] = services
+dependencies[] = rest_server
+dependencies[] = taxonomy
+dependencies[] = views
+dependencies[] = views_content
+
+files[] = shivanode.module
+files[] = includes/shivanode.constants.inc
+files[] = includes/shivanode.admin.inc
+files[] = includes/shivanode.pages.inc
+files[] = includes/shivanode.inc
+files[] = includes/visuals_search_access_filter.inc
+
+scripts[] = js/shivanode-behaviors.js
+scripts[] = js/shivanode-handler.js
+
+configure = admin/config/content/shivanode
+

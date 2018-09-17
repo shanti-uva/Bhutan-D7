@@ -1,0 +1,23 @@
+/** Styles for Shanti Image Admin Pages */
+/** Shanti Image Settings admin page */
+.page-admin-config-media input#edit-shanti-images-cron-age {
+    float: left;
+    margin-top: 4px;
+}
+
+.page-admin-config-media .form-item.form-type-select.form-item-shanti-images-cron-unit {
+    margin-top: -4px;
+    padding-left: 3rem;
+}
+
+.page-admin-config-media .form-item.form-type-textfield.form-item-shanti-images-cron-age {
+    margin-bottom: -8px;
+}
+
+.page-admin-config-media .form-item.form-type-checkbox.form-item-shanti-images-debug {
+    margin-top: 8px;
+}
+
+.page-admin-config-media .form-item.form-type-textfield.form-item-shanti-images-cron-batch-size {
+    margin-bottom: -8px;
+}

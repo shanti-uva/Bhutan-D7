@@ -1,0 +1,327 @@
+<?php
+
+// Define CONSTANTS used by this module: css class and title
+define('EXPLORE_SECTION_CLASS', 'container opencollect collections');
+define('EXPLORE_DIV_CLASS', 'col-sm-12 col-md-10 col-md-offset-1');
+define('EXPLORE_DIV_TITLE', 'EXPLORE');
+define('EXPLORE_LINK_TEXT', 'EXPLORE');
+
+/**
+ * Implements hook_menu().
+ */
+function explore_menu_menu() {
+  $items['admin/config/user-interface/explore_menu'] = array(
+    'title' => 'Shanti Explore Menu',
+    'description' => 'Configure Shanti Explore menu',
+    'page callback' => 'explore_menu_configure',
+    'access arguments' => array('administer site configuration'),
+  );
+
+  return $items;
+}
+
+function explore_menu_configure() {
+	drupal_goto('admin/structure/block/manage/explore_menu/explore_menu_block/configure');
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function explore_menu_block_info() {
+  $blocks = array();
+  $blocks['explore_menu_block'] = array(
+    'info' => t('Shanti Explore Menu Block'),
+   );
+  return $blocks;
+}
+
+/**
+ * display link for opening and closing explore menu (meant for Shanti Sarvaka theme)
+ */
+function explore_menu_block_view($delta='') {
+	$block = array();
+	switch($delta) {
+		case 'explore_menu_block':
+			$out = '<li id="collexplink" class="explore"><a href="#">' . variable_get('explore_link_text', EXPLORE_LINK_TEXT) . '<i class="icon shanticon-directions"></i></a></li>';
+			$block['content'] = $out;
+			break;
+	}
+	return $block;
+}
+
+/**
+ * Add explore_menu to vars with the shanti-explore menu tree in it to be displayed in page template
+ * Modify tree to keep disabled links with #attribute/disabled to be displayed as greyed out.
+ */
+function explore_menu_preprocess_page(&$vars) {
+
+	//$vars['explore_menu'] = menu_tree('shanti-explore-menu');
+
+	$hidden = array();
+	$menu_name = 'shanti-explore-menu';
+  $tree = menu_tree_page_data($menu_name);
+	foreach($tree as $tid => &$item) {
+	  if($item['link']['hidden'] == 1) {
+	    $hidden[] = $item['link']['mlid'];
+	    $item['link']['hidden'] = 0;
+	  }
+	}
+
+  $mto = menu_tree_output($tree);
+	foreach($hidden as $hid) {
+	  $mto[$hid]['#attributes']['disabled'] = 'disabled';
+	}
+	$vars['explore_menu'] = $mto;
+
+}
+
+/**
+* Implements hook_block_configure().
+*   Configures classes for section and div element plus the title text for the popup
+*/
+function explore_menu_block_configure($delta='explore_menu_block') {
+  $form = array();
+
+  switch($delta) {
+    case 'explore_menu_block' :
+      // Explore Div Class Attribute Value
+      $form['explore_section_class'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Section Element Class'),
+        '#description' => t('The value for the class attribute of the section element containing the content div'),
+        '#default_value' => variable_get('explore_section_class', EXPLORE_SECTION_CLASS),
+      );
+
+      // Explore Div Class Attribute Value
+      $form['explore_div_class'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Containing Div Class'),
+        '#description' => t('The value for the class attribute of the div containing the links to the collections'),
+        '#default_value' => variable_get('explore_div_class', EXPLORE_DIV_CLASS),
+      );
+
+      // Explore Div Title
+      $form['explore_div_title'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Title'),
+        '#description' => t('Title to display at the top of the collection links'),
+        '#default_value' => variable_get('explore_div_title', EXPLORE_DIV_TITLE),
+      );
+
+      // Explore Div Link Text
+      $form['explore_link_text'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Link Text'),
+        '#description' => t('Text for button in top bar'),
+        '#default_value' => variable_get('explore_link_text', EXPLORE_LINK_TEXT),
+      );
+
+      // Explanation of where data comes from
+      $form['data_explanation'] = array(
+        '#type' => 'markup',
+        '#markup' => '<div><strong>' . t('Note:') . '</strong> ' .
+          t('The links themselves are defined by a JSON file contained with the Shanti Explore Menu module\'s js folder.') . '</div>',
+
+      );
+
+			// Update links field set
+			$form['update_links'] = array(
+				'#type' => 'fieldset',
+				'#title' => t('Reset Menu Links'),
+			);
+				// Instructions
+			$form['update_links']['desc'] = array(
+				'#type' => 'markup',
+				'#markup' => t('<p style="width: 80%;">The button below will reset the links in the explorer menu based ' .
+                        'on the sites current domain.</p>'),
+			);
+			// Choose domain
+			$form['update_links']['update_links_domain'] = array(
+				'#type' => 'select',
+				'#options' => array(
+					'none' => t('Choose a Domain'),
+                      'local' => t('Local'),
+                      'local-stage' => t('Local Stage'),
+                      'predev' => t('Predev'),
+					 'dev' => t('Dev'),
+					 'stage' => t('Staging'),
+					 'prod' => t('Production'),
+				),
+				'#default_value' => explore_menu_get_current_domain(),
+			);
+			// Update Button
+		  $form['update_links']['update_button'] = array(
+		    '#type' => 'button',
+		    '#value' => t('Reset Links'),
+		    '#attributes' => array('title' => t('Reset Explore Menu Links based on current domain/host')),
+		    '#prefix' => '<div class="form-item">',
+		    '#suffix' => '<div id="em-update-msg">' .  t('The explore menu links currently point to: ') . explore_menu_get_current_domain() . '</div></div>',
+		    '#states' => array(
+		      'invisible' => array(
+		        ':input[name="update_links_domain"]' => array('value' => 'none'),
+		      ),
+		    ),
+		    '#ajax' => array(
+              'callback' => 'explore_menu_update_callback',
+		      'wrapper' => 'em-update-msg',
+		      'method' => 'replace',
+            ),
+		  );
+
+      break; // Explore block case switch break
+  }
+
+  return $form;
+}
+
+function explore_menu_block_save($delta = '', $edit = array()) {
+	variable_set('explore_section_class', $edit['explore_section_class']);
+	variable_set('explore_div_class', $edit['explore_div_class']);
+	variable_set('explore_div_title', $edit['explore_div_title']);
+	variable_set('explore_link_text', $edit['explore_link_text']);
+}
+/**
+ * Get current domain that links are displaying based on the first link
+ */
+function explore_menu_get_current_domain() {
+    $linktree = menu_tree_all_data('shanti-explore-menu');
+    $alink = array_shift($linktree);
+    $alink = $alink['link']['link_path'];
+    $domain = 'Prod';
+    if (strstr($alink, '-predev')) {
+        $domain = 'Predev';
+    } elseif (strstr($alink, '-dev')) {
+        $domain = 'Dev';
+    } elseif (strstr($alink, '-stage')) {
+        $domain = 'Stage';
+    }
+
+    if (strstr($alink, '.dd')) {
+        if (strstr($alink, '-stage')) {
+            $domain = 'Local-Stage';
+        } else {
+            $domain = ' Local';
+        }
+    }
+    return $domain;
+}
+
+/**
+ * Used by theme to get the icon class for a link with a specific title. Means all links must have unique titles. Could use href?
+ */
+function explore_menu_get_iconclass($title) {
+  $datastr = file_get_contents(drupal_get_path('module', 'explore_menu') . '/js/shanti-collections.json');
+  $json = json_decode($datastr);
+  foreach($json->links->generic as $n => $link) {
+    if($link->text == $title) {
+      return $link->class;
+    }
+  }
+  return FALSE;
+}
+
+/**
+ * Updates explore menu links from JS at explore_menu/js/shanti-collections.json
+ *
+ */
+function explore_menu_update_callback($form, $form_state) {
+    $domain = strtolower($form_state['values']['update_links_domain']);
+    $msg = explore_menu_update_links($domain);
+    return $msg;
+}
+
+function  explore_menu_update_links($domain = 'prod') {
+
+
+    // Remove current explore menu links
+    $mn = 'shanti-explore-menu';
+    $linktree = menu_tree_all_data($mn);
+    $rct = 0;
+    foreach ($linktree as $lnm => $link) {
+        $mlid = $link['link']['mlid'];
+        menu_link_delete($mlid);
+        $rct++;
+    }
+
+    // Build new Base URL
+    switch ($domain) {
+        case 'local':
+            $url_pattern = 'https://BASESITE.dd:8443/';
+            break;
+        case 'local-predev':
+            $url_pattern = 'https://BASESITE-predev.dd:8443/';
+            break;
+        case 'local-stage':
+            $url_pattern = 'https://BASESITE-stage.dd:8443/';
+            break;
+        case 'predev':
+            $url_pattern = 'https://BASESITE-predev.shanti.virginia.edu/';
+            break;
+        case 'dev':
+            $url_pattern = 'https://BASESITE-dev.shanti.virginia.edu/';
+            break;
+        case 'stage':
+            $url_pattern = 'https://BASESITE-stage.shanti.virginia.edu/';
+            break;
+        default:
+            $url_pattern = 'https://BASESITE.shanti.virginia.edu/';
+    }
+
+    // Get JSON Data about Links
+    $data = file_get_contents(drupal_get_path('module', 'explore_menu') . '/js/shanti-collections.json');
+    $jsondata = json_decode($data);
+    $linkdata = $jsondata->links->generic; // was {$domain}
+    $msg = "";
+    $ct = 0;
+
+    $mandala_sites = array('overview', 'subjects', 'places');
+
+    // Iterate through links in JSON file
+    foreach ($linkdata as $n => $link) {
+        if (!isset($link->disabled) || $link->disabled == FALSE) {
+            $site = $link->class;
+            if ($site == 'logo-shanti') {  // logo-shanti is wiki link use URL in JSON
+                $url = $link->href;
+            } elseif (in_array($site, $mandala_sites)) { // If its a mandala site base is "mandala"
+                $url = str_replace('BASESITE', 'mandala', $url_pattern);
+                if ($site != 'overview') { $url .= "{$site}"; }
+            } else { // Otherwise, the class is the site name
+                $url = str_replace('BASESITE', $site, $url_pattern);
+            }
+            // Set the link
+            $item = array(
+                'link_path' => $url,
+                'link_title' => $link->text,
+                'menu_name' => $mn,
+                'weight' => ($n - 50),
+                'language' => $jsondata->language,
+                'plid' => 0, // Parent menu item, 0 if menu item is on top level
+                'module' => 'menu',
+            );
+            $mlid = menu_link_save($item);
+            // Give warning if failed or count success
+            if (!$mlid) {
+                $msg .= "<li class=\"alert-warning\">{$item['link_title']} ({$item['link_path']}) could not be saved.</li>";
+            } else {
+                $ct++;
+            }
+        }
+    }
+    $domain = explore_menu_get_current_domain();  // Get the domain links are now set to.
+    if(empty($msg)) {
+        $msg = "<ul><li class=\"alert-success\">The Explore Collections Menu was successfully updated to point to: $domain <br/>($rct items removed. $ct items added.)</li></ul>";
+    } else {
+        $msg = '<ul>' . $msg . '</ul>';
+    }
+    return "<div id=\"em-update-msg\">$msg</div>";
+}
+
+function explore_menu_update_from_env()
+{
+  $env = 'local';
+  if (isset($_ENV['AH_SITE_ENVIRONMENT'])) {
+    $env = $_ENV['AH_SITE_ENVIRONMENT'];
+  }
+  $msg = _explore_menu_update_helper($env);
+  drupal_set_message($msg);
+}

@@ -1,0 +1,307 @@
+
+/** Flyout and Search Styles (From Visuals) **/
+    
+.input-section .input-group input.form-control{
+  margin-top:9px;
+}
+
+.extruder .text {
+  /*border: 1px solid #eee;*/
+}
+
+.extruder .region-search-flyout{
+  position: relative;
+}
+
+.extruder .views-exposed-form .views-exposed-widget{
+  width:100%;
+  padding-top:0;
+}
+
+.extruder .views-exposed-widgets input.form-control:first-child {
+  border-bottom-right-radius: 25px;
+  border-top-right-radius: 25px;
+  background-clip: padding-box;
+}
+
+.extruder .views-exposed-form > .views-exposed-widgets {
+  padding: 0 1.5rem 0 0;
+  display: block;
+  width: 100%;
+  background: #f8f8f8;
+  float:left;
+  margin-bottom:0;
+}
+
+.extruder label.flyout-search-label {
+  color:#444;
+  font-size: 0.93em;
+  position: absolute;
+  left: 3rem;
+  top: 1rem;
+  font-weight: normal;
+  letter-spacing:0.03rem;
+  text-transform: capitalize;
+  font-family: 'museo-sans-500',helvetica,arial,sans-serif;
+}
+
+.extruder label.flyout-search-label span{
+  text-transform: uppercase;
+  font-weight:bold;
+}
+
+.extruder .views-exposed-widgets .form-item-search-api-views-fulltext .icon.shanticon-magnify {
+  position: absolute;
+  left: 2.4rem;
+  top: 3.8rem;
+}
+
+.extruder .views-exposed-widgets .form-item-search-api-views-fulltext input.form-control {
+  position: relative;
+  left: 14px;
+  color: #777;
+  border: 1px solid #ccc;
+  border-radius: 25px;
+  background-clip: padding-box;
+  font-size: 1.06em;
+  height: 35px; /* coordinate with button height below */
+  line-height: 1.44em;
+  margin: 2.8rem 0 1.6rem;
+  padding: 0.2rem 6rem 0 3.2rem;
+  width: 100%;
+  max-width: 100%;
+  overflow: auto;
+  vertical-align: middle;
+  -webkit-box-shadow: 0 2px 5px #eee inset;
+  box-shadow: 0 2px 5px #eee inset;
+  border-collapse: separate; /* fix for ie9 shadow */
+  background: #fff;
+  -webkit-transition-property: all;
+  -webkit-transition-duration: 400ms;
+  transition-property: all;
+  transition-duration: 400ms;
+}
+/*
+.extruder .view-full-text .views-exposed-widgets .form-item-search-api-views-fulltext input.form-control{
+  margin-top:2.8rem;
+  border: 1px solid #ccc;
+}
+*/
+.extruder .views-exposed-widgets .form-item-search-api-views-fulltext input.form-control:hover {
+  border: 1px solid #ccc;
+  color: #777;
+}
+
+.extruder .views-exposed-widgets .form-item-search-api-views-fulltext input.form-control:focus {
+  border: 1px solid #9097d3;
+  -webkit-box-shadow: 0 0 4px #949bd8;
+  box-shadow: 0 0 4px #949bd8;
+  border-collapse: separate;
+}
+
+.views-widget-filter-search_api_views_fulltext .views-operator {
+    display: block; 
+    clear: both;
+    margin: -15px 20px;
+}
+
+.views-widget-filter-search_api_views_fulltext .views-operator > * {
+    display: inline-block;
+}
+
+.views-widget-filter-search_api_views_fulltext .form-item-search-api-views-fulltext-op .form-control.form-select {
+    width: auto;
+    margin: 6px 0px 6px 6px;
+}
+
+/*--- button group ---*/
+.extruder .views-submit-button {
+  width: 4.25rem !important;
+  height: 35px;
+  position: absolute;
+  top: 2.95rem;
+  right: 1.6rem;
+  z-index: 1;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  float: none;
+}
+/*
+.extruder .view-full-text .views-submit-button{
+  left: 4rem;
+  top: 4.4rem;
+}
+*/
+/*--- submit button ---*/
+.extruder .views-submit-button .btn.btn-primary {
+  display: block;
+  height: 33px; /* 2px less than search input height above */
+  color: #aaa;
+  width: 100%;
+  border: 1px solid #e5e5e5;
+  border-width: 0 0 0 1px;
+  border-radius: 0;
+  border-top-right-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
+  background-clip: padding-box;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  padding: 0 12px 2px 0;
+  margin: 0;
+  font-size: 1.2rem;
+  background-image: linear-gradient(to bottom,#fff 0,#e0e0e0 100%);
+}
+
+.extruder .views-submit-button .btn.btn-primary:hover {
+  background: #eee;
+  color: #777;
+}
+
+.extruder .views-submit-button .btn.btn-primary:active,
+.extruder .views-submit-button .btn-primary.active {
+  background: transparent;
+  border-color: #fff;
+}
+
+.extruder .views-submit-button .btn.btn-primary span {
+  font-family: 'Glyphicons Halflings' !important;
+  color: transparent;
+  background: transparent;
+}
+
+.extruder .views-submit-button .btn.btn-primary span::before {
+  content: '\e080';
+  color: #aaa;
+  position: relative;
+  top: 0.2rem;
+  left: .55rem;
+  font-size: 1.62rem;
+}
+
+.extruder .views-submit-button .btn.btn-primary:active span,
+.extruder .views-submit-button .btn.btn-primary.active span {
+  color: #777;
+}
+
+
+
+/** Reset Button **/
+.extruder .views-exposed-widget.views-reset-button{
+  padding:0;
+}
+
+.extruder .views-exposed-widget.views-reset-button .searchreset {
+  position: absolute;
+  top: 3.75rem;
+  right: 7rem;
+}
+
+/** Old Styles (??) **/
+.search-result .thumbnail {
+    max-height: 124px;
+    overflow: hidden;
+}
+
+.input-section{
+	padding-top:0;
+}
+
+.input-section .form-type-textfield{
+	margin-top:0;
+}
+
+.input-section .advanced-view{
+	margin-top: -3.25rem;
+	padding-left: 0.5rem;
+}
+
+.input-section .advanced-view .form-group{
+	border-top:none;
+}
+
+.input-section .input-group .btn.btn-default{
+	font-size: 1.65rem;
+}
+
+.input-section .input-group .glyphicon-chevron-right{
+	position: relative;
+	top: .3rem;
+}
+
+
+/* no idea why these settings are needed since the markup appears the same as sarvaka */
+.input-section .shanticon-magnify{
+	position: absolute;
+	left: 2.55rem;
+	top: 2.45rem;
+}
+
+.input-section div.contextual-links-wrapper{
+	position: absolute;
+	top: 0.2rem;
+}
+
+.input-section .advanced-view{
+	margin-top: -3.5rem;
+}
+
+.input-section .advanced-view .form-group{
+	margin: 0.7rem
+}
+
+/** Search Page Results  **/
+    
+.view-shanti-images-search li.views-row {
+    list-style-type: none;
+    margin: 6px 0px;
+    padding: 6px;
+}
+.view-shanti-images-search li.views-row.views-row-even {
+    background-color: rgba(180, 148, 67, 0.25);
+}
+.view-shanti-images-search .search-result-image, .view-shanti-images-search .search-details {
+    display: table-cell;
+    vertical-align: top;
+}
+
+.view-shanti-images-search .search-result-image {
+    overflow: hidden;
+    width: 200px;
+}
+
+.view-shanti-images-search .search-result-image img {
+   /* height: 200px;*/
+}
+
+.view-shanti-images-search .search-details {
+    padding: 0 6px;
+    width: 70%;
+}
+
+.view-shanti-images-search .search-details .shanti-image-description h2 {
+    display:none;
+}
+
+.view-shanti-images-search .search-details .shanti-image-description p {
+    margin-botton: 0px;
+}
+
+.view-shanti-images-search .search-details .image-type {
+    float: left;
+    padding-right: 4px;
+}
+
+.view-shanti-images-search .search-details .image-agents:not(:empty)::before{
+    content: ' by ';
+}
+
+.view-shanti-images-search .search-details .image-desc {
+    padding-top: 6px;
+    clear: both;
+}
+
+.view-shanti-images-search .search-details .hit-excerpt {
+    padding-top: 2px;
+    clear: both;
+}

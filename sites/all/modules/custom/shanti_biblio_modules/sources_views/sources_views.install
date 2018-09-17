@@ -1,0 +1,66 @@
+<?php
+
+/**
+ * @file
+ * Sources custom module updates.
+ */
+
+/**
+ * Transfer old language textfield values to new language select option field.
+ */
+function sources_views_update_7500() {
+  $node_languages_field_values = db_query('SELECT * FROM {field_data_field_biblio_long_language} WHERE field_biblio_long_language_value != :value', array(':value' => ''));
+  if ($node_languages_field_values) {
+    foreach ($node_languages_field_values as $node_language_data) {
+      $language_set = assign_new_language_value($node_language_data->field_biblio_long_language_value);
+      if (!empty($language_set)) {
+        $node = node_load($node_language_data->entity_id);
+        $node_wrapper = entity_metadata_wrapper('node', $node);
+        $field_value = $node_wrapper->field_biblio_language->value();
+        if (empty($field_value)) {
+          $node_wrapper->field_biblio_language->set($language_set);
+          $node_wrapper->save();
+        }
+      }
+    }
+  }
+}
+
+/**
+ *
+ */
+function assign_new_language_value($language_string) {
+  $language = array();
+  if ($language_string == 'en' || $language_string == 'En' || $language_string == 'eng' || $language_string == 'ENG' || $language_string == 'Eng' || $language_string == 'English' || $language_string == 'In English and Apabhra·msa; includes translations from Apabhra·msa ') {
+    $language = array('English');
+  }
+  if ($language_string == 'bo' || $language_string == 'Tibetan') {
+    $language = array('Tibetan');
+  }
+  if ($language_string == 'ger' || $language_string == 'German' || $language_string == 'de') {
+    $language = array('German');
+  }
+  if ($language_string == 'English and Sanskrit') {
+    $language = array('English', 'Sanskrit');
+  }
+  if ($language_string == 'English and Tibetan') {
+    $language = array('English', 'Tibetan');
+  }
+  if ($language_string == 'Tibetan, Chinese') {
+    $language = array('Tibetan', 'Chinese');
+  }
+  if ($language_string == 'Translated from the Japanese. ') {
+    $language = array('Japanese');
+  }
+  return $language;
+}
+
+/**
+ * Remove old biblio long language text field.
+ */
+function sources_views_update_7200() {
+  if (field_info_field('field_biblio_long_language')) {
+    field_delete_field('field_biblio_long_language');
+    field_purge_batch(6);
+  }
+}

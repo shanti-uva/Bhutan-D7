@@ -1,0 +1,714 @@
+body.section-restricted div#content {
+	background: transparent url(../../../pictures/bg-keys-gray.jpg) no-repeat 50px 50px;
+	height: 1000px;
+}
+
+body.section-restricted div#content p {
+	width: 700px;
+}
+
+div.shivanode_display {
+  border: outset 4px #99CCCC;
+  display: block;
+  margin: 12px;
+  padding: 6px;
+}
+
+.shivagallerychooser {
+  margin: 0px !important;
+  white-space: nowrap !important;
+}
+
+.shivagallerychooser br {display: none;}
+
+.shivagallerychooser select {
+  margin-left: 6px;
+}
+/* Help button in edit form
+div#sn-helplink {
+  /*float: left;
+  margin-top: 22px;*/
+  /*display: block;
+position: absolute;
+top: 200px;
+z-index: 1000;
+left: 0px;
+font-size: small;
+font-style: italic;
+}
+
+div#sn-helplink a {
+  padding: 4px;
+  background: silver;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+} */
+
+a.sn-helplink {
+  margin-left: 5px;
+  position: relative;
+}
+
+a.sn-helplink img {
+  padding: 0px !important;
+  vertical-align: text-bottom;
+  background: transparent !important;
+  box-shadow: 0 !important;
+  border: none !important;
+}
+
+/* Upper Action buttons in Edit Form */
+div#upperbuttons {
+	float: right;
+	padding-top: 8px;
+	margin-top: -35px;
+}
+
+div#otherbuttons {
+	margin-top: 45px;
+}
+
+div.sn-share-button {
+	display: inline !important;
+	float:right;
+	margin-top: 5px;
+	padding-bottom: 6px;
+}
+
+div.node-shivanode div.sn-share-button {
+	margin-top: -60px;
+}
+
+form.node-shivanode-form div.sn-share-button  {
+	margin-right: 3px;
+}
+
+div.sn-share-button img {
+  vertical-align: middle;
+}
+
+/** CSS for Superfish Main Menu */
+#block-superfish-1 {
+	position: relative;
+	top: -19px;
+}
+
+.sfHover ul {
+	border: 2px groove #4F6975;
+	border-top-style: none;
+	position: relative;
+	top: 19px !important;
+	margin: 6px;
+	background-color: #C5CED1;
+}
+
+.sf-menu ul ul {
+  left: 96% !important;
+}
+
+.sf-menu li a {
+	padding: 2px 4px;
+	border-radius: 8px;
+}
+
+.sf-menu li a:hover {
+	background: white;
+	text-decoration: none;
+}
+
+.sf-menu li.menuparent li a {
+	width: 90%;
+}
+
+.sf-menu li.menuparent li.menuparent span.sf-sub-indicator { margin-left: 150px; }
+
+.sf-menu li.menuparent li.menuparent ul { 
+	border: 1px solid #4F6975;
+  margin-left: -35px !important;
+  margin-top: -20px !important;
+  padding-top: 10px !important;
+}
+
+.sf-menu.explore ul {
+  margin: 30px 0px 0px 20px;
+  border: thin solid gray;
+  background-color: #c5ced1;
+}
+
+#shivanode-node-form div.form-item-title, #shivanode-node-form div#edit-shivanode-element-type {
+  float: left;
+  padding-right: 12px;
+}
+
+#shivanode-node-form input#edit-button, #shivanode-node-form input#edit-new-button {
+  float: right;
+  margin-top: 0px;
+}
+
+#shivanode-node-form div#edit-shivanode-access {
+  float: left;
+  height: 2em;
+}
+
+.my-data-table .views-field-created {
+    white-space: nowrap;
+}
+
+div#use-data-element-link {
+  padding-top: 24px;
+}
+
+div#use-data-element-link a {
+  padding-left: 12px;
+}
+
+div#sneditmessage {
+  margin: -10px 0px 0px;  
+  padding-left: 40%;
+  color: red;
+}
+
+#iframe_container {
+  clear: both;
+  background-color: #ffffff;
+}
+
+#iframe_container legend span.form-required {
+  padding-left: 6px;
+}
+
+div#edit-shivanode-tags {
+  clear: both;
+  display: block;
+}
+
+fieldset#iframe_container iframe {
+    margin: 0px;
+    padding: 0px;
+    min-width: 100%;
+    min-height: 1000px;
+}
+
+iframe#shivaViewFrame {
+  border: none!important;
+  clear: both;
+  display: block;
+}
+
+fieldset#edit-shivanode-container {clear: both;}
+
+select#elementType {
+  display: none;
+}
+
+/* Generic Button Style: This should be in Theme */
+input[type="reset"], input[type="submit"], input[type="button"]  {
+	cursor: pointer;
+	background: -moz-linear-gradient(center top , #FFFFFF 0%, #DDDDDD 100%) repeat scroll 0 0 rgba(0, 0, 0, 0);
+  border-color: #DDDDDD #BBBBBB #999999;
+  border-image: none;
+  border-radius: 11px 11px 11px 11px;
+  border-style: solid;
+  border-width: 1px;
+  color: #333333;
+  padding: 1px 6px 2px;
+  margin: 4px 3px;
+}
+
+input.nobutton {
+	cursor: pointer;
+  background-color: transparent;
+  border: none;
+  color: #496771;
+  padding: 0px;
+  font-size: 14px;
+}
+
+input.nobutton:hover {
+	cursor: pointer;
+  color: #0071B3;
+	text-decoration: underline;
+}
+
+input.error {
+  border: thin solid red;
+}
+
+div.jsonEditMsg {
+  position:absolute;
+  width: 250px;
+  height: 50px;
+  color:red;
+  border: outset 3px #DB2323;
+  padding: 4px;
+}
+
+#shiva_node_list .actions {
+  font-size: smaller;
+  white-space: nowrap;
+}
+
+p.table-note {
+  margin: 6px 6px;
+  font-size: small;
+  font-style: italic;
+}
+
+/* Datatables pager styles */
+.dataTables_paginate {
+    margin-left: -190px;
+}
+
+form.node-shivanode-form, form.node-shivanode-form .form-item {
+  margin-top: 0px !important;
+}
+
+div.addspreadsheet-button {
+	/*float: right;*/
+	padding: 10px 0px 0px 0px;
+}
+
+div.addspreadsheet-button span {
+	background-color: #DDDEEA; /*#adadad;*/
+	border-radius: 4px; 
+	-moz-border-radius: 4px; 
+	-webkit-border-radius: 4px; 
+	border: 1px solid #888;
+	padding: 2px 6px;
+}
+
+div.addspreadsheet-button span a {
+	color: #496771;
+}
+
+div.spreadsheet-add-de-link {
+	padding-top: 24px
+}
+
+div#data_sheet_link_buttons {
+	display: inline;
+}
+
+input#edit-reset-button {
+	font-size: 1em;
+	background: none!important;
+	border: none;
+	padding: 0!important;
+	color: #496771;
+
+}
+
+input#edit-reset-button:hover {
+	text-decoration: underline;
+	color: #0071B3;
+}
+
+#block-shivanode-recent-nodes td.shivanode-type {
+  width: 15%;
+}
+
+#block-shivanode-recent-nodes td.edit, #block-shivanode-recent-nodes td.delete {
+  width: 8%;
+  text-align: center;
+}
+
+#guser-reset {
+  float: right !important;
+  text-align: right;
+  width: 100%;
+  margin-top: -15px;
+}
+
+#gdoclist-back {
+  float: right !important;
+  text-align: right;
+  margin-top: -32px;
+  margin-right: -48px;
+}
+
+#edit-gss-form .form-type-checkbox label{
+  display: inline;
+  font-weight: normal;
+}
+
+ul.content-list li.content-item * {
+  display: inline!important;
+}
+
+#edit-gss-done .fieldset-legend, #edit-gss-list .fieldset-legend {
+	font-weight: bold;
+}
+
+div#addspreadsheet-filter {
+	text-align: right;
+	white-space: nowrap !important;
+}
+
+div#addspreadsheet-filter  * {
+	white-space: nowrap !important;
+}
+
+/*
+#user-login-form #edit-submit {
+  font-family: 'Trebuchet MS', Verdana, sans-serif;
+  width: 100px;
+  height: 25px;
+  border: none !important;
+  background: transparent url(../images/button_orange.gif) top left no-repeat;
+  font-weight: bold;
+  font-size: 13px;
+  padding-top: 2px;
+  float: left;
+  margin-left: 10px;
+  margin-right: 10px;
+  color: white;
+  text-align: center;
+}
+*/
+ul.shivanode-spreadsheets li {
+  list-style-type: none;
+}
+
+ul.shivanode-spreadsheets li * {
+  display: inline !important;
+}
+
+.views-field-shivanode-description {
+	max-width: 350px;
+}
+
+.view-shiva-elements table.views-table * {
+	vertical-align: top;
+}
+
+.view-shiva-elements table.views-table p {
+	margin-top: 0px;
+}
+
+/* Gallery link styles */
+.gallery, .mygallery { margin: 0px 3px; }
+.gallery li, .mygallery li {
+  margin: 0px 0px 0px -30px !important 
+}
+
+/* Shiva node teaser view */
+div.shiva-teaser {
+	position: relative;
+	float: left;
+	margin: 6px;
+	padding: 4px;
+	box-shadow: 4px 6px 6px #aaa;
+}
+
+div.shiva-teaser .shiva-teaser-title {
+	width: 150px;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+div.shiva-teaser .shiva-teaser-image {
+  opacity: 1;
+	transition: opacity .25s ease-in-out;
+	-moz-transition: opacity .25s ease-in-out;
+	-webkit-transition: opacity .25s ease-in-out;
+}
+
+div.shiva-teaser:hover .shiva-teaser-image {
+    opacity: 0.35;
+}
+
+div.shiva-teaser .info-wrapper {
+	position: relative;
+	margin-top: -170px;
+	width: 155px;
+	height: 170px;
+	opacity: 0;
+	transition: opacity .25s ease-in-out;
+	-moz-transition: opacity .25s ease-in-out;
+	-webkit-transition: opacity .25s ease-in-out;
+	background: rgba(0,0,0,.75);
+	cursor: pointer;
+}
+
+div.shiva-teaser .info {
+	position: relative;
+	top: 25%;
+	width: 80%;
+	left: 10%;
+	text-align: center;
+	opacity: 0;	
+	transition: opacity .25s ease-in-out;
+	-moz-transition: opacity .25s ease-in-out;
+	-webkit-transition: opacity .25s ease-in-out;
+	color: #ddd;
+}
+
+div.shiva-teaser:hover .info-wrapper {
+	opacity: 1;
+}
+
+div.shiva-teaser:hover .info {
+	opacity: 1;
+}
+
+div.shiva-teaser .info a {
+	color: white;
+}
+
+div.shiva-teaser .info a:hover, div.shiva-teaser .info a:visited {
+	text-decoration: underline;
+}
+
+/* For custom User Profiles */
+div.shanti-profile-pic .panel-pane {
+  height: 100px;
+  width: 64px;
+  background: url('/sites/all/pictures/no-profile-pic.png') no-repeat top center;
+}
+
+
+/* For Lightbox popups */
+
+iframe#lightboxFrame {
+  border: none !important;
+}
+
+html.lightpop #content {
+  margin-left: 0px !important;
+}
+
+#imageDataContainer {
+  height: 0px !important;
+}
+
+#imageData #bottomNav {
+  height: 30px;
+  position: absolute;
+  top: 0px;
+}
+
+#bottomNavClose {
+  display: block;
+  z-index: 200;
+  background: url(../images/close.gif) left no-repeat;
+  position: relative !important;
+  top: 0px;
+  left: 775px !important;
+  height: 26px;
+  width: 26px;
+  margin-top: 0px !important;
+}
+
+/* Add any custom headers here, if you want them hidden in popups */
+html.lightpop #header, html.lightpop #navigation, html.lightpop #footer, 
+html.lightpop #sidebar-first, html.lightpop #sidebar-second, 
+html.lightpop #toolbar, html.lightpop #admin-menu, 
+html.lightpop #header-top, html.lightpop #block-search-form {
+	display: none !important;
+}
+/*
+html.lightpop body, html.lightpop #page-wrapper {
+	height: 800px !important;
+	width: 800px !important;
+}
+
+html.lightpop .popup, html.lightpop .form-textarea-wrapper {
+	width: 750px !important;
+}
+
+*/
+html.lightpop #page {
+  margin-top: 0px !important;
+}
+
+html.lightpop form.skip-form {
+  display: none;
+}
+
+html.lightpop .views-field-nothing-1 {
+    max-width: 200px !important;
+}
+
+div#sninsert-popup {
+	position: absolute !important;
+	top: 100px;
+	left: 200px;
+	width: 600px;
+	height: 500px;
+	overflow: auto;
+	border: 3px ridge silver;
+	padding: 12px;
+	font-size: small;
+	background-color: #fdfdfd;
+}
+
+div#sninsert-popup .closeBtn {
+	position: absolute;
+	right: 10px;
+	top: 10px;
+	width: 25px;
+	height: 25px;
+	background: url(../images/close.gif) left no-repeat;
+	border: 3px outset;
+}
+
+table.pagerer {
+  display: block;
+  clear: both;
+  margin-left: 30% !important;
+}
+
+/* Admin Styles */
+div.form-item-shivanode-whois-host {
+  margin: -15px 0px 0px 30px;
+}
+
+/* General class styles */
+/* .button-link: a class to make a button look like a regular link */
+span.button-link input {
+	font-size: 1em;
+	background: none!important;
+	border: none;
+	padding: 0!important;
+	color: #496771;
+}
+
+span.button-link input:hover {
+	text-decoration: underline;
+	color: #0071B3;
+}
+
+span.list-select, span.list-checkbox {
+  display: inline !important;
+}
+
+span.private {padding-left: 2px; color: #990000;}
+
+.float-right { float: right; }
+
+.float-left { float: left; }
+
+.normal {
+	font-weight: normal !important;
+	font-style: normal !important;
+}
+
+.bold {
+	font-weight: bold !important;
+}
+
+.label {
+  font-weight: bold !important;
+}
+
+.italic {
+	font-style: italic !important;
+}
+
+.error {
+  border: 2px solid red !important;
+}
+
+.warning {
+	border: 2px solid orange !important;
+}
+
+.jscommands {
+  display: none;
+}
+
+.hidden {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+.nobreak {
+  white-space: nowrap;
+}
+
+.inline {
+  display: inline !important;
+}
+
+.link {
+	cursor: pointer;
+}
+
+.link:hover {
+	text-decoration: underline;
+}
+
+.sn-notpublic {
+  font-size: 120%;
+  color: red;
+}
+
+
+/** TEST AREA **/
+
+.views-thin-list .views-row {
+	float: left;
+	width: 98%;
+	height: 110px;
+	background: white;
+	padding-bottom: 10px;
+	padding-right: 20px;
+	margin: 0 0 10px;
+	border-bottom: thin solid #aaa;
+}
+
+
+.views-thin-list .views-row img {
+	float: left;
+	margin-right: 10px;
+	height: 110px;
+	width: 110px;
+}
+
+.views-thin-list .views-row h3.title {
+	font-size: 18px;
+	margin-right: 10px;
+	margin-bottom: 5px;
+}
+
+.views-thin-list .views-field-shivanode-description {
+	max-width: 100% !important;
+}
+
+.views-thin-list .views-row .field-content p {
+	max-width: 100%;
+	width: 100%;
+}
+
+.view-all-texts-control-box {
+	display: table;
+	width: 100%;
+	border-top: 0;
+	margin: 10px 0;
+	border-color: none;
+}
+
+.view-all-texts-control-box-row {
+	display: table-row;
+}
+
+.view-all-texts-control-box-cell {
+	display: table-cell;
+	vertical-align: middle;
+}
+
+.view-all-texts-control-box-cell.a {
+	width: 25%;
+}
+
+.view-all-texts-control-box-cell.b {
+	width: 30%;
+}
+
+.view-all-texts-control-box-cell.c {
+	width: 15%;
+}
+
+.view-all-texts-control-box-cell.d {
+	width: 30%;
+}

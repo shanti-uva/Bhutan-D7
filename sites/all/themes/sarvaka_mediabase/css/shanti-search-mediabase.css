@@ -1,0 +1,205 @@
+/**
+* Mandala Audio-Video - Development
+*
+* version 1.x - shanti-search-mediabase.css
+* -------------------------------------------------------
+* University of Virginia / SHANTI MANDALA / AUDIO-VIDEO
+* -------------------------------------------------------
+*
+*/
+
+/**
+* Search Flyout Top-Section
+*/
+.extruder .input-section {
+  height: 120px;
+}
+
+.input-section .contextual-links-trigger{
+  top: 0.3rem;
+  right: .2rem;
+  position: relative;
+}
+
+.input-section .toggle-link,
+.input-section .advanced-view{
+  display:none;
+}
+
+.input-section .input-group{
+  padding: 0 20px 0 25px;
+  margin-top: 1.5rem;
+}
+
+.input-section .input-group .btn.btn-default {
+  font-size: 1.65rem;
+}
+
+.input-section .input-group .glyphicon-chevron-right:before {
+  font-size: 1.5rem;
+  position: relative;
+  right: 0.1rem;
+  top: 0.05rem;
+}
+
+.input-section .input-group .input-group-btn{
+  position: absolute;
+  top: 2.73rem;
+  right: 2.1rem;
+}
+
+.input-section .input-group .form-control{
+  margin-top:1.2rem;
+  height: 2.4em;
+}
+
+.input-section label.flyout-search-label{
+  color: #444;
+  font-size: 0.93em;
+  position: absolute;
+  left: 4.4rem;
+  top: -0.2rem;
+}
+
+.input-section label.flyout-search-label span{
+  text-transform: uppercase;
+  padding-right: 0.3rem;
+  font-weight:bold;
+}
+
+.logged-in .input-section .shanticon-magnify,
+.not-logged-in .input-section .shanticon-magnify{
+  position: absolute;
+  top: 3.6rem;
+  left: 3.5rem;
+}
+
+.input-section .form-item-search-block-form{
+  display: block;
+}
+
+.advanced-view .form-group:nth-of-type(1) { margin: 0 0 0 2rem;}
+.advanced-view .form-group:nth-of-type(2) { display: none;}
+
+
+.input-section .search-group .radio-inline {
+  min-width: 0px !important;
+}
+
+.input-section .form-item .option.icheck-label {
+  font-size: 100% !important;
+}
+
+.input-section .shanti-options .form-item {
+  margin-right: 0rem;
+  margin-top: 1.2rem;
+  float: left;
+}
+
+.input-section .shanti-options .form-item:first-child{
+  margin-left: 0;
+}
+
+.input-section .search-group .radio-inline:first-child {
+  width: 1.7rem;
+}
+
+.view-section .tab-content{
+  border: 1px solid #ddd;
+  border-width: 0 1px;
+}
+
+.view-section .treeview h2 {
+  font-size: 1.5em;
+}
+
+.view-section h2 .toggle-facet-label-search {
+  float: left;
+  margin-left: 0.62em;
+  margin-right: .5em;
+  margin-bottom: 0.5em;
+  position: relative;
+  top: 0.25em;
+}
+
+.view-section .nav-tabs>li.km-facet-tab{ width:30%;}
+.view-section .nav-tabs>li:first-child{ width:40%;}
+
+.view-section .nav-tabs>li.km-facet-tab a {
+  font-size: 0.88em;
+}
+
+.view-section .nav-tabs>li.km-facet-tab.active>a,
+.view-section .nav-tabs>li.km-facet-tab.active>a:hover,
+.view-section .nav-tabs>li.km-facet-tab.active>a:active {
+  font-size: 0.93em;
+}
+
+.extruder #loading-text{
+  position: absolute  !important;
+  left: 3.5rem !important;
+}
+
+
+
+
+
+/**
+* SOLR Results
+*/
+
+.mb-solr-results .head .label {
+  color: #333;
+  text-transform: uppercase;
+  font-size: 0.9em;
+  padding-left: 1rem;
+}
+
+.mb-solr-results .head .count{
+  color: #222;
+}
+
+.mb-solr-results .head table.pagerer {
+  margin: -0.3rem 0 0 0;
+}
+
+.mb-solr-results .foot table.pagerer {
+  margin: 1rem 0 0;
+}
+
+.mb-solr-results .results {
+  margin-top: 2.75rem;
+}
+
+
+#no-views-filter-results {
+  color: red;
+  margin: 1.2rem;
+  font-size: 0.9em;
+}
+/** No Results Header **/
+.view-media-by-kmap .view-empty h3 {
+  font-style: italic;
+}
+
+.view-browse-media .view-empty .no-results {
+  position: absolute;
+  font-style: italic;
+  margin-top: 12px;
+}
+
+@media (min-width:600px) {
+
+  .mb-solr-results .results{
+    margin-top: 1rem;
+  }
+}
+
+
+
+
+.page-search .region-sidebar-second h4{
+  text-transform: capitalize;
+  font-size: 1em;
+}
+

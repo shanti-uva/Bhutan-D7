@@ -1,0 +1,5 @@
+name = Sources Miscellaneous Custom Module
+description = Custom for miscellaneous functions for the Sources site
+package = Sources
+core = 7.x
+

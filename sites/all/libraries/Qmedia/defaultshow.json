@@ -1,0 +1,497 @@
+{
+    "title": "Bill Clinton speaks at 2007 TED Conference",
+    "contentsLab": "Contents",
+    "contentsPlayOnClick": "false",
+    "infoLab": "More information",
+    "infoMapSource": "//www.viseyes.org/shiva/go.htm?e=1301",
+    "transHgt": "400",
+    "transInfoRatio": 0.5,
+    "transLab": "Transcript",
+    "transLangs": "None|English|Spanish|French|Tibetan",
+    "transLanguage": "English",
+    "transText": "I thought in getting up to my TED wish I would try to begin by putting in perspective what I try to do and how it fits with what they try to do. We live in a world that everyone knows is interdependent, but insufficient in three major ways. It is, first of all, profoundly unequal: half the world's people still living on less than two dollars a day; a billion people with no access to clean water; two and a half billion no access to sanitation; a billion going to bed hungry every night; one in four deaths every year from AIDS, TB, malaria and the variety of infections associated with dirty water -- 80 percent of them under five years of age. Even in wealthy countries it is common now to see inequality growing. In the United States, since 2001 we've had five years of economic growth, five years of productivity growth in the workplace, but median wages are stagnant and the percentage of working families dropping below the poverty line is up by four percent. The percentage of working families without health care up by four percent. So this interdependent world which has been pretty good to most of us -- which is why we're all here in Northern California doing what we do for a living, enjoying this evening -- is profoundly unequal. It is also unstable. Unstable because of the threats of terror, weapons of mass destruction, the spread of global disease and a sense that we are vulnerable to it in a way that we weren't not so many years ago. And perhaps most important of all, it is unsustainable because of climate change, resource depletion and species destruction.\n\nWhen I think about the world I would like to leave to my daughter and the grandchildren I hope to have, it is a world that moves away from unequal, unstable, unsustainable interdependence to integrated communities -- locally, nationally and globally -- that share the characteristics of all successful communities: a broadly shared, accessible set of opportunities, a shared sense of responsibility for the success of the common enterprise and a genuine sense of belonging. All easier said than done. When the terrorist incidents occurred in the United Kingdom a couple of years ago, I think even though they didn't claim as many lives as we lost in the United States on 9/11, I think the thing that troubled the British most was that the perpetrators were not invaders, but homegrown citizens whose religious and political identities were more important to them than the people they grew up with, went to school with, worked with, shared weekends with, shared meals with. In other words, they thought their differences were more important than their common humanity. It is the central psychological plague of humankind in the 21st century.\n\nInto this mix, people like us, who are not in public office, have more power to do good than at any time in history, because more than half the world's people live under governments they voted in and can vote out. And even non-democratic governments are more sensitive to public opinion. Because primarily of the power of the Internet, people of modest means can band together and amass vast sums of money that can change the world for some public good if they all agree. When the tsunami hit South Asia, the United States contributed 1.2 billion dollars. 30 percent of our households gave. Half of them gave over the Internet. The median contribution was somewhere around 57 dollars. And thirdly, because of the rise of non-governmental organizations. They, businesses, other citizens' groups, have enormous power to affect the lives of our fellow human beings. When I became president in 1993, there were none of these organizations in Russia. There are now a couple of hundred thousand. None in India. There are now at least a half a million active. None in China. There are now 250,000 registered with the government, probably twice again that many who are not registered for political reasons.\n\nWhen I organized my foundation, and I thought about the world as it is and the world that I hope to leave to the next generation, and I tried to be realistic about what I had cared about all my life that I could still have an impact on. I wanted to focus on activities that would help to alleviate poverty, fight disease, combat climate change, bridge the religious, racial and other divides that torment the world, but to do it in a way that would either use whatever particular skills we could put together in our group to change the way some public good function was performed so that it would sweep across the world more.",
+    "playerAspect": 0.5625,
+    "playerAuto": "false",
+    "playerControls": "false",
+    "playerQuality": "Default",
+    "playerSource": "3_T9Un5hWAg",
+    "playerSlideRatio": 0.5,
+    "playerStart": 0,
+    "playerStop": 367,
+    "playerVolume": 75,
+    "width": 1000,
+    "indexVectors": [
+        {
+            "t": 0,
+            "c": "Opening credits",
+            "s": "B"
+        },
+        {
+            "t": 16,
+            "c": "My TED wish",
+            "l": "1"
+        },
+        {
+            "t": 30,
+            "c": "Graphical overlays",
+            "l": "2",
+            "s": "I"
+        },
+        {
+            "t": 44,
+            "c": "An unequal world",
+            "l": "0",
+            "s": "B"
+        },
+        {
+            "t": 55,
+            "c": "Disqus commenting",
+            "l": "2",
+            "s": "I"
+        },
+        {
+            "t": 68.5,
+            "c": "Assessment demo",
+            "l": "2",
+            "s": "I"
+        },
+        {
+            "t": 79,
+            "c": "Graphing calculator",
+            "l": "2",
+            "s": "I"
+        },
+        {
+            "t": 109,
+            "c": "An unstable world",
+            "l": "0",
+            "s": "B"
+        },
+        {
+            "t": 137,
+            "c": "The world I want to see",
+            "s": "-",
+            "l": "1"
+        },
+        {
+            "t": 138,
+            "c": "Live network demo",
+            "l": "2",
+            "s": "I"
+        },
+        {
+            "t": 177,
+            "c": "The London bombings",
+            "l": "0",
+            "s": "B"
+        },
+        {
+            "t": 196,
+            "c": "Relocation of map demo",
+            "s": "I",
+            "l": "2"
+        },
+        {
+            "t": 220,
+            "c": "Power of people",
+            "l": "0",
+            "s": "B"
+        },
+        {
+            "t": 220,
+            "c": "3D model demo",
+            "s": "I",
+            "l": "2"
+        },
+        {
+            "t": 304,
+            "c": "Clinton foundation",
+            "l": "1"
+        },
+        {
+            "t": 361,
+            "c": "Closing remarks",
+            "s": "B"
+        }
+    ],
+    "playerVectors": [
+        {
+            "t": 0,
+            "c": ""
+        },
+        {
+            "t": 30,
+            "c": "qTitle|Lower third|Right|Bar|#999999|#cccccc|Sans-Serif|Bold/Ital|#ffd966|16|#333333|Lower-third title bar",
+            "m": ""
+        },
+        {
+            "t": 34,
+            "c": "//icons.iconarchive.com/icons/gakuseisean/radium/256/Globe-Connected-icon.png",
+            "z": ".17|.17|.3|8|.15|.15|.001",
+            "m": "Notice Picture-in-picture of globe"
+        },
+        {
+            "t": 44,
+            "c": "",
+            "m": ""
+        },
+        {
+            "t": 46,
+            "c": "<svg width='100%' height='100%'><text x='53%' y='95%' fill='yellow' font-size='18px' opacity='.8' font-family='sans-serif' text-anchor='middle'>A highlight on top of video</text><circle cx='53%' cy='46%' r='30%' fill='white' opacity='.2'></svg>",
+            "m": "Note the highlight"
+        },
+        {
+            "t": 59,
+            "c": "",
+            "m": ""
+        },
+        {
+            "t": 698,
+            "c": "",
+            "m": ""
+        }
+    ],
+    "transVectors": [
+        {
+            "t": 0,
+            "c": 0,
+            "d": 0
+        },
+        {
+            "t": 16,
+            "c": 0,
+            "d": 60
+        },
+        {
+            "t": 22,
+            "c": 39
+        },
+        {
+            "t": 25,
+            "c": 91
+        },
+        {
+            "t": 34,
+            "c": 145
+        },
+        {
+            "t": 68,
+            "c": 648
+        },
+        {
+            "t": 110,
+            "c": 1246
+        },
+        {
+            "t": 137,
+            "c": 1584
+        },
+        {
+            "t": 159,
+            "c": 1899
+        },
+        {
+            "t": 178,
+            "c": 2085
+        },
+        {
+            "t": 220,
+            "c": 2736
+        },
+        {
+            "t": 305,
+            "c": 3926
+        },
+        {
+            "t": 367,
+            "c": 4551
+        }
+    ],
+    "slideVectors": [
+        {
+            "t": 0,
+            "c": "//www.viseyes.org/shiva/qmedia/clinton01.jpg",
+            "r": 0.5
+        },
+        {
+            "t": 12,
+            "c": "//www.viseyes.org/shiva/qmedia/clinton01.jpg#1",
+            "r": 0.5,
+            "z": ".75|.65|5|4"
+        },
+        {
+            "t": 17,
+            "c": "//www.viseyes.org/shiva/qmedia/clinton02.jpg",
+            "r": 1
+        },
+        {
+            "t": 44,
+            "c": "//www.viseyes.org/shiva/qmedia/clinton03.jpg",
+            "r": 0.5
+        },
+        {
+            "t": 59,
+            "c": "//c.tadst.com/gfx/600x400/un-world-health-day.jpg?1",
+            "r": 0.5
+        },
+        {
+            "t": 68.5,
+            "c": "assess=unequal",
+            "r": 0.5,
+            "e": "play"
+        },
+        {
+            "t": 69,
+            "c": "//www.viseyes.org/shiva/qmedia/clinton04.jpg"
+        },
+        {
+            "t": 77,
+            "c": "//www.rajaha.com/wp-content/uploads/2012/05/Plant-growth-hormones.jpg",
+            "r": 0.5
+        },
+        {
+            "t": 109,
+            "c": "//www.viseyes.org/shiva/qmedia/clinton05.jpg",
+            "z": ".492|.492|3|13",
+            "r": 0.5
+        },
+        {
+            "t": 126,
+            "c": "//i.dailymail.co.uk/i/pix/2010/07/05/article-0-004D820800000258-318_468x308.jpg",
+            "z": "0.6016666666666667|0.40545685279187826|1.271186440677966|7",
+            "r": 0.5
+        },
+        {
+            "t": 135,
+            "c": "//www.viseyes.org/shiva/qmedia/clinton06.jpg",
+            "m": "",
+            "z": "0.52|0.48089762611275966|1.0676156583629892|10|0.5116666666666667|0.4198813056379822|1.3888888888888888",
+            "r": 0.5
+        },
+        {
+            "t": 158,
+            "c": "//www.viseyes.org/shiva/qmedia/clinton07.jpg",
+            "r": 0.5
+        },
+        {
+            "t": 177,
+            "c": "//www.viseyes.org/shiva/go.htm?e=1103",
+            "m": "This is a live map",
+            "r": 0.4
+        },
+        {
+            "t": 184,
+            "c": "//www.viseyes.org/shiva/go.htm?e=1103#1",
+            "m": "We zoomed in",
+            "h": "goto|51.513149|-0.077955|16",
+            "r": 0.3
+        },
+        {
+            "t": 196,
+            "c": "//www.viseyes.org/shiva/go.htm?e=1103#2",
+            "h": "goto|51.5131494459|-0.077955722808|18",
+            "r": 0.5,
+            "m": " "
+        },
+        {
+            "t": 208,
+            "c": "http://wc1.smartdraw.com/examples/content/examples/05_strategy_&_planning/venn_diagrams/4_circle_venn_diagram_l.jpg",
+            "z": "0.49166666666666664|0.49502020785219397|1|4|0.5|0.48119212962962965|2.112676056338028",
+            "r": 0.5
+        },
+        {
+            "t": 220,
+            "c": "//www.viseyes.org/shiva/qmedia/clinton09.jpg"
+        },
+        {
+            "t": 304,
+            "c": "//www.viseyes.org/shiva/qmedia/clinton10.jpg"
+        }
+    ],
+    "infoVectors": [
+        {
+            "t": 0,
+            "c": "info.jpg",
+            "r": 0.5
+        },
+        {
+            "t": 44,
+            "c": "http://previous.presstv.ir/photo/20131013/329258_Rome.jpg",
+            "z": "0.4625|0.639630126953125|1.3921113689095128|10",
+            "r": 0.5
+        },
+        {
+            "t": 55,
+            "c": "disqus.htm?qmediaplayer|1",
+            "r": 0.5
+        },
+        {
+            "t": 79,
+            "c": "//www.viseyes.org/shiva/graphr/?x^3/20",
+            "r": 0.4
+        },
+        {
+            "t": 98,
+            "c": "http://training4cna.org/wp-content/uploads/2013/05/CNA-good-life.jpg",
+            "r": 0.5
+        },
+        {
+            "t": 106,
+            "c": "http://www.thestar.com/content/dam/thestar/news/2013/03/01/video_unequal_justice/2198171235001_videoStillImage.jpg",
+            "r": 0.5
+        },
+        {
+            "t": 137,
+            "c": "//www.viseyes.org/shiva/go.htm?e=1121",
+            "m": "This is a live visualization",
+            "r": 0.5
+        },
+        {
+            "t": 159,
+            "c": "http://careergirlnetwork.com/wp-content/uploads/2014/05/Opportunity.jpg",
+            "m": "",
+            "r": 0.5
+        },
+        {
+            "t": 177,
+            "c": "//truthandshadows.files.wordpress.com/2011/01/london-bombing-sign.jpg",
+            "r": 0.5
+        },
+        {
+            "t": 182,
+            "c": "//static.guim.co.uk/sys-images/Education/Pix/pictures/2008/12/01/kx4.jpg",
+            "r": 0.5
+        },
+        {
+            "t": 188,
+            "c": "//www.viseyes.org/shiva/qmedia/clinton08.jpg"
+        },
+        {
+            "t": 190,
+            "c": "//upload.wikimedia.org/wikipedia/en/f/f9/July_7,_2005_London_bombings_CCTV.JPG",
+            "r": 0.5
+        },
+        {
+            "t": 220,
+            "c": "wgl.htm",
+            "m": "3D Model walk-through",
+            "h": "play",
+            "r": 0
+        },
+        {
+            "t": 248,
+            "c": "wgl.htm",
+            "r": 0,
+            "m": "You can navigate through this scene with the  mouse",
+            "p": "",
+            "h": "pause"
+        },
+        {
+            "t": 270,
+            "c": "info.jpg",
+            "r": 0.5,
+            "m": ""
+        },
+        {
+            "t": 310,
+            "c": "chem/chemdraw.htm",
+            "e": "scroll",
+            "m": "Draw chemical structures here!"
+        },
+        {
+            "t": 330,
+            "c": "chem/chemdraw.htm?3D=1",
+            "h": "data|{\"a\":[{\"x\":2.2354000000000003,\"y\":-2.3803,\"i\":\"a0\",\"z\":0.16135000000000002},{\"x\":0.9024,\"y\":-2.3094,\"i\":\"a1\",\"z\":0.51675},{\"x\":0.25139999999999996,\"y\":-1.0856,\"i\":\"a2\",\"z\":0.53215},{\"x\":0.9521,\"y\":0.07840000000000014,\"i\":\"a3\",\"z\":0.18615},{\"x\":2.2999,\"y\":-0.007599999999999885,\"i\":\"a4\",\"z\":-0.17085},{\"x\":2.9311999999999996,\"y\":-1.2328999999999999,\"i\":\"a5\",\"z\":-0.18125000000000002},{\"x\":0.27009999999999995,\"y\":1.3857000000000002,\"i\":\"a6\",\"z\":0.19845000000000002},{\"x\":-0.9024000000000001,\"y\":1.4564000000000001,\"i\":\"a7\",\"l\":\"O\",\"z\":0.50905},{\"x\":0.9472999999999999,\"y\":2.502,\"i\":\"a8\",\"l\":\"O\",\"z\":-0.13484999999999997},{\"x\":-1.0584,\"y\":-1.0147,\"i\":\"a9\",\"l\":\"O\",\"z\":0.88035},{\"x\":-1.9579000000000002,\"y\":-1.0715999999999999,\"i\":\"a10\",\"z\":-0.11544999999999997},{\"x\":-1.5923999999999998,\"y\":-1.2757,\"i\":\"a11\",\"l\":\"O\",\"z\":-1.24885},{\"x\":-3.4231,\"y\":-0.8807999999999998,\"i\":\"a12\",\"z\":0.18095000000000003},{\"x\":2.7390999999999996,\"y\":-3.3356000000000003,\"i\":\"a13\",\"l\":\"H\",\"z\":0.15495000000000003},{\"x\":0.36669999999999997,\"y\":-3.2085999999999997,\"i\":\"a14\",\"l\":\"H\",\"z\":0.7825500000000001},{\"x\":2.8463000000000003,\"y\":0.8846000000000003,\"i\":\"a15\",\"l\":\"H\",\"z\":-0.43904999999999994},{\"x\":3.9732000000000003,\"y\":-1.2983999999999998,\"i\":\"a16\",\"l\":\"H\",\"z\":-0.4573499999999999},{\"x\":0.4578,\"y\":3.3356000000000003,\"i\":\"a17\",\"l\":\"H\",\"z\":-0.11214999999999997},{\"x\":-3.5585000000000004,\"y\":-0.7093999999999998,\"i\":\"a18\",\"l\":\"H\",\"z\":1.24885},{\"x\":-3.7974000000000006,\"y\":-0.021399999999999864,\"i\":\"a19\",\"l\":\"H\",\"z\":-0.37534999999999996},{\"x\":-3.9732000000000003,\"y\":-1.7735999999999998,\"i\":\"a20\",\"l\":\"H\",\"z\":-0.11645}],\"b\":[{\"b\":0,\"e\":1,\"i\":\"b0\"},{\"b\":1,\"e\":2,\"i\":\"b1\",\"o\":2},{\"b\":2,\"e\":3,\"i\":\"b2\"},{\"b\":3,\"e\":4,\"i\":\"b3\",\"o\":2},{\"b\":4,\"e\":5,\"i\":\"b4\"},{\"b\":0,\"e\":5,\"i\":\"b5\",\"o\":2},{\"b\":3,\"e\":6,\"i\":\"b6\"},{\"b\":6,\"e\":7,\"i\":\"b7\",\"o\":2},{\"b\":6,\"e\":8,\"i\":\"b8\"},{\"b\":2,\"e\":9,\"i\":\"b9\"},{\"b\":9,\"e\":10,\"i\":\"b10\"},{\"b\":10,\"e\":11,\"i\":\"b11\",\"o\":2},{\"b\":10,\"e\":12,\"i\":\"b12\"},{\"b\":0,\"e\":13,\"i\":\"b13\"},{\"b\":1,\"e\":14,\"i\":\"b14\"},{\"b\":4,\"e\":15,\"i\":\"b15\"},{\"b\":5,\"e\":16,\"i\":\"b16\"},{\"b\":8,\"e\":17,\"i\":\"b17\"},{\"b\":12,\"e\":18,\"i\":\"b18\"},{\"b\":12,\"e\":19,\"i\":\"b19\"},{\"b\":12,\"e\":20,\"i\":\"b20\"}]}",
+            "m": "This is a 3D model of apririn"
+        },
+        {
+            "t": 345,
+            "c": "info.jpg",
+            "m": "More information"
+        }
+    ],
+    "assessments": [
+        {
+            "name": "unequal",
+            "showFeedback": "true",
+            "pages": [
+                {
+                    "title": "The world is unequal",
+                    "numTries": 8,
+                    "whyRight": "Clinton said that there was a \"billion going to bed hungry every night -- 80 percent of them under five years of age.\"",
+                    "whyWrong": "Hint: It seemed like a large percentage. Click here(1:00) to review the speech.",
+                    "text": "President Clinton says that the world is profoundly unequal, with half the world's people living on less than two dollars a day.",
+                    "prompt": "What percentage of children under 5 years old live in these unequal conditions?",
+                    "pic": "//sitemaker.umich.edu/356.cho/files/hunger.jpg",
+                    "optionType": "radio",
+                    "options": [
+                        "10%",
+                        "30%",
+                        "50%",
+                        "*80%"
+                    ]
+                },
+                {
+                    "title": "The world is unequal",
+                    "numTries": 2,
+                    "whyRight": "Clinton said that there were \"one in four deaths every year from AIDS, TB, malaria and the variety of infections associated with dirty water.\"",
+                    "whyPartial": "Hint: Only two of them in this list were mentioned.",
+                    "whyWrong": "Hint: Think of tropical diseases",
+                    "text": "President Clinton says that mentioned a number of diseases affecting children.",
+                    "prompt": "What are the diseases he talks about?",
+                    "pic": "http://chicagotonight.wttw.com/sites/default/files/field/image/Legionnaires%20Disease.jpg",
+                    "optionType": "checkbox",
+                    "options": [
+                        "*TB",
+                        "*Malaria",
+                        "Tetnus",
+                        "Lyme's disease"
+                    ]
+                },
+                {
+                    "title": "The world is unequal",
+                    "numTries": 2,
+                    "text": "\"It is, first of all, profoundly unequal: ______ the world's people still living on less than ______ dollars a day; a ______ people with no access to clean water\"",
+                    "prompt": "Fill in the blanks with the amounts he mentioned",
+                    "optionType": "cloze",
+                    "options": [
+                        "one half;half;1/2;a half",
+                        "two;2",
+                        "billion"
+                    ]
+                },
+                {
+                    "title": "Draw a concept map",
+                    "text": "President Clinton says the world is interdependent, but insufficient. What does he mean by that?",
+                    "prompt": "Draw a concept map below which illustrates that idea.",
+                    "pic": "//upload.wikimedia.org/wikipedia/en/0/08/Integrative_learning_concept_map.gif",
+                    "background": "#e8e8e8",
+                    "optionType": "draw"
+                },
+                {
+                    "title": "Find in time",
+                    "numTries": 3,
+                    "text": "President Clinton often uses his hands to gesture and reinforce his talk.",
+                    "prompt": "Scroll to a place in the video where he gestures",
+                    "whyRight": "That's one of them, but he does this kind of gesturing a lot.",
+                    "whyWrong": "Not one I chose, try: 2:26",
+                    "optionType": "findtime",
+                    "options": [
+                        "146-147",
+                        "185"
+                    ]
+                },
+                {
+                    "title": "What do you think?",
+                    "text": "President Clinton says the world is interdependent, but insufficient.",
+                    "prompt": "What does he mean by that?",
+                    "optionType": "write",
+                    "options": [
+                        "EQ"
+                    ]
+                }
+            ]
+        }
+    ],
+    "curShow": "1"
+}

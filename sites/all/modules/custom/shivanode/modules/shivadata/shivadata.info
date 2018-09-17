@@ -1,0 +1,10 @@
+name = SHIVA Data Module
+description = Creates a specific content type for SHIVA data and provides option to migrate data over from Shivanode
+package = SHIVA
+core = 7.x
+files[] = shivadata.module
+dependencies[] = file
+dependencies[] = list
+dependencies[] = options
+dependencies[] = text
+dependencies[] = shivanode

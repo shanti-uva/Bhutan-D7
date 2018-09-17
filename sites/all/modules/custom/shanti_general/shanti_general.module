@@ -1,0 +1,129 @@
+<?php
+/**
+ * @file
+ * Shanti General Module began as a feature. This is blank except for auxiliary or Shanti general functions
+ */
+ 
+ /**
+  * Enable form edit cancel button when there are editor conflicts.
+  */
+ function shanti_general_node_validate($node, $form, &$form_state) {
+     $err = form_get_errors();
+     if (!empty($err['changed'])) {
+        // If the error is that the node has been changed by someone else
+         // And the cancel button is clicked
+         if ($form_state['clicked_button']['#id'] == 'edit-cancel') {
+             // Clear the error and add cancel message
+             drupal_set_message(t("Edit form cancelled by user"), 'warning');
+             form_clear_error();
+             // If there is a cancel button call back use that
+             if (!empty($form_state['clicked_button']['#submit'][0])) {
+                 $cancel_function = $form_state['clicked_button']['#submit'][0];
+                 $cancel_function($form, $form_state);
+             } else {
+                 // Otherwise just go to node page.
+                 $alias = drupal_lookup_path('alias', "node/$node->nid");
+                 drupal_goto($alias);
+                 drupal_goto();
+             }
+         }
+     // If the delete button has been clicked, ignore any validation errors
+     } else if ($form_state['clicked_button']['#id'] == 'edit-delete') {
+         form_clear_error();
+     } 
+ }
+
+ /**
+  * i18n Functions (Should these ultimately go to a standalon shanti-i18n module?)
+  */
+
+/**
+ * Utility function to get the language name from its code, if that language is enabled
+ *
+ * @param $code
+ * @return bool
+ */
+function shanti_general_get_lang_name($code) {
+    $ll = language_list();
+    if (isset($ll[$code])) {
+     return $ll[$code]->name;
+    }
+    return FALSE;
+}
+
+/**
+ * Utility function to get a language's i18n code from its name (as found in the language list record)
+ * Only works if the language is enabled
+ *
+ * @param $name
+ * @return bool|int|string
+ */
+function shanti_general_get_lang_code($name) {
+    $ll = language_list();
+    foreach($ll as $lc => $lobj) {
+        if ($lobj->name == $name) {
+            return $lc;
+        }
+    }
+    return FALSE;
+}
+
+/**
+ * Utility function to determine if a node is public
+ */
+function shanti_general_is_public($node) {
+    if (is_numeric($node)) { $node = node_load($node); }
+    if ($node) {
+        $ew = entity_metadata_wrapper('node', $node);
+        // For Regular conten nodes
+        if (isset($ew->group_content_access)) {
+            $gca = $ew->group_content_access->value();
+            if ($gca == 2) {
+                return FALSE;
+            }
+            if ($gca == 0 && isset($node->field_og_collection_ref[LANGUAGE_NONE][0]['target_id'])) {
+                ## Get Group node and check it.
+                $gid = $node->field_og_collection_ref[LANGUAGE_NONE][0]['target_id'];
+                $gnode = node_load($gid);
+                if ($gnode) {
+                    $gew = entity_metadata_wrapper('node', $gnode);
+                    if (isset($gew->group_access)) {
+                        $ggca = $gew->group_access->value();
+                        if ($ggca == 1) {
+                            return FALSE;
+                        }
+                    }
+                }
+            }
+            // For Collection/Group Content Nodes
+        } elseif (isset($ew->group_access)) {
+            $ggca = $ew->group_access->value();
+            if ($ggca == 1) {
+                return FALSE;
+            }
+            // Otherwise not sure what to do?
+        } else {
+            watchdog('shanti_general is_public', "Node {$node->nid} ({$node->type}) does not have a Group Content Access field");
+        }
+
+        return TRUE;
+    } else {
+        return FALSE;
+    }
+}
+
+/**
+ * Utility function to do file get contents within SSL. So one can call shanti_file_get_contents() instead of
+ * having to make this long call each time.
+ *
+ * NB: for the sake of brevity, the function breaks the naming convention and is only called shanti_file_get_contents()
+ */
+
+function shanti_file_get_contents($url) {
+    return file_get_contents($url, false, stream_context_create(
+        array('ssl' => array(
+            'verify_peer' => isset($_ENV['AH_PRODUCTION']) && $_ENV['AH_PRODUCTION'] == 1 ? true : false,
+            'verify_peer_name' => isset($_ENV['AH_PRODUCTION']) && $_ENV['AH_PRODUCTION'] == 1 ? true : false
+        ))
+    ));
+}

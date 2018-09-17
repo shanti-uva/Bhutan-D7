@@ -1,0 +1,9 @@
+name = Shanti Sarvaka User Preferences 
+description = "Defines user preference fields, stores them on a user by user bases, and displays in Shanti Sarvaka theme main menu"
+core = 7.x
+package = Shanti
+
+files[] = user_prefs.module
+files[] = user_prefs.install
+
+scripts[] = js/user_prefs.js

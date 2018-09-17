@@ -1,0 +1,599 @@
+<?php
+
+function transcripts_node_init()
+{
+  module_load_include('inc', 'transcripts_node', 'transcripts_node.index');
+}
+
+function transcripts_node_menu()
+{
+  $items = array();
+  $items['node/%/transcript'] = array(
+    'title' => 'Transcript',
+    'page callback' => 'transcripts_node_get_player',
+    'page arguments' => array(1),
+    'access callback' => 'transcripts_node_transcript_access',
+    'access arguments' => array(1),
+    'type' => MENU_CALLBACK,
+    'weight' => 80,
+  );
+  return $items;
+}
+
+function transcripts_node_transcripts_apachesolr_redirect($transcript, $fragment = NULL)
+{
+  $path = 'node/' . $transcript['id'] . '/transcript';
+  if ($fragment === NULL) {
+    drupal_goto($path);
+  } else {
+    drupal_goto($path, array('fragment' => $fragment));
+  }
+}
+
+function transcripts_node_get_player($nid)
+{
+  $trid = transcripts_apachesolr_already_indexed_trid('transcripts_node', 'node', $nid);
+  if ($trid) {
+    return transcripts_apachesolr_scroller($trid, $nid);
+  }
+}
+
+function transcripts_node_videotag($entity_id, $trid)
+{
+  $node = node_load($entity_id);
+
+  if ($node->type == 'video') {
+    foreach ($node->field_video_compressed['und'] as $vid) {
+      $val['video_url'][] = file_create_url($vid['uri']);
+    }
+  } else if ($node->type == 'audio') {
+    foreach ($node->field_audio_compressed['und'] as $vid) {
+      $val['video_url'][] = file_create_url($vid['uri']);
+    }
+  }
+
+  $vars = array();
+  $vars['trid'] = 'trid-' . $trid;
+  $vars['tag_type'] = isset($val['audio']) ? 'audio' : 'video';
+  $vars['video_url'] = isset($val['video_url']) ? $val['video_url'] : '';
+  $vars['video_tag'] = isset($val['video_tag']) ? $val['video_tag'] : '';
+
+  return theme('transcripts_apachesolr_video_tag', $vars);
+}
+
+function transcripts_node_transcript_access($nid)
+{
+  $node = node_load($nid);
+  return transcripts_node_has_transcript($node) && node_access('view', $node) ? true : false;
+}
+
+function transcripts_node_has_transcript($node)
+{
+  $fields = array_filter(transcripts_node_all_file_fields(), 'is_transcript_field');
+  foreach ($fields as $field) {
+    if (!empty($node->$field)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Return all fields that are of type 'file'. Copied from apachesolr_attachments.
+ */
+function transcripts_node_all_file_fields()
+{
+  $field_names = array();
+  if (module_exists('file')) {
+    $fields = field_info_fields();
+    foreach ($fields as $field_name => $field) {
+      if ($field['type'] == 'file') {
+        $field_names[] = $field_name;
+      }
+    }
+  }
+  return $field_names;
+}
+
+function is_transcript_field($field_name)
+{
+  $transcript_fields = variable_get('transcripts_transcript_fields', array());
+  if (in_array($field_name, array_keys($transcript_fields))) {
+    return $transcript_fields[$field_name];
+  } else {
+    return 0;
+  }
+}
+
+/**
+ * Implements hook_field_formatter_info().
+ */
+function transcripts_node_field_formatter_info()
+{
+  return array(
+    'transcripts_scroller_with_controls' => array(
+      'label' => t('Scrolling transcript with controls'),
+      'field types' => array('file'),
+    ),
+    'transcripts_html5_video' => array(
+      'label' => t('HTML 5 audio or video tag'),
+      'field types' => array('file'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_formatter_view().
+ */
+function transcripts_node_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display)
+{
+  $element = array();
+
+  switch ($display['type']) {
+    case 'transcripts_scroller_with_controls':
+      if (is_transcript_field($field['field_name'])) {
+        foreach ($items as $delta => $item) {
+          $nid = arg(1);
+          $trid = transcripts_apachesolr_already_indexed_trid('transcripts_node', 'node', $nid);
+          if ($trid) {
+            $element[$delta] = array('#markup' => transcripts_apachesolr_scroller($trid, $nid));
+          }
+        }
+      }
+      break;
+
+    case 'transcripts_html5_video':
+      list($nid, ,) = entity_extract_ids($entity_type, $entity);
+      $trid = transcripts_apachesolr_already_indexed_trid('transcripts_node', 'node', $nid);
+      if ($trid) {
+        $urls = array();
+        foreach ($items as $delta => $item) {
+          $urls[] = file_create_url($item['uri']);
+        }
+        $vars = array();
+        $vars['trid'] = 'trid-' . $trid;
+        $vars['urls'] = $urls;
+
+        if ($entity->type == 'audio') {
+          $element[0] = array('#markup' => theme('transcripts_apachesolr_html5_audio', $vars));
+        } else if ($entity->type == 'video') {
+          $element[0] = array('#markup' => theme('transcripts_apachesolr_html5_video', $vars));
+        }
+
+      }
+      break;
+  }
+
+  return $element;
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function transcripts_node_form_alter(&$form, $form_state, $form_id)
+{
+  if (isset($form['#field']) && $form['#field']['type'] == 'file') {
+    $form['instance']['transcripts'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Transcripts Settings'),
+      '#collapsed' => FALSE,
+      '#weight' => 20,
+    );
+    $form['instance']['transcripts']['is_transcript'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Treat as transcript'),
+      '#default_value' => is_transcript_field($form['#field']['field_name']),
+      '#description' => t("Tick this box if this field's files are transcripts of audio or video recordings."),
+      '#weight' => 2
+    );
+    if (!in_array('transcripts_node_form_submit', $form['#submit'])) {
+      $form['#submit'][] = 'transcripts_node_form_submit';
+    }
+  }
+}
+
+/**
+ * Implements hook_form_submit().
+ */
+function transcripts_node_form_submit($form, &$form_state)
+{
+  $field_name = $form_state['values']['instance']['field_name'];
+  $is_transcript = $form_state['values']['instance']['transcripts']['is_transcript'];
+  $transcript_fields = variable_get('transcripts_transcript_fields', array());
+  $transcript_fields[$field_name] = $is_transcript;
+  variable_set('transcripts_transcript_fields', $transcript_fields);
+}
+
+function transcripts_node_field_widget_form_alter(&$element, &$form_state, $context) {
+
+  // Add a css class to widget form elements for all fields of type mytype.
+  if ($context['field']['type'] == 'file' && is_transcript_field($element[0]['#field_name'])) {
+    $options = array(
+      'easy' => t('An SRT or WebVTT transcript, or a plain text transcript without timecodes.'),
+      'legacy' => t('A Mandala AV supported custom format. (Choose this option only if you have been told to do so.)'),
+    );
+    $element[0]['processor'] = array(
+      '#type' => 'radios',
+      '#required' => TRUE,
+      '#default_value' => 'easy',
+      '#options' => $options,
+      '#weight' => 50,
+      '#prefix' => '<div class="transcript-type"><div class="description">What type of transcript are you uploading?</div>',
+      '#suffix' => '</div>',
+    );
+  }
+}
+
+function transcripts_node_theme()
+{
+  return array(
+    'transcripts_node_connected_tier_list' => array(
+      'path' => drupal_get_path('module', 'transcripts_node') . '/theme',
+      'file' => 'transcripts_node.theme.inc',
+      'variables' => array('tiers' => NULL),
+    ),
+    'transcripts_node_process_upload' => array(
+      'path' => drupal_get_path('module', 'transcripts_node') . '/theme',
+      'template' => 'transcript-processor',
+      'variables' => array(
+        'timed' => NULL,
+        'tiers' => NULL,
+        'languages' => NULL,
+        'numlangs' => 0,
+        'source' => NULL,
+        'results' => NULL,
+      ),
+    ),
+  );
+}
+
+/**
+ * Implements hook_element_info().
+ */
+function transcripts_node_element_info()
+{
+  $elements = array();
+  $elements['managed_file']['#process'][] = 'transcripts_node_file_field_process';
+  $elements['managed_file']['#attached']['css'][] =  drupal_get_path('module', 'transcripts_node') . '/css/transcript-processor.css';
+  $elements['managed_file']['#attached']['js'][] =  drupal_get_path('module', 'transcripts_node') . '/js/transcript-processor.js';
+  $elements['managed_file']['#attached']['js'][] = array(
+    'type' => 'setting',
+    'data' => array(
+      'transcriptTiers' => transcripts_ui_tiers(),
+    ),
+  );
+  return $elements;
+}
+
+function transcripts_node_file_field_process($element, &$form_state, $form)
+{
+  if (isset($element['#field_name']) && is_transcript_field($element['#field_name'])) {
+    $item = $element['#value'];
+    $item['fid'] = $element['fid']['#value'];
+    $field = field_widget_field($element, $form_state);
+    $instance = field_widget_instance($element, $form_state);
+    $settings = $instance['widget']['settings'];
+    // $element['#theme'] = 'file_widget';
+
+    if (empty($item['fid'])) {
+    }
+    else {
+      $fid = $item['fid'];
+      $nid = isset($form_state['node']->nid) ? $form_state['node']->nid : 0;
+      $all_tiers = transcripts_ui_tiers();
+      if ($tiers = transcripts_node_get_connected_tiers($nid, $fid)) { // tiers connected - no option to change
+        $element['#description'] = "<div class='connect-message' id='connect-message-$nid-$fid'>" . theme('transcripts_node_connected_tier_list', array('tiers' => $tiers)) . "</div>";
+      }
+      else { // just uploaded so need to select language tiers
+        $file = $element['#file'];
+        if ($item['processor'] == 'legacy') {
+          if (strtolower(substr($file->filename, -4) == '.srt')) { // only collect tiers manually for SRT
+          $element['#description'] = "<div class='connect-message' id='connect-message-$nid-$fid'>".
+            "Select the language tiers that are in this transcript, ".
+            "then press <strong>Connect</strong> to generate subtitle tracks ".
+            "and an interactive transcript for these tiers.".
+            "</div>";
+
+          $element['tiers'] = array(
+            '#type' => 'select',
+            '#weight' => 0,
+            '#prefix' => "<div id='connect-tiers-$nid-$fid'>",
+            '#suffix' => '</div>',
+            '#title' => t('Language tiers'),
+            '#options' => $all_tiers,
+            '#required' => FALSE,
+            '#multiple' => TRUE,
+            // '#empty_option' => t('- Select language tiers -'),
+            '#attributes' => array(
+              'title' => t('Select one or more language tiers'),
+              'data-header' => t('Select language tiers'),
+              'data-selected-text-format' => 'values',
+              'data-width' => '75%',
+
+            ),
+          );
+          } else {
+            $element['#description'] = 'Press <strong>Connect</strong> to generate subtitle tracks and an interactive transcript.';
+          }
+          $element['connect'] = array(
+            '#type' => 'submit',
+            '#weight' => 5,
+            '#prefix' => "<div id='connect-button-$nid-$fid'>",
+            '#suffix' => '</div>',
+            '#value' => t('Connect'),
+            '#ajax' => array(
+              'callback' => 'transcripts_node_connect_transcript',
+            ),
+          );
+        }
+        else if ($item['processor'] == 'easy') {
+          $filepath = drupal_realpath($file->uri);
+          $file_contents = preg_replace('/\r\n?/', "\n", trim(file_get_contents($filepath)));
+          $file_contents = preg_replace('/<v ([^>]+)>/', '&lt;v $1&gt;', $file_contents);
+          $lines = explode("\n", $file_contents);
+          $units = array();
+          for ($n = 0; $n < count($lines); $n++) {
+            if (preg_match('/^[\d\.\:,]+\s*-->\s*[\d\.\:,]+\s*/', $lines[$n])) {
+              $units[] = $n;
+            }
+          }
+          if (!preg_match('/^WEBVTT\s+/', $file_contents)) {
+            drupal_set_message('The string "WEBVTT" was added to the beginning of the transcript.', 'status', FALSE);
+          }
+          $numlangs = 0;
+          $maxlangs = 8;
+          $results = array_fill(0, $maxlangs + 1, "WEBVTT\n\n");
+          $xml = "<tcus>\n";
+          if (count($units) == 0) { // no timecodes
+            $timed = FALSE;
+            drupal_set_message("Your transcript didn't have timecodes - empty timecodes have been inserted.", 'status', FALSE);
+
+            $units = explode("\n\n", $file_contents);
+            for ($n = 0; $n < count($units); $n++) {
+              $cueid = strval($n + 1);
+              $header = $cueid . "\n";
+              $header .= "00:00.000 --> 00:00.000\n";
+              $languages = transcripts_node_separate_languages(transcripts_node_check_speaker_names($units[$n]));
+              $results[0] .= $header . implode("\n", $languages) . "\n\n";
+              $tiers = array();
+              $speakers = array();
+              for ($m = 0; $m < $maxlangs; $m++) {
+                if ($m < count($languages)) {
+                  $results[$m + 1] .= $header . $languages[$m] . "\n\n";
+                  if (preg_match("/^&lt;v (.*)&gt;(.*)/", $languages[$m],$matches)) {
+                    $speakers[] = "<ss_speaker_und>".$matches[1]."</ss_speaker_und>";
+                    $tiers[] = "<ts_content_und>".trim($matches[2])."</ts_content_und>";
+                  }
+                  else {
+                    $tiers[] = "<ts_content_und>".$languages[$m]."</ts_content_und>";
+                  }
+                } else {
+                  $results[$m + 1] = $header . "\n\n";
+                }
+              }
+              if (count($languages) > $numlangs) $numlangs = count($languages);
+              $xml .= "<tcu>\n<start>0</start>\n<end>0</end>\n<speakers>".implode("\n", $speakers)."</speakers>\n<tiers>".implode("\n", $tiers)."</tiers>\n</tcu>\n";
+            }
+          } else { // some timecodes
+            $timed = TRUE;
+            for ($n = 0; $n < count($units); $n++) {
+              if ($units[$n] > 0 && preg_match('/^\d+/', $lines[$units[$n] - 1])) {
+                $cueid = $lines[$units[$n] - 1];
+              } else {
+                $cueid = strval($n + 1);
+                drupal_set_message('Some unit identifiers were not present - they have been inserted before the timecodes.', 'status', FALSE);
+              }
+              $header = $cueid . "\n";
+              $header .= str_replace(',', '.', $lines[$units[$n]], $k) . "\n";
+              if ($k > 0) {
+                drupal_set_message('Commas in timecodes have been replaced with periods.', 'status', FALSE);
+              }
+              $from = $units[$n] + 1;
+              if ($n == count($units) - 1) {
+                $cue = implode("\n", array_slice($lines, $from));
+              } else {
+                $length = preg_match('/^\d+/', $lines[$units[$n + 1] - 1]) ? $units[$n + 1] - $from - 1 : $units[$n + 1] - $from;
+                $cue = implode("\n", array_slice($lines, $from, $length));
+              }
+              $languages = transcripts_node_separate_languages(transcripts_node_check_speaker_names($cue));
+              $results[0] .= $header . implode("\n", $languages) . "\n\n";
+              $tiers = array();
+              $speakers = array();
+              for ($m = 0; $m < $maxlangs; $m++) {
+                if ($m < count($languages)) {
+                  $results[$m + 1] .= $header . $languages[$m] . "\n\n";
+                  if (preg_match("/^&lt;v (.*)&gt;(.*)/", $languages[$m],$matches)) {
+                    $speakers[] = "<ss_speaker_und>".$matches[1]."</ss_speaker_und>";
+                    $tiers[] = "<ts_content_und>".trim($matches[2])."</ts_content_und>";
+                  }
+                  else {
+                    $tiers[] = "<ts_content_und>".$languages[$m]."</ts_content_und>";
+                  }
+                } else {
+                  $results[$m + 1] .= $header . "\n\n";
+                }
+              }
+              if (count($languages) > $numlangs) $numlangs = count($languages);
+              $times = explode(" --> ", $lines[$units[$n]]);
+              $xml .= "<tcu>\n<start>" .transcripts_node_as_seconds($times[0]). "</start>\n<end>" .transcripts_node_as_seconds($times[1]). "</end>\n<speakers>".implode("\n", $speakers)."</speakers>\n<tiers>".implode("\n", $tiers)."</tiers>\n</tcu>\n";
+            }
+          }
+          $xml .= "</tcus>";
+          $langs = array_fill(0, $maxlangs + 1, 'ts_content_und');
+          $tiers = transcripts_ui_tiers();
+          $element['results'] = array(
+            '#prefix' => "<div id='transcript-processor-results-$nid-$fid'>",
+            '#suffix' => '</div>',
+            '#markup' => theme('transcripts_node_process_upload', array(
+              'timed' => $timed,
+              'tiers' => $tiers,
+              'languages' => $langs,
+              'numlangs' => $numlangs,
+              'source' => $file_contents,
+              'results' => $results
+            )),
+            '#attached' => array(
+              'js' => array(
+                array(
+                  'type' => 'setting',
+                  'data' => array(
+                    'transcripts_node' => array(
+                      'source' => $file_contents
+                    ),
+                  ),
+                )
+              ),
+            ),
+          );
+          $element['xml'] = array(
+            '#prefix' => "<div id='transcript-processor-xml-$nid-$fid' class='transcript-processor-xml'>",
+            '#suffix' => "</div>",
+            '#type' => 'hidden',
+            '#default_value' => $xml,
+          );
+          $element['tiers'] = array(
+            '#prefix' => "<div id='transcript-processor-tiers-$nid-$fid' class='transcript-processor-tiers'>",
+            '#suffix' => "</div>",
+            '#type' => 'hidden',
+            '#default_value' => $numlangs == 0 ? '' : 'ts_content_und',
+          );
+          $element['accept'] = array(
+            '#type' => 'submit',
+            '#weight' => 5,
+            '#prefix' => "<div id='accept-button-$nid-$fid' class='accept-button'>",
+            '#suffix' => "<div class='accept-message alert alert-danger' role='alert'>Transcript languages must be unique.</div></div>",
+            '#value' => t('Accept'),
+            '#attributes' => array('disabled' => 'disabled'),
+            '#ajax' => array(
+              'callback' => 'transcripts_node_accept_analysis',
+            ),
+          );
+          $element['#description'] = "<div class='connect-message' id='connect-message-$nid-$fid'></div>";
+        }
+      }
+    }
+    array_unshift($element['remove_button']['#submit'], 'transcripts_node_file_submit');
+  }
+  return $element;
+}
+
+function transcripts_node_as_seconds($timecode)
+{
+  if (preg_match('/^([0-9]{2}):([0-9]{2}):([0-9]{2})[\.,]([0-9]{3})$/', $timecode, $m)) {
+    $seconds = $m[1]*3600 + $m[2]*60 + $m[3] + $m[4]/1000;
+    return number_format($seconds, 3, ".", "");
+  } else {
+    return "0";
+  }
+}
+
+function transcripts_node_check_speaker_names($cue) {
+  $count = 0;
+  $cue = preg_replace('~\x{00a0}~siu', ' ', $cue); //replace non-breaking spaces while we are at it
+  $cue = preg_replace('/>>\s*([^>:]+):/', '&lt;v $1&gt;', $cue, -1, $count);
+  if ($count > 0) {
+    drupal_set_message('YouTube speaker names have been converted to WEBVTT voice tags.', 'status', FALSE);
+  }
+  return $cue;
+}
+function transcripts_node_separate_languages($cue) {
+  $cue = trim($cue);
+  $languages = explode("\n", $cue);
+  if (count($languages) > 1) {
+    drupal_set_message('Multiple languages have been separated out into different transcripts.', 'status', FALSE);
+  }
+  return $languages;
+}
+
+function transcripts_node_get_connected_tiers($nid, $fid) {
+  $tiers = transcripts_apachesolr_already_indexed_tiers('transcripts_node', 'node', $nid , $fid);
+  if ($tiers) {
+    return array_intersect_key(transcripts_ui_tiers(), array_fill_keys(explode(' ', $tiers), '?'));
+  }
+  else {
+    return FALSE;
+  }
+}
+
+function transcripts_node_file_submit($form, &$form_state)
+{
+  $parents = $form_state['triggering_element']['#array_parents'];
+  $button_key = array_pop($parents);
+  $element = drupal_array_get_nested_value($form, $parents);
+  if ($button_key == 'remove_button') {
+    // Transcripts are removed even if the operation is canceled by not saving the node.
+    if ($element['#file']) {
+      $nid = isset($form_state['node']->nid) ? $form_state['node']->nid : 0;
+      $fid = $nid == 0 ? $element['#file']->fid : NULL; //delete all pre-existing transcripts if multiple
+      transcripts_apachesolr_remove_transcript('transcripts_node', 'node', $nid, $fid);
+      drupal_set_message("The transcript <em>{$element['#file']->filename}</em> has been removed.", 'status');
+      watchdog('transcripts_node', '[node/%nid] Transcript removed.', array('%nid' => $nid), WATCHDOG_DEBUG);
+    }
+  }
+  $form_state['rebuild'] = TRUE;
+}
+
+function transcripts_node_connect_transcript($form, &$form_state)
+{
+  $parents = $form_state['triggering_element']['#array_parents'];
+  array_pop($parents); // $element is not properly set if we don't do this
+  $element = drupal_array_get_nested_value($form, $parents);
+
+  // Transcripts are added even if the operation is canceled by not saving the node.
+  if ($element['#file']) {
+    $nid = isset($form_state['node']->nid) ? $form_state['node']->nid : 0;
+    $fid = $element['#file']->fid;
+    $selected_tiers = implode(' ', $element['#value']['tiers']);
+
+    transcripts_apachesolr_remove_transcript('transcripts_node', 'node', $nid); //prevent multiple uploads without saving node
+    if (transcripts_node_add_transcript($element['#file'], $nid, $selected_tiers)) {
+      drupal_set_message(t("The transcript {$element['#file']->filename} is now connected to this content."), 'status');
+      watchdog('transcripts_node', '[node/%nid] Transcript indexed.', array('%nid' => $nid), WATCHDOG_DEBUG);
+      $commands = array();
+      $commands[] = ajax_command_remove("#connect-tiers-$nid-$fid");
+      $commands[] = ajax_command_remove("#connect-button-$nid-$fid");
+      if ($connected_tiers = transcripts_node_get_connected_tiers($nid, $fid)) {
+        $replace = "<div class='connect-message' id='connect-message-$nid-$fid'>" . theme('transcripts_node_connected_tier_list', array('tiers' => $connected_tiers)) . "</div>";
+        $commands[] = ajax_command_replace("#connect-message-$nid-$fid", $replace);
+      }
+      return array('#type' => 'ajax', '#commands' => $commands);
+    } else {
+      drupal_set_message(t("There was an error and the transcript {$element['#file']->filename} could not be indexed. Please alert the site administrator."), 'error');
+      watchdog('transcripts_node', '[node/%nid] Transcript could not be indexed.', array('%nid' => $nid), WATCHDOG_DEBUG);
+    }
+  }
+}
+
+function transcripts_node_accept_analysis($form, &$form_state)
+{
+  $parents = $form_state['triggering_element']['#array_parents'];
+  array_pop($parents); // $element is not properly set if we don't do this
+  $element = drupal_array_get_nested_value($form, $parents);
+
+  // Transcripts are added even if the operation is canceled by not saving the node.
+  if ($element['#file']) {
+    $nid = isset($form_state['node']->nid) ? $form_state['node']->nid : 0;
+    $fid = $element['#file']->fid;
+    $xml = $element['#value']['xml'];
+    $tiers = $element['#value']['tiers'];
+
+    transcripts_apachesolr_remove_transcript('transcripts_node', 'node', $nid); //prevent multiple uploads without saving node
+    if (transcripts_node_add_processed_transcript($element['#file'], $nid, $xml, $tiers)) {
+      drupal_set_message(t("The transcript {$element['#file']->filename} is now connected to this content."), 'status');
+      watchdog('transcripts_node', '[node/%nid] Transcript indexed.', array('%nid' => $nid), WATCHDOG_DEBUG);
+      $commands = array();
+      $commands[] = ajax_command_remove("#transcript-processor-results-$nid-$fid");
+      $commands[] = ajax_command_remove("#transcript-processor-xml-$nid-$fid");
+      $commands[] = ajax_command_remove("#transcript-processor-tiers-$nid-$fid");
+      $commands[] = ajax_command_remove("#accept-button-$nid-$fid");
+      if ($connected_tiers = transcripts_node_get_connected_tiers($nid, $fid)) {
+        $replace = "<div class='connect-message' id='connect-message-$nid-$fid'>" . theme('transcripts_node_connected_tier_list', array('tiers' => $connected_tiers)) . "</div>";
+        $commands[] = ajax_command_replace("#connect-message-$nid-$fid", $replace);
+      }
+      return array('#type' => 'ajax', '#commands' => $commands);
+    } else {
+      drupal_set_message(t("There was an error and the transcript {$element['#file']->filename} could not be indexed. Please alert the site administrator."), 'error');
+      watchdog('transcripts_node', '[node/%nid] Transcript could not be indexed.', array('%nid' => $nid), WATCHDOG_DEBUG);
+    }
+  }
+}

@@ -1,0 +1,34 @@
+<?php
+/**
+ * @file
+ * Code for the Shanti External Classification feature.
+ */
+
+include_once 'shanti_external_classification.features.inc';
+
+/**
+   * Implements hook_node_validate
+   */
+ function shanti_external_classification_node_validate($node, $form, &$form_state) {
+     // External Classification Scheme
+     if ($node->type == 'external_classification_scheme') {
+         // Scheme abbreviation must be unique.
+         $form_state['input']['field_scheme_abbreviation']['und'][0]['value'] = trim($form_state['input']['field_scheme_abbreviation']['und'][0]['value']);
+         $form_state['values']['field_scheme_abbreviation']['und'][0]['value'] = trim($form_state['values']['field_scheme_abbreviation']['und'][0]['value']);
+         $abbr = $form_state['input']['field_scheme_abbreviation']['und'][0]['value'];
+         $query = new EntityFieldQuery();
+         $query->entityCondition('entity_type', 'node')
+            ->entityCondition('bundle', 'external_classification_scheme')
+            ->fieldCondition('field_scheme_abbreviation', 'value', $abbr, '=');
+         $res = $query->execute();
+         if (count($res) > 0) {
+             $keys = array_keys($res['node']);
+             $nid = array_shift($keys);
+             $node2 = node_load($nid);
+             if ($node2->nid == $node->nid) { return; }
+             form_set_error('field_scheme_abbreviation', t('The abbreviation for this classification scheme must be unique. ' .
+                '"@abbr" is already in use for "@scheme_name"', array('@abbr' => $abbr, '@scheme_name' => $node2->title)));
+         }
+     }
+ }
+ 

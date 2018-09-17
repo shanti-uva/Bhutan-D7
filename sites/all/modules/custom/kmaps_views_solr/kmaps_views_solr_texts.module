@@ -1,0 +1,25 @@
+<?php
+/**
+ * Implementation of hook_views_api().
+ */
+function kmaps_views_solr_texts_views_api() {
+  return array(
+    'api' => 3,
+    'path' => drupal_get_path('module', 'kmaps_views_solr_texts'),
+    'template path' => drupal_get_path('module', 'kmaps_views_solr_texts') . '/templates',
+  );
+}
+
+/** 
+ * Implementation of hook_form_alter
+ */
+function kmaps_views_solr_texts_form_alter(&$form, &$form_state, $form_id){
+  if($form_id == "views_exposed_form"){
+    if (isset($form['texts_title'])) {
+      $form['texts_title']['#attributes'] = array(
+        'placeholder' => array(t('Enter Search...')),
+        'size' => 15
+      );
+    }
+  }
+}

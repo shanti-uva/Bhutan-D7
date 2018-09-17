@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the CSC Biblio Search feature.
+ */
+
+include_once 'sources_biblio_search.features.inc';

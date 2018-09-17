@@ -1,0 +1,788 @@
+/**
+* Mandala Images - Development
+* 
+* version 1.x - shanti-main-images.css
+* --------------------------------------------------
+* University of Virginia / SHANTI MANDALA / IMAGES
+* --------------------------------------------------
+* 
+*/
+
+/* BEGIN sub-theme colors */
+.titlearea,
+.carousel-control,
+.breadcrumb .icon,
+.shanti-thumbnail-image .icon,
+.nav-tabs.nav-justified>li.active>a,
+.nav-tabs.nav-justified>li.active>a:focus,
+.nav-tabs.nav-justified>li.active>a:hover,
+.shanti-thumbnail-image.shanti-field-visuals .icon {
+  /* background-color: #c4be28 !important; */
+  background-color: #b5953b !important;
+}
+/* darker shades below are used to better define details */
+.bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a .check-mark,
+.bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a:active .check-mark,
+.main-content .selectpicker .caret::before,
+.view-section .nav-tabs>li.active>a, 
+.view-section .nav-tabs>li.active>a:hover, 
+.view-section .nav-tabs>li.active>a:active,
+.view-section .fancytree-container .glyphicon,
+.view-section .fancytree-container .fancytree-node:hover > .glyphicon,
+.view-section .fancytree-container .fancytree-node:active > .glyphicon,
+.view-section .fancytree-node.fancytree-active > .glyphicon,
+.view-section .fancytree-node.fancytree-selected > .glyphicon {
+  /* color: rgb(196,190,40) !important; */
+  color: #b5953b !important;
+}
+
+.nav-tabs.nav-justified>li.active {
+  border-top-color: #b5953b !important;
+}
+
+.ui-resizable-handle.ui-resizable-w,
+.ui-resizable-handle.ui-resizable-w:hover { border-color: #b5953b transparent transparent transparent; }
+.ui-resizable-handle.ui-resizable-w:active { border-color: transparent; /* reset */ }
+
+@media screen and (min-width: 500px) {
+  .navbar-header .site-slogan{ color: #92782f !important; } /* Darker shade for banner site-slogan text */
+  .navbar-brand:hover .site-slogan{ color: #555 !important; } 
+  .navbar-header:active .site-slogan{ color: #92782f !important; } 
+}
+
+@media screen and (min-width: 768px) {
+  .nav-tabs.nav-justified>li.active::before {
+    color: #b5953b !important;
+  }
+}
+
+::-moz-selection { background: #35397E !important; }
+::selection { background: #35397E !important; }
+
+.shanti-thumbnail .footer-wrap{
+  background: #8e752e; /* testing custom version */
+}
+
+/*
+ *  END Sarvaka subtheme colors 
+ */
+
+
+
+/* adjust list item in sidebar collections page */
+.sidebar-second.sidebar-offcanvas .view-collection-members ul li a{
+  margin-left: 1.2rem;
+}
+/* opening up some white space */
+.node-type-collection .view-collections.contextual-links-region{
+  min-height: 1.5rem;
+}
+
+
+/**
+** Editing page admin 
+*/
+.media-item .label-wrapper{
+  position: relative;
+  max-width:18rem;
+}
+
+.media-item .label-wrapper label{
+  margin: 0 0 0.2rem;
+}
+
+.node-type-collection .media-widget .preview .media-item{
+  box-shadow: none;
+  border: none;
+}
+
+.node-type-collection .media-widget .form-type-media{
+  margin-bottom:0;
+}
+
+
+
+/* make the table full-width */
+.page-node-edit #edit-field-image-und-table{
+  width: 100%;
+  text-transform: capitalize;
+}
+/* upload instructions for new images */
+.page-node-edit #edit-field-image-und-table .form-item .description{
+  font-style: normal;
+  font-family: 'Helvetica Neue',helvetica,arial,sans-serif;
+  letter-spacing: 0.0275rem;
+  font-size: .75em;
+  margin-top: 1rem;
+}
+/* this is a small system icon that seems pointless and is not complementary, now hiding it. */
+.page-node-edit .image-widget-data img.file-icon{
+  display:none !important;
+}
+
+.page-node-edit td.inline-entity-form-node-title{
+  padding-left: 2.5rem;
+}
+
+.page-node-edit #edit-field-image-und-table .image-widget-data .file a{
+  font-family: 'museo-sans-500', helvetica, arial, sans-serif;
+}
+
+.page-node-edit #edit-field-image-und-table .image-preview{
+  padding-top: 10px;
+}
+
+.front .view-shanti-images-gallery .view-header{
+  float: left;
+  margin-top: 1rem;
+}
+
+.front .view-filters {
+    float: left;
+}
+
+.front .view-filters .views-widget-filter-title {
+    margin-left: 12px;
+}
+
+.front .form-type-select.form-item-sort-by label,
+.front .form-type-select.form-item-sort-order label {
+    display: none !important;
+}
+
+.front .views-exposed-widget.views-reset-button button#edit-reset {
+    margin-top: 2px;
+    height: 24px;
+    padding: 0 0 0 3px;
+    width: 6rem;
+
+      display:none;
+}
+
+.page-title .icon::before{
+  filter: alpha(opacity=90);
+  opacity: .9;
+}
+
+.images.front table.pagerer{
+  margin-top:1rem;
+}
+
+
+
+
+
+/**
+* BEGIN collection Styles 
+* Are these collections rules relavant still Than?
+*/
+/*----- Collection List page ------*/
+.view-collections .views-exposed-form .views-exposed-widget .form-submit { margin-top: -5px; } /* for Apply (filter) button on Collection list page */
+.view-collections .add-coll-btn { position: relative; top: -0.45em; }
+.view-collections .views-row .field-content p { margin: 5px 0px; }
+.view-collections .views-row p { margin: 5px 0px; }
+.view-collections .views-row .views-field-created .field-content { font-style: italic; }
+.view-collections .views-row .coll-list-type  { font-size: 0.9em; }
+.view-collections .views-row .coll-list-type .type { font-style: italic; }
+.view-collections .views-field-title span.icon.shanticon-stack {  
+  margin-right: 0.5em;
+  position: relative;
+  top: 0.1rem;
+}
+
+.view-collections.view-id-collections .shanti-gallery {
+    margin-top: 24px;
+}
+
+.view-collections.view-id-collections .views-exposed-form .views-exposed-widget label {
+    display: none;
+}
+
+.view-collections .views-field-title h3{ /* set to H4 header font-size */
+  font-size: 1.32em;
+}
+
+.view-collections.shanti-gallery .view-header .view-filters .views-exposed-widget .form-type-select label {
+    display: none;
+}
+
+.view-collections.shanti-gallery .view-content {
+    margin-top: 25px;
+}
+
+.view-collections.shanti-gallery .view-content .shanti-thumbnail-field.shanti-field-body {
+    display: none;
+}
+
+/** Pig grid drop down styles specific to images site **/
+.shanti-image-description h2 .desc-author {
+    display: block;
+    font-size: 0.8em;
+    font-style: italic;
+    font-weight: normal;
+    margin: 0.3rem 0 .75rem .5rem;
+    letter-spacing: 0.0175rem;
+}
+    
+.shanti-image-description h2 .desc-author:not(:empty)::before {
+    content: '- by ';
+}
+
+/** Description modal styles for link and modal popup **/
+.desc.morelink {
+    font-family: 'Helvetica Neue',helvetica, arial, sans-serif;
+    font-size: 0.88em;
+    font-style: italic;
+    position: relative;
+    /*right: 0.5rem;*/
+    bottom: .1rem;
+    display: inline;
+}
+
+.desc.morelink a{
+  font-weight: 700;
+  color: #454fa4;
+}
+
+.desc.morelink span.icon {
+    vertical-align: middle;
+    font-size: 80%;
+}
+
+
+/**
+*  Modal Descriptions
+*/
+.modal-header{
+  padding: 1.3rem 2rem 1rem 2.5rem;
+  border-bottom: .6rem double #fff;
+  background: #444;
+  border-top: 1px solid #aaa;
+}
+
+.modal-header .close{
+  filter: alpha(opacity=50);
+  opacity: .5;
+  font-size: 3em;
+  font-weight: 500;
+  text-shadow:none;
+  color:#fff;
+  font-weight:300;
+  position: relative;
+  bottom: 1.25rem;
+  left: 1rem;
+}
+
+.modal-header .close:hover{
+  filter: alpha(opacity=80);
+  opacity: .8;
+}
+.modal-header .close:focus{
+  filter: alpha(opacity=100);
+  opacity: 1;  
+}
+
+.modal-header .modal-title,
+.modal-header h5{
+  color: #fff;
+  letter-spacing:0.0175rem;
+}
+
+.modal-title{
+  color: #fff;
+  font-size: 1.25em;
+  margin-left: -0.4rem;
+  line-height: 1.25em;
+}
+
+.modal-title::before{
+  display: inline-block;
+  position: relative;
+  top: 0.2rem;
+  margin-left: -0.3rem;
+  margin-right: .7rem;
+  color: #e0e0e0;
+  content: '\e62b';
+  font-family: 'shanticon';
+  font-size:1.38em;
+}
+
+.modal-header h5{
+  padding-left:.5rem;
+  margin-top:.7rem;
+  font-size:0.88em;
+  letter-spacing: 0.0325rem;
+  font-family: 'Helvetica Neue',helvetica, arial, sans-serif;
+}
+
+.modal-body{
+  padding: 1.5rem 2.5rem 3rem;
+}
+
+.modal-content{
+  background-color: #fafafa;
+  border-radius: 0;
+  border:none;
+}
+
+.modal-content p {
+    color: #000;
+    line-height:1.58em;
+}
+
+.modal-footer{
+  background:#444;
+  border-bottom: 1px solid #aaa;
+}
+
+.modal-footer .btn-default{
+  /*box-shadow:none;
+  border:1px solid #fff;*/
+  display:none;
+}
+
+.modal-footer .btn.btn-default:hover, .modal-footer .btn.btn-default:focus{
+  color:#000;
+  border:1px solid #fff;
+}
+
+.modal-footer .btn.btn-default:active, .modal-footer .btn.btn-default.active{
+  color:#fff;
+  background:#222;
+}
+
+
+
+/**
+ *     Custom Styles for Cultural Landscapes
+ */
+.view-id-media_sharedshelf_my_images .ppd-fullimg .ppd-img-wrapper img {
+    max-height: 450px !important;
+    max-width: 500px !important;
+}
+
+.view-display-id-cultural_landscapes_block .shanti-grid-view-gallery .ppd-img-wrapper a img {
+    min-width: 300px;
+}
+
+.page-node-2 .pswp__preloader, .page-node-2 .pswp {
+    display: none;
+}
+
+
+/**
+ *     Other custom styles
+ */
+
+/** for extclassifications page **/
+ .views-table tr td.views-field-field-scheme-home-url a {
+     text-transform: none !important;
+ }
+
+
+
+
+/* fixes image admin edit page layout */
+.page-node-edit.node-type-shanti-image .image-display-wrapper{
+  max-width: 110rem;
+  margin: 0 auto
+}
+
+/* Removes contextual menu on image descr in drop down for admins */
+.node-image-descriptions.node-teaser .contextual-links-wrapper {
+    display: none;
+}
+
+
+
+/* testing optional loader */
+.pswp__preloader,
+.preloading-horizontal {
+  height: .3rem !important;
+  width: 100% !important;
+  position: absolute;
+  top: 0.2rem !important;
+  left: 0 !important;
+  z-index: 5000;
+  overflow: hidden;
+  background-color: transparent;
+  display:block;
+}
+.pswp__preloader::before,
+.preloading-horizontal:before{
+  display: inline-block;
+  content: "";
+  position: absolute;
+  left: -50px;
+  width: 50px;
+  height: .3rem;
+  background-color: #b5953b;
+  animation: zloading 1.5s linear infinite;
+}
+
+@keyframes zloading {
+    from {right: 100%; width: 1%;}
+    50% {width: 15%;}
+    100% {width: 1%;}
+    to {left: 100%;}
+}
+
+/* hides default loader by pswp-lightbox script */
+.pswp__preloader div{
+    display:none !important;
+}
+/*
+.pswp--zoomed-in .pswp__zoom-wrap img{
+  height: auto !important;
+}
+*/
+
+
+
+
+
+/*-------------------------*/
+/*======== max-width ======*/
+/*-------------------------*/
+@media screen and (max-width: 992px) {
+}
+
+@media screen and (max-width: 600px) {
+}
+
+@media screen and (max-width: 991px) {}
+
+
+/*--------------------------*/
+/*======== min-width =======*/
+/*--------------------------*/
+@media screen and (min-width: 768px) {}
+
+@media screen and (min-width: 992px) {}
+
+@media screen and (min-width: 1150px) {}
+
+
+
+
+
+
+
+
+
+/* testing */
+
+/*
+article.main-col{
+  max-width: 100% !important;
+  padding-top: .5rem;
+}
+
+.front article.main-col{
+  max-width: 1600 !important;
+}
+*/
+
+
+@media screen and (min-width: 1170px) {
+
+    body:not(.page-user) .content-section.col-md-9{
+      width:79%;
+    }
+
+    .collection-page .collections-content.col-md-9 {
+      width:75%;
+    }
+
+    body:not(.page-user) section.sidebar-second{
+      max-width: 20%;
+      float:right;
+    }
+} 
+
+@media screen and (min-width: 1450px) {
+
+    .collection-page .collections-content.col-md-9 {
+      width:77%;
+    }
+}
+
+@media screen and (min-width: 1600px) {
+
+    .collection-page .collections-content.col-md-9 {
+      width:79%;
+    }
+}
+
+@media (min-width:1750px) {
+
+    body:not(.page-user) .content-section.col-md-9 {
+      width:84%;
+    }
+
+    .collection-page .collections-content.col-md-9 {
+      width:80%;
+    }
+
+    body:not(.page-user) section.sidebar-second{
+      max-width: 15%;
+    }
+}
+
+@media (min-width:1900px) {
+
+    .collection-page .collections-content.col-md-9 {
+      width:83%;
+    }
+}
+
+@media (min-width:2100px) {
+
+    .collection-page .collections-content.col-md-9 {
+      width:84%;
+    }
+}
+
+@media (min-width:2200px) {
+
+    .collection-page .collections-content.col-md-9 {
+      width:85%;
+    }
+}
+
+
+
+
+
+
+
+
+
+.sidebar-second .content-section > .tab-content{
+  padding-right:0;
+  padding-left:0;
+
+}
+
+
+/*
+.collection-page article.main-col,
+.front.images article.main-col{
+  padding-right: 1.5rem;
+  padding-left: 1.5rem;
+}
+*/
+
+
+
+
+
+
+
+
+
+/*------ File Page ------
+.file-ss-div {
+  margin: 12px auto;
+}
+.file-ss-div .field {
+  margin: 4px 0 0 0;
+}
+.modal-dialog .modal-body {
+    color: #333;
+}
+
+--- Dropdown details tab #info content ---
+ single image page 
+ the outer frame 
+.page-file #block-system-main > .content {
+  padding: 0 1.5rem 1.5rem;
+  margin-top: -0.5rem;
+  margin-bottom: 7rem;
+
+}
+  filmstrip 
+.page-file .file-image {
+  border-left: 3rem dotted #e3e3e3;
+  border-right: 3rem dotted #e3e3e3;
+  margin-top: 2rem;
+  padding: 0 2rem 2rem;
+}
+
+.page-file .file-image img {
+  float: right;
+  margin: 0 0 1rem 1rem !important;
+}
+
+.page-file .file-image .field .field-label {
+  margin-top: 1.5rem;
+  text-transform: uppercase;
+  font-family: 'museo-sans-500',helvetica,arial,sans-serif;
+}
+
+.page-file .file-image > .content {
+  margin-top: -0.5rem;
+  background: white;
+  border: 1px solid #e9e9e9;
+  border-top: 1rem solid #ccc;
+  padding: 2rem 2rem 2rem 3rem;
+  box-shadow: -1px 2px 5px #e0e0e0;
+  border-collapse: separate;
+}
+
+.field-name-field-sharedshelf-solr-search {
+  display: none;
+}
+
+----- Static Image Styles (e.g. https://images-dev.shanti.virginia.edu/image/eusko-unhappy) ------
+.page-file .file-image > .content > img {
+    max-width: 100%; ---------- So large images don't spill over page width 
+}
+*/
+
+
+
+
+/* field agent 
+.node-image-agent.node-teaser {
+    margin-top: 1rem;
+}
+
+.field-name-field-agent-notes .field-item p {
+    display: none;
+}
+*/
+
+
+
+
+/* misc */
+/* 
+.flex-images { overflow: hidden; }
+.flex-images .item { float: left; margin: 4px; border: 1px solid #eee; box-sizing: content-box; overflow: hidden;  }
+.flex-images .item img { display: block; width: 100%; height: 100%; }
+*/
+
+
+
+
+/**
+ *   Shanti Image Node Styles    
+ */
+               
+/* ------ Shanti Image Node Form Styles --------- 
+.node-shanti_image-form h2.multipage-pane-title {
+    margin: 0 0 2rem 0;
+}
+
+.node-shanti_image-form .form-item-field-image-descriptions-und-form-status {
+    display: none;
+}
+
+
+.page-node-edit .content-section .backarrow a {
+    position: relative;
+    top: 0.5rem;
+    left: 1rem; 
+    margin-bottom: 0.5rem;
+    color: #777 !important;
+}
+.page-node-edit .content-section .backarrow a:hover {
+    color: #225180 !important;
+    text-decoration: none !important;
+    border: none !important;
+}
+
+--------- Shanti Image View Styles ------------ 
+.node-shanti-image.full div#sd-div { 
+    height: 650px; 
+    border: 2px inset #b5953b; 
+    padding: 4px; 
+}
+
+.node-shanti-image.full .field-name-field-caption {
+    margin: 1rem 0.25rem 2rem;
+}
+
+.node-shanti-image.full .field-name-body .field-label {
+    margin: 1rem 0rem 0.25rem;
+    font-style: italic;
+}
+
+.node-shanti-image .field-name-field-external-class-scheme, .node-shanti-image .field-name-field-external-class-scheme * {
+    display: inline;
+    font-weight: bold;
+    font-style: italic;
+}
+
+.node-shanti-image .field-name-field-external-class-scheme .field-item:after {
+    content: ':';
+    padding-right: 0.5rem;
+}
+
+.node-shanti-image .field-name-field-external-class-id, .node-shanti-image .field-name-field-external-class-id * {
+    display: inline;
+}
+
+.node-shanti-image .field-collection-view .field-label {
+    width: auto;
+}
+
+------ End of Shanti Image Node Styles  --------------- */
+
+
+
+
+
+
+/**
+ *   Shanti Image PDF Styles    
+*/              
+/* ------ Shanti Image Node Form Styles --------- 
+body.page-file-pdf .main-col .block-system > .content {
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+}
+
+body.page-file-pdf #block-system-main > .content{ padding-top:1rem;}
+
+body.page-file-pdf .content-section.equal-height{ padding-bottom:1rem; }
+
+body.page-file-pdf .content-section.equal-height .tab-content .tab-pane:nth-child(n+2){
+  padding: 1rem 2.5rem 7rem;
+  background: #fff;
+  border-radius: .2rem .2rem .5rem .5rem;
+  border: 1px solid #ddd;
+  border-width: 0 1px 1px;
+}
+
+body.page-file-pdf ul.nav.nav-tabs li:first-child{ margin-left:1rem; }
+
+body.page-file-pdf ul.nav.nav-tabs a{
+  text-transform: uppercase;
+  font-family: 'museo-sans-700', helvetica, arial, sans-serif !important;
+  font-size: 0.88em !important;
+  line-height: 1.75em !important;
+  height: 3em !important;
+}
+
+div.pdfextlink{ 
+  position:absolute; 
+  right:0; 
+  top: -4.3rem;
+  font-family: 'museo-sans-700';
+  font-size: 0.88em; 
+}
+
+div#pdf.tab-pane.iframe.active{ position:relative; }
+
+iframe.pdf-frame {
+    background-image: url('/sites/all/themes/shanti_sarvaka/images/ajax-loader.gif');
+    background-repeat: no-repeat;
+    background-position: center 200px;
+    border-color:transparent;
+}
+
+*/
+

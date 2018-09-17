@@ -1,0 +1,209 @@
+<?php
+/**
+ * Implement hook_schema
+ * Define table with basic shanti image info: fid, nid, and iiif id (on server). 
+ * The iiif id must be unique. 
+ */
+function shanti_images_schema() {
+    $schema = array(
+        'shanti_images' => array(
+            'description' => 'The base table for Shanti Images.',
+            'fields' => array(
+                'siid' => array(
+                    'description' => 'The Shanti image table index',
+                    'type' => 'serial',
+                    'unsigned' => TRUE,
+                    'not null' => TRUE,
+                ),
+                'fid' => array(
+                    'description' => 'The file id of the image',
+                    'type' => 'int',
+                    'unsigned' => TRUE,
+                    'not null' => FALSE,
+                ),
+                'nid' => array(
+                    'description' => 'The node id that the image is associated with',
+                    'type' => 'int',
+                    'unsigned' => TRUE,
+                    'not null' => TRUE,
+                ),
+                'uid' => array(
+                    'description' => 'The user id who uploaded image',
+                    'type' => 'int',
+                    'unsigned' => TRUE,
+                    'not null' => TRUE,
+                ),
+                'i3fid' => array(
+                    'description' => 'IIIF ID of file on server',
+                    'type' => 'varchar',
+                    'length' => 255,
+                    'not null' => TRUE,
+                    'default' => '',
+                ),
+                'filename' => array(
+                    'description' => 'Original File name',
+                    'type' => 'varchar',
+                    'length' => 255,
+                    'not null' => TRUE,
+                    'default' => '',
+                ),
+                'mmsid' => array(
+                    'description' => 'The image ID in MMS',
+                    'type' => 'int',
+                    'unsigned' => TRUE,
+                    'not null' => FALSE,
+                ),
+                'width' => array(
+                    'description' => 'Pixel Width of Image',
+                    'type' => 'int',
+                    'not null' => FALSE,
+                    'default' => 0,
+                ),
+                'height' => array(
+                    'description' => 'Pixel Height of Image',
+                    'type' => 'int',
+                    'not null' => FALSE,
+                    'default' => 0,
+                ),
+                'created' => array(
+                    'type' => 'int',
+                    'not null' => TRUE,
+                    'default' => 0,
+                ),
+            ),
+            'unique keys' => array(
+                'i3fid' => array('i3fid'),
+             ),
+            'primary key' => array('siid'),
+        ),
+     );
+    return $schema;
+}
+
+/**
+ * Make fid, i3fid, and filename fields not required in the shanti_images table
+ * and add 'width', 'height', and 'created' fields
+ */
+function shanti_images_update_7000(&$sandbox) {
+    db_drop_unique_key('shanti_images', 'i3fid');
+    db_change_field('shanti_images', 'i3fid', 'i3fid', array(
+        'description' => 'IIIF ID of file on server',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+        'default' => '',
+    ));
+    db_change_field('shanti_images', 'fid', 'fid', array(
+        'description' => 'The file id of the image',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+    ));
+    db_change_field('shanti_images', 'filename', 'filename', array(
+        'description' => 'Original File name',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+        'default' => '',
+    ));
+
+    db_add_field('shanti_images', 'width', array(
+        'description' => 'Pixel Width of Image',
+        'type' => 'int',
+        'not null' => FALSE,
+        'default' => 0,
+    ));
+    db_add_field('shanti_images', 'height', array(
+        'description' => 'Pixel Height of Image',
+        'type' => 'int',
+        'not null' => FALSE,
+        'default' => 0,
+    ));
+
+    db_add_field('shanti_images', 'created', array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+    ));
+}
+
+
+/**
+ * Fill in height, width, and created fields for each node's image record in the shanti_images table
+ */
+function shanti_images_update_7001(&$sandbox) {
+    // Necessary to create the Shanti Image object
+    module_load_include('php', 'shanti_images', 'includes/shanti_image.class');
+
+    if (!isset($sandbox['progress'])) {
+
+        // The count of nodes visited so far.
+        $sandbox['progress'] = 0;
+
+        // Total nodes that must be visited.
+        $res = db_query('select * from {shanti_images}');
+        $sandbox['max'] = $res->rowCount();
+
+        // A place to store messages during the run.
+        $sandbox['messages'] = array();
+
+        // Last node read via the query.
+        $sandbox['current_node'] = -1;
+    }
+
+    $limit = 10;
+
+    $res = db_select('shanti_images', 'si')
+        ->fields('si')
+        ->orderBy('siid', 'ASC')
+        ->range($sandbox['progress'], $limit)
+        ->execute();
+
+    foreach ($res as $record) {
+        $siid = $record->siid;
+        $siobj = new ShantiImage($siid);
+        $siobj->setDimensionsByIIIF();
+        $file = file_load($siobj->fid);
+        $fields = array(
+            'width' => $siobj->width,
+            'height' => $siobj->height,
+        );
+        if (!empty($file->timestamp)) {
+            $fields['created'] = $file->timestamp;
+        } else {
+            $fields['created'] = time();
+        }
+        if (!empty($siobj->width) && !empty($siobj->height)) {
+            $num = db_update('shanti_images')
+                ->fields($fields)
+                ->condition('siid', $siid, '=')
+                ->execute();
+            if ($num == 0) {
+                watchdog('shanti_images update 7001', 'Unable to add width and height to Shanti Image ' . $siid);
+            }
+        } else {
+            watchdog('shanti_images update 7001', "No width/height found for node: {$siobj->getNID()} ({$siobj->getID()})");
+        }
+        $sandbox['progress']++;
+        $sandbox['current_node'] = $siid;
+    }
+
+    $sandbox['#finished'] = $sandbox['progress'] >= $sandbox['max'] ? TRUE : $sandbox['progress'] / $sandbox['max'];
+
+    if ($sandbox['#finished']) {
+        return t('All @count Shanti Image records have been updated with height, width, and timestamp.',
+            array('@count' => $sandbox['max']));
+    }
+}
+
+/**
+ * Add a column for MMS ID (mmsid) to shanti_images table to track importation
+ */
+function shanti_images_update_7002(&$sandbox) {
+    db_add_field('shanti_images', 'mmsid', array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+        'default' => 0,
+    ));
+}

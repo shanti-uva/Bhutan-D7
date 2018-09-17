@@ -1,0 +1,9 @@
+name = Mediabase OG access control
+description = "Enable access control for UVa Community and archive administrators."
+package = "SHANTI Mediabase"
+dependencies[] = og_access
+core = 7.x
+version = VERSION
+;files[] = mb_space_og.inc
+
+

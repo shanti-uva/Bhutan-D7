@@ -1,0 +1,635 @@
+<?php
+/*
+ *  mb_services.module: Pertains to all API calls GETs & POSTs relating to MB that are not covered by the Services module.
+ * 									    Returns JSON objects representing entities in the Mediabase.
+ */
+
+ define('MB_SOLR_ITEMS_PER_PAGE', 50); 
+ define('KMAP_SERVICE_SUBJECTS', "http://subjects.kmaps.virginia.edu/features/");
+ define('KMAP_SERVICE_PLACES', "http://places.kmaps.virginia.edu/features/");
+ //define('KMAP_SOLR_INDEX_POST', "http://kidx.shanti.virginia.edu/solr/kmindex-dev/update/json?commit=true");
+ 
+/*
+ * Implements hook_menu. 
+ * Defines URLs for service calls that return JSON. 
+ * No need to use services module because we don't need CRUD only Retrieval.
+ * 
+ * URLs Defined:
+ *    services/coll/%{id} : calls mb_services_collection. takes a collection alias (e.g., mediabase-test-collection) and 
+ *                          returns a JSON object representing that collection
+ * 
+ *    services/subject/%{kmapid} : Returns all videos tagged with a specific KMap id
+ * 
+ *  For services/kmap/% see the mb_solr module as this returns SOLR add docs.
+ */
+function mb_services_menu() {
+  $items = array();
+
+  // Return json of a single collection (page 1) (collection services by Travis)
+  $items['services/coll/%'] = array(
+    'title' => 'JSON output of Mediabase Data',
+    'description' => 'Return the JSON description for Mediabase items',
+    'page callback' => 'mb_services_collection',
+    'page arguments' => array(2),
+    'access callback' => TRUE,
+  );
+  // Return json of a single node (subsequent pages)
+  $items['services/coll/%/%'] = array(
+    'title' => 'JSON output of Mediabase Data',
+    'description' => 'Return the JSON description for Mediabase items',
+    'page callback' => 'mb_services_collection',
+    'page arguments' => array(2, 3),
+    'access callback' => TRUE,
+  );
+  
+  // Return JSON containing a list of a/v nodes tagged with given Kmap ID 
+  // First param is either place or subject; Second is the kmap id
+  
+  $items['services/%/%'] = array(
+    'title' => 'JSON output of Mediabase Nodes by Kmap ID',
+    'description' => 'Return the JSON description for Mediabase nodes that are tagged with a given Kmap ID',
+    'page callback' => 'mb_services_get',
+    'page arguments' => array(1,2),
+    'access callback' => 'user_access',
+    'access arguments' => array('access content'),
+  );
+	
+  // Return an HTML fragment suitable for embedding in page view ajax call
+  $items['services/node/ajax/%/player'] = array(
+    'title' => 'A/V Node HTML Fragment',
+    'description' => 'Redirects to the kaltura player for this video',
+    'page callback' => 'mb_services_node_player',
+    'page arguments' => array(3),
+    'type' => MENU_CALLBACK,
+    'access callback' => 'user_access',
+    'access arguments' => array('access content'),
+  );
+  // Return an HTML fragment suitable for embedding in page view ajax call
+  $items['services/node/ajax/%'] = array(
+    'title' => 'A/V Node HTML Fragment',
+    'description' => 'Returns an HTML fragment for a/v resource suitable for embedding via AJAX',
+    'page callback' => 'mb_services_node_ajax',
+    'page arguments' => array(3),
+    'type' => MENU_CALLBACK,
+    'access callback' => 'user_access',
+    'access arguments' => array('access content'),
+  );
+  
+  // Redirect to node's thumbail
+  $items['services/node/thumb/%'] = array(
+    'title' => 'A/V Node Thumbnail Pipeline',
+    'description' => 'Redirects to the thubmnail for node',
+    'page callback' => 'mb_services_node_thumb',
+    'page arguments' => array(3),
+    'type' => MENU_CALLBACK,
+    'access callback' => 'user_access',
+    'access arguments' => array('access content'),
+  );
+	
+  // Return Embed code for audio or video
+  /* No longer works
+  $items['services/embed/%'] = array(
+    'title' => 'Resource Embed Code',
+    'description' => 'Returns the HTML 5 embed code for a resource (a/v) player',
+    'page callback' => 'mb_services_embed',
+    'page arguments' => array(2),
+    'access callback' => TRUE,
+  );
+  */
+	// Urls with service/facets are in mb_solr.module
+	
+  return $items;
+}
+/**
+ * Implements hook_node_insert to post data changes to Kmaps Solr Index
+ *  COMMENTING OUT for MANU-1869: Replaced by Shanti Kmaps Fields
+ * 
+function mb_services_node_insert($node) {
+	if(in_array($node->type, array('audio', 'video'))) {
+		mb_services_post_to_solr($node);
+	}
+}
+ */
+ 
+/**
+ * Implements hook_node_update to post data changes to Kmaps Solr Index
+ *  COMMENTING OUT for MANU-1869: Replaced by Shanti Kmaps Fields
+ * 
+function mb_services_node_update($node) {
+	if(in_array($node->type, array('audio', 'video'))) {
+		mb_services_post_to_solr($node);
+	}
+}
+*/
+/**
+ * Implements hook_node_delete to remove records from kmaps index
+ *   Can pass either an nid or node object
+ *   To Delete all records:
+ * 
+      		$data = '{"delete": {"query": "service:mediabase*"}}';
+  		 		$res = mb_services_do_solr_post($data);
+ * 
+ *  COMMENTING OUT for MANU-1869: Replaced by Shanti Kmaps Fields
+ * 
+function mb_services_node_delete($node, $return_result = FALSE) {
+	global $base_root;
+	$nid = (is_int($node)) ? $node : $node->nid;
+	$pts = explode('://', $base_root);
+	if(count($pts) > 1) {
+		$server = str_replace('.', '_', $pts[1]) . '-';
+		$data = '{"delete": {"query": "uid:' . $server . $nid . '"}}';
+		$result = mb_services_do_solr_post($data);
+		if($return_result) { return $result; }
+	} else {
+		drupal_set_message(t('Unable to parse base_root (@broot) for deletion in solr index.', array('@broot' => $base_root)), 'warning');
+	}
+}
+*/
+
+/**
+ * Post Audio and Video Node updates to Solr Index
+ *  COMMENTING OUT for MANU-1869: Replaced by Shanti Kmaps Fields
+ * 
+function mb_services_post_to_solr($node, $show_result = FALSE) {
+	// Make sure node is public
+	$is_public = node_access('view', $node, user_load(0));
+	if (!$is_public) { return "Private node ({$node->nid})"; }
+	// Get Entity Wrapper and set field info to send
+	$ewrap = entity_metadata_wrapper('node', $node);
+	$bundle = $ewrap->getBundle();
+	if(empty($bundle)) { $bundle = $node->type; }
+	$nid = $ewrap->getIdentifier();
+	if(in_array($bundle, array('audio', 'video'))) {
+		$alias = (!empty($node->path['alias'])) ? $node->path['alias'] : drupal_get_path_alias('node/' . $nid);
+		$url = url($alias, array("absolute" => TRUE));
+		$desc_array = $ewrap->field_pbcore_description->value();
+		$desc = '';
+		foreach($desc_array as $n => $desc_obj) {
+			if(is_object($desc_obj) && !empty($desc_obj->field_description[LANGUAGE_NONE][0]['value'])) {
+				$desc .= $desc_obj->field_description[LANGUAGE_NONE][0]['value'] . ' | '; // Separating multiple descriptions with vertical pipe
+			}
+		}
+		
+		// Get thumbnail for node
+		if($bundle == 'video' && empty($node->thumbnail_url)) {
+			$node->thumbnail_url = ''; 
+			if(count($node->field_video) > 0) {
+  			module_load_include('inc', 'mb_kaltura', 'mb_kaltura');
+				list($lang, $vinfo) = each($node->field_video);
+				$kid = $vinfo[0]['entryid'];
+				$media = _get_media_from_entry_id($kid);
+				$node->thumbnail_url = (isset($media->thumbnailUrl)) ? $media->thumbnailUrl : '';
+			}
+		}
+		
+		// Create Data Array from field info
+		$solrdoc_array = mb_solr_get_solrdoc($node, 'json');
+		$data = $solrdoc_array['doc'];
+		
+		// Serialize data and add to settings array
+		$data = json_encode(array($data));
+		$result = mb_services_do_solr_post($data);
+		if($show_result) { return $result; }
+	}
+} 
+
+ * */
+
+/**
+ * mb_services_do_solr_post: posts to solr index
+ * 
+ *   To Delete all records (DO NOT DELETE THIS SNIPPET OR FUNCTION, VERY USEFUL):
+ * 
+      		$data = '{"delete": {"query": "service:audio-video_drupal-dev_shanti_virginia_edu"}}';
+  		 	$res = mb_services_do_solr_post($data);
+             dpm($res);
+ */
+function mb_services_do_solr_post($data) {
+	//dpm($data, 'data posted');
+	$solr_index = variable_get('kmaps_solr_index', '');
+	if(!empty($solr_index)) {
+		$content_length = strlen($data);
+		$settings = array(
+			'method' => 'POST',
+			'data' => $data,
+			'headers' => array(
+				'Content-Type' => 'application/json; charset=utf-8',
+				'Content-Length' => $content_length,
+			),
+		);
+		// Do Post to the SOLR Index
+		$result = drupal_http_request($solr_index . '/update/json?commit=true', $settings);
+		return $result;
+	}
+	drupal_set_message(t('You have not defined a solr-index for posting kmaps information. Please go to the <a href="@link">Mediabase Settings</a> page.',
+												array('@link' => url('admin/config/media/mediabase') . '#edit-kmaps-solr-index')), 'warning', FALSE);
+	return FALSE;
+}
+
+ /**
+ * Helper function to get all Kmaps associated with a node as an array
+ *  Use to populate the solr doc to send to solr
+ *  Updated: 08/03/15
+ */
+ function mb_services_get_node_kmapids($node) {
+	if(is_int($node)) { $node = node_load($node); }
+	$field_data = array(
+		'places' => array(
+			'field' => 'field_location',
+			'label' => 'places-',
+		),
+		'subjects' => array(
+			'field' => 'field_subject',
+			'label' => 'subjects-',
+		),
+		'subcollection' => array(
+			'field' => 'field_subcollection_new',
+			'label' => 'subjects-',
+		),
+	);
+	$kids = array();
+	foreach($field_data as $label => $finfo) {
+		$nfield = $node->{$finfo['field']};
+		$flang = field_language('node', $node, $finfo['field']);
+		foreach($nfield[$flang] as $n => $fdata) {
+			array_push($kids, $finfo['label'] . $fdata['id']);
+		}
+	}
+	return $kids;
+}
+
+/*
+ * mb_services_collection: Takes a collection alias
+ */
+function mb_services_collection($collid, $pg = 1) {
+  $path = drupal_lookup_path("source", "collection/$collid" );
+  $parts = explode('/', $path);
+  $nid=$parts[1];
+  drupal_set_message('Update mb_services_collection function in mb_services.module if necessary');
+  return '{"MESSAGE": "Update mb_services_collection function in mb_services.module"}';
+  // Previous code
+  $group = node_load($nid);
+  $gout = array(
+    'gid' => $nid,
+   /* 'etid' => $group->etid,*/
+    'title' => $group->title,
+    'page' => $pg,
+    'items' => array()
+  );
+  $items = array();
+  
+  $query = db_select("og_membership", "ogm")
+            ->condition("ogm.gid", $nid, "=")
+            ->condition('entity_type', 'node', '=')
+            ->fields("ogm", array("entity_type", "etid"))
+            ->execute();
+  $results = $query->fetchAll();
+  $start = ($pg - 1) * MB_SOLR_ITEMS_PER_PAGE + 1;
+  $end = $pg * MB_SOLR_ITEMS_PER_PAGE;
+  $gout['first_item'] = $start;
+  $gout['last_item'] = $end;
+  $gout['total_items'] = count($results);
+  $gout['total_pages'] = intval(count($results) / MB_SOLR_ITEMS_PER_PAGE);
+  $n = 0;
+  foreach($results as $result) {
+    $n++;
+    if ($n >= $start && $n <= $end) {
+      $item = array();
+      $nid = $result->etid;
+      $node = node_load($nid);
+      $type = $node->type;
+      if($type == 'video' || $type == 'audio') {
+        $item['nid'] = $nid;
+        $item['type'] = $type;
+        $item['title'] = $node->title;
+        $query = "SELECT kaltura_thumbnail_url
+           FROM {field_data_field_$type} 
+           JOIN {node_kaltura} ON field_" . $type . "_entryid = kaltura_entryid
+           WHERE entity_id = :etid";     
+        $res = db_query($query, array(':etid' => $nid) );
+        $item['thumb_url'] = array_shift($res->fetchCol());
+        $item['path'] = drupal_lookup_path('alias', 'node/' . $nid);
+        array_push($items, $item);
+      }
+    }
+  }
+  $gout['item_count'] = count($items);
+  $gout['items'] = $items;
+  drupal_json_output($gout);
+}
+
+/**
+ * mb_services_get: Returns JSON for all resources tagged with a certain kmap subject, subcollection, or place
+ * 
+ * e.g.: http://mediabase.drupal-dev.shanti.virginia.edu/services/subject/302
+ * 
+ *  was mb_services_subject but adding place so that subject or place is first var
+ * 
+ * TODO: Possibly add $use_descendants parameter which would get all nodes tagged with this kmap or any of its descendants
+ */
+function mb_services_get($type, $kmid) {
+	// Normalize and validate type variable for subject or place
+	if ($type == 'subjects') {$type = 'subject';}
+	if ($type == 'places') {$type = 'place';}
+	if (!in_array($type, array('subject', 'place'))) { drupal_not_found(); }
+	
+	// Do initial page calculations and variable initializing
+  $pg = (isset($_GET['pg'])) ? $_GET['pg'] * 1 : 1;
+  $row_count = (isset($_GET['rows'])) ? $_GET['rows'] * 1 : 20;
+  $n = 0;
+  $start = (intval($pg) - 1) * intval($row_count);
+	
+	// Determine output format
+	$pts = explode('.', $kmid);
+	$kmid = $pts[0]; 
+	$return_json = (count($pts) == 2 && $pts[1] == 'xml') ? FALSE : TRUE;
+	
+	// Find nodes tagged with kmapid
+	$nids = array(); // array for node ids tagged with kmap id  
+  $json = mb_services_get_kmap_info($kmid, $type . 's');
+  $kmnm = ($json)? $json['feature']['header'] : 'not found';
+	$dbug = "";
+	$is_place = ($type == 'place') ? TRUE : FALSE;
+	$nids = mediabase_nodes_by_kmap($kmid, $is_place); // Find all nodes with this kmap id
+	
+	// If none, return skeletal array
+  if(count($nids) == 0) {
+    drupal_json_output(array( 'media' => array(), 'total' => 0, 'type' => $type, 'kmid' => $kmid, 'debug' => $dbug ));
+    return;
+  }
+	
+	// Get the splice of results for the desired page
+  // Sift nodes by type and permissions
+	$nodes_filtered = array();
+	foreach($nids as $nid) {
+		$node = node_load($nid);
+    if($node && ($node->type == 'video' || $node->type == 'audio')) {
+      // Only output node info if it's public [user_load(0) == anonymous user]
+      if(node_access('view', $node, user_load(0))) {
+      	$nodes_filtered[$nid] = $node;
+			} 
+		}
+	}
+	
+	// Splice results for the correct page
+	$totalct = count($nodes_filtered);
+  ksort($nodes_filtered);
+	$nodes = array_slice($nodes_filtered, $start, $row_count);
+	
+  // For entities that are video or audio nodes output json
+  // Load mb_kaltura include for its functions for calling kaltura
+  module_load_include('inc', 'mb_kaltura', 'mb_kaltura');
+	
+	// Assemble Output Results
+  $gout = array();
+  $items = array();
+  foreach($nodes as $nid => $node) {
+    $item = array();
+    $ntype = $node->type; 	
+		if($node) { 
+	  	$flang = field_language('node', $node, "field_$ntype");
+	    $item['nid'] = $node->nid;
+	    $item['title'] = $node->title;
+	    $item['type'] = $ntype;
+	    $item['kaltura_id'] = $node->{"field_$ntype"}[$flang][0]['entryid'];
+	    $item['thumbnail'] = $node->thumbnail_url;
+	    $media = _get_media_from_entry_id($item['kaltura_id']);
+	    $item['video_url'] = $media->dataUrl;
+	    $item['duration'] = $node->duration;
+	    $item['created'] = $node->created;
+	    $item['mb_url'] = url(drupal_get_path_alias('node/' . $node->nid), array('absolute' => 'true'));
+	    array_push($items, $item);
+		}
+  }
+
+  $gout["total"] = $totalct; 
+	$gout["type"] = $type;
+	$gout["kmid"] = $kmid;
+	$gout["kmname"] = $kmnm;
+  $gout["page"] = $pg;
+  $gout["start"] = $start;
+  $gout["rows"] = $row_count;
+	$gout["debug"] = $dbug;
+  $gout["media"] = $items;
+	
+	// Send the output in the correct format
+	if ($return_json) {
+  	drupal_json_output($gout);
+	} else {
+		mb_services_xml_out($gout); // See below
+	}
+}
+
+/**
+ * Functions that converts a search result array into XML output
+ */
+function mb_services_xml_out($results) {
+	drupal_add_http_header('Content-Type', 'text/xml; utf-8');
+	print '<?xml version="1.0" encoding="utf-8"?>'."\n";
+	print "<results>";
+	print mb_services_convert_to_xml($results);
+	print "</results>";
+}
+
+function mb_services_convert_to_xml($results) {
+	foreach($results as $name => $value) {
+		if (is_object($value)) { $value = (array) $value; }
+		if ($name == 'media') {
+			print "<$name>";
+			foreach ($value as $n => $result) {
+				$nval = $n + 1;
+				print "<node n=\"$nval\">";
+				mb_services_convert_to_xml($result);
+				print "</node>";
+			}
+			print "</$name>";
+		} else if (is_array($value)) {
+			print "<$name>";
+			mb_services_convert_to_xml($value);
+			print "</$name>";
+		} else {
+			print "<$name>" . $value . "</$name>";
+		}
+	}
+}
+
+/**
+ * Redirect to Kaltura player for this media item
+ * This called from url: ../services/node/ajax/{NID}/player
+ */
+function mb_services_node_player($nid) {
+    global $base_url, $base_path;
+    $node = node_load($nid);
+    if (!$node) { return MENU_NOT_FOUND; }
+    if (!node_access('view', $node)) { return MENU_ACCESS_DENIED; }
+    $fnm = 'field_' . $node->type;
+    $lang = $node->language;
+    $entryId = $node->{$fnm}[$lang][0]['entryid'];
+    
+    $kurl =  str_replace('http:', 'https:', variable_get('kaltura_server_url', ''));
+    $kpi = variable_get('kaltura_partner_id', '');
+    $ksi = variable_get('kaltura_subp_id', '');
+    
+    $kaltura_url = $kurl . '/p/' . $kpi . '/sp/' . $ksi . '/embedIframeJs/uiconf_id/' . MB_MAIN_PLAYER_ID . '/partner_id/' . $kpi;
+    $kaltura_url .= '?iframeembed=true&playerId=js-kaltura-media-' . str_replace('_', '-', $entryId) . '&entry_id=' . $entryId . '&flashvars[streamerType]=auto';
+    drupal_goto($kaltura_url);
+}
+
+/**
+ * mb_services_node_ajax: returns AJAX embeddable fragment for a certin node
+ */
+function mb_services_node_ajax($nid) {
+	global $base_url, $base_path;
+	$node = node_load($nid);
+  if (!$node) { return MENU_NOT_FOUND; }
+  if (!node_access('view', $node)) { return MENU_ACCESS_DENIED; }
+  if (user_access('access content')) { // This is already specified in the menu item
+    if (in_array($node->type, array('audio', 'video'))) {
+    	// This returns exact markup as when viewed in MB
+    	$eview = entity_view('node', array($node));
+			$html = drupal_render($eview); 
+			// Following line makes all relative MB URLs into absolute ones for embed.
+			$html = str_replace('<a href="/', '<a target="_blank" href="' . $base_url . '/', $html);
+			$kurl =  variable_get('kaltura_server_url', '');
+			$kpi = variable_get('kaltura_partner_id', '');
+			$ksi = variable_get('kaltura_subp_id', '');
+			$base = $base_url . $base_path;
+			$transcript_folder = drupal_get_path('module', 'transcripts_ui');
+			$mbservices_folder = drupal_get_path('module', 'mb_services');
+			$mbkal_folder = drupal_get_path('module', 'mb_kaltura');
+			$jss = array(
+				/*$base . $kaltura_folder . '/js/kaltura.js',
+				$base . $kaltura_folder . '/js/kaltura.behaviors.js',
+				$kurl . '/p/' . $kpi . '/sp/' . $ksi . '/embedIframeJs/uiconf_id/' . MB_MAIN_PLAYER_ID . '/partner_id/' . $kpi,*/
+				$base . $transcript_folder . '/js/transcripts_tier_selector.js',
+				$base . $transcript_folder . '/js/transcripts_navigation.js',
+				$base . $transcript_folder . '/js/transcripts_search.js',
+				$base . $transcript_folder . '/js/jquery.scrollTo.min.js',
+				$base . $mbkal_folder . '/js/transcripts_ui.js',
+				$base . $transcript_folder . '/js/transcripts_scroller.js',
+				//$base . $mbservices_folder . '/mb_services.js'
+			);
+			$scripts = "";
+			foreach($jss as $jurl) {
+				$scripts .= "<script type=\"text/javascript\" src=\"$jurl\"></script>";
+			}
+			
+			$loadScripts = '<script type="text/javascript">window.onload = function() { (function($) { ';
+			foreach($jss as $jurl) {
+				$loadScripts .= '$.getScript("' . $jurl . '"); ';
+			}
+				
+    
+			$js = drupal_get_js();
+			$jorig = $js;
+			$pts = explode('<!--//-->', $js);
+			if(count($pts) > 1) {
+				$js = "<script type=\"text/javascript\">\n<!--//-->" . array_pop($pts);
+			} else { $js = ''; }
+			
+			$js = str_replace('Drupal.settings, {', '{', $js);
+			$pts = explode('jQuery.extend(', $js);
+			$js = $pts[1];
+			$pts = explode('}});', $js);
+			$js = $pts[0] . '}}';
+			$json = json_decode($js);
+			$json = $json->ajax;
+			$json = "$.extend(Drupal.settings, {\"ajaxfrag\": " . json_encode($json) . "});";
+			
+			$loadScripts .= $json .  '})(jQuery)};</script>';
+			print "<div class=\"mb-node-ajax\">$html $loadScripts </div>";
+    } 
+    else { drupal_not_found(); }
+  } 
+  else { drupal_access_denied(); }
+}
+ 
+/**
+ * mb_services_embed: returns html 5 player embed code for a given node id
+ * 
+ * e.g. http://mediabase.drupal-dev.shanti.virginia.edu/services/embed/1959
+ */
+function mb_services_embed($nid) {
+  $node = node_load($nid);
+  module_load_include('inc', 'mb_kaltura', 'mb_kaltura');
+  $kid = _get_entry_id_from_node($node);
+  $type = $node->type;
+  $out = array('embed' => '');
+  if($type == 'video') { 
+    $out['embed'] = mb_kaltura_video_tag($kid);
+  } elseif ($type == 'audio') { 
+    $out['embed'] = mb_kaltura_audio_tag($kid);
+  } 
+  drupal_json_output($out);
+}
+
+/**
+ * Look up a node's thumbnail and redirect to that image after making sure that thumbnail exists
+ * If it doesn't exist use the default image for the thumbnail
+ */
+function mb_services_node_thumb($nid) {
+    $node = node_load($nid);
+    if($node) {
+        $redirect_url = '';
+        if (!empty($node->thumbnail_url) && mb_services_url_exists($node->thumbnail_url)) {
+            $redirect_url = $node->thumbnail_url;
+        } else {
+            $type = $node->type;
+            $path = drupal_get_path('module', 'mediabase') . "/images/generic-{$type}-thumb.jpg";
+            $redirect_url = url($path, array('external' => TRUE));
+        }
+        drupal_goto($redirect_url, array(), 301);
+    }
+}
+
+/**
+ * Function to check if a url (i.e. thumbnail) exists
+ */
+function mb_services_url_exists($url) {
+    $handle = curl_init($url);
+    curl_setopt($handle,  CURLOPT_RETURNTRANSFER, TRUE);
+    
+    /* Get the HTML or whatever is linked in $url. */
+    $response = curl_exec($handle);
+    
+    /* Check for 404 (file not found). */
+    $httpCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
+    curl_close($handle);
+    if($httpCode == 404) {
+        return FALSE;
+    }
+    return TRUE;
+}
+
+/**
+ * Returns an array of the parent id and all children id for a kmap
+ */
+function mb_services_get_all_kmap_children($kmid, $type='subjects') {
+  if($json = mb_services_get_kmap_info($kmid, $type)) {
+    $kids = mb_services_process_features($json['feature']);
+    return $kids;
+  } else {
+    return FALSE;
+  }
+}
+
+function mb_services_process_features($feature, $fids = array()) {
+  array_push($fids, $feature['id']);
+  if(isset($feature['features']) && is_array($feature['features'])) { 
+    foreach($feature['features'] as $f) {
+     $fids = mb_services_process_features($f, $fids);
+    }
+  }
+  return $fids;
+}
+
+/**
+ * Returns Kmap info in JSON format for a feature
+ */
+function mb_services_get_kmap_info($kmid, $type='subjects') {
+	$service = ($type == 'places') ? KMAP_SERVICE_PLACES : KMAP_SERVICE_SUBJECTS;
+  $url = $service . $kmid . '/all.json';
+	$jstr = @file_get_contents($url);
+	$json = json_decode($jstr, TRUE);
+	return $json;
+}

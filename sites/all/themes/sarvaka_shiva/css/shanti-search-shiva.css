@@ -1,0 +1,311 @@
+/**
+* Mandala Visuals - Development
+* 
+* version 1.x - shanti-search-visuals.css
+* ---------------------------------------------------
+* University of Virginia / SHANTI MANDALA / VISUALS
+* ---------------------------------------------------
+* 
+*/
+.view-section .nav-tabs>li{
+  width: 30%;
+}
+
+/**** Facet Blocks ****/
+div.block-facetapi:after {
+  border-top: thin solid #a0a0a0;
+  width: 60%;
+  display: block;
+  content: " ";
+  margin-left: 10%;
+}
+
+div.block-facetapi h4 {
+  font-size: 1.5rem;
+  margin-top: 12px;
+}
+
+ul.facetapi-facetapi-links, 
+ul.facetapi-shivanode-types {
+  margin: 6px 0px 6px;
+  padding-left: 2px;
+}
+
+ul.facetapi-facetapi-links li.leaf, 
+ul.facetapi-shivanode-types li.leaf {
+
+}
+
+div.block-facetapi a.facetapi-limit-link {
+  font-size: 1.2rem;
+  text-align: right;
+  width: 70%;
+  display: block;
+  color: #9399c7;
+  margin: -6px 0px 3px;
+}
+
+div.block-facetapi a.facetapi-limit-link:hover {
+  color: #454fa4;
+}
+
+.btn.btn-icon.shivanode-btn span:last-child {
+  line-height: 1.5em;
+}
+
+.btn.btn-icon.shivanode-btn a.sharelink {
+  color: white;
+}
+
+ul.shivanode-info li {
+  list-style-type: none;
+  margin-bottom: 6px;
+}
+
+ul.shivanode-info li .icon {
+  display: inline-block;
+  padding-right: 12px;
+}
+
+ul.shivanode-info li div {
+  display: inline-block;
+}
+
+
+
+/** Flyout and Search Styles **/
+    
+.input-section .input-group input.form-control{
+  margin-top:9px;
+}
+
+.extruder .text {
+  /*border: 1px solid #eee;*/
+}
+
+.extruder .views-exposed-form .views-exposed-widget{
+  width:100%;
+  padding-top:0;
+}
+
+.extruder .views-exposed-widgets input.form-control:first-child {
+  border-bottom-right-radius: 25px;
+  border-top-right-radius: 25px;
+  background-clip: padding-box;
+}
+
+.extruder .views-exposed-form > .views-exposed-widgets {
+  padding: 0 1.5rem 0 0;
+  display: block;
+  width: 100%;
+  background: #f8f8f8;
+  float:left;
+  margin-bottom:0;
+}
+
+.extruder label.flyout-search-label {
+  color:#444;
+  font-size: 0.93em;
+  position: absolute;
+  left: 2.9rem;
+  top: 1rem;
+  font-weight: normal;
+  letter-spacing:0.03rem;
+  text-transform: capitalize;
+  font-family: 'museo-sans-500',helvetica,arial,sans-serif;
+}
+
+.extruder label.flyout-search-label span{
+  text-transform: uppercase;
+  padding-right: 0.3rem;
+  font-weight:bold;
+}
+
+.extruder .views-exposed-widgets .form-item-search-api-views-fulltext .icon.shanticon-magnify {
+  position: absolute;
+  left: 2.4rem;
+  top: 3.8rem;
+}
+
+.extruder .views-exposed-widgets .form-item-search-api-views-fulltext input.form-control {
+  position: relative;
+  left: 14px;
+  color: #777;
+  border: 1px solid #ccc;
+  border-radius: 25px;
+  background-clip: padding-box;
+  font-size: 1.06em;
+  height: 35px; /* coordinate with button height below */
+  line-height: 1.44em;
+  margin: 2.8rem 0 1.6rem;
+  padding: 0.2rem 6rem 0 3.2rem;
+  width: 100%;
+  max-width: 100%;
+  overflow: auto;
+  vertical-align: middle;
+  -webkit-box-shadow: 0 2px 5px #eee inset;
+  box-shadow: 0 2px 5px #eee inset;
+  border-collapse: separate; /* fix for ie9 shadow */
+  background: #fff;
+  -webkit-transition-property: all;
+  -webkit-transition-duration: 400ms;
+  transition-property: all;
+  transition-duration: 400ms;
+}
+/*
+.extruder .view-full-text .views-exposed-widgets .form-item-search-api-views-fulltext input.form-control{
+  margin-top:2.8rem;
+  border: 1px solid #ccc;
+}
+*/
+.extruder .views-exposed-widgets .form-item-search-api-views-fulltext input.form-control:hover {
+  border: 1px solid #ccc;
+  color: #777;
+}
+
+.extruder .views-exposed-widgets .form-item-search-api-views-fulltext input.form-control:focus {
+  border: 1px solid #9097d3;
+  -webkit-box-shadow: 0 0 4px #949bd8;
+  box-shadow: 0 0 4px #949bd8;
+  border-collapse: separate;
+}
+
+/*--- button group ---*/
+.extruder .views-submit-button {
+  width: 4.5rem !important;
+  height: 35px;
+  position: absolute;
+  top: 2.9rem;
+  right: 1.6rem;
+  z-index: 10;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  float:none;
+}
+/*
+.extruder .view-full-text .views-submit-button{
+  left: 4rem;
+  top: 4.4rem;
+}
+*/
+/*--- submit button ---*/
+.extruder .views-submit-button .btn.btn-primary {
+  display: block;
+  height: 33px; /* 2px less than search input height above */
+  color: #aaa;
+  width: 100%;
+  border: 1px solid #e5e5e5;
+  border-width: 0 0 0 1px;
+  border-radius: 0;
+  border-top-right-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
+  background-clip: padding-box;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  padding: 0 0 0 7px;
+  margin: 0;
+  font-size: 1.2rem;
+  background-image: linear-gradient(to bottom,#fff 0,#e0e0e0 100%);
+}
+
+.extruder .views-submit-button .btn.btn-primary:hover {
+  background: #eee;
+  color: #777;
+}
+
+.extruder .views-submit-button .btn.btn-primary:active,
+.extruder .views-submit-button .btn-primary.active {
+  background: transparent;
+  border-color: #fff;
+}
+
+.extruder .views-submit-button .btn.btn-primary span {
+  font-family: 'Glyphicons Halflings' !important;
+  color: transparent;
+  background: transparent;
+}
+
+.extruder .views-submit-button .btn.btn-primary span::before {
+  content: '\e080';
+  color: #aaa;
+  position: relative;
+  top: 0.2rem;
+  left: .55rem;
+  font-size: 1.62rem;
+}
+
+.extruder .views-submit-button .btn.btn-primary:active span,
+.extruder .views-submit-button .btn.btn-primary.active span {
+  color: #777;
+}
+
+/** Reset Button **/
+
+.extruder .views-exposed-widget.views-reset-button{
+  padding:0;
+}
+
+.extruder .views-exposed-widget.views-reset-button .searchreset {
+  position: absolute;
+  top: 3.75rem;
+  right: 7rem;
+}
+
+/** Clearing float for kmap tag list **/
+.extruder .region-search-flyout section.view-section {
+  clear: both;
+}
+
+/** Facet Gallery Result styling **/
+.kmaps-facets-results .shanti-filters .label {
+  display: none;
+}
+
+
+.extruder .region-search-flyout > div{
+  float:left;
+  border: 1px solid #e0e0e0;
+  width:100%;
+  position: relative;
+}
+
+
+
+
+
+
+.view-section .tab-content{
+  overflow-y:scroll;
+}
+
+.view-section .tab-content::-webkit-scrollbar{
+  width: 0.6rem;
+}
+.view-section .tab-content::-webkit-scrollbar-track{
+  border-radius: 0.6rem;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.1);
+}
+.view-section .tab-content::-webkit-scrollbar-thumb{
+  background-color: #e5e5e5;
+  border-radius: 0.6rem;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.2);
+}
+.view-section .tab-content:hover::-webkit-scrollbar-thumb{
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+}
+
+
+.view-section .tab-content div{
+  overflow-y:visible;
+}
+
+
+
+
+
+
+
+
+
+/* END search flyout */

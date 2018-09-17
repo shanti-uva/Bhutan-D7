@@ -1,0 +1,16 @@
+
+name = Media: SharedShelf
+description = Integrates SharedShelf images, sets, and/or projects with Media.
+package = Media
+core = 7.x
+php = 5.2.10
+dependencies[] = media (>=7.x-2.0-alpha3)
+dependencies[] = media_internet (>=7.x-2.0-alpha3)
+dependencies[] = entity
+dependencies[] = views
+;dependencies[] = apachesolr_file
+files[] = includes/MediaSharedShelfStreamWrapper.inc
+files[] = includes/MediaSharedShelfMediaInternetHandler.inc
+files[] = includes/MediaSharedShelfStyles.inc
+files[] = includes/MediaSharedShelfBrowser.inc
+configure = admin/config/media/media_sharedshelf/api

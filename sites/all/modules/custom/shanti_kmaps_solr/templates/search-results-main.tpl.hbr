@@ -1,0 +1,202 @@
+<div class="inner-wrapper">
+ <div>
+
+  <header class="current-search-results-header">
+    <h3>Search Results:
+      <span class="current-search-identifiers">
+        <span class="kmaps-inpage-results-number">({{{rangeStart}}}-{{{rangeEnd}}}) of {{data.numFound}}</span>
+        {{#if searchString}}
+          <span class="kmaps-inpage-results-search-term">for <i>'{{searchString}}'</i></span>
+        {{/if}}
+      </span>
+  </h3>
+  </header>
+
+  <!-- PAST SEARCH LINKS DISPLAY - (for future reference)
+  <section id="previous-searches">
+      <h5 class="sr-only">Kmaps Search Results: Previous Search Terms</h5>
+      <strong>Previous Searches:</strong>
+        <span><a href="#"></a></span>
+        <span><a href="#"></a></span>
+        <span><a href="#"></a></span>
+  </section>
+  -->
+
+  <section class="search-results-sorting">
+    <h5 class="sr-only">Current Search: Filters and Sorting</h5>
+
+    <!-- ADD SORTING FILTERING HERE -->
+  </section>
+
+   <section class="search-results-asset-selector">
+     <div class="results-node-kmaps-resources results-filtering-top-tabs">
+       <ul class="results-kmaps-resource-list list-inline">
+         <!--<li class="all results-list-asset-type-filter selected" data-asset-type="all" >-->
+           <!--<div>-->
+             <!--<a href="#">-->
+               <!--<div>-->
+                 <!--<span class="icon shanticon-logo-shanti"></span>-->
+                 <!--<span class="kmaps-results-name">All</span>-->
+                 <!--<span class="badge">{{data.numFound}}</span>-->
+               <!--</div>-->
+             <!--</a>-->
+           <!--</div>-->
+         <!--</li>-->
+         {{#each asset_counts}}
+           {{#ifCond this.hide "===" false}}
+         <li class="{{@key}} results-list-asset-type-filter {{this.selected}}"  data-asset-type="{{@key}}" data-toggle="tooltip" title="{{@key}}">
+           <div>
+             <a href="#">
+               <div>
+                 <span class="icon {{this.icon}}"></span>
+                 <span class="kmaps-results-name">{{this.label}}</span>
+                 <span class="badge">{{this.count}}</span>
+               </div>
+             </a>
+           </div>
+         </li>
+           {{/ifCond}}
+         {{/each}}
+       </ul>
+     </div>
+
+
+     <!--<pre>-->
+       <!--{{json asset_counts}}-->
+     <!--</pre>-->
+   </section>
+
+
+   <!-- <section>
+     <div class="active-kmfaceted-list kmap-filter-box"></div>
+   </section> -->
+
+  <section class="search-results-list-container">
+      <h4 class="sr-only">Current Search: All Results</h4>
+
+      <div class="kmaps-inpage-results-pager  top-pager">
+        <!-- BUTTONS: Gallery and List buttons -->
+        <div>
+          <span class="icon shanticon-list listview results-list-asset-view-mode btn-results-list {{list_mode_selected}}" role="button" aria-label="Select List View" data-view-mode="list"></span>
+          <span class="icon shanticon-grid listview results-list-asset-view-mode btn-results-gallery {{gallery_mode_selected}} {{no_gallery}}" role="button" aria-label="Select Gallery View" data-view-mode="gallery"></span>
+        </div>
+
+        <!-- PAGING -->
+        {{#if data.numFound}}
+          {{{pager}}}
+        {{/if}}
+
+        <!-- Close Results Button -->
+        <span id="btn-collapse-search-results" class="icon btn-collapse-search-results" role="button" aria-label="Close Search Results"></span>
+      </div>
+
+      <!-- RESULTS DISPLAY - Gallery View -->
+  <div id="search-results-node-preview" class="search-results-node-preview  {{#if gallery_mode_selected}}show-gallery{{/if}} search-results-loading">
+     	<span class="icon shanticon-collapse" role="button" aria-label="Close Search Preview"></span>
+
+	      <!-- Gallery Ref: http://miromannino.github.io/Justified-Gallery/getting-started/ -->
+	      <!-- RESULTS GALLERY -->
+	      <div id="search-results-gallery" class="search-results-gallery justified-gallery">
+	      {{#each data.docs}}
+	        <a class="search-results-gallery-node"  data-lookup-index="{{@index}}" data-asset-type="{{{tree}}}" data-asset-subtype="{{{asset_subtype}}}" data-asset-id="{{{id}}}" data-url-html="{{{url_html}}}" data-url-json="{{{url_json}}}" data-url-ajax="{{{url_ajax}}}" href="{{{url_asset_nav}}}">
+
+	          <img alt="{{display_label}}" data-asset-type="{{tree}}" src="{{{url_thumb}}}" {{#if url_thumb_height}} height={{url_thumb_height}} width={{url_thumb_width}} {{/if}} onError="this.src='/sites/all/themes/shanti_sarvaka/images/default/generic-{{tree}}-icon.png'; this.height=110; this.width=150" >
+
+            <!-- Audio and Popover Icons -->
+            <span class="btn-gallery-popup-icon" role="button" aria-label="Close Results Descriptive Popup" data-toggle="popover" data-placement="bottom"><span class="icon fa-info-circle" role="button"></span></span>
+	          <span class="gallery-audio-icon"><span class="icon shanticon-audio"></span></span>
+	        </a>
+	      {{/each}}
+	      </div>
+     </div>
+
+      <!-- RESULTS DISPLAY - List View -->
+      <div class="search-results-list-wrapper search-results-loading">
+        <div>
+          <div class="panel panel-default">
+            <div class="panel-body">
+
+                {{#unless data.numFound}}
+                  <div class="no-results">
+                    <p>No Results Found. Please refine your search.</p>
+                  </div>
+                {{/unless}}
+
+                {{#each data.docs as |doc i|}}
+                  <div class="results-node-wrapper {{doc.tree}} {{doc.asset_subtype}}">
+                    <div>
+
+                        <h4 class="results-node-title-wrapper">
+                          <a class="results-node-title" href="{{doc.url_asset_nav}}">{{safe doc.title.[0]}}</a>
+                          <a class="results-node-title-icon" href="{{doc.url_asset_nav}}"><span class="icon"></span></a>
+
+                          <span class="data-node-feature-type">
+                            {{#ifCond doc.tree '===' "places"}}
+                              {{#each doc.feature_types as |ftype i|}}
+                                  <span>{{ftype}}</span>
+                              {{/each}}
+                            {{/ifCond}}
+                          </span>
+                          <span class="node-id">{{doc.uid}}</span>
+                        </h4>
+
+                        <div class="results-node-classification">
+                          <span class="parents-path">{{#each doc.ancestors as |name i|}}<span>/<a href="/{{doc.tree}}/{{ancestorId doc i}}/overview/nojs#search">{{name}}</a></span>{{/each}}</span>
+                        </div>
+
+                        {{#if collection_title}}
+                          <div class="results-node-classification" data-label="Collection">{{{collection_title}}}</div>
+                        {{/if}}
+
+                        <div class="results-node-more-details pop-content closeup place-open-{{extractId doc.uid}}" style="display:none;">
+                          {{!-- > details-template doc --}}
+                          {{> (choosetemplate doc.asset_type) doc}}
+                          <a data-toggle="collapse" data-target="#json-{{uid}}" class="results-node-classification">show json</a>
+                          <div id="json-{{uid}}" class="collapse">
+                            <pre>
+                              {{json doc}}
+                            </pre>
+                          </div>
+                        </div>
+
+                        <div class="toggle-results-node" role="button" aria-label="Show Results Description">
+                          <span class="results-details-open open-task fa fa-plus" data-app="{{doc.tree}}" data-id="{{extractId doc.uid}}"></span>
+                        </div>
+
+                    </div>
+                  </div><!-- END results-node-wrapper -->
+                {{/each}}
+
+            </div>
+          </div><!-- END panel -->
+        </div>
+      </div><!-- END search-results-list-wrapper -->
+
+
+      <div class="kmaps-inpage-results-pager bottom-pager">
+        <!-- BUTTONS: Gallery and List buttons -->
+        <div>
+          <span class="icon shanticon-list listview results-list-asset-view-mode btn-results-list {{list_mode_selected}}" role="button" aria-label="Select List View" data-view-mode="list"></span>
+          <span class="icon shanticon-grid listview results-list-asset-view-mode btn-results-gallery {{gallery_mode_selected}} {{no_gallery}}" role="button" aria-label="Select Gallery View" data-view-mode="gallery"></span>
+        </div>
+
+        <!-- PAGING -->
+        {{#if data.numFound}}
+          {{{pager}}}
+        {{/if}}
+      </div>
+</section><!-- END search-results-list-container -->
+
+    <!-- JSON Data for testing -->
+    <div>
+      <!--
+        <pre>
+          {{json rangeStart}}
+          {{json data}}
+        </pre>
+        -->
+    </div><!-- END: JSON Data for testing -->
+
+
+ </div>
+</div> <!-- END inner-wrapper -->

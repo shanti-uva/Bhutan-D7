@@ -1,0 +1,462 @@
+/* shanti image gallery */ 
+.ppd-grid {
+  list-style: none;
+  padding:0;
+  margin: 0 auto;
+  text-align: center;
+  width: 100%;
+}
+
+
+.pig-figure .img-footer-overlay {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    padding-left: 4px;
+    background-color: #3f3f3f;
+    color: white;
+    opacity: 0.8;
+}
+
+/** Expander Styles **/
+.ppd-expander {
+    background: #222;
+    border-bottom: 0.75rem double #eee;
+    color: white;
+    width: 100%;
+    margin-top: 1rem;
+    height: 500px;
+    margin: 1rem;
+    text-align: left;
+    overflow: hidden;
+}
+
+.ppd-expander-inner {
+    background: #303030;
+    padding: 2.5rem 5.5rem;
+    height: 100%;
+    -webkit-box-shadow: inset 0 0 70px 30px rgba(0, 0, 0, 0.5);
+    -moz-box-shadow: inset 0 0 70px 30px rgba(0, 0, 0, 0.5);
+    box-shadow: inset 0 0 70px 30px rgba(0, 0, 0, 0.5);
+}
+
+/** Can't get this callout notch to work **/
+.ppd-expanded:after {
+    content: "";
+    width: 0px;
+    height: 0px;
+    position: absolute;
+    left: 45%;
+    top: 100%;
+    border-top: 10px solid #222222;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 0;
+}
+
+.ppd-close {
+    position: absolute;
+    width: 3rem;
+    height: 3rem;
+    top: 1.5rem;
+    right: 2rem;
+    color: #aaa;
+    cursor: pointer;
+}
+
+.ppd-close::before, .ppd-close::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    top: 50%;
+    height: 1px;
+    background: #aaa;
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+.ppd-close::after {
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+}
+
+.ppd-close:hover::before,
+.ppd-close:hover::after{
+  background: #eee;
+}
+
+.ppd-fullimg,
+.ppd-details {
+  float: left;
+  height: 100%;
+  /*overflow: hidden;*/
+  /*position: relative;*/
+}
+
+.ppd-fullimg {
+    height: 100%;
+    float: left;
+    padding: 0 1rem;
+    margin: 0 1rem;
+    width: 52.5%;
+    text-align: center;
+    position: relative;
+}
+
+
+.ppd-fullimg img {
+  display: inline-block;
+  max-height: 100%;
+  max-width: 100%;
+  position:absolute;
+  top:-50%; bottom:-50%;
+  left:-50%; right:-50%;
+  margin:auto;
+  width: auto;
+  height: auto;
+  vertical-align: middle;
+    box-shadow: 0 0 2.5rem #111;
+    border: 1px solid transparent;
+}
+
+.ppd-fullimg img:hover {
+  box-shadow: none;
+  border-color: #555;
+}
+
+.ppd-fullimg img:active {
+  box-shadow:none;
+  border-color: #aaa;
+}
+
+/** PPD Details **/
+.ppd-details {
+    padding: 0;
+    height: auto;
+    width: 43%;
+    float: left;
+    margin: 0;
+    margin: 0 0 0 1rem;
+    -webkit-transition: margin .3s ease-out;
+    transition: margin .3s ease-out;
+}
+
+.ppd-details-inner {
+    float: left;
+    display: inline-block;
+    overflow: hidden;
+    width: 100%;
+}
+
+
+/*-------------------------*/
+/*--- .ppd-details content ---*/
+/*-------------------------*/
+
+
+.view .ppd-expander .ppd-details h2 {
+    display: block;
+    float: none !important;
+    margin-top: 0rem !important;
+    max-width: 95%;
+}
+
+.view .ppd-expander .ppd-details .specs {
+    display: block;
+    float: none !important;
+}
+
+.view .ppd-expander .ppd-details .links {
+    margin: 0;
+    padding: 0;
+    margin-left: -2%;
+}
+
+.view .ppd-expander .ppd-details .specs *,
+.view .ppd-expander .ppd-details .links * {
+    display: inline;
+}
+
+.view .ppd-expander .ppd-details .description ul.links, 
+.view .ppd-expander .ppd-details .description .field-name-field-description h2 {
+    display: none;
+}
+
+.view .ppd-expander .ppd-details .description p,
+.view .ppd-expander .ppd-details a {
+  font-size: 1em;
+  color: #f0f0f0;
+  outline: none;
+  margin: 0;
+  padding:0;
+}
+
+.view .ppd-expander .ppd-details .description h2 + p:after {
+    display: inline;
+    content: '...';
+}
+
+
+.view .ppd-expander .ppd-details a:hover {
+  color: #ddd;
+  border-bottom-color: #ccc;
+}
+
+.view .ppd-expander .ppd-details a:active {
+  color: #ddd;
+  border-bottom-color: transparent;
+}
+
+.view .ppd-expander .ppd-details a::before {
+  margin:0;
+}
+
+/** Lightbox Sidebar **/
+.pswp_sidebar {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    border: thin solid white;
+    background-color: black;
+    color: white;
+}
+
+.pswp_sidebar .sidebar_inner {
+    margin: 8px;
+}
+
+/** Copied directly from og-grid view. Need to review **/
+.ppd-details div.field {
+  color: #c0c0c0;
+  margin-bottom:0.3rem;
+}
+
+.ppd-details li label, 
+.ppd-details div.field div.field-label {
+  color: #c0c0c0;
+  font-size: 0.88em;
+  margin-left: 0;
+  margin-right: .5rem;
+  display:inline;
+}
+
+.ppd-details div.field div.field-label{
+  float: left;
+  text-transform: uppercase;
+  font-family: 'museo-sans-300', sans-serif;
+  color: #aaa;
+  font-size: 90%;
+}
+
+
+.ppd-details .field-label-inline .field-items{
+  text-transform: capitalize;
+  color: #eee;
+}
+
+.ppd-details p {
+  font-size: 1em;
+  line-height:1.5em;
+  font-family: 'Helvetica Neue',helvetica,arial,sans-serif;
+  letter-spacing: 0.05rem;
+  color: #c0c0c0;
+  /*max-height: 260px;*/ /*min-height: 150px;*/
+  /*overflow-y: auto;*/
+  padding-right: 2rem;
+}
+
+.ppd-details h2, .ppd-details h3 {
+  color:#d6d6d6;
+  font-size: 1.12em;
+  font-weight: bold !important;
+  line-height:1.44em;
+  padding: 0;
+  margin: 0.5em 0;
+}
+
+.ppd-details #info .field-name-field-external-classification .field-item h2 {
+    display: none;
+}
+
+.ppd-details #info .field-name-field-external-classification .field-item {
+    margin-left: 1rem;
+}
+
+
+/** PPD Nav Arrows **/
+/**** gallery dropdown paging arrow buttons ****/
+.ppd-nav-arrow {
+    position: absolute;
+    top: 50%;
+    width: 6rem;
+    height: 10rem;
+    border-radius: .3rem;
+    border: 1px solid #303030;
+    margin-top: -5rem;
+    background: #242424;
+    box-shadow: inset 0 0 10px #111;
+    display: inline-block;
+}
+
+.ppd-nav-arrow:hover{
+  background:#2e2e2e;
+  border-color:#444;
+}
+
+.ppd-nav-arrow:active{
+  border-color:#555;
+  background:#202020;
+}
+
+.ppd-nav-arrow.prev {
+    position: absolute;
+    left: -1rem;
+    text-shadow: 0 0.2rem 0.5rem #111;
+}
+
+.ppd-nav-arrow.next {
+    position: absolute;
+    right: -1rem;
+    text-shadow: 0.2rem 0 0.5rem #111;
+}
+
+.icon {
+    font-family: 'shanticon';
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.ppd-nav-arrow .icon {
+    font-size: 3.5rem;
+    width: 6rem;
+    height: 10rem;
+    position: relative;
+    top: 3rem;
+    background: transparent;
+}
+
+.ppd-nav-arrow .icon::before {
+    position: relative;
+    color: #444;
+    background: transparent;
+}
+
+.prev.ppd-nav-arrow .icon::before {
+    content: '\e606';
+    left: 1.4rem;
+}
+
+.next.ppd-nav-arrow .icon::before {
+    content: '\e607';
+    right: -0.4rem;
+}
+
+.ppd-nav-arrow:hover .icon::before{
+  color:#707070;
+  background:transparent !important;
+}
+
+.ppd-nav-arrow:active .icon::before{
+  color:#aaa;
+  background:transparent !important;
+}
+
+/** Loading styles **/
+    
+.ppd-loading{
+  display:none;
+}
+
+.ppd-loading{
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ddd;
+  box-shadow: 0 0 1px #ccc, 15px 30px 1px #ccc, -15px 30px 1px #ccc;
+  position: absolute;
+  top: 50%;
+  left: 75%;
+  margin: -25px 0 0 -25px;
+  -webkit-animation: loader 0.5s infinite ease-in-out both;
+  -moz-animation: loader 0.5s infinite ease-in-out both;
+  animation: loader 0.5s infinite ease-in-out both;
+}
+
+@-webkit-keyframes loader{
+  0% { background: #ddd;}
+  33% { background: #ccc; box-shadow: 0 0 1px #ccc, 15px 30px 1px #ccc, -15px 30px 1px #ddd;}
+  66% { background: #ccc; box-shadow: 0 0 1px #ccc, 15px 30px 1px #ddd, -15px 30px 1px #ccc;}
+}
+
+@-moz-keyframes loader {
+  0% { background: #ddd;}
+  33% { background: #ccc; box-shadow: 0 0 1px #ccc, 15px 30px 1px #ccc, -15px 30px 1px #ddd;}
+  66% { background: #ccc; box-shadow: 0 0 1px #ccc, 15px 30px 1px #ddd, -15px 30px 1px #ccc;}
+}
+
+@keyframes loader {
+  0% { background: #ddd;}
+  33% { background: #ccc; box-shadow: 0 0 1px #ccc, 15px 30px 1px #ccc, -15px 30px 1px #ddd;}
+  66% { background: #ccc; box-shadow: 0 0 1px #ccc, 15px 30px 1px #ddd, -15px 30px 1px #ccc;}
+}
+    
+/* lightbox styles (pswp)*/
+.pswp{
+  z-index:1000;
+}
+
+.pswp__button{
+  margin-right:1.5rem;
+}
+
+.pswp__caption__center{
+  text-align: center;
+  font-family: 'museo-sans-500',helvetica,arial,sans-serif;
+}
+
+.pswp__bg{
+  filter: alpha(opacity=100);
+  opacity: 1;
+  background: #222 !important;
+}
+.pswp__ui--fit .pswp__top-bar, 
+.pswp__ui--fit .pswp__caption{
+  background: transparent;
+}
+
+.pswp__share-tooltip a{  border:none;}
+.pswp__share-tooltip a:hover,
+.pswp__share-tooltip a:active{
+    color:#fff !important;
+}
+
+.pswp__share-tooltip a:hover:nth-child(n+3),
+.pswp__share-tooltip a:active:nth-child(n+3){
+    color:#333 !important;
+}
+
+/**** lightbox 
+.pswp__counter{
+  display:none;
+}
+
+.pswp__top-bar{
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 44px;
+}
+****/
+
+
+

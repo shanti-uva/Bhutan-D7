@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Shanti Images Features feature.
+ */
+
+include_once 'shanti_images_features.features.inc';

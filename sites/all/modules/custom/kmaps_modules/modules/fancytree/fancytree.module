@@ -1,0 +1,326 @@
+<?php
+/**
+ * Implementation of @link (hook_libraries_info(), http://drupalcontrib.org/api/drupal/contributions%21libraries%21libraries.api.php/function/hook_libraries_info/7)
+ * @return array() of library definitions
+ */
+function fancytree_libraries_info(){
+  $theme = variable_get('fancytree_theme', 'win8');
+  $plugins = variable_get('fancytree_plugins', array('filter','childcounter','glyph'));
+  $libraries['fancytree'] = array(
+      'name' => 'jQuery Fancytree',
+      'vendor url' => 'https://github.com/mar10/fancytree',
+      'dependencies' => array('json2'),
+      'download url' => 'https://github.com/mar10/fancytree/releases/download/v2.0.0-2/jquery.fancytree-2.0.0-2.zip',
+      'version arguments' => array(
+          'file' => 'jquery.fancytree.min.js',
+          'pattern' => '@(?i:version) ([0-9\.\-a-z]+)@',
+          'lines' => 12
+      ),
+      'files' => array(
+          'js' => array('jquery.fancytree.min.js'),
+          'css' => array('skin-' . $theme . '/ui.fancytree.css'),
+      ),
+      'variants' => array(
+          'minified' => array(
+              'files' => array(
+                  'js' => array(
+                      'jquery.fancytree.min.js',
+                  ),
+              ),
+          ),
+          'source' => array(
+              'files' => array(
+                  'js' => array(
+                      'jquery.fancytree.js',
+                  ),
+              ),
+          ),
+
+          'all_source' => array(
+              'files' => array(
+                  'js' => array(
+                      'jquery.fancytree-all.js',
+                  ),
+              ),
+          ),
+          'all_min' => array(
+              'files' => array(
+                  'js' => array(
+                      'jquery.fancytree-all.min.js',
+                  ),
+              ),
+          ),
+      ),
+      'integration files' => array(
+          'fancytree' => array(
+              'js' => array('fancytree.js'),
+              'css' => array('fancytree.css'),
+          ),
+      ),
+  );
+  foreach($plugins as $plugin){
+    $plugin = 'jquery.fancytree.' . $plugin . '.js';
+    foreach($libraries['fancytree']['variants'] as $id => $variant){
+      $libraries['fancytree']['variants'][$id]['files']['js'][] = $plugin;
+
+    }
+    $libraries['fancytree']['files']['js'][] = $plugin;
+  }
+
+
+  return $libraries;
+}
+function fancytree_element_info(){
+
+  $element_types['fancytree'] = array(
+      '#input' => TRUE,
+      '#disabled' => FALSE,
+      '#default_value' => array(),
+      '#attached' => array(
+          'libraries_load' => array(
+              array(
+                  'fancytree'
+            ),
+          ),
+      ),
+      '#base_type' => 'textfield',
+      '#theme_wrappers' => array('form_element'),
+      '#process' => array('fancytree_process_input'),
+      '#value_callback' => 'fancytree_fancytree_value',
+      '#theme' => 'fancytree',
+      '#validated' => TRUE,
+      // 'tree' => array('#type' => 'container', '#attributes' => array('class')))
+  );
+  // * Config  generated from http://wwwendt.de/tech/fancytree/demo/sample-configurator.html
+  $element_types['fancytree']['#settings'] = array(
+      'aria' => TRUE, // Enable WAI-ARIA support.
+      'autoCollapse' => FALSE, // Automatically collapse all siblings, when a node is expanded.
+      'autoScroll' => FALSE, // Automatically scroll nodes into visible area.
+      'checkbox' => TRUE, // Show checkboxes.
+      'debugLevel' => 1, // 0:quiet, 1:normal, 2:debug
+      'generateIds' => TRUE, // Generate id attributes like <span id='fancytree-id-KEY'>
+      'idPrefix' => "fancytree-id", // Used to generate node id´s like <span id='fancytree-id-<key>'>.
+      'selectMode' => 3, // 1:single, 2:multi, 3:multi-hier
+      'extensions' => array('filter','glyph'),
+      'filter' => array(
+        'mode' => 'hide',
+        ),
+      );
+  // Load the fancytree js / css files and associated dependencies
+
+  return $element_types;
+}
+/**
+* Provide a default value
+*/
+function fancytree_fancytree_value($element, $input = FALSE, $form_state = array()){
+  if (empty($input)) {
+    return isset($element['#default_value']) ? $element['#default_value'] : array();
+  }else {
+    $value = fancytree_parse_json($input);
+    return $value;
+  }
+}
+function theme_fancytree($variables){
+  $element = $variables['element'];
+  // $output = "<div class=\"fancytree-wrapper\">\n";
+  $output = drupal_render_children($element) . "\n";
+  // $output .= "</div>\n";
+  return $output;
+}
+function fancytree_theme(){
+  return array(
+      'fancytree' => array(
+          'render element' => 'element',
+      ),
+  );
+}
+function fancytree_parse_json($values){
+  $return = array();
+  if(isset($values)){
+    $values = drupal_json_decode($values);
+    foreach($values as $id => $value){
+      //Trim the leading "/""
+      $value = substr($value, 1);
+      $tree = array_reverse(explode('/', $value));
+      $depth = 0;
+      $current_value = array();
+      foreach($tree as $branch){
+        if($depth == 0){
+          $current_value = array($branch =>  TRUE);
+        }else{
+          $current_value = array($branch => $current_value);
+        }
+        $depth ++;
+      }
+      if($current_value){
+        $return += $current_value;
+      }
+    }
+  }
+  return $return;
+}
+function fancytree_process_input($element, &$form_state){
+  if(isset($element['#process_called'])){
+    return $element;
+  }
+  $element['#process_called'] = TRUE;
+  $element['#tree'] = TRUE;
+  $value = array();
+  // if(isset($element['#value']['value'])){
+  //   $value = $element['#default_value'] = $element['#value']['value'] = fancytree_parse_json($element['#value']['value']);
+  // }
+  // if($element['#value']){
+    $element['#default_value'] = $element['#value'];
+  // }
+  $tree = fancytree_walk($element['#options'], $element['#value'], $value);
+  $id = drupal_html_id($element['#name']);
+  $tree_html = '<input type="text" class="treevalue" name="' . $element['#name'] .'" />';
+  $tree_html .= '<div class="fancytree" id="'. $id . '"></div>';
+  $element['#settings']['source'] = $tree;
+  // Apparently we need these if we have more than one tree on the page
+  $element['#settings']['cookieId'] = $element['#settings']['idPrefix'] = $id;
+  $key = 'fancytree_tree_' . crc32(serialize($element['#settings']));
+  $loaded = &drupal_static($key, FALSE);
+  if(!$loaded){
+
+    $element['#attached']['js'] = array(array(
+      'data' => array('fancytree' => array($id => $element['#settings'])),
+      'type' => 'setting',
+      )
+    );
+
+
+    $loaded = TRUE;
+  }
+  $element['tree'] = array(
+      '#type' => 'container',
+      '#children' => $tree_html,
+      '#attributes' => array('class' => array('fancytree-wrapper')),
+      );
+  // $element['#type'] = $element['#base_type'];
+
+  // $element['#attributes'] =  array('class' => array('treevalue'));
+  // $element['value'] = array(
+  //     '#type' => 'textfield',
+  //     '#title' => 'value',
+  //     '#maxlength' => 1024 * 1024,
+  //     '#attributes' =>
+  //     '#name' => $element['#name'],
+  //     // '#default_value' => drupal_json_encode($value),
+  //     '#suffix' => $tree_html,
+  // );
+  // $element['#name'] .= '_fancytree';
+
+  return $element;
+}
+function fancytree_walk($tree = array(), $values = array(), &$selected_nodes = array(), $parent = ''){
+  $nodes = array();
+  foreach ($tree as $key => $branch){
+    if($key === '#title'){
+      //this value has already been attached to the parent
+      continue;
+    }
+    $selected = FALSE;
+    if(is_array($values)){
+      if(isset($values[$key]) && $values[$key]){
+        $selected = TRUE;
+      }
+    } else {
+      $selected = $values;
+    }
+
+    $node = array(
+      'selected' => $selected,
+      'key' => $key,
+      );
+    if(is_array($branch)){
+      $node['title'] = isset($branch['#title']) ? $branch['#title'] : $key;
+      $node['folder'] = TRUE;
+
+      $node['children'] = fancytree_walk($branch, isset($values[$key]) ? $values[$key] : $selected, $selected_nodes, $key);
+    }else{
+      $node['title'] = $branch;// = array('title' => $branch, 'key' => 'node|'.$depth.'|'.$key);
+    }
+    if($node['selected']){
+      $selected_nodes[] = $node['key'];
+    }
+    $nodes[] = $node;
+  }
+  return $nodes;
+}
+function fancytree_block_info(){
+  return array(
+      'test' => array(
+          'info' => t('Fancytree Test'),
+      ),
+  );
+}
+
+function fancytree_block_view($delta = ''){
+  $block = array();
+  switch($delta){
+    case 'test':
+      $block['subject'] = t('Test Fancytree');
+      $block['content'] = drupal_get_form('fancytree_test_form');
+      break;
+    default:
+      break;
+  }
+  return $block;
+}
+function fancytree_test_form($form, &$form_state){
+  $options =   array(
+  // -- First option group
+  'image_galleries' => array(
+    '#title' => 'Image Galleries',
+    1 => 'Book Covers',
+    2 => 'Movie Posters',
+    3 => 'Illustrations',
+  ),
+  // -- Second option group
+  'authors' => array(
+    4 => 'Arthur C. Clark',
+    5 => 'Frank Herbert',
+    // ...
+    9 => 'Robert Heinlein',
+    '#title' => 'Authors',
+  ),
+  // -- Third option group
+  'genres' => array(
+    '#title' => 'Genres',
+    10 => 'Alien Invasion',
+    15 => 'Space Wars',
+     'authors' => array(
+      4 => 'Arthur C. Clark',
+      5 => 'Frank Herbert',
+      // ...
+      9 => 'Robert Heinlein',
+      '#title' => 'Authors',
+    ),
+  ),
+);
+  $form['test'] = array(
+      '#type' => 'fancytree',
+      '#title' => 'Fancytree Test',
+      '#options' => $options,
+      '#description' => t('You can test the fanciness of this tree here'),
+  );
+  $form['test']['#default_value'] = array(
+        'image_galleries' => array(
+          2 => TRUE
+          ),
+        'authors' => TRUE,
+        'genres' => array('authors' => array(4 => TRUE)));
+  // $form['#method'] = 'get';
+  $form['tree2'] = $form['test'];
+  ksort($form['tree2']['#options']);
+  $form['submit'] = array(
+      '#type' => 'submit',
+
+      // #value is the text to display inside the button
+      '#value' => t('Submit'),
+  );
+
+  return $form;
+}

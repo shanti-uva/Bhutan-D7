@@ -1,0 +1,16 @@
+<?php
+
+/*
+ * @file
+ * 
+ * A panels pane to improve php input experience for panels.
+ */
+
+/**
+ * Implements hook_ctools_plugin_directory().
+ */
+function panels_php_ctools_plugin_directory($module, $plugin) {
+  if ($module == 'ctools' && !empty($plugin)) {
+    return "plugins/$plugin";
+  }
+}

@@ -1,0 +1,1173 @@
+<?php
+/**
+ * @file
+ * audio_video.field_group.inc
+ */
+
+/**
+ * Implements hook_field_group_info().
+ */
+function audio_video_field_group_info() {
+  $field_groups = array();
+
+  $field_group = new stdClass();
+  $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->api_version = 1;
+  $field_group->identifier = 'group_availability_access|node|audio|default';
+  $field_group->group_name = 'group_availability_access';
+  $field_group->entity_type = 'node';
+  $field_group->bundle = 'audio';
+  $field_group->mode = 'default';
+  $field_group->parent_name = '';
+  $field_group->data = array(
+    'label' => 'Availability & Access',
+    'weight' => '8',
+    'children' => array(
+      0 => 'field_available_from',
+      1 => 'group_content_access',
+    ),
+    'format_type' => 'fieldset',
+    'format_settings' => array(
+      'label' => 'Availability & Access',
+      'instance_settings' => array(
+        'classes' => ' group-availability-access field-group-fieldset',
+        'description' => '',
+      ),
+      'formatter' => 'collapsed',
+    ),
+  );
+  $field_groups['group_availability_access|node|audio|default'] = $field_group;
+
+  $field_group = new stdClass();
+  $field_group->disabled = TRUE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->api_version = 1;
+  $field_group->identifier = 'group_availability_access|node|audio|form';
+  $field_group->group_name = 'group_availability_access';
+  $field_group->entity_type = 'node';
+  $field_group->bundle = 'audio';
+  $field_group->mode = 'form';
+  $field_group->parent_name = '';
+  $field_group->data = array(
+    'label' => 'Availability & Access',
+    'weight' => '7',
+    'children' => array(
+      0 => 'field_available_from',
+      1 => 'group_content_access',
+    ),
+    'format_type' => 'fieldset',
+    'format_settings' => array(
+      'label' => 'Availability & Access',
+      'instance_settings' => array(
+        'required_fields' => 1,
+        'classes' => ' group-availability-access field-group-fieldset',
+        'description' => '',
+      ),
+      'formatter' => 'collapsed',
+    ),
+  );
+  $field_groups['group_availability_access|node|audio|form'] = $field_group;
+
+  $field_group = new stdClass();
+  $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->api_version = 1;
+  $field_group->identifier = 'group_availability_access|node|video|default';
+  $field_group->group_name = 'group_availability_access';
+  $field_group->entity_type = 'node';
+  $field_group->bundle = 'video';
+  $field_group->mode = 'default';
+  $field_group->parent_name = '';
+  $field_group->data = array(
+    'label' => 'Availability & Access',
+    'weight' => '6',
+    'children' => array(
+      0 => 'field_available_from',
+      1 => 'group_content_access',
+    ),
+    'format_type' => 'fieldset',
+    'format_settings' => array(
+      'label' => 'Availability & Access',
+      'instance_settings' => array(
+        'classes' => ' group-availability-access field-group-fieldset',
+        'description' => '',
+      ),
+      'formatter' => 'collapsed',
+    ),
+  );
+  $field_groups['group_availability_access|node|video|default'] = $field_group;
+
+  $field_group = new stdClass();
+  $field_group->disabled = TRUE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->api_version = 1;
+  $field_group->identifier = 'group_availability_access|node|video|form';
+  $field_group->group_name = 'group_availability_access';
+  $field_group->entity_type = 'node';
+  $field_group->bundle = 'video';
+  $field_group->mode = 'form';
+  $field_group->parent_name = '';
+  $field_group->data = array(
+    'label' => 'Availability & Access',
+    'weight' => '6',
+    'children' => array(
+      0 => 'field_available_from',
+      1 => 'group_content_access',
+    ),
+    'format_type' => 'fieldset',
+    'format_settings' => array(
+      'label' => 'Availability & Access',
+      'instance_settings' => array(
+        'required_fields' => 1,
+        'classes' => ' group-availability-access field-group-fieldset',
+        'description' => '',
+      ),
+      'formatter' => 'collapsed',
+    ),
+  );
+  $field_groups['group_availability_access|node|video|form'] = $field_group;
+
+  $field_group = new stdClass();
+  $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->api_version = 1;
+  $field_group->identifier = 'group_catalog_record_workflow|field_collection_item|field_workflow|form';
+  $field_group->group_name = 'group_catalog_record_workflow';
+  $field_group->entity_type = 'field_collection_item';
+  $field_group->bundle = 'field_workflow';
+  $field_group->mode = 'form';
+  $field_group->parent_name = '';
+  $field_group->data = array(
+    'label' => 'Catalog Record Workflow',
+    'weight' => '1',
+    'children' => array(
+      0 => 'field_basic_cataloging',
+      1 => 'field_cataloging_proofed',
+      2 => 'field_place_data_present',
+      3 => 'field_translation_language_1',
+      4 => 'field_translation_language_2',
+      5 => 'field_catalog_workflow_notes',
+      6 => 'field_extended_cataloging_new',
+    ),
+    'format_type' => 'fieldset',
+    'format_settings' => array(
+      'label' => 'Catalog Record Workflow',
+      'instance_settings' => array(
+        'required_fields' => 1,
+        'classes' => ' group-catalog-record-workflow field-group-fieldset',
+        'description' => '',
+      ),
+      'formatter' => 'collapsed',
+    ),
+  );
+  $field_groups['group_catalog_record_workflow|field_collection_item|field_workflow|form'] = $field_group;
+
+  $field_group = new stdClass();
+  $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->api_version = 1;
+  $field_group->identifier = 'group_details|node|audio|default';
+  $field_group->group_name = 'group_details';
+  $field_group->entity_type = 'node';
+  $field_group->bundle = 'audio';
+  $field_group->mode = 'default';
+  $field_group->parent_name = '';
+  $field_group->data = array(
+    'label' => 'Details',
+    'weight' => '5',
+    'children' => array(
+      0 => 'field_pbcore_coverage',
+      1 => 'field_pbcore_title',
+      2 => 'field_pbcore_relation',
+      3 => 'field_location',
+      4 => 'field_recording_location_new',
+      5 => 'field_subcollection_new',
+      6 => 'field_subject',
+      7 => 'field_og_collection_ref',
+      8 => 'field_language_kmap',
+    ),
+    'format_type' => 'fieldset',
+    'format_settings' => array(
+      'formatter' => 'collapsible',
+      'instance_settings' => array(
+        'description' => '',
+        'classes' => ' group-details field-group-fieldset',
+        'required_fields' => 1,
+      ),
+    ),
+  );
+  $field_groups['group_details|node|audio|default'] = $field_group;
+
+  $field_group = new stdClass();
+  $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->api_version = 1;
+  $field_group->identifier = 'group_details|node|audio|form';
+  $field_group->group_name = 'group_details';
+  $field_group->entity_type = 'node';
+  $field_group->bundle = 'audio';
+  $field_group->mode = 'form';
+  $field_group->parent_name = '';
+  $field_group->data = array(
+    'label' => 'Classification',
+    'weight' => '5',
+    'children' => array(
+      0 => 'field_pbcore_coverage',
+      1 => 'field_tags',
+      2 => 'field_pbcore_relation',
+      3 => 'field_kmap_annotation',
+      4 => 'field_location',
+      5 => 'field_recording_location_new',
+      6 => 'field_subcollection_new',
+      7 => 'field_subject',
+      8 => 'field_language_kmap',
+    ),
+    'format_type' => 'fieldset',
+    'format_settings' => array(
+      'label' => 'Classification',
+      'instance_settings' => array(
+        'required_fields' => 0,
+        'id' => '',
+        'classes' => ' group-details field-group-fieldset',
+        'description' => '',
+      ),
+      'formatter' => 'collapsed',
+    ),
+  );
+  $field_groups['group_details|node|audio|form'] = $field_group;
+
+  $field_group = new stdClass();
+  $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->api_version = 1;
+  $field_group->identifier = 'group_details|node|video|default';
+  $field_group->group_name = 'group_details';
+  $field_group->entity_type = 'node';
+  $field_group->bundle = 'video';
+  $field_group->mode = 'default';
+  $field_group->parent_name = '';
+  $field_group->data = array(
+    'label' => 'Details',
+    'weight' => '3',
+    'children' => array(
+      0 => 'field_pbcore_coverage',
+      1 => 'field_pbcore_title',
+      2 => 'field_pbcore_relation',
+      3 => 'field_location',
+      4 => 'field_recording_location_new',
+      5 => 'field_subcollection_new',
+      6 => 'field_subject',
+      7 => 'field_og_collection_ref',
+      8 => 'field_language_kmap',
+    ),
+    'format_type' => 'fieldset',
+    'format_settings' => array(
+      'formatter' => 'collapsible',
+      'instance_settings' => array(
+        'description' => '',
+        'classes' => ' group-details field-group-fieldset',
+        'required_fields' => 1,
+      ),
+    ),
+  );
+  $field_groups['group_details|node|video|default'] = $field_group;
+
+  $field_group = new stdClass();
+  $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->api_version = 1;
+  $field_group->identifier = 'group_details|node|video|form';
+  $field_group->group_name = 'group_details';
+  $field_group->entity_type = 'node';
+  $field_group->bundle = 'video';
+  $field_group->mode = 'form';
+  $field_group->parent_name = '';
+  $field_group->data = array(
+    'label' => 'Classification',
+    'weight' => '4',
+    'children' => array(
+      0 => 'field_pbcore_coverage',
+      1 => 'field_tags',
+      2 => 'field_pbcore_relation',
+      3 => 'field_kmap_annotation',
+      4 => 'field_location',
+      5 => 'field_recording_location_new',
+      6 => 'field_subcollection_new',
+      7 => 'field_subject',
+      8 => 'field_language_kmap',
+    ),
+    'format_type' => 'fieldset',
+    'format_settings' => array(
+      'label' => 'Classification',
+      'instance_settings' => array(
+        'required_fields' => 1,
+        'classes' => ' group-details field-group-fieldset',
+        'description' => '',
+      ),
+      'formatter' => 'collapsed',
+    ),
+  );
+  $field_groups['group_details|node|video|form'] = $field_group;
+
+  $field_group = new stdClass();
+  $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->api_version = 1;
+  $field_group->identifier = 'group_media_workflow|field_collection_item|field_workflow|form';
+  $field_group->group_name = 'group_media_workflow';
+  $field_group->entity_type = 'field_collection_item';
+  $field_group->bundle = 'field_workflow';
+  $field_group->mode = 'form';
+  $field_group->parent_name = '';
+  $field_group->data = array(
+    'label' => 'Media Workflow',
+    'weight' => '0',
+    'children' => array(
+      0 => 'field_audio_quality_acceptable',
+      1 => 'field_edls_archived',
+      2 => 'field_masters_archived',
+      3 => 'field_media_needs_re_editing',
+      4 => 'field_media_needs_recompression',
+      5 => 'field_media_problem_1',
+      6 => 'field_media_problem_2',
+      7 => 'field_media_problem_3',
+      8 => 'field_video_quality_acceptable',
+      9 => 'field_workflow_notes',
+    ),
+    'format_type' => 'fieldset',
+    'format_settings' => array(
+      'formatter' => 'collapsible',
+      'instance_settings' => array(
+        'description' => '',
+        'classes' => ' group-media-workflow field-group-fieldset',
+        'required_fields' => 1,
+      ),
+    ),
+  );
+  $field_groups['group_media_workflow|field_collection_item|field_workflow|form'] = $field_group;
+
+  $field_group = new stdClass();
+  $field_group->disabled = TRUE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->api_version = 1;
+  $field_group->identifier = 'group_media|node|audio|form';
+  $field_group->group_name = 'group_media';
+  $field_group->entity_type = 'node';
+  $field_group->bundle = 'audio';
+  $field_group->mode = 'form';
+  $field_group->parent_name = '';
+  $field_group->data = array(
+    'label' => 'Thumbnail and Related Media',
+    'weight' => '3',
+    'children' => array(
+      0 => 'field_pbcore_relation',
+      1 => 'field_thumbnail_image',
+    ),
+    'format_type' => 'fieldset',
+    'format_settings' => array(
+      'label' => 'Thumbnail and Related Media',
+      'instance_settings' => array(
+        'required_fields' => 1,
+        'id' => '',
+        'classes' => ' group-media field-group-fieldset',
+        'description' => '',
+      ),
+      'formatter' => 'collapsible',
+    ),
+  );
+  $field_groups['group_media|node|audio|form'] = $field_group;
+
+  $field_group = new stdClass();
+  $field_group->disabled = TRUE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->api_version = 1;
+  $field_group->identifier = 'group_media|node|video|form';
+  $field_group->group_name = 'group_media';
+  $field_group->entity_type = 'node';
+  $field_group->bundle = 'video';
+  $field_group->mode = 'form';
+  $field_group->parent_name = '';
+  $field_group->data = array(
+    'label' => 'Media',
+    'weight' => '2',
+    'children' => array(
+      0 => 'field_pbcore_relation',
+    ),
+    'format_type' => 'fieldset',
+    'format_settings' => array(
+      'label' => 'Media',
+      'instance_settings' => array(
+        'required_fields' => 0,
+        'classes' => ' group-media field-group-fieldset',
+        'description' => '',
+      ),
+      'formatter' => 'collapsible',
+    ),
+  );
+  $field_groups['group_media|node|video|form'] = $field_group;
+
+  $field_group = new stdClass();
+  $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->api_version = 1;
+  $field_group->identifier = 'group_people|node|audio|default';
+  $field_group->group_name = 'group_people';
+  $field_group->entity_type = 'node';
+  $field_group->bundle = 'audio';
+  $field_group->mode = 'default';
+  $field_group->parent_name = '';
+  $field_group->data = array(
+    'label' => 'People',
+    'weight' => '6',
+    'children' => array(
+      0 => 'field_pbcore_contributor',
+      1 => 'field_pbcore_creator',
+      2 => 'field_pbcore_publisher',
+      3 => 'field_pbcore_sponsor',
+    ),
+    'format_type' => 'fieldset',
+    'format_settings' => array(
+      'label' => 'People',
+      'instance_settings' => array(
+        'classes' => ' group-people field-group-fieldset',
+        'description' => '',
+      ),
+      'formatter' => 'collapsible',
+    ),
+  );
+  $field_groups['group_people|node|audio|default'] = $field_group;
+
+  $field_group = new stdClass();
+  $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->api_version = 1;
+  $field_group->identifier = 'group_people|node|audio|form';
+  $field_group->group_name = 'group_people';
+  $field_group->entity_type = 'node';
+  $field_group->bundle = 'audio';
+  $field_group->mode = 'form';
+  $field_group->parent_name = '';
+  $field_group->data = array(
+    'label' => 'Availability & Copyrights',
+    'weight' => '8',
+    'children' => array(
+      0 => 'field_available_from',
+      1 => 'field_pbcore_publisher',
+      2 => 'field_pbcore_rights_summary',
+      3 => 'field_pbcore_sponsor',
+    ),
+    'format_type' => 'fieldset',
+    'format_settings' => array(
+      'label' => 'Availability & Copyrights',
+      'instance_settings' => array(
+        'required_fields' => 1,
+        'id' => '',
+        'classes' => ' group-people field-group-fieldset',
+        'description' => '',
+      ),
+      'formatter' => 'collapsed',
+    ),
+  );
+  $field_groups['group_people|node|audio|form'] = $field_group;
+
+  $field_group = new stdClass();
+  $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->api_version = 1;
+  $field_group->identifier = 'group_people|node|video|default';
+  $field_group->group_name = 'group_people';
+  $field_group->entity_type = 'node';
+  $field_group->bundle = 'video';
+  $field_group->mode = 'default';
+  $field_group->parent_name = '';
+  $field_group->data = array(
+    'label' => 'People',
+    'weight' => '4',
+    'children' => array(
+      0 => 'field_pbcore_contributor',
+      1 => 'field_pbcore_creator',
+      2 => 'field_pbcore_publisher',
+      3 => 'field_pbcore_sponsor',
+    ),
+    'format_type' => 'fieldset',
+    'format_settings' => array(
+      'label' => 'People',
+      'instance_settings' => array(
+        'classes' => ' group-people field-group-fieldset',
+        'description' => '',
+      ),
+      'formatter' => 'collapsible',
+    ),
+  );
+  $field_groups['group_people|node|video|default'] = $field_group;
+
+  $field_group = new stdClass();
+  $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->api_version = 1;
+  $field_group->identifier = 'group_people|node|video|form';
+  $field_group->group_name = 'group_people';
+  $field_group->entity_type = 'node';
+  $field_group->bundle = 'video';
+  $field_group->mode = 'form';
+  $field_group->parent_name = '';
+  $field_group->data = array(
+    'label' => 'Availability & Copyrights',
+    'weight' => '7',
+    'children' => array(
+      0 => 'field_available_from',
+      1 => 'field_copyright_owner',
+      2 => 'field_license',
+      3 => 'field_pbcore_publisher',
+      4 => 'field_pbcore_rights_summary',
+      5 => 'field_year_published',
+      6 => 'field_pbcore_sponsor',
+    ),
+    'format_type' => 'fieldset',
+    'format_settings' => array(
+      'label' => 'Availability & Copyrights',
+      'instance_settings' => array(
+        'required_fields' => 1,
+        'id' => '',
+        'classes' => ' group-people field-group-fieldset',
+        'description' => '',
+      ),
+      'formatter' => 'collapsed',
+    ),
+  );
+  $field_groups['group_people|node|video|form'] = $field_group;
+
+  $field_group = new stdClass();
+  $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->api_version = 1;
+  $field_group->identifier = 'group_required_audio_info|node|audio|form';
+  $field_group->group_name = 'group_required_audio_info';
+  $field_group->entity_type = 'node';
+  $field_group->bundle = 'audio';
+  $field_group->mode = 'form';
+  $field_group->parent_name = '';
+  $field_group->data = array(
+    'label' => 'Required Audio Info',
+    'weight' => '0',
+    'children' => array(
+      0 => 'field_pbcore_contributor',
+      1 => 'field_pbcore_creator',
+      2 => 'field_pbcore_description',
+      3 => 'field_pbcore_title',
+      4 => 'group_content_access',
+      5 => 'field_audio',
+      6 => 'field_thumbnail_image',
+      7 => 'field_og_collection_ref',
+      8 => 'title',
+    ),
+    'format_type' => 'fieldset',
+    'format_settings' => array(
+      'label' => 'Required Audio Info',
+      'instance_settings' => array(
+        'required_fields' => 1,
+        'id' => '',
+        'classes' => 'group-required-audio-info field-group-fieldset',
+        'description' => '',
+      ),
+      'formatter' => 'collapsible',
+    ),
+  );
+  $field_groups['group_required_audio_info|node|audio|form'] = $field_group;
+
+  $field_group = new stdClass();
+  $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->api_version = 1;
+  $field_group->identifier = 'group_required_video_info|node|video|form';
+  $field_group->group_name = 'group_required_video_info';
+  $field_group->entity_type = 'node';
+  $field_group->bundle = 'video';
+  $field_group->mode = 'form';
+  $field_group->parent_name = '';
+  $field_group->data = array(
+    'label' => 'Required Video Info',
+    'weight' => '0',
+    'children' => array(
+      0 => 'field_pbcore_contributor',
+      1 => 'field_pbcore_creator',
+      2 => 'field_pbcore_description',
+      3 => 'field_pbcore_title',
+      4 => 'field_video',
+      5 => 'group_content_access',
+      6 => 'field_og_collection_ref',
+      7 => 'title',
+    ),
+    'format_type' => 'fieldset',
+    'format_settings' => array(
+      'label' => 'Required Video Info',
+      'instance_settings' => array(
+        'required_fields' => 1,
+        'id' => '',
+        'classes' => 'group-required-video-info field-group-fieldset',
+        'description' => '',
+      ),
+      'formatter' => 'collapsible',
+    ),
+  );
+  $field_groups['group_required_video_info|node|video|form'] = $field_group;
+
+  $field_group = new stdClass();
+  $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->api_version = 1;
+  $field_group->identifier = 'group_rights|node|audio|default';
+  $field_group->group_name = 'group_rights';
+  $field_group->entity_type = 'node';
+  $field_group->bundle = 'audio';
+  $field_group->mode = 'default';
+  $field_group->parent_name = '';
+  $field_group->data = array(
+    'label' => 'Rights & Licensing',
+    'weight' => '7',
+    'children' => array(
+      0 => 'field_copyright_owner',
+      1 => 'field_license',
+      2 => 'field_pbcore_rights_summary',
+      3 => 'field_year_published',
+    ),
+    'format_type' => 'fieldset',
+    'format_settings' => array(
+      'label' => 'Rights & Licensing',
+      'instance_settings' => array(
+        'classes' => ' group-rights field-group-fieldset',
+        'description' => '',
+      ),
+      'formatter' => 'collapsed',
+    ),
+  );
+  $field_groups['group_rights|node|audio|default'] = $field_group;
+
+  $field_group = new stdClass();
+  $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->api_version = 1;
+  $field_group->identifier = 'group_rights|node|audio|form';
+  $field_group->group_name = 'group_rights';
+  $field_group->entity_type = 'node';
+  $field_group->bundle = 'audio';
+  $field_group->mode = 'form';
+  $field_group->parent_name = '';
+  $field_group->data = array(
+    'label' => 'Rights & Licensing',
+    'weight' => '6',
+    'children' => array(
+      0 => 'field_copyright_owner',
+      1 => 'field_license',
+      2 => 'field_year_published',
+    ),
+    'format_type' => 'fieldset',
+    'format_settings' => array(
+      'label' => 'Rights & Licensing',
+      'instance_settings' => array(
+        'required_fields' => 1,
+        'classes' => ' group-rights field-group-fieldset',
+        'description' => '',
+      ),
+      'formatter' => 'collapsed',
+    ),
+  );
+  $field_groups['group_rights|node|audio|form'] = $field_group;
+
+  $field_group = new stdClass();
+  $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->api_version = 1;
+  $field_group->identifier = 'group_rights|node|video|default';
+  $field_group->group_name = 'group_rights';
+  $field_group->entity_type = 'node';
+  $field_group->bundle = 'video';
+  $field_group->mode = 'default';
+  $field_group->parent_name = '';
+  $field_group->data = array(
+    'label' => 'Rights & Licensing',
+    'weight' => '5',
+    'children' => array(
+      0 => 'field_copyright_owner',
+      1 => 'field_license',
+      2 => 'field_pbcore_rights_summary',
+      3 => 'field_year_published',
+    ),
+    'format_type' => 'fieldset',
+    'format_settings' => array(
+      'label' => 'Rights & Licensing',
+      'instance_settings' => array(
+        'classes' => ' group-rights field-group-fieldset',
+        'description' => '',
+      ),
+      'formatter' => 'collapsed',
+    ),
+  );
+  $field_groups['group_rights|node|video|default'] = $field_group;
+
+  $field_group = new stdClass();
+  $field_group->disabled = TRUE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->api_version = 1;
+  $field_group->identifier = 'group_rights|node|video|form';
+  $field_group->group_name = 'group_rights';
+  $field_group->entity_type = 'node';
+  $field_group->bundle = 'video';
+  $field_group->mode = 'form';
+  $field_group->parent_name = '';
+  $field_group->data = array(
+    'label' => 'Rights & Licensing',
+    'weight' => '5',
+    'children' => array(
+      0 => 'field_copyright_owner',
+      1 => 'field_license',
+      2 => 'field_year_published',
+    ),
+    'format_type' => 'fieldset',
+    'format_settings' => array(
+      'label' => 'Rights & Licensing',
+      'instance_settings' => array(
+        'required_fields' => 1,
+        'classes' => ' group-rights field-group-fieldset',
+        'description' => '',
+      ),
+      'formatter' => 'collapsed',
+    ),
+  );
+  $field_groups['group_rights|node|video|form'] = $field_group;
+
+  $field_group = new stdClass();
+  $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->api_version = 1;
+  $field_group->identifier = 'group_technical|node|audio|default';
+  $field_group->group_name = 'group_technical';
+  $field_group->entity_type = 'node';
+  $field_group->bundle = 'audio';
+  $field_group->mode = 'default';
+  $field_group->parent_name = '';
+  $field_group->data = array(
+    'label' => 'Technical Metadata',
+    'weight' => '9',
+    'children' => array(
+      0 => 'field_pbcore_identifier',
+      1 => 'field_pbcore_instantiation',
+    ),
+    'format_type' => 'fieldset',
+    'format_settings' => array(
+      'label' => 'Technical Metadata',
+      'instance_settings' => array(
+        'classes' => ' group-technical field-group-fieldset',
+        'description' => '',
+      ),
+      'formatter' => 'collapsed',
+    ),
+  );
+  $field_groups['group_technical|node|audio|default'] = $field_group;
+
+  $field_group = new stdClass();
+  $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->api_version = 1;
+  $field_group->identifier = 'group_technical|node|audio|form';
+  $field_group->group_name = 'group_technical';
+  $field_group->entity_type = 'node';
+  $field_group->bundle = 'audio';
+  $field_group->mode = 'form';
+  $field_group->parent_name = '';
+  $field_group->data = array(
+    'label' => 'Technical Metadata',
+    'weight' => '9',
+    'children' => array(
+      0 => 'field_pbcore_extension',
+      1 => 'field_pbcore_identifier',
+      2 => 'field_pbcore_instantiation',
+    ),
+    'format_type' => 'fieldset',
+    'format_settings' => array(
+      'label' => 'Technical Metadata',
+      'instance_settings' => array(
+        'required_fields' => 1,
+        'classes' => ' group-technical field-group-fieldset',
+        'description' => '',
+      ),
+      'formatter' => 'collapsed',
+    ),
+  );
+  $field_groups['group_technical|node|audio|form'] = $field_group;
+
+  $field_group = new stdClass();
+  $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->api_version = 1;
+  $field_group->identifier = 'group_technical|node|video|default';
+  $field_group->group_name = 'group_technical';
+  $field_group->entity_type = 'node';
+  $field_group->bundle = 'video';
+  $field_group->mode = 'default';
+  $field_group->parent_name = '';
+  $field_group->data = array(
+    'label' => 'Technical Metadata',
+    'weight' => '7',
+    'children' => array(
+      0 => 'field_pbcore_identifier',
+      1 => 'field_pbcore_instantiation',
+    ),
+    'format_type' => 'fieldset',
+    'format_settings' => array(
+      'label' => 'Technical Metadata',
+      'instance_settings' => array(
+        'required_fields' => 1,
+        'classes' => ' group-technical field-group-fieldset',
+        'description' => '',
+      ),
+      'formatter' => 'collapsed',
+    ),
+  );
+  $field_groups['group_technical|node|video|default'] = $field_group;
+
+  $field_group = new stdClass();
+  $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->api_version = 1;
+  $field_group->identifier = 'group_technical|node|video|form';
+  $field_group->group_name = 'group_technical';
+  $field_group->entity_type = 'node';
+  $field_group->bundle = 'video';
+  $field_group->mode = 'form';
+  $field_group->parent_name = '';
+  $field_group->data = array(
+    'label' => 'Technical Metadata',
+    'weight' => '8',
+    'children' => array(
+      0 => 'field_pbcore_extension',
+      1 => 'field_pbcore_identifier',
+      2 => 'field_pbcore_instantiation',
+    ),
+    'format_type' => 'fieldset',
+    'format_settings' => array(
+      'label' => 'Technical Metadata',
+      'instance_settings' => array(
+        'required_fields' => 1,
+        'classes' => ' group-technical field-group-fieldset',
+        'description' => '',
+      ),
+      'formatter' => 'collapsed',
+    ),
+  );
+  $field_groups['group_technical|node|video|form'] = $field_group;
+
+  $field_group = new stdClass();
+  $field_group->disabled = TRUE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->api_version = 1;
+  $field_group->identifier = 'group_title_desc|node|audio|default';
+  $field_group->group_name = 'group_title_desc';
+  $field_group->entity_type = 'node';
+  $field_group->bundle = 'audio';
+  $field_group->mode = 'default';
+  $field_group->parent_name = '';
+  $field_group->data = array(
+    'label' => 'Title & Description',
+    'weight' => '4',
+    'children' => array(),
+    'format_type' => 'fieldset',
+    'format_settings' => array(
+      'formatter' => 'collapsible',
+      'instance_settings' => array(
+        'description' => '',
+        'classes' => ' group-title-desc field-group-fieldset',
+        'required_fields' => 1,
+      ),
+    ),
+  );
+  $field_groups['group_title_desc|node|audio|default'] = $field_group;
+
+  $field_group = new stdClass();
+  $field_group->disabled = TRUE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->api_version = 1;
+  $field_group->identifier = 'group_title_desc|node|audio|form';
+  $field_group->group_name = 'group_title_desc';
+  $field_group->entity_type = 'node';
+  $field_group->bundle = 'audio';
+  $field_group->mode = 'form';
+  $field_group->parent_name = '';
+  $field_group->data = array(
+    'label' => 'Description',
+    'weight' => '2',
+    'children' => array(
+      0 => 'field_pbcore_description',
+    ),
+    'format_type' => 'fieldset',
+    'format_settings' => array(
+      'label' => 'Description',
+      'instance_settings' => array(
+        'required_fields' => 1,
+        'id' => '',
+        'classes' => ' group-title-desc field-group-fieldset',
+        'description' => '',
+      ),
+      'formatter' => 'collapsed',
+    ),
+  );
+  $field_groups['group_title_desc|node|audio|form'] = $field_group;
+
+  $field_group = new stdClass();
+  $field_group->disabled = TRUE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->api_version = 1;
+  $field_group->identifier = 'group_title_desc|node|video|default';
+  $field_group->group_name = 'group_title_desc';
+  $field_group->entity_type = 'node';
+  $field_group->bundle = 'video';
+  $field_group->mode = 'default';
+  $field_group->parent_name = '';
+  $field_group->data = array(
+    'label' => 'Title & Description',
+    'weight' => '4',
+    'children' => array(
+      0 => 'field_pbcore_description',
+      1 => 'field_pbcore_title',
+      2 => 'field_tags',
+    ),
+    'format_type' => 'fieldset',
+    'format_settings' => array(
+      'formatter' => 'collapsible',
+      'instance_settings' => array(
+        'description' => '',
+        'classes' => ' group-title-desc field-group-fieldset',
+        'required_fields' => 1,
+      ),
+    ),
+  );
+  $field_groups['group_title_desc|node|video|default'] = $field_group;
+
+  $field_group = new stdClass();
+  $field_group->disabled = TRUE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->api_version = 1;
+  $field_group->identifier = 'group_title_desc|node|video|form';
+  $field_group->group_name = 'group_title_desc';
+  $field_group->entity_type = 'node';
+  $field_group->bundle = 'video';
+  $field_group->mode = 'form';
+  $field_group->parent_name = '';
+  $field_group->data = array(
+    'label' => 'Description',
+    'weight' => '1',
+    'children' => array(
+      0 => 'field_pbcore_description',
+    ),
+    'format_type' => 'fieldset',
+    'format_settings' => array(
+      'label' => 'Description',
+      'instance_settings' => array(
+        'required_fields' => 1,
+        'id' => '',
+        'classes' => ' group-title-desc field-group-fieldset',
+        'description' => '',
+      ),
+      'formatter' => 'collapsed',
+    ),
+  );
+  $field_groups['group_title_desc|node|video|form'] = $field_group;
+
+  $field_group = new stdClass();
+  $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->api_version = 1;
+  $field_group->identifier = 'group_transcript_workflow|field_collection_item|field_workflow|form';
+  $field_group->group_name = 'group_transcript_workflow';
+  $field_group->entity_type = 'field_collection_item';
+  $field_group->bundle = 'field_workflow';
+  $field_group->mode = 'form';
+  $field_group->parent_name = '';
+  $field_group->data = array(
+    'label' => 'Transcript Workflow',
+    'weight' => '2',
+    'children' => array(
+      0 => 'field_timecode_too_infrequent',
+      1 => 'field_timecoding_problem_1',
+      2 => 'field_timecoding_problem_2',
+      3 => 'field_trans_proofed_lang_1',
+      4 => 'field_trans_proofed_lang_2',
+      5 => 'field_trans_proofed_lang_3',
+      6 => 'field_translation_lang_3',
+      7 => 'field_timecoded',
+      8 => 'field_transcribed',
+      9 => 'field_transcript_workflow_notes',
+      10 => 'field_translation_input_lang_1',
+      11 => 'field_translation_input_lang_2',
+    ),
+    'format_type' => 'fieldset',
+    'format_settings' => array(
+      'label' => 'Transcript Workflow',
+      'instance_settings' => array(
+        'required_fields' => 1,
+        'classes' => ' group-transcript-workflow field-group-fieldset',
+        'description' => '',
+      ),
+      'formatter' => 'collapsed',
+    ),
+  );
+  $field_groups['group_transcript_workflow|field_collection_item|field_workflow|form'] = $field_group;
+
+  $field_group = new stdClass();
+  $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->api_version = 1;
+  $field_group->identifier = 'group_transcript|node|audio|form';
+  $field_group->group_name = 'group_transcript';
+  $field_group->entity_type = 'node';
+  $field_group->bundle = 'audio';
+  $field_group->mode = 'form';
+  $field_group->parent_name = '';
+  $field_group->data = array(
+    'label' => 'Transcript',
+    'weight' => '4',
+    'children' => array(
+      0 => 'field_transcript',
+    ),
+    'format_type' => 'fieldset',
+    'format_settings' => array(
+      'label' => 'Transcript',
+      'instance_settings' => array(
+        'required_fields' => 0,
+        'classes' => ' group-transcript field-group-fieldset',
+        'description' => '',
+      ),
+      'formatter' => 'collapsed',
+    ),
+  );
+  $field_groups['group_transcript|node|audio|form'] = $field_group;
+
+  $field_group = new stdClass();
+  $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->api_version = 1;
+  $field_group->identifier = 'group_transcript|node|video|form';
+  $field_group->group_name = 'group_transcript';
+  $field_group->entity_type = 'node';
+  $field_group->bundle = 'video';
+  $field_group->mode = 'form';
+  $field_group->parent_name = '';
+  $field_group->data = array(
+    'label' => 'Transcript',
+    'weight' => '3',
+    'children' => array(
+      0 => 'field_transcript',
+    ),
+    'format_type' => 'fieldset',
+    'format_settings' => array(
+      'label' => 'Transcript',
+      'instance_settings' => array(
+        'required_fields' => 0,
+        'classes' => ' group-transcript field-group-fieldset',
+        'description' => '',
+      ),
+      'formatter' => 'collapsed',
+    ),
+  );
+  $field_groups['group_transcript|node|video|form'] = $field_group;
+
+  $field_group = new stdClass();
+  $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->api_version = 1;
+  $field_group->identifier = 'group_workflow|field_collection_item|field_workflow|default';
+  $field_group->group_name = 'group_workflow';
+  $field_group->entity_type = 'field_collection_item';
+  $field_group->bundle = 'field_workflow';
+  $field_group->mode = 'default';
+  $field_group->parent_name = '';
+  $field_group->data = array(
+    'label' => 'Workflow',
+    'weight' => '0',
+    'children' => array(
+      0 => 'field_audio_quality_acceptable',
+      1 => 'field_basic_cataloging',
+      2 => 'field_cataloging_proofed',
+      3 => 'field_edls_archived',
+      4 => 'field_masters_archived',
+      5 => 'field_media_needs_re_editing',
+      6 => 'field_media_needs_recompression',
+      7 => 'field_media_problem_1',
+      8 => 'field_media_problem_2',
+      9 => 'field_media_problem_3',
+      10 => 'field_place_data_present',
+      11 => 'field_timecode_too_infrequent',
+      12 => 'field_timecoding_problem_1',
+      13 => 'field_timecoding_problem_2',
+      14 => 'field_trans_proofed_lang_1',
+      15 => 'field_trans_proofed_lang_2',
+      16 => 'field_trans_proofed_lang_3',
+      17 => 'field_translation_lang_3',
+      18 => 'field_translation_language_1',
+      19 => 'field_translation_language_2',
+      20 => 'field_video_quality_acceptable',
+      21 => 'field_workflow_notes',
+      22 => 'field_catalog_workflow_notes',
+      23 => 'field_transcript_workflow_notes',
+      24 => 'field_extended_cataloging_new',
+      25 => 'field_translation_input_lang_2',
+      26 => 'field_translation_input_lang_1',
+      27 => 'field_transcribed',
+      28 => 'field_timecoded',
+    ),
+    'format_type' => 'fieldset',
+    'format_settings' => array(
+      'label' => 'Workflow',
+      'instance_settings' => array(
+        'classes' => ' group-workflow field-group-fieldset',
+        'description' => '',
+      ),
+      'formatter' => 'collapsed',
+    ),
+  );
+  $field_groups['group_workflow|field_collection_item|field_workflow|default'] = $field_group;
+
+  $field_group = new stdClass();
+  $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->api_version = 1;
+  $field_group->identifier = 'group_workflow|node|audio|form';
+  $field_group->group_name = 'group_workflow';
+  $field_group->entity_type = 'node';
+  $field_group->bundle = 'audio';
+  $field_group->mode = 'form';
+  $field_group->parent_name = '';
+  $field_group->data = array(
+    'label' => 'Workflow',
+    'weight' => '10',
+    'children' => array(
+      0 => 'field_workflow',
+    ),
+    'format_type' => 'fieldset',
+    'format_settings' => array(
+      'formatter' => 'collapsible',
+      'instance_settings' => array(
+        'description' => '',
+        'classes' => 'group-workflow field-group-fieldset ',
+        'required_fields' => 1,
+      ),
+    ),
+  );
+  $field_groups['group_workflow|node|audio|form'] = $field_group;
+
+  $field_group = new stdClass();
+  $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->api_version = 1;
+  $field_group->identifier = 'group_workflow|node|video|form';
+  $field_group->group_name = 'group_workflow';
+  $field_group->entity_type = 'node';
+  $field_group->bundle = 'video';
+  $field_group->mode = 'form';
+  $field_group->parent_name = '';
+  $field_group->data = array(
+    'label' => 'Workflow',
+    'weight' => '9',
+    'children' => array(
+      0 => 'field_workflow',
+    ),
+    'format_type' => 'fieldset',
+    'format_settings' => array(
+      'formatter' => 'collapsible',
+      'instance_settings' => array(
+        'description' => '',
+        'classes' => 'group-workflow field-group-fieldset ',
+        'required_fields' => 1,
+      ),
+    ),
+  );
+  $field_groups['group_workflow|node|video|form'] = $field_group;
+
+  // Translatables
+  // Included for use with string extractors like potx.
+  t('Availability & Access');
+  t('Availability & Copyrights');
+  t('Catalog Record Workflow');
+  t('Classification');
+  t('Description');
+  t('Details');
+  t('Media');
+  t('Media Workflow');
+  t('People');
+  t('Required Audio Info');
+  t('Required Video Info');
+  t('Rights & Licensing');
+  t('Technical Metadata');
+  t('Thumbnail and Related Media');
+  t('Title & Description');
+  t('Transcript');
+  t('Transcript Workflow');
+  t('Workflow');
+
+  return $field_groups;
+}

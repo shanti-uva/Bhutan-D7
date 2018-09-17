@@ -1,0 +1,59 @@
+#transcript-processor {
+  margin-top: 20px;
+}
+.multilingual label.monolingual {
+  display: none;
+}
+.multilingual li.monolingual {
+  display: none;
+}
+.monolingual #languages-delimiter {
+  display: none;
+}
+.monolingual label.multilingual {
+  display: none;
+}
+.monolingual li.multilingual {
+  display: none;
+}
+#languages-which .bootstrap-select {
+  width: 100%;
+}
+#transcript-settings h2:first-child {
+  margin-top: 5px;
+}
+span.file ~ .transcript-type {
+  display: none;
+}
+#languages-howmany {
+  margin-top: 0.5em;
+}
+#languages-delimiter {
+  margin-top: 0.6em;
+}
+#languages-which {
+  margin-top: 0.8em;
+}
+#languages-which > label {
+  margin-top: 0.5em;
+}
+#transcript-results .tab-content {
+  max-height: 800px;
+}
+#transcript-results .tab-pane {
+  max-height: 800px;
+  overflow-y: auto;
+}
+div.accept-message {
+  display: inline-block;
+  margin-left: 10px;
+  padding: 3px;
+  font-style: italic;
+}
+div.connect-message {
+  clear: both;
+}
+/* shouldn't really be referencing mb-av-form here */
+.mb-av-form .file-widget.form-managed-file {
+  float: none;
+}

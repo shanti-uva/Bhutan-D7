@@ -1,0 +1,6 @@
+name = SHANTI KMaps Tree
+description = Wrapper for SHANTI KMaps Tree plugin
+core = 7.x
+package = SHANTI
+dependencies[] = libraries (>=2.1)
+dependencies[] = fancytree

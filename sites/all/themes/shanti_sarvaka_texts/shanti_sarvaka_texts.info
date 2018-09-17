@@ -1,0 +1,54 @@
+name = SHANTI Savarka for Texts
+description = A subtheme of SHANTI's Savarka theme customized for Texts.
+core = 7.x
+base theme = shanti_sarvaka
+version = 7.x-1.x
+
+dependencies[] = jquery_update ; requires jquery v 1.10+
+dependencies[] = shanti_texts
+dependencies[] = shanti_collections_admin
+
+
+;;;;;;;;;;;;;;;;;;;;;
+;; Regions
+;;;;;;;;;;;;;;;;;;;;;
+
+regions[header]         = Top Bar Header
+regions[banner]         = Color Strip Banner
+regions[content]        = Content
+regions[search_flyout]  = Search Fly Out
+regions[sidebar_first]  = Primary Sidebar
+regions[sidebar_second] = Secondary Sidebar
+regions[highlighted]    = Highlighted
+regions[help]           = Help
+regions[page_top]       = Page top
+regions[page_bottom]    = Page bottom
+regions[footer]         = Footer
+regions[admin_footer]   = Admin Footer
+
+
+;;;;;;;;;;;;;;;;;;;;;
+;; Theme Settings
+;;;;;;;;;;;;;;;;;;;;;
+
+settings[shanti_sarvaka_base_color] = '#8c48a1'
+settings[shanti_sarvaka_icon_class] = 'texts'
+settings[shanti_sarvaka_shanti_site] = 1
+
+;;;;;;;;;;;;;;;;;;;;;
+;; Stylesheets
+;;;;;;;;;;;;;;;;;;;;;
+
+stylesheets[all][] =  css/shanti-main-texts.css
+stylesheets[all][] =  css/shanti-search-texts.css
+
+;; FOAD	
+stylesheets[all][] =  css/jquery.ui.tabs.min.css
+
+
+;;;;;;;;;;;;;;;;;;;;;;
+;;; Scripts
+;;;;;;;;;;;;;;;;;;;;;;
+
+scripts[] = js/shanti-main-texts.js
+scripts[] = js/shanti-search-texts.js

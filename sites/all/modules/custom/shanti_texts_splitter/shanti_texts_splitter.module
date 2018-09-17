@@ -1,0 +1,386 @@
+<?php
+
+// Global array to hold the pages.
+$shanti_texts_splitter_pages = array();
+
+/**
+ * Implements hook_menu().
+ */
+function shanti_texts_splitter_menu() {
+  return array(
+    'admin/config/content/shanti_texts_splitter' => array(
+      'title'             => 'SHANTI Texts Splitter Configuration',
+      'description'       => 'Provide settings for SHANTI Texts Splitter.',
+      'page callback'     => 'drupal_get_form',
+      'page arguments'    => array('shanti_texts_splitter_admin'),
+      'access arguments'  => array('administer shanti_texts_splitter'),
+      'type'              => MENU_NORMAL_ITEM,
+    ),
+  );
+}
+
+/**
+ * Function called by menu item in hook_menu().
+ */
+function shanti_texts_splitter_admin() {
+  $form['shanti_texts_splitter_content_field'] = array(
+    '#type'           => 'textfield',
+    '#title'          => t('Texts Content Field'),
+    '#default_value'  => variable_get('shanti_texts_splitter_content_field', 'body'),
+    '#size'           => 60,
+    '#maxlength'      => 255,
+    '#description'    => t('The field in the texts content type to split by header. Default it <b>body</b>.'),
+    '#required'       => TRUE,
+  );
+  $form['shanti_texts_splitter_default_state'] = array(
+    '#type'           => 'checkbox',
+    '#title'          => t("Do you want to enable the splitter by default?"),
+    '#description'    => t("If yes, you can disable it for a given text at edit time."),
+    '#default_value'  => variable_get('shanti_texts_splitter_default_state', 0),
+    '#options'        => array(0 => 'no', 1 => 'yes'),
+  );
+  return system_settings_form($form);
+}
+
+/**
+ * Implements hook_CALLBACK_validate().
+ */
+function shanti_texts_splitter_admin_validate($form, &$form_state) {
+  # Do some test to make sure field actually exists
+  $field_name = $form_state['values']['shanti_texts_splitter_content_field'];
+  $test = field_info_field($field_name);
+  if (is_null($test)) {
+    form_set_error('shanti_texts_splitter_content_field',
+      t("Looks like <b><tt>$field_name</tt></b> is not a valid field.")
+    );
+  }
+}
+
+/**
+ * Implementation of hook_help().
+ */
+function shanti_texts_splitter_help($path, $arg) {
+  switch ($path) {
+    case 'admin/help#shanti_texts_splitter' :
+      $output = t('<p>SHANTI Texts Splitter lets you optionally create a new text section at each html heading and subheading (&lt;h1&gt;, &lt;h2&gt;, etc) in the body text. This makes it possible to use documents created in word processing programs to automatically create a multi-section SHANTI text or text section in a single step. To use this feature, click on the input split collapsible box below the Text body in the edit form.</p><p>All text before the first heading will be retained as the body of the original section. Subsequent sections will be added as children of that section, using the heading as their title and all text from that point to the next heading as their body. Child sections will be nested based on the subheadding number, i.e. h2 sections will be nested below the h1 section they follow, h3 sections will be nested below h2 sections, etc. </p> <p>You can choose which heading levels will be used to create new sections. You might create new sections only when a &lt;h1&gt; or &lt;h2&gt; heading is encountered, or make a new section at every header. <p>Each new text section is created as a clone of the original section, so they will have the same author, categories, and other settings selected in the original section. For instance, if the original section is marked as published and promoted to the front section, all the child sections will be published and promoted to the front section. If the original section uses the Full HTML filter, all the child sections will use the same filter. If you set the original section to be private to an Organic Group, all the child sections will have the same setting. </p><p>If the source is a word processing document, be sure it has been saved as html rather than as a word processing document so the Shanti_Texts_Splitter module can locate the headings in the text. Microsoft Word documents pasted into the body should come from text first saved as \'Html, filtered\' for best results. Badly structured documents will yield unpredictable results, clean and simple html will work the best.</p>');
+      $output .= t('EXAMPLE:
+<pre>
+INPUT:
+
+Node 1 Title: My Text
+Node 1 Body:
+&lt;div&gt;Here is my section.&lt;/div&gt;
+&lt;h1&gt;Section 1&lt;/h1&gt;
+  &lt;p&gt;Here is my text for section 1.&lt;/p&gt;
+  &lt;h2&gt;Section 1a&lt;/h2&gt;
+    &lt;p&gt;This is section 1a.&lt;/p&gt;
+  &lt;h2&gt;Section 1b&lt;/h2&gt;
+    &lt;p&gt;This is section 1b.&lt;/p&gt;
+&lt;h1&gt;Section 2&lt;/h1&gt;
+  &lt;p&gt;This is section 2.&lt;/p&gt;
+
+CREATES:
+
+Node 1 Title: My Text
+Node 1 Body: &lt;div&gt;Here is my section.&lt;/div&gt;
+Node 1 Parent: &lt;top level&gt;
+Node 1 Weight: -15
+
+    Node 2 Title: Section 1
+    Node 2 Body: &lt;p&gt;Here is my text for section 1.&lt;/p&gt;
+    Node 2 Parent: Node 1
+    Node 2 Weight: -15
+
+       Node 3 Title: Section 1a
+       Node 3 Body: &lt;p&gt;This is section 1a.&lt;/p&gt;
+       Node 3 Parent: Node 2
+       Node 3 Weight: -15
+
+       Node 4 Title: Section 1b
+       Node 4 Body: &lt;p&gt;This is section 1b.&lt;/p&gt;
+       Node 4 Parent: Node 2
+       Node 4 Weight: -14
+
+    Node 5 Title: Section 2
+    Node 5 Body: &lt;p&gt;This is section 2.&lt;/p&gt;
+    Node 5 Parent: Node 1
+    Node 5 Weight: -14
+    </pre>
+');
+    return $output;
+    break;
+  }
+}
+
+/**
+ * Implements hook_permission().
+ */
+function shanti_texts_splitter_permission() {
+  return array(
+    'administer shanti_texts_splitter' => array(
+      'title' => t('Administer SHANTI Texts Splitter'),
+      'description' => t('Define field for SHANTI Texts Splitter.'),
+    ),
+    'use shanti_texts_splitter' => array(
+      'title' => t('Use SHANTI Texts Splitter'),
+      'description' => t('Create multi-section SHANTI texts based upon HTML markup.'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function shanti_texts_splitter_form_alter(&$form, $form_state, $form_id) {
+
+  if ($form_id == 'book_node_form' && user_access('use shanti_texts_splitter')) {
+    $form['shanti_texts_splitter_group'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('SHANTI Texts Splitter'),
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
+    );
+    $form['shanti_texts_splitter_group']['shanti_texts_instructions'] = array(
+      '#title' => t('Heading treatment'),
+      '#markup'  => t('<p>This feature allows you to split a text into separate book pages -- sections -- based on it\'s HTML headers,
+      e.g. H1, H2, H3, etc. Splitting your text allows you to edit and assign KMap terms to its sectionns
+      individually. To split your text, select the "Create a new SHANTI Text section at each HTML heading" below.
+      Beware, however, that the process is currently irreversible: once your text is divided into sections, the sections
+      cannot be automatically re-joined into a single text.</p>'),
+    );
+    $form['shanti_texts_splitter_group']['shanti_texts_splitter'] = array(
+      '#type' => 'radios',
+      '#title' => t('Heading treatment'),
+      '#description' => t('Should this text be !help at each HTML heading?', array('!help' => l(t('split into new SHANTI Text sections'), 'admin/help/shanti_texts_splitter'))),
+      '#default_value' => variable_get('shanti_texts_splitter_default_state',0),
+      '#options' => array(
+        0 => t('Do not split SHANTI Text into sections.'),
+        1 => t('Create a new SHANTI Text section at each HTML heading.'),
+      ),
+    );
+    $form['shanti_texts_splitter_group']['splitters'] = array(
+      '#type' => 'checkboxes',
+      '#title' => t('Split on'),
+      '#description' => t('Identify the header levels that should identify a new section. All other headers will be ignored.'),
+      '#options' => array(
+        '1' => '&lt;h1&gt;',
+        '2' => '&lt;h2&gt;',
+        '3' => '&lt;h3&gt;',
+        '4' => '&lt;h4&gt;',
+        '5' => '&lt;h5&gt;',
+        '6' => '&lt;h6&gt;',
+        '7' => '&lt;h7&gt;',
+      ),
+      '#default_value' => array(1, 2, 3),
+    );
+  }
+}
+
+/**
+ * Implements hook_node_presave().
+ */
+function shanti_texts_splitter_node_presave($node)
+{
+	global $shanti_texts_splitter_pages;
+
+	if (!empty($shanti_texts_splitter_pages))
+	{
+    	return;
+  	}
+
+	if ($node->type == 'book' && !empty($node->shanti_texts_splitter) && user_access('use shanti_texts_splitter'))
+	{
+    	_shanti_texts_splitter_split($node);
+    	if ($node->book['bid'] == 0)
+    	{
+      		$node->book = array(
+        		'bid' =>'new', // use 'new' to create new top level book
+        		'plid' => 0,   // this is the top level
+      		);
+    	}
+    	$node->parent = $node->nid;
+  	}
+}
+
+/**
+ * Implements hook_node_insert().
+ */
+function shanti_texts_splitter_node_insert($node)
+{
+	if (!empty($node->shanti_texts_splitter))
+	{
+		_shanti_texts_splitter_node_expand($node);
+  }
+}
+
+/**
+ * Implements hook_node_update().
+ */
+function shanti_texts_splitter_node_update($node)
+{
+	_shanti_texts_splitter_node_expand($node);
+}
+
+/**
+ * Split node into an page array.
+ */
+function _shanti_texts_splitter_split($node)
+{
+	global $shanti_texts_splitter_pages;
+
+	$shanti_texts_splitter_content_field = variable_get('shanti_texts_splitter_content_field');
+
+	$lang = $node->language;
+  	if (!isset($node->{$shanti_texts_splitter_content_field}[$lang]))
+  	{
+    	$lang =  LANGUAGE_NONE;
+  	}
+  	$body = $node->{$shanti_texts_splitter_content_field}[$lang][0]['value'];
+
+  	// Break up the body into separate pages wherever there is a heading
+	// flagged as a splitter.
+	$splitters = array_filter(array_values($node->splitters));
+	$items = preg_split('/<h(['. implode('|', $splitters) .'].*)>/U', $body, -1, PREG_SPLIT_DELIM_CAPTURE);
+	$ii = $level = 0;
+	$label = '';
+	$istag = FALSE;
+
+	foreach ($items as $item)
+	{
+    	if ($istag)
+    	{
+      	$label = '';
+  			$headele = preg_split('/ /', $item);
+  			if (isset($headele[1]))
+  			{
+    			if (preg_match('/id=\"(.*)\"/', $headele[1], $matches))
+    			{
+      				$label = $matches[1];
+    			}
+  			}
+  			$level = $headele[0];
+		}
+		else
+		{
+			$shanti_texts_splitter_pages[$ii]['level'] = $level;
+			$shanti_texts_splitter_pages[$ii]['label'] = $label;
+			$shanti_texts_splitter_pages[$ii]['cntnt'] = $item;
+			$ii++;
+    }
+    $istag = !$istag;
+	}
+
+	// Array $shanti_texts_splitter_pages holds all our pages.
+	$node->{$shanti_texts_splitter_content_field}[$lang][0]['value'] = $shanti_texts_splitter_pages[0]['cntnt'];
+	array_shift($shanti_texts_splitter_pages);
+}
+
+/**
+ * Expand array $shanti_texts_splitter_pages into nodes
+ */
+function _shanti_texts_splitter_node_expand($node)
+{
+
+	global $shanti_texts_splitter_pages;
+
+	$shanti_texts_splitter_content_field = variable_get('shanti_texts_splitter_content_field');
+
+	if (!isset($node->book))
+	{
+    return;
+  }
+
+  $lang = $node->language;
+  if (!isset($node->{$shanti_texts_splitter_content_field}[$lang]))
+  {
+    $lang =  LANGUAGE_NONE;
+  }
+
+	// Set the three arrays that keeps track at each level.
+	$parent     = array(0 => $node->nid);
+	$bookml     = array(0 => $node->book['mlid']);
+	$weight     = array(0 => -15);
+	$prev_level = 0;
+	$pageno     = 1;
+
+	$original_time = ini_get('max_execution_time'); // May take a while, so ...
+
+	if (isset($shanti_texts_splitter_pages))
+	{
+    	foreach ($shanti_texts_splitter_pages as $page)
+    	{
+    		$level = $page['level'];
+    		$label = $page['label'];
+        $nodecntnt = '<h'. $level . '>' . $page['cntnt'];
+        $split = explode('</h'. $level .'>', $nodecntnt);
+        $title = trim(str_replace('&nbsp;', ' ', strip_tags($split[0])));
+        $body = trim($split[1]);
+
+        // After the first time through, clone the parent as a starting point for child nodes.
+        $child_node = clone($node);
+
+        // Lose the KMap terms of the parent
+        foreach($child_node->kmap_data as $k => $v) {
+          unset($child_node->$k);
+        }
+        unset($child_node->kmap_data);
+
+        watchdog_array('SHANTI','child_node 2',$child_node);
+
+        // Set the child nid and vid to zero so new nodes are created.
+        $child_node->nid = 0;
+        $child_node->vid = 0;
+
+        // Make sure the title is never an empty string.
+        $child_node->title = $title ? $title : t('Section !pageno', array('!pageno' => $pageno));
+
+        // Create the child's body.
+        $child_node->{$shanti_texts_splitter_content_field}[$lang][0]['value'] = $body;
+
+        // Create the child's weight.
+        if ($level > $prev_level || !isset($weight[$level]))
+        {
+          $weight[$level] = -15;
+        }
+        else
+        {
+          // There might be too many pages to increase this forever.
+          // Don't overrun the book module max weight.
+          if ($weight[$level] <= 15) $weight[$level]++;
+        }
+        $child_node->book['weight'] = $weight[$level];
+
+        // Find the parent id for this node using the value stored for the
+        // next higher level.
+        $parent_level = intval($level - 1);
+        $child_node->parent = $parent[$parent_level] ? $parent[$parent_level] : $node->nid;
+
+     		//$child_node->book['bid']  = $parent[0]; // This was wrong ... why?
+			  $child_node->book['bid'] = $node->book['bid'];
+        $child_node->book['plid'] = $bookml[$parent_level];
+
+        // Make sure shanti_texts_splitter is not run again on the child nodes.
+        $child_node->shanti_texts_splitter = 0;
+        $child_node->is_new = TRUE;
+
+        node_save($child_node);
+
+        // Set a parent nid and bookml mlid for this level that can be
+        // used by later children.
+        $parent[$level] = $child_node->nid;
+        $bookml[$level] = $child_node->book['mlid'];
+
+        $prev_level = $level;
+        $pageno++;
+
+    	} // end foreach page
+  	}// end if
+
+  	// Reset max_execution_time
+  	ini_set('max_execution_time', $original_time);
+
+  	if ($pageno > 1)
+  	{
+    	drupal_set_message(t('Text content field was expanded into !pageno pages by SHANTI Texts Splitter module.', array('!pageno' => $pageno)));
+  	}
+}

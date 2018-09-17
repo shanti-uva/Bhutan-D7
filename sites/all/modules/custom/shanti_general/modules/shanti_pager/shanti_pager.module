@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Shanti Pager feature.
+ */
+
+include_once 'shanti_pager.features.inc';

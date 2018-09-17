@@ -1,0 +1,92 @@
+/**
+ *     CSS for any node edit form on Shanti Images
+ */
+/**
+ *   Styles for Image File Field
+ */
+
+.field-name-field-image .fieldset-wrapper .fieldset-description {
+    float: right;
+    max-width: 400px;
+    font-size: 1.25rem;
+}
+
+.field-name-field-image .fieldset-wrapper .form-item.form-type-managed-file label {
+    display: none;
+}
+
+.field-name-field-image .fieldset-wrapper .form-item.form-type-managed-file .description {
+    margin: 0.75em 0 0 0;
+    padding: 0;
+}
+
+/*
+ *  Table of Image Agents added to node
+ */
+#ief-entity-table-edit-field-image-agents-und-entities {
+    width: 100%;
+}
+
+#ief-entity-table-edit-field-image-agents-und-entities th {
+    min-width: 20%;
+}
+
+#ief-entity-table-edit-field-image-agents-und-entities th,
+#ief-entity-table-edit-field-image-agents-und-entities td {
+    padding: 2px;
+}
+
+/**
+ *     Add new image agent form
+ */
+#edit-field-image-agents-und-form .form-item-field-image-agents-und-form-status {
+    display: none;
+}
+
+#edit-field-image-agents-und-form .fieldset-wrapper {
+    /*padding-left: 25px;*/
+}
+
+#field-copyright-date-add-more-wrapper .form-wrapper legend {
+    border: none;
+    font-weight: normal;
+    font-size: 1em;
+    font-family: 'museo-sans-500',helvetica,arial,sans-serif;
+    text-transform: uppercase;
+    margin-bottom: -12px !important;
+    margin-left: 12px;
+}
+
+#edit-field-copyright-date-und-0-value {
+    margin-left: -8px;
+}
+
+#edit-field-copyright-statement {
+    margin-top: -24px;
+}
+
+.field-name-field-copyright-statement #field-copyright-statement-add-more-wrapper .form-item label,
+#field-copyright-holder-add-more-wrapper .form-item label,
+#field-rights-notes-add-more-wrapper .form-item label {
+    color: #444;
+}
+
+#image-ajax-replace .image-placeholder-wrapper .image-placeholder {
+    float: left;
+    padding-right: 1.5rem;
+}
+
+#image-ajax-replace .image-placeholder-wrapper .image-iiif-info .label {
+    color: #333;
+}
+
+#image-ajax-replace .image-placeholder-wrapper .image-iiif-info a.imgurl {
+    font-weight: normal !important;
+    font-size: 1.2rem;
+}
+
+/** Show Progress Bar in node form
+.form-managed-file .image-widget-data div.ajax-progress-bar {
+    display: block !important;
+}
+**/

@@ -1,0 +1,50 @@
+<?php
+
+/**
+ *  Update Biblio entries to our new autocomplete language field
+ */
+function biblio_long_fields_update_7001() {
+  $node_languages_field_values = db_query('SELECT * FROM {field_data_field_biblio_long_language} WHERE field_biblio_long_language_value != :value', array(':value' => ''));
+  foreach ($node_languages_field_values as $node_language_data) {
+    $language_set = biblio_long_fields_assign_new_language_value($node_language_data->field_biblio_long_language_value);
+
+    drupal_set_message("Node id: " . $node_language_data->entity_id, 'notice');
+    drupal_set_message("Node language string: " . $language_set, 'notice');
+
+    if (!empty($language_set) && $node_language_data->entity_id != 22013 && $node_language_data->entity_id != 21667) {
+      $node = node_load($node_language_data->entity_id);
+      $node_wrapper = entity_metadata_wrapper('node', $node);
+      $field_value = $node_wrapper->field_biblio_language->value();
+      if (empty($field_value)) {
+        $node_wrapper->field_biblio_language->set($language_set);
+        $node_wrapper->save();
+      }
+    }
+  }
+}
+
+function biblio_long_fields_assign_new_language_value($language_string) {
+  $language = '';
+  if ($language_string == 'en' || $language_string == 'En' || $language_string == 'eng' || $language_string == 'ENG' || $language_string == 'Eng' || $language_string == 'English' || $language_string == 'In English and Apabhra·msa; includes translations from Apabhra·msa ') {
+    $language_string = array('English');
+  }
+  if ($language_string == 'bo' || $language_string == 'Tibetan'){
+    $language_string = array('Tibetan');
+  }
+  if ($language_string == 'ger' || $language_string == 'German' || $language_string == 'de') {
+    $language_string = array('German');
+  }
+  if ($language_string == 'English and Sanskrit'){
+    $language_string = array('English', 'Sanskrit');
+  }
+  if ($language_string == 'English and Tibetan'){
+    $language_string = array('English', 'Tibetan');
+  }
+  if ($language_string == 'Tibetan, Chinese') {
+    $language_string = array('Tibetan', 'Chinese');
+  }
+  if ($language_string == 'Translated from the Japanese. ') {
+    $language_string = array('Japanese');
+  }
+  return $language_string;
+}

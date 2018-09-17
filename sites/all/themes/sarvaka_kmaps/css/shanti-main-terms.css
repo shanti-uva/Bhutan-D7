@@ -1,0 +1,150 @@
+
+.terms-node-wrapper .tab-pane{
+  padding:2rem;
+}
+
+.terms-node-wrapper .tab-pane ul{
+  list-style-type: none;
+}
+
+.terms-node-wrapper .tab-pane ul li{
+  line-height: 1.75em;
+  font-size: 1.06em;
+}
+
+.terms-node-wrapper .tab-pane ul li strong{
+  padding-right:.4rem;
+  font-family: 'Helvetica-Neue',helvetica,arial,sans-serif;
+}
+
+
+
+
+.terms-introduction-tabs{
+  padding:0;
+  background: #fff;
+  margin-bottom: 7rem;
+}
+
+.terms-introduction-tabs .nav-tabs.nav-justified{
+  margin-top:0;
+}
+
+.terms-introduction-tabs .nav-tabs.nav-justified>li{
+  background: #eee;
+  border: 1px solid #ddd;
+  border-width: 1px 1px 0 0;
+}
+
+.terms-introduction-tabs .nav-tabs.nav-justified>li:first-of-type{
+  border-width: 1px 0 0 1px;
+}
+
+.terms-introduction-tabs .nav-tabs.nav-justified>li.active{
+  border-width: 1px 0 0;
+  border-color: #a57546;
+}
+
+.terms-introduction-tabs .nav-tabs.nav-justified>li:hover:not(.active){
+  box-shadow: none;
+  background: white;
+}
+
+.terms-introduction-tabs .nav-tabs.nav-justified>li>a{
+  text-transform: none;
+  line-height: 1.75em;
+  padding-top: 1.4rem;
+  font-size: 1.06em;
+}
+
+.terms-introduction-tabs .nav-tabs.nav-justified>li.active>a{
+  color:#FFF !important;
+  background-color:#a57546;
+}
+
+.terms-introduction-tabs .nav-tabs.nav-justified>li.active::before{
+  color:#a57546 !important;
+  font-family: 'shanticon';
+  font-size: 2em;
+  content: '\e646';
+}
+
+.terms-introduction-tabs .terms-kmaps-id span{
+  float:right
+}
+
+
+
+
+
+
+
+
+
+
+
+.terms-definition-list-wrapper{
+  padding: 0;
+  margin: 0 2.5rem;
+}
+
+.terms-definition-node{ 
+  margin-left:0;
+  margin-bottom: 3rem;
+}
+
+.terms-definition-node.terms-def-child{
+  margin-left:4rem;
+}
+
+.terms-definition-node.terms-def-child + .terms-def-child{
+  margin-left:8rem;
+}
+/* page and line number */
+.terms-node-wrapper .terms-definition-node .tab-pane ul li strong:nth-of-type(2) {
+  padding-left:1rem;
+}
+
+.terms-definition-node .nav-tabs>li>a{
+  color:#333;
+  font-family: 'Helvetica-Neue',helvetica,arial,sans-serif;
+  font-size: 1.12em;
+  letter-spacing:0.0125rem;
+  padding: 1.2rem 3rem 0.75rem;
+}
+
+.terms-definition-node .nav-tabs>li:first-child>a{
+  text-transform: uppercase;
+}
+
+.terms-definition-node .nav-tabs>li.active>a{
+  font-weight: bold;
+  color:#555;
+}
+
+.terms-definition-node .nav-tabs>li.active:first-child>a{
+  color:#555;
+}
+
+
+
+
+
+
+
+
+.terms-dictionaries-other{
+  margin-bottom:7rem;
+  padding: 0 3rem 7rem;
+}
+
+
+
+
+
+
+
+
+
+
+

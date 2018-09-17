@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Sources Misc Config feature.
+ */
+
+include_once 'sources_misc_config.features.inc';

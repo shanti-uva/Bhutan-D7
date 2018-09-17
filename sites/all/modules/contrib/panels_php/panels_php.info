@@ -1,0 +1,14 @@
+name = Panels PHP
+description = Improve php input experience for panels.
+dependencies[] = ctools
+dependencies[] = panels
+dependencies[] = page_manager
+;dependencies[] = php
+core = 7.x
+
+; Information added by Drupal.org packaging script on 2014-03-03
+version = "7.x-1.0-alpha2"
+core = "7.x"
+project = "panels_php"
+datestamp = "1393829926"
+

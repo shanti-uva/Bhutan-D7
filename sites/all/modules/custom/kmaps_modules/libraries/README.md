@@ -1,0 +1,1 @@
+These directories need to be installed at sites/all/libraries

@@ -1,0 +1,281 @@
+.ui-fancytree li a,
+.fancytree-node .fancytree-expander,
+.fancytree-container .fancytree-node:hover > .glyphicon,
+.fancytree-container .glyphicon,
+.fancytree-container .fancytree-node.on-hover .fancytree-expander,
+.fancytree-container .fancytree-node.fancytree-active .glyphicon {
+  color: #008a96 !important;
+}
+
+.taxonomy-list-tree .ui-fancytree {
+  border: none;
+  background: none;
+}
+
+.treeview .fancytree-exp-n .fancytree-expander,
+.treeview .fancytree-exp-nl .fancytree-expander{
+  margin-left: -0.1rem;
+}
+
+.fancytree-expander{
+ background-image: none !important;
+}
+
+
+.view-section .fancytree-title{
+  margin-left: -2.55rem;
+}
+
+.custom-pager .custom-pager-right{
+  border-left: none;
+}
+
+
+
+/*-----------------------------------------------------*/
+/*---- START / Search Tree in central content area ----*/
+/*-----------------------------------------------------*/
+.main-col .fancytree-container {
+  margin: 0;
+  background: transparent;
+  border: none;
+  font-family: 'droidserif',palatino,'Palatino Linotype',georgia,serif;
+}
+
+.main-col .fancytree-container ul {
+  padding-top: 0;
+  margin-top: 0;
+}
+
+.main-col .fancytree-container li {
+  padding: 0;
+  line-height: 1.68em;
+  overflow: hidden;
+  position: relative;
+}
+
+.main-col .fancytree-icon {
+  margin: 0;
+  padding: 0;
+  width: 0;
+  height: 0;
+  line-height: 0;
+  display: none;
+} /*--- remove checkbox ---*/
+.main-col .fancytree-node {
+  border: 1px solid transparent !important;
+  display: block;
+}
+
+.main-col .fancytree-node:hover,
+.main-col .fancytree-node:active,
+.main-col .fancytree-node.fancytree-active,
+.main-col .fancytree-node.fancytree-selected,
+.main-col .fancytree-container.fancytree-treefocus span.fancytree-node.fancytree-active {
+  background: white !important;
+  border-color: #eee !important;
+}
+/*
+.main-col .fancytree-node .ajax-progress{ position:absolute; right:0.1rem; background:transparent;padding-right:1rem;}
+.main-col .fancytree-node.fancytree-has-children .ajax-progress{ position:absolute; right:0.1rem;}
+*/
+.main-col .fancytree-container li > .ajax-progress {
+  position: absolute;
+  top: 0.15rem;
+  right: 0.1rem;
+  background: #fff;
+  padding: 0.1rem 0.5rem;
+}
+
+.main-col .fancytree-title a {
+  color: #444;
+}
+
+.main-col .fancytree-title a:hover,
+.main-col .fancytree-title a:active {
+  color: #111;
+}
+
+.main-col .fancytree-title {
+  color: #444;
+  margin: 0 0 0 -0.8rem;
+  padding-left: 15px;
+  line-height: 1.68em;
+  height: 1.62em;
+  box-sizing: content-box;
+}
+
+.main-col .fancytree-title:hover,
+.main-col .fancytree-title:active {
+  color: #111;
+/*background:#fff;*/
+}
+
+.main-col .fancytree-title::before {
+  background: #fff;
+  color: transparent;
+  font-family: 'shanticon';
+  content: '\e625';
+  font-size: 1em;
+  float: left;
+  position: relative;
+  top: 0.6rem;
+  right: 0.2rem;
+  border-radius: 50%;
+  background-clip: padding-box;
+  width: 9px;
+  height: 9px;
+  display: block; display:none;
+  margin-right: 7px;
+  box-shadow: 0 0 2px 1px #aaa;
+  border-collapse: separate;
+}
+
+.main-col .fancytree-title:hover::before {
+  background: #777;
+  box-shadow: none;
+}
+
+.main-col .fancytree-statusnode-wait .fancytree-title::before,
+.main-col .fancytree-statusnode-error .fancytree-title::before {
+  width: 0;
+  height: 0;
+  display: none;
+  color: transparent;
+  box-shadow: none;
+  background: transparent;
+}
+
+.main-col .fancytree-has-children>span.fancytree-title {
+  padding-left: 10px;
+  margin-left: -15px;
+}
+
+.main-col .fancytree-has-children span.fancytree-title::before {
+  content: none;
+  position: relative;
+  top: 0;
+}
+
+.main-col .fancytree-container .fancytree-active .fancytree-title,
+.main-col .fancytree-container .fancytree-selected .fancytree-title {
+  color: #000;
+}
+
+.main-col .fancytree-container .fancytree-active.fancytree-has-children .fancytree-title::before,
+.main-col .fancytree-container .fancytree-selected.fancytree-has-children .fancytree-title::before {
+  content: none;
+  text-shadow: none;
+  display: none;
+}
+
+.main-col .fancytree-container .fancytree-active .fancytree-title::before,
+.main-col .fancytree-container .fancytree-selected .fancytree-title::before {
+  background: #888;
+  box-shadow: none;
+}
+
+.main-col .fancytree-container .glyphicon {
+  color: #666;
+  font-family: 'Glyphicons Halflings';
+  font-size: 15px;
+  margin-right: 12px;
+  position: relative;
+  top: 0.4rem;
+}
+
+.main-col .fancytree-container .fancytree-node:hover > .glyphicon {
+  color: #888;
+}
+
+.main-col .fancytree-container .fancytree-node.fancytree-active:active > .glyphicon,
+.main-col .fancytree-container .fancytree-node.fancytree-active .glyphicon,
+.main-col .fancytree-container .fancytree-node.fancytree-selected:active > .glyphicon,
+.main-col .fancytree-container .fancytree-node.fancytree-selected .glyphicon {
+  color: #666;
+  background: transparent;
+}
+
+
+
+
+
+
+
+
+
+
+.main-col .view-section .fancytree-title::before {
+  background: #fff;
+  color: transparent;
+  font-family: 'shanticon';
+  content: '\e625';
+  font-size: 1em;
+  float: left;
+  position: relative;
+  top: 0.6rem;
+  right: 0.2rem;
+  border-radius: 50%;
+  background-clip: padding-box;
+  width: 9px;
+  height: 9px;
+  display: block;
+  margin-right: 7px;
+  box-shadow: 0 0 2px 1px #aaa;
+  border-collapse: separate;
+}
+
+.main-col .view-section .fancytree-title:hover::before {
+  background: #777;
+  box-shadow: none;
+}
+
+.main-col .view-section .fancytree-statusnode-wait .fancytree-title::before,
+.main-col .view-section .fancytree-statusnode-error .fancytree-title::before {
+  width: 0;
+  height: 0;
+  display: none;
+  color: transparent;
+  box-shadow: none;
+  background: transparent;
+}
+
+
+
+
+
+
+.main-col .fancytree-exp-n .fancytree-expander,
+.main-col .fancytree-exp-nl .fancytree-expander {
+  background: #fff;
+  color: transparent;
+  font-family: 'shanticon';
+  content: '\e625';
+  font-size: 1em;
+  float: left;
+  position: relative;
+  top: 0.65rem;
+  left: 0.25rem;
+  border-radius: 50%;
+  background-clip: padding-box;
+  width: 9px;
+  height: 9px;
+  display: block;
+  margin-right: 7px;
+  box-shadow: 0 0 2px 1px #aaa;
+  border-collapse: separate;
+  background-image: none !important;
+}
+
+.main-col .fancytree-exp-n.on-hover .fancytree-expander,
+.main-col .fancytree-exp-nl.on-hover .fancytree-expander,
+.main-col .fancytree-active.fancytree-exp-n .fancytree-expander,
+.main-col .fancytree-active.fancytree-exp-nl .fancytree-expander {
+  background: #777;
+  box-shadow: none;
+}
+
+
+
+
+

@@ -1,0 +1,4 @@
+name = SHANTI Footnotes CKEditor
+description = Add footnotes functionality to ckeditor
+core = 7.x
+package = SHANTI

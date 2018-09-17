@@ -1,0 +1,150 @@
+<?php
+
+/**
+ * @file
+ * Taxonomy delete all terms.
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function taxonomy_delete_all_terms_menu() {
+  $items = array();
+  $items['admin/structure/taxonomy/%/delete_all'] = array(
+    'title' => 'Delete all terms from vocabulary',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('taxonomy_delete_all_terms_form', 3),
+    'access arguments' => array('administer taxonomy'),
+  );
+
+  return $items;
+}
+
+/**
+ * Form builder function for confirmation of deletion.
+ */
+function taxonomy_delete_all_terms_form($form, &$form_state, $vocabulary) {
+  $vocabulary = check_plain($vocabulary);
+
+  $form['description'] = array(
+    '#type' => 'markup',
+    '#markup' => t('Are you sure you want to permanently delete all terms from vocabulary <b>@voc</b>?', array('@voc' => $vocabulary)) . '<br/><br/>',
+  );
+
+  $form['selected_vocabulary'] = array(
+    '#type' => 'value',
+    '#value' => $vocabulary,
+  );
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => 'Yes, delete all terms',
+  );
+
+  return $form;
+}
+
+/**
+ * Confirmation form submit handler.
+ */
+function taxonomy_delete_all_terms_form_submit($form, &$form_state) {
+  $vocabulary_machine_name = $form_state['values']['selected_vocabulary'];
+
+  drupal_set_message(t('Deleting all terms in vocabulary @voc', array('@voc' => $vocabulary_machine_name)));
+  $vocabulary = taxonomy_vocabulary_machine_name_load($vocabulary_machine_name);
+  $efq = new EntityFieldQuery();
+  $efq->entityCondition('entity_type', 'taxonomy_term');
+  $efq->propertyCondition('vid', $vocabulary->vid, '=');
+  $result = $efq->execute();
+  $tids = array();
+
+  if (!isset($result['taxonomy_term'])) {
+    drupal_set_message(t('No terms to delete in vocabulary @voc.', array('@voc' => $vocabulary_machine_name)));
+    drupal_goto('admin/structure/taxonomy/');
+  }
+
+  foreach ($result['taxonomy_term'] as $term) {
+    $tids[] = $term->tid;
+  }
+
+  // If a term with a very large number of descendants is deleted, it is
+  // possible that the request times out before the full transaction is
+  // processed. As a result, no terms get deleted since the transaction is
+  // rolled back. This is, in fact, the very reason for the existence of this
+  // module.
+  //
+  // Starting from the larger tids makes it more likely that children are
+  // deleted before their parents, decreasing the chances of a term with lots
+  // of children being deleted.
+  rsort($tids);
+  $limit = 10;
+  $chunks = array_chunk($tids, $limit);
+
+  $operations = array();
+  foreach ($chunks as $chunk) {
+    $operations[] = array('taxonomy_delete_all_terms_processor', array($chunk));
+  }
+
+  $batch = array(
+    'operations' => $operations,
+    'finished' => 'taxonomy_delete_all_terms_finished',
+    'title' => 'Deleting all terms in chunks of ' . $limit,
+  );
+
+  batch_set($batch);
+}
+
+/**
+ * Batch processor function.
+ */
+function taxonomy_delete_all_terms_processor($chunk, &$context) {
+  foreach($chunk as $tid) {
+    taxonomy_term_delete($tid);
+  }
+}
+
+/**
+ * Batch 'finished' callback.
+ */
+function taxonomy_delete_all_terms_finished($success, $results, $operations) {
+  if ($success) {
+    drupal_set_message(t('Terms deleted.'));
+  }
+  else {
+    // An error occurred.
+    // $operations contains the operations that remained unprocessed.
+    $error_operation = reset($operations);
+    drupal_set_message(t('An error occurred while processing @operation with arguments : @args', array(
+      '@operation' => $error_operation[0],
+      '@args' => print_r($error_operation[0], TRUE),
+    )));
+  }
+  drupal_goto('admin/structure/taxonomy');
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function taxonomy_delete_all_terms_form_taxonomy_form_vocabulary_alter(&$form) {
+  if (arg(3) != 'add') {
+    $form['actions']['delete_all'] = array(
+      '#type' => 'submit',
+      '#value' => 'Delete all terms',
+      '#weight' => 10,
+      '#submit' => array('taxonomy_delete_all_terms_taxonomy_form_vocabulary_submit'),
+    );
+  }
+}
+
+/**
+ * Custom submit handler for vocabulary edit form.
+ */
+function taxonomy_delete_all_terms_taxonomy_form_vocabulary_submit($form, &$form_state) {
+  if ($form_state['clicked_button']['#id'] == 'edit-delete-all') {
+    // Since ours should be the only submit handler, or at least the first
+    // one to run, we can redirect before any other submit handlers are run.
+    // This is done to avoid for example uselessly rebuilding the Taxonomy
+    // Menu before deleting the items.
+    drupal_goto('admin/structure/taxonomy/' . $form_state['values']['machine_name'] . '/delete_all');
+  }
+}

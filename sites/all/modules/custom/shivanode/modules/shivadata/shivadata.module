@@ -1,0 +1,581 @@
+<?php
+
+/**
+ * Sample url for using a datanode in a new visualization as on shiva production:
+ * http://shiva.virginia.edu/node/add/shivanode/3013/chart?ctype=Geo%20Chart
+ * 
+ * @TODO: Use only one data node for example per type. Don't create one for each user. Have title Example Data for SHIVA	 
+ * 
+ * Note: After updating delete all "Example Data for SHIVA" nodes created previously and converted.
+ * 
+ */
+
+function shivadata_menu() {
+	$items = array();
+	$items['shivadata/text/%'] = array(
+    'title' => 'Shiva Text Data',
+    'description' => 'Returns a Shivadata pasted text as a CSV for use in Shiva Visualizations',
+    'page callback' => 'shivadata_text_as_csv',
+    'page arguments' => array(2),
+    'access callback' => TRUE,
+    'type' => MENU_NORMAL_ITEM,
+	);
+	
+  $items['admin/config/content/shivanode/convert'] = array(
+    'title' => 'Convert Data Entries',
+    'description' => 'Converts data entries from old format to individual records of shivadata type',
+    'type' => MENU_LOCAL_TASK,
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('shivadata_admin_convert_form'),
+    'access arguments' =>  array('access shivanode view settings'),
+    'weight' => -10
+  );
+  
+	
+	return $items;
+}
+
+/**
+ * Given a Google Doc ID and optional Description, this function creates a shivadata node for the 
+ * spreadsheet.
+ * 
+ * TODO: Extend to add other datatypes
+ * 
+ */
+function shivadata_add_node($gid, $desc='Node added from Google Docs') {
+	global $user;
+	module_load_include('inc', 'shanti_gdrive', 'shanti_gdrive');
+	$gfile = shanti_gdrive_get_file($gid);
+	$node = new stdClass();
+  $node->title = $gfile['title'];
+  $node->type = "shivadata";
+  node_object_prepare($node); // Sets some defaults. Invokes hook_prepare() and hook_node_prepare().
+  $node->language = LANGUAGE_NONE; // Or e.g. 'en' if locale is enabled
+  $node->uid = $user->uid; 
+  $node->status = 1; // Published
+  $node->promote = 0; // Not Promoted to front page
+  $node->comment = 0; // Comments disabled
+  $node = node_submit($node); // Prepare node for saving
+  
+  // Add Custom Data
+  // Shivadata type 0 = google doc url
+  $node->shivadata_type[$node->language][]['value'] = 0;
+	$node->shivadata_source_url[$node->language][]['value'] = $gfile['alternateLink'];
+	$node->body[$node->language][]['value'] = $desc;
+  node_save($node);
+	return $node;
+}
+
+/**
+ * @TODO: Need to add a function for modifying the display of this node type to show actual data
+ * 
+ * @TODO: Modify display of node to include "Use this Data Link"
+ */
+ 
+/**
+ * shivadata_get_url: Returns the url for the data depending on the type of data.
+ * 		GDoc and CSV return URL from URL field
+ * 		File returns URL to file in Drupal system
+ * 		Text returns shivadata/text/[NID] defined above
+ * 
+ * 	TODO: Add ability to upload Excell Docs? Or Require CSV?
+ */
+function shivadata_get_url() {
+	// TODO: Return url depending on type of data 	
+}
+
+/**
+ * Return Pasted text as a CSV to provide URL for 
+ */
+ 
+ function shivadata_text_as_csv($nid) {
+ 	$node = node_load($nid);
+	$txtfield = field_get_items('node', $node, 'shivadata_text');
+	$sdata = field_view_value('node', $node, 'shivadata_text', $txtfield[0]);
+ 	drupal_add_http_header('Content-type', 'text/csv; charset=utf-8'); // or do we want application/csv ?
+ 	return $sdata;
+ }
+ 
+ 
+/**
+ * Implements hook_node_view_alter(&$build)
+ *   Adding field showing which data element is used by a visualization
+ *
+ */ 
+function shivadata_preprocess_node(&$vars) {
+  //dpm($vars, 'vars in sppn');
+	if($vars['type'] == 'shivadata') {
+		$vars['vis_links'] = shivadata_get_links($vars['nid'], 'links');
+	}
+}
+
+/**
+ * Add a link to the table given a visualization node id and a data node id
+ * Deletes any previous datalinks this visualization had
+ * 
+ * @param int $visnid
+ * 	The id of the visualization node
+ * @param int $did
+ * 	The id of the data node
+ * 
+ * @return boolean
+ * 	TRUE if successful
+ */
+function shivadata_add_link($visnid, $did) {
+	global $user;
+	try {
+		shivadata_remove_links($visnid); // Make sure it doesn't already have a link associated with it, delete them if so.
+		$lid = db_insert('shivadata_links')->fields(array(
+			'data_id' => $did,
+			'vis_id' => $visnid,
+			'uid' => $user->uid,
+			'created' => REQUEST_TIME,
+		))->execute();
+		return (empty($lid)) ? FALSE : TRUE; 
+	} catch (Exception $e) {
+		drupal_set_message(t("Unable to set link to between visualization (@visnid) and data (@did).", 
+			array('@visnid' => $visnid, '@did' => $did)), 'warning');
+			watchdog('shivadata', "Unable to save link to from visualization $visnid to data $did: {$e->getMessage()}");
+			return FALSE;
+	}
+}
+
+/**
+ * Implements hook node delete for data or visualization nodes
+ * 
+ * @param object $node
+ * 	The node being deleted
+ */
+function shivadata_node_delete($node) {
+	if ($node->type == 'shivadata') {
+		shivadata_remove_links($node->nid, 'data');
+	} else if ($node->type == 'shivanode') {
+		shivadata_remove_links($node->nid);
+	}
+}
+
+/**
+ * Removes all links in the table for a given visualization/data node id
+ * Used when user deletes a node of either type or when unlinks data from vis 
+ * 
+ * @param int $nid
+ * 	The id of the visualization/data node whose links should be removed
+ * 
+ * @param string $type
+ * 	Type of nid provided: 'visual' or 'data'
+ * 
+ * @return boolean
+ * 	TRUE if successful
+ */
+function shivadata_remove_links($nid, $type='visual') {
+	global $user;
+	$column = ($type == 'data') ? 'data_id' : 'vis_id';
+	$lid =  db_delete('shivadata_links')
+	  ->condition($column, $nid)
+	  ->execute();
+	if($type == 'visual') {
+		if ($lid > 1) { watchdog('shivadata', "Visualization {$nid} had multiple links in shivadata link table."); }
+	} else {
+		if ($lid > 0) {
+			drupal_set_message(t("Unlinked @n visualizations from deleted data record (@nid).", 
+				array('@n' => $lid, '@nid' => $nid))); 
+		}
+	}
+	return (empty($lid)) ? FALSE : TRUE; 
+}
+
+
+/**
+ * Given a Shiva Visualization node or node id this function returns the data node id (did) linked to it, if one exists
+ * 
+ * @param mixed $node
+ * 	The node or node id of the visualization to find its linked data
+ * 
+ * @param string $format
+ * 	'id' (default) : returns the node id for the linked data node
+ *  'obj' : returns the loaded node object
+ * 
+ * @return mixed
+ * 	Depending on the desired format returns an id or node object
+ *  or FALSE if no did is found. Only returns first one found so multiple ones should not be allowed
+ */
+function shivadata_get_did($nid, $format='id') {
+	if(is_object($nid) && isset($nid->nid)) { $nid = $nid->nid; }
+	$result = db_query('select data_id from {shivadata_links} where vis_id=:nid', array(':nid'=>$nid));
+	$record = $result->fetchAssoc();
+	if (!isset($record['data_id'])) {
+		return FALSE;
+	} elseif ($format == 'node') {
+		return node_load($record['data_id']);
+	} else {
+		return $record['data_id'];
+	}
+}
+
+/**
+ * Returns a list of nodes using the data node whose id is given. Can be styled as an array of nids or links
+ * 
+ * @param $did : the node id of the shivadata node representing the datat
+ * @param $style : either 'nids' or 'links'
+ * 
+ * @return array of either nids or links
+ */
+function shivadata_get_links($did, $style='nids') {
+	$result = db_query('select * from {shivadata_links} where data_id=:did', array(':did'=>$did));
+	$links = array();
+	while($record = $result->fetchAssoc()){
+		$nid = $record['vis_id'];
+		if($style == 'links') {
+			if ($node = node_load($nid)) {
+				$user = user_load($record['uid']);
+				$date = Date('M. j, Y', $record['created']);
+				$links[] = l($node->title, "node/$nid", array(
+					'attributes' => array(
+						'title' => "Created by {$user->name} on {$date}",
+					),
+				));
+			} else {
+				drupal_set_message(t('Link of data to non-existing node @nid in shivadata_get_links()', array('@nid' => $nid)), 'warning');
+			}
+		} else {
+			$links[] = $nid;
+		}
+	}
+	return $links;
+}
+
+ /****** Convert Old Nodes Functions *******/
+ /**
+  * Add shivanode admin page to convert old data nodes to this new format
+  * Temporary: Remove after one production cycle once nodes have been converted
+  */
+ function shivadata_admin_convert_form($form, &$form_state) {
+  // Display Settings for Shivanode dealing with size of views etc.
+    
+  $form['shivadata_convert_header'] = array(
+    '#markup' => t('<h3>Shiva Data Convert</h3>') .
+      t('<p>Convert all old shivadata nodes to the new shivadata content type. You will need to delete old nodes separately.</p>'),
+  );
+	$old_nodes = shivadata_get_olddatanids();
+	if (count($old_nodes) == 0) {
+	  $form['shivadata_convert_items'] = array(
+		  '#markup' => t('<p>There are no old nodes to be converted.'),
+	  );
+	} else {
+		$form['shivadata_convert_items'] = array(
+		  '#markup' => t('<p>There are @count old nodes to be converted.</p>', array('@count' => count($old_nodes))),
+	  );
+	  $form['shivadata_convert_button'] = array(
+	    '#type' => 'submit',
+	    '#value' => t('Convert All Data Nodes'),
+	  );
+		$form['#submit'][] = 'shivadata_admin_convert_submit';
+	}
+	
+	return $form;
+ }
+ 
+function shivadata_admin_convert_submit($form, &$form_state) {
+	batch_set(shivadata_admin_convert_batch());
+}
+
+function shivadata_admin_convert_batch() {
+	$nids = shivadata_get_olddatanids();
+	//$nids = array_splice($nids, 0, 200); // Limit to 200 for testing
+	$operation = array();
+	foreach($nids as $nid) {
+    $operations[] = array('shivadata_admin_convert_node', array($nid));
+  }
+	 // build the batch instructions
+  $batch = array(
+    'operations' => $operations,
+    'finished' => 'shivadata_admin_convert_finished',
+  );
+  return $batch;
+}
+
+function shivadata_get_olddatanids() {
+ 	$query = 'select n.nid, n.title from node n, field_data_shivanode_element_type et ' .
+ 							'where n.nid = et.entity_id and et.shivanode_element_type_value = 1 order by n.nid desc';
+	$res = db_query($query);
+	$nids = $nodes = array();
+	while ($item = $res->fetchAssoc()) {
+		$nids[] = $item['nid'];
+	}
+	return $nids;
+}
+
+function shivadata_admin_convert_node($old_nid, &$context) {
+	$old_node = node_load($old_nid);
+	$context['results'][] = $old_nid . ' : ' . check_plain($old_node->title);
+  $context['message'] = t('Processing data node "@title" (@nid)', array('@title' => $old_node->title, '@nid' => $old_nid));
+  $node = new stdClass();
+  $node->title = $old_node->title;
+  $node->type = 'shivadata';
+  node_object_prepare($node); // Sets some defaults. Invokes hook_prepare() and hook_node_prepare().
+  $node->language = $old_node->language;  // Set language to match old node
+  $node->uid = $old_node->uid; // set author to old node author
+  $node->status = 1; // published 
+  $node->promote = 0; // not promoted to front page
+  $node->comment = 0; // comments disabled
+
+  // Set Data Type to 0 = Google Doc URL
+  $node->shivadata_type[$node->language][0]['value'] = 0;
+	
+  // Get Source URL From old nodes JSON
+	$jsontxt = $old_node->shivanode_json[LANGUAGE_NONE][0]['value'];
+	$json = json_decode($jsontxt);
+	// if not dataSourceURL set warning and continue loop
+	if (!isset($json->dataSourceUrl)) {
+		drupal_set_message("{$old_node->title} ($old_node->nid) has no dataSourceUrl! Unable to convert!", 'warning');
+		return;
+	}
+	// Otherwise set source_url field
+  $node->shivadata_source_url[$node->language][0] = array(
+    'value' => $json->dataSourceUrl,
+    'safe_value' => $json->dataSourceUrl,
+  );
+  $node = node_submit($node); // Prepare node for saving
+	// Change all timestamps to match old node
+	$node->created = $old_node->created; 
+	$node->changed = $old_node->changed;
+	$node->revision_timestamp = $old_node->revision_timestamp;
+	$node->last_comment_timestamp = $old_node->last_comment_timestamp;
+  node_save($node); // Save new node
+	shivadata_migrate_links($node, $old_nid); // Migrate old data links to refer to new node
+	/*$old_link = l($old_nid, "node/$old_nid");
+	$new_link = l($node->nid, "node/{$node->nid}");
+	watchdog("shivadata", "Old node $old_link saved as node $new_link");*/
+}
+
+function shivadata_migrate_links($node, $old_id) {
+	if(!isset($node->nid)) { return; }
+	$data_id = $node->nid;
+	//watchdog('shivadata', "Migrating links New Nid: $data_id; Old Nid: $old_id");
+	$res = db_query('select * from {shivanode_links} where data_id=:oid', array(':oid'=>$old_id));
+	if($res) {
+		while ($record = $res->fetchAssoc()) {
+			if($sn_node = node_load($record['sn_id'])) {
+				$uid = (empty($sn_node->uid)) ? $node->uid : $sn_node->uid;
+				if(empty($uid)) {
+					$uid = 1;
+					watchdog('shivadata convert', "No Uid found for ($data_id). Substituting Admin UID."); 
+				}
+				if(!empty($record['sn_id']) && !empty($record['created'])) {
+					$res2 = db_insert('shivadata_links')->fields(array(
+						'data_id' => $data_id,
+						'vis_id' => $record['sn_id'],
+						'old_data_id' => $old_id,
+						'uid' => $uid,
+						'created' => $record['created'],
+					))->execute();
+				} else {
+					watchdog('shivadata convert', "Could not convert sn data link (link id: {$record['link_id']}).");
+				}
+			} else {
+				watchdog('shivadata convert', "Could not load node {$record['sn_id']} in convert data link");
+			}
+		}
+	}
+}
+
+function shivadata_admin_convert_finished($success, $results, $operations) {
+  if ($success) {
+    // display the number of nodes processed
+    drupal_set_message(t('@count data nodes converted.', array('@count' => count($results))));
+		shivadata_delete_old_nodes();
+  } else {
+    // An error occurred.
+    // $operations contains the operations that remained unprocessed.
+    $error_operation = reset($operations);
+    drupal_set_message(t('An error occurred while processing @operation with arguments : @args', array('@operation' => $error_operation[0], '@args' => print_r($error_operation[0], TRUE))));
+  }
+}
+
+function shivadata_delete_old_nodes() {
+	// Query for all Shivanodes with element_type = 1 (old data nodes)
+	$q = db_select('node', 'n');
+	$q->join('field_data_shivanode_element_type','et', 'n.nid = et.entity_id and et.shivanode_element_type_value = 1');
+	$q->fields('n', array('nid'));
+	$res = $q->execute();
+	$allnids = array();
+	// Get NIDs of all old data nodes
+	while ($item = $res->fetchAssoc()) {
+		$allnids[] = $item['nid'];
+	}
+	$ct = 0;
+	// Delete 100 at a time
+	while (count($allnids) > 0) {
+		$nids = array_splice($allnids, 0, 100);
+		node_delete_multiple($nids);
+		$ct++;
+	}
+	drupal_set_message(t("@ct old Shiva data records deleted after conversion to new data records", array('@ct' => $ct)));
+}
+
+/***** End of Convert Old Nodes ****/
+
+
+/****************************  Sevice Functions   ***************************/
+/*
+ * Function shivadata_services_resources: 
+ * 
+ *  Implements hook_services_resources from the Services Module
+ *
+ **/
+
+function shivadata_services_resources() {
+  $node_resource = array(
+    'shivadata' => array(
+      'retrieve' => array(
+        'file' => array('type' => 'module', 'module' => 'shivadata', 'name' => 'shivadata'),
+        'help' => t('This method retreives a single Shiva data page from its node id.'),
+        'callback' => 'shivadata_resource_retrieve',
+        'args' => array(
+          array(
+            'name' => 'nid',
+            'optional' => FALSE,
+            'source' => array('path' => 0),
+            'type' => 'int',
+            'description' => 'The nid of the shivadata node to get',
+          ),
+        ),
+        'access callback' => '_node_resource_access',
+        'access callback file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/node_resource'),
+        'access arguments' => array('view'),
+        'access arguments append' => TRUE,
+      ),
+      'index' => array(
+        'file' => array('type' => 'module', 'module' => 'shivadata', 'name' => 'shivadata'),
+        'help' => t('This method retreives a list of Shivanodes by searching for specific parameters such as user ids, etc.'),
+        'callback' => 'shivadata_resource_index',
+        'args' => array(
+          array(
+            'name'          => 'fields',
+            'optional'      => TRUE,
+            'type'          => 'string',
+            'description'   => t('The fields to get, separated by commas.'),
+            'default value' => '*', // use fields=* for all 
+            'source'        => array('param' => 'fields'),
+          ),
+          array(
+            'name'          => 'var',
+            'optional'      => TRUE,
+            'type'          => 'array',
+            'description'   => t('Parameters array'),
+            'default value' => array(),
+            'source'        => array('param' => 'var'),
+          ),
+          array(
+            'name'          => 'page',
+            'optional'      => TRUE,
+            'type'          => 'int',
+            'description'   => t('The zero-based index of the page to get, defaults to 0.'),
+            'default value' => 0,
+            'source'        => array('param' => 'page'),
+          ),
+          array(
+            'name'          => 'pagesize',
+            'optional'      => TRUE,
+            'type'          => 'int',
+            'description'   => t('The number of items per page, defaults to 25.'),
+            'default value' => 25,
+            'source'        => array('param' => 'pagesize'),
+          ),
+        ),
+        'access arguments' => array('access content'),
+      ),
+    ),
+  );
+  return $node_resource;
+}
+
+
+/**
+ * Function shivadata_resource_index: 
+ *    Return an array of optionally paged nids baed on a set of criteria.
+ *
+ * Copied from _shivanode_resource_index in the shivanode/includes/shivanode.inc file.
+ * Modified to use "var" instead of "parameters" and to include a tags search on Taxonomy tags
+ * 
+ * An example request might look like
+ *
+ * http://domain/endpoint/node?fields=nid,title&var[tags]=India,Temple&parameters[uid]=1
+ *
+ * This would return an array of objects with only nid and title defined, which
+ * have either the tage India or Temple and were created by UID = 1.
+ *
+ * @param $page
+ *   Page number of results to return (in pages of 20).
+ * @param $fields
+ *   The fields you want returned.
+ * @param $var
+ *   An array containing fields and values used to build a sql WHERE clause
+ *   indicating items to retrieve.
+ * @param $page_size
+ *   Integer number of items to be returned.
+ * @return
+ *   An array of node objects.
+ *
+ * @todo
+ *   Evaluate the functionality here in general. Particularly around
+ *     - Do we need fields at all? Should this just return full nodes?
+ *     - Is there an easier syntax we can define which can make the urls
+ *       for index requests more straightforward?
+ */
+function shivadata_resource_index($fields, $var, $page, $page_size) {
+  module_load_include('inc', 'services', 'services.module');
+  $node_select = db_select('node', 't')
+    ->addTag('node_access')
+    ->orderBy('sticky', 'DESC')
+    ->orderBy('created', 'DESC');
+    
+  // Add type = shivanode
+  $node_select->condition('t.type', 'shivadata');
+  
+  // If UID is a true string, it's users name, so find the ID
+  if (isset($var['uid']) && !is_numeric($var['uid'])) {
+    if ($var['uid'] == 'my') {
+      global $user;
+      $var['uid'] = $user->uid;
+    }
+    $snuser = user_load_by_name($var['uid']);
+    if (isset($snuser->uid)) {
+      $var['uid'] = $snuser->uid;
+    }
+  }
+  
+  // Allow for use of fields=all
+  if ($fields == 'all') {
+    $fields = '*';
+  }
+	
+  services_resource_build_index_query($node_select, $page, $fields, $var, $page_size, 'node');
+
+  if (!user_access('administer nodes')) {
+    $node_select->condition('status', 1);
+  }
+  
+  $results = services_resource_execute_index_query($node_select);
+  $nodes = services_resource_build_index_list($results, 'node', 'nid');
+  foreach ($nodes as $node) {
+    $node->uri = str_replace('/node/', '/shivadata/', $node->uri) . '.json';
+  }
+  return $nodes;
+}
+
+// For the Retreive service of Shiva Data node
+function shivadata_resource_retrieve($nid) {
+  $node = node_load($nid);
+  if ($node) {
+    $uri = entity_uri('node', $node);
+    $node->path = url($uri['path'], array('absolute' => TRUE));
+    // Unset uri as it has complete entity and this
+    // cause never ending recursion in rendering.
+    unset($node->uri);
+  }
+	if (isset($node->shivadata_source_url['und'][0]['value'])) {
+		$node->data_url = $node->shivadata_source_url['und'][0]['value'];
+	}
+  return $node;
+}

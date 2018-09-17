@@ -1,0 +1,8 @@
+name = Mediabase User Integration
+description = "Integrates with IdP to synchronize information in AudioVideo"
+core = 7.x
+package = SHANTI Mediabase
+version = "7.x-1.0"
+
+
+

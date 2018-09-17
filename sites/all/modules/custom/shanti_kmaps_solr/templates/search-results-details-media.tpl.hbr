@@ -1,0 +1,124 @@
+
+  {{#if url_thumb}}
+    <div class="results-node-description">
+      <a class="results-node-thumbnail-image results-node-show-viewer" data-asset-type="{{{tree}}}" data-asset-subtype="{{{asset_subtype}}}" data-asset-id="{{{id}}}" data-url-html="{{{url_html}}}" data-url-json="{{{url_json}}}" data-url-ajax="{{{url_ajax}}}" href="{{{url_asset_nav}}}">
+        <img src="{{{url_thumb}}}" onError="this.onerror=null; this.alt=this.src; this.src='/sites/all/themes/shanti_sarvaka/images/default/generic-{{{tree}}}-icon.png';" >
+      </a>
+    </div>
+  {{/if}}
+  {{#if tree}}
+    <div>
+        <span class="results-node-description" data-label="Asset Type">{{{tree}}}</span>
+      {{#if asset_subtype}}
+        <span class="results-node-description" data-label="Asset Subtype">/ {{{asset_subtype}}}</span>
+      {{/if}}
+      {{#if creator}}
+        <span class="results-node-description" data-label="Creator">{{#each creator}}
+          {{{this}}}{{#unless @last}}, {{/unless}}
+        {{/each}}</span>
+      {{/if}}
+    </div>
+  {{/if}}
+  {{#if caption}}
+    <div class="results-node-classification" data-label="Caption"><p>{{{caption}}}</p></div>
+  {{/if}}
+  {{#if summary}}
+    <div class="results-node-description" data-label="Summary"><p>{{{summary}}}</p></div>
+  {{/if}}
+
+  {{#if names_txt}}
+    <div class="results-node-description" data-label="Names">
+    {{#each names_txt}}
+      <li>{{{this}}}</li>
+    {{/each}}
+    </div>
+  {{/if}}
+
+  <div class="results-node-kmaps-resources" style="display:none;">
+    <h6 class="sr-only">Related Resources:</h6>
+    <ul class="results-kmaps-resource-list list-inline">
+      <li class="subjects" style="display:none;">
+        <div>
+          <a href="/{{{tree}}}/{{extractId uid}}/subjects/nojs">
+            <div>
+              <span class="icon shanticon-subjects"></span>
+              <span class="kmaps-results-name">Subjects</span>
+              <span class="badge">0</span>
+            </div>
+          </a>
+        </div>
+      </li>
+
+      <li class="places" style="display:none;">
+        <div>
+          <a href="/{{{tree}}}/{{extractId uid}}/places/nojs">
+            <div>
+              <span class="icon shanticon-places"></span>
+              <span class="kmaps-results-name">Places</span>
+              <span class="badge">0</span>
+            </div>
+          </a>
+        </div>
+      </li>
+
+      <li class="audio-video" style="display:none;">
+        <div>
+          <a href="/{{{tree}}}/{{extractId uid}}/audio-video/nojs">
+            <div>
+              <span class="icon shanticon-audio-video"></span>
+              <span class="kmaps-results-name">AV</span>
+              <span class="badge">0</span>
+            </div>
+          </a>
+        </div>
+      </li>
+
+      <li class="images" style="display:none;">
+        <div>
+          <a href="/{{{tree}}}/{{extractId uid}}/photos/nojs">
+            <div>
+              <span class="icon shanticon-photos"></span>
+              <span class="kmaps-results-name">Images</span>
+              <span class="badge">0</span>
+            </div>
+          </a>
+        </div>
+      </li>
+
+      <li class="texts" style="display:none;">
+        <div>
+          <a href="/{{{tree}}}/{{extractId uid}}/texts/nojs">
+            <div>
+              <span class="icon shanticon-texts"></span>
+              <span class="kmaps-results-name">Texts</span>
+              <span class="badge">0</span>
+            </div>
+          </a>
+        </div>
+      </li>
+
+      <li class="visuals" style="display:none;">
+        <div>
+          <a href="/{{{tree}}}/{{extractId uid}}/visuals/nojs">
+            <div>
+              <span class="icon shanticon-visuals"></span>
+              <span class="kmaps-results-name">Visuals</span>
+              <span class="badge">0</span>
+            </div>
+          </a>
+        </div>
+      </li>
+
+      <li class="sources" style="display:none;">
+        <div>
+          <a href="/{{{tree}}}/{{extractId uid}}/sources/nojs">
+            <div>
+              <span class="icon shanticon-sources"></span>
+              <span class="kmaps-results-name">Sources</span>
+              <span class="badge">0</span>
+            </div>
+          </a>
+        </div>
+      </li>
+    </ul>
+  </div>

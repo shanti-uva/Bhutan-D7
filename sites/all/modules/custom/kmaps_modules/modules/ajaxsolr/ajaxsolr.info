@@ -1,0 +1,9 @@
+name = Ajax Solr
+description = Totally Rad Library Loader for <a href="https://github.com/evolvingweb/ajax-solr">Ajax Solr</a>
+core = 7.x
+php = 5.2.4
+version = 7.x-1.
+package= Shanti
+dependencies[] = libraries (>=2.1)
+dependencies[] = jquery_update
+

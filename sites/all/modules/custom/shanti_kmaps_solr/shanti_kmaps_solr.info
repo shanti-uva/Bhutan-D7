@@ -1,0 +1,11 @@
+name = SHANTI KMaps Solr
+description = Wrapper for SHANTI KMaps Solr jQuery plugin
+core = 7.x
+package = SHANTI
+dependencies[] = jquery_update
+dependencies[] = json2
+dependencies[] = libraries (>=2.1)
+dependencies[] = handlebars
+
+scripts[] = js/drupal.kmapsSolr.js
+

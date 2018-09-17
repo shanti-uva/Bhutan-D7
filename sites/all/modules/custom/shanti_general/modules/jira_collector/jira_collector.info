@@ -1,0 +1,9 @@
+name = Shanti Sarvaka JIRA Collector
+description = "Provides a block for displaying a feedback button to submit JIRA bug reports"
+core = 7.x
+package = Shanti
+
+configure = admin/config/user-interface/jira_collector
+
+files[] = jira_collector.module
+

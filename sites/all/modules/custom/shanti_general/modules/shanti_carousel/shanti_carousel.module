@@ -1,0 +1,455 @@
+<?php
+
+/**
+ * Shanti Carousel
+ */
+
+define('ALLOWED_TAGS', '<a><b><br><button><em><i><img><pre><s><span><strong><sub><sup><u>');
+
+function shanti_carousel_menu() {
+    $items['admin/config/user-interface/shanti_carousel'] = array(
+        'title' => 'Shanti Carousel',
+        'description' => 'Configure Shanti Carousel Module',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('shanti_carousel_admin'),
+        'access arguments' => array('administer site configuration'),
+    );
+    return $items;
+}
+
+function shanti_carousel_admin() 
+{
+    $form = array();
+    $form['shanti_carousel_num'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Enter number of carousels for this site'),
+        '#default_value' => variable_get('shanti_carousel_num', 1),
+        '#required' => TRUE,
+    );
+    $form['shanti_carousel_block_speed'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Speed of Carousel'),
+        '#description' => t('Enter the number of seconds to pause between frames for all carousels'),
+        '#default_value' => variable_get('shanti_carousel_block_speed', 8),
+        '#required' => TRUE,
+    );
+    $form['shanti_carousel_image_fieldset'] = array(
+        '#type' => 'fieldset',
+        '#title' => t('Map image fields'),
+        '#collapsible' => TRUE,
+        '#collapsed' => TRUE,
+    );
+   $form['shanti_carousel_image_fieldset']['shanti_carousel_image_fields'] = array(
+        '#type' => 'checkboxes',
+        '#title' => t('Image Fields'),
+        '#description' => t('Choose all image fields that could be used in the carousel. Leave none checked to choose all.'),
+        '#options' =>  _shanti_carousel_get_fields('image'),
+        '#default_value' => variable_get('shanti_carousel_image_fields'),
+     );
+    $form['shanti_carousel_description_fieldset'] = array(
+        '#type' => 'fieldset',
+        '#title' => t('Map Description fields'),
+        '#collapsible' => TRUE,
+        '#collapsed' => TRUE,
+    );
+   $form['shanti_carousel_description_fieldset']['shanti_carousel_description_fields'] = array(
+        '#type' => 'checkboxes',
+        '#title' => t('Description Fields'),
+        '#description' => t('Choose all description fields that could be used in the carousel. Leave none checked to choose all.'),
+        '#options' => _shanti_carousel_get_fields('text_with_summary, text_long, field_collection'),
+        '#default_value' => variable_get('shanti_carousel_description_fields'),
+     );
+    return system_settings_form($form);
+}
+/**
+ * Given a comma-delimited string or an array of field types returns an array with the names of all the fields of those types
+ * in the form of array('field_name' => 'field_name') unless 2nd param $mode is given as "list".
+ */
+function _shanti_carousel_get_fields($types, $mode='options') {
+    if (is_string($types)) { $types = explode(',', str_replace(' ', '', $types)); }
+    $field_options = array();
+    foreach(field_info_fields() as $k => $v) {
+       if (in_array($v['type'], $types)) {
+           $field_options[$k] = $k;
+       }
+    }
+    if ($mode == 'list') { $field_options = array_keys($field_options); }
+    return $field_options;
+}
+
+/**
+ * Implements hook_block_info
+ */
+function shanti_carousel_block_info()
+{
+    $blocks = array();
+    $num_of_blocks = variable_get('shanti_carousel_num', 1);
+    foreach (range(1, $num_of_blocks) as $n) {
+        $blocks['shanti_carousel_block_' . $n] = array(
+            'info' => variable_get('shanti_carousel_block_name_' . $n, 'Shanti Carousel Block ' . $n),
+            'visibility' => BLOCK_VISIBILITY_NOTLISTED,
+        );
+    }   
+    return $blocks;
+}
+
+function shanti_carousel_block_view($delta)
+{
+    if (strstr($delta, 'shanti_carousel_block')) {
+        $n = str_replace('shanti_carousel_block_', '', $delta);
+        $block['subject'] = '';
+        $block['content'] = shanti_carousel_carousel_block($n);
+        return $block;
+    }
+}
+
+/*
+ * Configure carousel block to determine which projects to highlight
+*/
+function shanti_carousel_block_configure($delta = '')
+{
+    $form = array();
+    if (strstr($delta, 'shanti_carousel_block')) {
+        $n = str_replace('shanti_carousel_block_', '', $delta);
+        $form['shanti_carousel_block_name_' . $n] = array(
+            '#type' => 'textfield',
+            '#title' => t('Carousel Block Name'),
+            '#default_value' => variable_get('shanti_carousel_block_name_' . $n, 'Shanti Carousel Block ' . $n),
+        );
+        $form['shanti_carousel_block_resource_link_text_' . $n] = array(
+            '#type' => 'textfield',
+            '#title' => t('Text for Link to Slide'),
+            '#description' => t('Enter the text for the link to the resource in the slide. Defaults to "View Resource".'),
+            '#default_value' => variable_get('shanti_carousel_block_resource_link_text_' . $n, 'View Resource'),
+            '#required' => TRUE,
+        );
+        $form['shanti_carousel_block_node_ids_' . $n] = array(
+            '#type' => 'textarea',
+            '#title' => t('Node IDs to Include in Carousel ' .$n),
+            '#description' => t('Enter the Node IDs or SOLR record IDs for the items you wish to show in the carousel, one per line,' .
+                                                 'optionally followed by a pipe | and the url for the image to if the thumb url in SOLR is not appropriate.'),
+            '#default_value' => variable_get('shanti_carousel_block_node_ids_' . $n),
+            '#required' => TRUE,
+        );
+        $form['shanti_carousel_block_link_text_' . $n] = array(
+            '#type' => 'textfield',
+            '#title' => t('Text for Link above Carousel ' .$n),
+            '#description' => t('If you want a link to appear above carousel, enter the text for the link here.'),
+            '#default_value' => variable_get('shanti_carousel_block_link_text_' . $n),
+            '#required' => FALSE,
+        );
+        $form['shanti_carousel_block_link_url_' . $n] = array(
+            '#type' => 'textfield',
+            '#title' => t('URL for Link above Carousel ' .$n),
+            '#description' => t('If you want a link to appear above carousel, enter the URL for the link here.'),
+            '#default_value' => variable_get('shanti_carousel_block_link_url_' . $n),
+            '#required' => FALSE,
+        );
+        $form['shanti_carousel_block_link_newwindow_' . $n] = array(
+            '#type' => 'checkbox',
+            '#title' => t('New Window for Link in Carousel ' .$n),
+            '#description' => t('If you want the link to open in a new window, click this checkbox.'),
+            '#default_value' => variable_get('shanti_carousel_block_link_newwindow_' . $n),
+            '#required' => FALSE,
+        );
+        $form['shanti_carousel_block_autostart_' . $n] = array(
+            '#type' => 'checkbox',
+            '#title' => t('Auto start Carousel ' .$n),
+            '#description' => t('If you want the carousel to start cycling automatically, check this box.'),
+            '#default_value' => variable_get('shanti_carousel_block_autostart_' . $n, TRUE),
+            '#required' => FALSE,
+        );
+        $form['global_settings'] = array(
+            '#type' => 'markup', 
+            '#markup' => '<p>To adjust the speed of an automatically revolving carousel, see the ' . 
+                                        l("global settings", '/admin/config/user-interface/shanti_carousel') . '.</p>',
+        );
+        
+    }
+    return $form;
+}
+
+function shanti_carousel_block_save($delta = '', $edit = array())
+{
+    if (strstr($delta, 'shanti_carousel_block')) {
+       $n = str_replace('shanti_carousel_block_', '', $delta);
+       variable_set('shanti_carousel_block_name_' . $n, $edit['shanti_carousel_block_name_' . $n]);
+       variable_set('shanti_carousel_block_resource_link_text_' . $n, rtrim($edit['shanti_carousel_block_resource_link_text_' . $n], 's'));
+       variable_set('shanti_carousel_block_node_ids_' . $n, str_replace(' ', '', $edit['shanti_carousel_block_node_ids_' . $n]));
+       variable_set('shanti_carousel_block_link_text_' . $n, $edit['shanti_carousel_block_link_text_' . $n]);
+       variable_set('shanti_carousel_block_link_url_' . $n, $edit['shanti_carousel_block_link_url_' . $n]);
+       variable_set('shanti_carousel_block_link_newwindow_' . $n, $edit['shanti_carousel_block_link_newwindow_' . $n]);
+       variable_set('shanti_carousel_block_autostart_' . $n, $edit['shanti_carousel_block_autostart_' . $n]);
+    }
+}
+
+function shanti_carousel_carousel_block($n) {
+    $slides = array();
+    $b = block_load('shanti_carousel', 'shanti_carousel_block_' . $n);
+    $res_link_text = variable_get('shanti_carousel_block_resource_link_text_' . $n, t('View Resource'));
+    $title = (!empty($b->title)) ? $b->title : "Featured Resources";
+    $nids = variable_get('shanti_carousel_block_node_ids_' . $n);
+    $link_text = variable_get('shanti_carousel_block_link_text_' . $n);
+    $link_url = variable_get('shanti_carousel_block_link_url_' . $n);
+    $new_window = variable_get('shanti_carousel_block_link_newwindow_' . $n, FALSE);
+    $autostart = variable_get('shanti_carousel_block_autostart_' . $n, TRUE);
+    if (empty($nids)) {
+        watchdog('shanti sarvaka', 'The shanti carousel block ' . $n . ' is enabled but no node ids given in settings. Please add node ids to settings for the block.'); 
+        return; 
+    }
+    $items =explode("\n", $nids);
+    foreach ($items as $itemid) { // nid = node id, not sequential but node number in Drupal
+        // Deal with SOLR IDs
+        if (!empty($itemid)) {
+            $itempts = explode('|', $itemid);
+            $itemid = str_replace(':', '\:', trim($itempts[0]));
+            $imgcust = (count($itempts) > 1) ? $itempts[1] : FALSE;
+            $slide = FALSE;
+            if (strstr($itemid, 'shanti_virginia') || strstr($itemid, '_dd')) {
+                // Get slide for SOLR asset record (kmassets)
+                $slide = _get_solr_slide($itemid, $imgcust);
+            } else if (strstr($itemid, 'places-') || strstr($itemid, 'subjects-')) {
+                // Get slide for SOLR term records (kmterms)
+                $slide = _get_kmaps_slide($itemid, $imgcust);
+            } else  {
+                // Get slide for node on the site
+                $slide = _get_page_slide($itemid, $imgcust);
+            }
+            if (!$slide) {
+                $slide = array(
+                    'id' => $itemid,
+                    'title' => "Invalid Slide ID",
+                    'author' => '',
+                    'date' => '',
+                    'path' => '/#',
+                    'img' => '',
+                    'summary' => '<p>The slide definition, ' . $itemid . ' is invalid. Please check and correct it</p>',
+                    'type' => 'invalid',
+                );
+            }
+            $slides[] = $slide; 
+        }
+    } 
+    // Render and return carousel
+    $carousel = array(
+        'element' => array(
+            '#theme' => 'carousel',
+            '#children' => '',
+            'title' => $title,
+            'res_link_text' => $res_link_text,
+            'num' => $n,
+            'link_text' => $link_text,
+            'link_url' => $link_url,
+            'new_window' => $new_window,
+            'autostart' => $autostart,
+            'speed' => variable_get('shanti_carousel_block_speed', 8),
+            'slides' => $slides,
+        ),
+    );
+    return drupal_render($carousel);
+}
+
+function _get_solr_slide($itemid, $imgcust = FALSE) {
+    $solr = variable_get('shanti_kmaps_admin_server_solr') . '/select?q=uid:' . $itemid . '&wt=json';
+    $json = file_get_contents($solr);
+    $jobj = json_decode($json, TRUE);  
+    $slide = FALSE; 
+    if ($jobj['response']['numFound'] > 0) {
+       $doc = $jobj['response']['docs'][0];
+       $imgurl = ($imgcust) ? $imgcust : $doc['url_thumb'];
+       $author = (isset($doc['node_user'])) ? $doc['node_user'] : '';
+       $slide = array(
+            'id' => $itemid,
+            'title' => $doc['title'][0],
+            'author' => $author,
+            'date' => date('M. j, Y', strtotime($doc['node_created'])),
+            'path' => $doc['url_html'],
+            'img' => $imgurl,
+            'summary' => '<p>' . _format_slide_desc($doc['summary']) . '</p>',
+            'type' => $doc['asset_type'],
+         );
+    } else {
+        watchdog('shanti_carousel', "No solr record found for kmasset: $itemid");
+    }
+    return $slide;
+}
+
+function _format_slide_desc($desc) {
+    $desc = strip_tags($desc, ALLOWED_TAGS);
+    $desc = str_replace('&nbsp;', ' ', $desc);
+    $desc = preg_replace(
+        '{(www\.[^\s]+)(\.com|\.org|\.net)([\s\.\,\;\!\?$])}mi',
+        ' <a href="http://$1$2" target="_blank">$1$2</a>$3',
+        $desc
+    );
+    return $desc;
+}
+
+function _get_kmaps_slide($itemid, $imgcust = FALSE) {
+    $solr = variable_get('shanti_kmaps_admin_server_solr_terms') . '/select?q=uid:' . $itemid . '&wt=json';
+    $json = file_get_contents($solr);
+    $jobj = json_decode($json, TRUE); 
+    $slide = FALSE;  
+    if ($jobj['response']['numFound'] > 0) {
+        $doc = $jobj['response']['docs'][0];
+        $imgurl = ($imgcust) ? $imgcust : $doc['illustration_mms_url'][0];
+        $pts = explode('-', $itemid); 
+        $slide = array(
+            'id' => $itemid,
+            'title' => $doc['header'],
+            'author' => FALSE,
+            'date' => FALSE,
+            'path' => "/{$pts[0]}/{$pts[1]}/overview/nojs",
+            'img' => $imgurl,
+            'summary' => '<p>' . strip_tags($doc['summary_eng'][0], ALLOWED_TAGS) . '</p>',
+            'type' => $pts[0],
+         );
+     } else {
+        watchdog('shanti_carousel', "No solr record found for kmterm: $itemid");
+    }
+    return $slide;
+}
+
+function _get_page_slide($itemid, $imgcust = FALSE) {
+    $node_path = trim($itemid);
+    $nid = FALSE;
+    if (!strstr($node_path, 'node/')) {
+        $node_path = drupal_lookup_path('source', $node_path);
+    }
+    $pthpts = explode('/', $node_path);
+    $nid = array_pop($pthpts);
+    $slide = FALSE;
+    if ($nid) {
+        $pic = False;
+        if ($node = node_load($nid)) {
+            $ew = entity_metadata_wrapper('node', $node);
+            // Do the Carousel Image for Node
+            $imgstyle = '';
+            $imgurl = $imgcust; // For images we find the first defined value in the image fields
+            if (!$imgurl) {
+                $img_fields = variable_get('shanti_carousel_image_fields');
+                $noneset = _check_field_settings($img_fields);
+               foreach ($img_fields as $field_name => $field_value) {
+                   if (is_string($field_value) || $noneset) {
+                        if (!empty($ew->{$field_name}) && !empty($ew->{$field_name}->value())) {
+                            $file = $ew->{$field_name}->value();
+                            $imgurl = image_style_url('carousel', $file['uri']);
+                            break;
+                        }
+                    }
+               }
+            }
+           // Do the textual description/summary for node
+            $summ = '';  // For summary we find the first defined value in the description fields
+            $desc_fields = variable_get('shanti_carousel_description_fields');
+            $noneset = _check_field_settings($desc_fields);
+            foreach ($desc_fields as $field_name => $field_value) {
+                if (is_string($field_value) || $noneset) {
+                    if (!empty($ew->{$field_name}) && !empty($ew->{$field_name}->value())) {
+                         $field_info = field_info_field($field_name);
+                        $summ = _get_description_value($ew->{$field_name}->value(), $field_info['type']);
+                       if (strlen(strip_tags($summ, ALLOWED_TAGS)) > 0) { break; }
+                    }
+                }
+            }
+            $link = url(trim($itemid));
+            if (!empty($ew->field_resource_link) && !empty($ew->field_resource_link->value())) {
+                $reslink = $ew->field_resource_link->value();
+                $link = $reslink['url'];
+            }
+            $slide = array(
+                'id' => $node->nid,
+                'title' => $node->title,
+                'author' => FALSE,
+                'date' => FALSE,
+                'path' => $link,
+                'img' => $imgurl,
+                'summary' => '<p>' . strip_tags($summ, ALLOWED_TAGS) . '</p>',
+                'type' => 'places',
+             );
+        } else {
+             watchdog("Shanti Carousel", "Invalid Node ID given: " . $node_path);
+        }
+    } else {
+        watchdog("Shanti Carousel", "Non-standard node path given: " . $node_path);
+    }
+    return $slide;
+}
+
+function _check_field_settings($settings) {
+    $noneset = TRUE;
+    foreach ($settings as $k => $v) {
+        if (is_string($v)) { $noneset = FALSE;}
+    }
+    return $noneset;
+}
+
+function _get_description_value($field_value, $field_type) {
+    if ($field_type == 'field_collection' && count($field_value) > 0) {
+        $field_item = $field_value[0];
+        foreach ($field_item as $key => $value) {
+            if (is_array($value) && isset($value['und'][0]['safe_value'])) {
+              return$value['und'][0]['safe_value'];
+            }
+        }
+    } else if (isset($field_value['safe_value'])) {
+        $summ = (!empty($field_value['safe_summary']) && strlen(strip_tags($field_value['safe_summary'], ALLOWED_TAGS))) ? 
+                                $field_value['safe_summary'] : $field_value['safe_value'];
+        return $summ;
+    }
+    return '';
+}
+
+// Carousel Image style
+function shanti_carousel_image_default_styles() {
+    $styles = array();
+    // Exported image style: carousel.
+    $styles['carousel'] = array(
+        'label' => 'Carousel',
+        'effects' => array(
+            0 => array(
+                'name' => 'image_scale',
+                'data' => array(
+                    'width' => 500,
+                    'height' => '',
+                    'upscale' => 1,
+                ),
+                'weight' => 0,
+            ),
+            1 => array(
+                'name' => 'image_crop',
+                'data' => array(
+                    'width' => 500,
+                    'height' => 325,
+                    'anchor' => 'center-top',
+                ),
+                'weight' => 5,
+            ),
+        ),
+    );
+    return $styles;
+}
+
+/** 
+ * Implements hook_file_presave
+ *  Automatically creates a 'carousel' image derivative in public://styles/carousel/public 
+ */
+function shanti_carousel_file_presave($file) {
+    if ($file->type == "image") {
+        $style = 'carousel';
+        $style_path = image_style_path($style, $file->uri);
+        $style_path = preg_replace('/public\/[^\/]+\//','public/', $style_path);
+        image_style_create_derivative(image_style_load($style), $file->uri, $style_path);
+    }
+}
+
+function get_carousel_image_url($file) {
+    if ($file->type == "image") {
+        $style = 'carousel';
+        $style_path = image_style_path($style, $file->uri);
+        $style_path = preg_replace('/public\/[^\/]+\//','public/', $style_path);
+        $url = file_create_url($style_path);
+        return $url;
+    }
+    return FALSE;
+}

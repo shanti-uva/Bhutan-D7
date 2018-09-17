@@ -1,0 +1,90 @@
+<?php 
+
+
+/**
+ * Implements hook_menu().
+ */
+function jira_collector_menu() {
+  $items = array();
+
+  $items['admin/config/user-interface/jira_collector'] = array(
+    'title' => 'JIRA Collector Settings',
+    'description' => 'Settings for JIRA Collector module',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('jira_collector_form'),
+    'access arguments' => array('access administration pages'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  return $items;
+}
+
+/**
+ * Page callback: Current posts settings
+ *
+ * @see current_posts_menu()
+ */
+function jira_collector_form($form, &$form_state) {
+  $form['jira_collector_type'] = array(
+    '#type' => 'select',
+    '#title' => t('How to include JIRA collector'),
+    '#options' => array(
+          0 => t('Script Tag'),
+          1 => t('jQuery Code'),
+       ),
+       '#default_value' => variable_get('jira_collector_type', 0),
+       '#description' => t('Choose whether you want to include the JIRA collecto through a &lt;script&gt; tag or through a jQuery load call'),
+       '#require' => TRUE,
+  );
+  $form['jira_collector_include_admin'] = array(  
+    '#type' => 'checkbox',
+    '#title' => t('Include collector on admin pages'),
+    '#description' => t('Check this box to include the JIRA collector on Admin pages'),
+    '#default_value' => variable_get('jira_collector_include_admin', FALSE),
+    '#required' => FALSE, 
+  );
+  $form['jira_collector_exclude_paths'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Pages Not to Include Collecor On'),
+    '#description' => t('List one path per line. Wildcards accepted'),
+    '#default_value' =>  variable_get('jira_collector_exclude_paths', ''),
+    '#required' => FALSE,
+  );
+  return system_settings_form($form);
+}
+
+function jira_collector_page_alter(&$page) {
+    $cp = current_path();
+    $ex_paths = variable_get('jira_collector_exclude_paths', '');
+    $type = variable_get('jira_collector_type', 0);
+    $on_admin = variable_get('jira_collector_include_admin', FALSE);
+    // if user not logged in or it's an admin page and not included on admin or if it matches exclude paths, then do nothing but return
+    if (!user_is_logged_in() || (path_is_admin($cp) && !$on_admin) || drupal_match_path($cp, $ex_paths)) { return; }
+    switch ($type) {
+        case 0:  // Script tag
+            $src="https://issues.shanti.virginia.edu/s/d41d8cd98f00b204e9800998ecf8427e/en_USr653vo-1988229788/6260/4/1.4.7/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?collectorId=3b82b030&components=Images";
+            drupal_add_js($src, 'external');
+            break;
+            
+        case 1:  // jQuery code
+            $code = 'jQuery(document).ready(function() { jQuery.ajax({
+                url: "https://issues.shanti.virginia.edu/s/d41d8cd98f00b204e9800998ecf8427e/en_USr653vo-1988229788/6260/4/1.4.7/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector-embededjs/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector-embededjs.js?collectorId=3b82b030",
+                type: "get",
+                cache: true,
+                dataType: "script"
+            });});';
+            drupal_add_js($code, array('type' => 'inline', 'scope' => 'footer'));
+            break;
+    }
+
+    // Add URL to JIRA Description
+    $desc = "URL\: https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+    $jiraprops = "window.ATL_JQ_PAGE_PROPS = jQuery.extend(window.ATL_JQ_PAGE_PROPS, {
+        // ==== Add code below to set the component field value for JIRA issue collector ====
+        fieldValues: {
+            components : '13260',
+            description : '{$desc}'
+        }                   
+    });"; 
+    drupal_add_js($jiraprops, array('type' => 'inline', 'scope' => 'footer'));
+}

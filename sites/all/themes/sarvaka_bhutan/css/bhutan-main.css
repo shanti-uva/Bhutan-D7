@@ -1,0 +1,337 @@
+/**
+* Mandala Bhutan - Development
+* 
+* version 1.x - bhutan-main.css
+* --------------------------------------------------
+* University of Virginia / SHANTI MANDALA / BHUTAN
+* --------------------------------------------------
+* 
+*/
+
+article ul,
+article ul ul,
+article ul ul ul,
+article ul ul ul ul { -webkit-margin-before: 0; margin-top:0;}
+/** To prevent images from spilling out over popup **/
+/* .modal img { max-width: 550px; } */
+
+.navbar-header{ padding-left:1rem;}
+.navbar-header .navbar-brand{ line-height: 2.25em;}
+.site-logo{ width:500px; height:40px; position:relative; top:0rem;}
+.site-title{ display:none !important;}
+/*-- #search-flyout.extruder.right.isOpened .extruder-content{ border-right-width:13px;} --*/
+
+/** PAGE: Sponsors **/
+.page-sponsors .main-wrapper{ min-height:53em;}
+.page-sponsors .view-resources.btn-default{ display:none;}
+.sponsor-list .views-row{ margin:16px; clear:both;}
+.sponsor-list .views-row h2{ margin-bottom: 6px;}
+.sponsor-list .views-row img{ background-color:#325a6b;padding: 8px 18px;border:3px double #eee;border-radius:0;float:right;margin-left:15px;-webkit-transition:border 300ms ease-out;-moz-transition:border 300ms ease-out;-o-transition:border 300ms ease-out;transition:border 300ms ease-out;}
+.sponsor-list .views-row{ max-width:950px;}
+.sponsor-list .views-row-1 img{ padding:18px;max-width: 190px;}
+.sponsor-list .views-row-2 img{ padding:5px 18px 8px;max-width:200px;}
+.sponsor-list .views-row-3 img{ padding:15px 18px; width: 270px;}
+.sponsor-list .views-row img:hover{ border:3px solid #eee;border-radius:4px;}
+.sponsor-list .views-row img:active{ border:3px double #eee; border-radius:0;}
+
+.sponsor-list .views-row .summary{ padding: 0px 16px 16px 0px;}
+.sponsor-list .views-row .website{ display: block;clear: both;}
+.sponsor-list .views-row .website .label{ font-size: 0.9em;color: #555;padding-left:0;}
+
+/** FOOTER **/
+.footer{ min-height: 120px; background:#222;padding: 10px 15px 30px; position:relative;border-top:3px double #ccc;border-bottom:22px solid #000;}
+.footer,	
+.footer .sponsors, 
+.footer .general,
+.footer .sponsors .views-row{ float: left;}
+.footer .sponsors{ width:100%;}
+.footer .view-sponsor-logos{ display:inline-block;position:relative;top:1.5rem;}
+
+/* footer logos */
+.footer .views-field img.img-responsive{ width:auto; max-width:auto; margin:1.6rem 3rem 0 0;opacity:0.5;}
+.footer .views-field img.img-responsive:hover{ opacity:0.8;}
+.footer .views-field img.img-responsive:active{ opacity:0.4;}
+
+.footer .views-row-1 .views-field img.img-responsive{ height:30px;} /* arcadia */
+.footer .views-row-2 .views-field img.img-responsive{ height:40px; margin-top: 0.7rem;} /* shejun */
+.footer .views-row-3 .views-field img.img-responsive{ height:28px; margin-right:0;margin-top:1.4rem;} /* tibet center */
+
+/* hide drupal */
+.footer .general .content > span{ display:none;} 
+/* copyright */
+.footer .general > p{ color:#707070;font-size:90%;position:absolute;left:50%;bottom:-2rem;margin:0 0 0 -4.4em;} 
+/* sponsored by */
+.footer .sponsors p.tagline{ color:#888;position:absolute;left:50%;margin:0 0 0 -4.62em;letter-spacing:2px;font-size:0.88em;font-family:'museo sans';text-transform:uppercase;} 
+.footer .sponsors p.tagline::first-letter{ font-size:117%;}
+
+@media screen and (max-width: 993px) {	/* this breakpoint from kmaps */
+	
+	.view-resources.btn-default{ display:inline-block !important;}
+	.page-sponsors .view-resources.btn-default{ display:none !important;}
+}
+
+@media screen and (min-width: 650px) {
+	/**.footer{ padding-bottom:10px;}
+	.footer .view-sponsor-logos{ left:50%;margin-left:-255px;}**/
+}
+/*--- BEGIN collections panel ---*/
+.collections {
+  background: #222;
+  margin: 0 0 .2rem 0;
+  padding: 1rem 0 1.8rem 0.8rem;
+  position: relative;
+  width: 100%;
+  display: none;
+}
+
+.collections .row {
+  margin: 0;
+}
+
+.collections ul {
+  text-align: center;
+  list-style-type: none;
+  margin: 0 auto 0 2%;
+  margin-bottom: 10px !important;
+}
+
+.collections ul li {
+  margin: 0;
+  float: left;
+  line-height: 4.5em;
+  width: 50%;
+}
+
+.collections ul li a {
+  color: #d0d0d0;
+  text-decoration: none;
+  letter-spacing: 0.08em;
+  margin-left: 0;
+  float: left;
+  font-size: 0.75em;
+  line-height: 2.75em;
+  font-family: 'museo-sans-500',helvetica,arial,sans-serif;
+  font-weight: 500;
+  font-weight: normal;
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+
+.collections ul li a.disabled, .collections ul li a.disabled:hover, .collections ul li a.disabled:active, 
+.collections ul li a.disabled .icon, .collections ul li a.disabled:hover .icon {
+  color: #707070;
+  cursor: default;
+}
+
+.collections ul li a:hover,
+.collections ul li a:active {
+  text-decoration: none;
+  color: #fff;
+}
+
+.collections ul .icon {
+  color: #aaa !important;
+  margin-right: 8px;
+  font-size: 1.75em;
+  position: relative;
+  top: 0.4rem;
+}
+
+.collections ul .icon.shanticon-logo-shanti {
+  color: #f0f0f0;
+}
+
+.collections ul li a:hover .icon::before{
+  color: #fafafa;
+}
+.collections ul li a:active .icon::before{
+  color: #fff;
+}
+
+.collections ul .icon.shanticon-visuals::before {
+  font-size: 120%;
+  position: relative;
+  left: -0.15rem;
+  margin-right: -0.25rem;
+}
+.collections ul .icon.shanticon-logo-shanti::before {
+  font-size: 110%;
+}
+
+
+
+.collections h4 {
+  color: #eee;
+  text-align: center;
+  margin: 10px 0 18px;
+  letter-spacing: 0.4rem;
+  display: none;
+}
+
+.collections .close {
+  color: #ccc;
+  background: transparent;
+  background-image: none;
+  font-size: 1.75em;
+  width: 2.5rem;
+  height: 2.5rem;
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  z-index: 10 !important;
+  filter: alpha(opacity=35);
+  opacity: 0.35;
+  padding: 0;
+  margin: 0;
+  border: none;
+  text-shadow: none;
+  box-shadow: none;
+  cursor: pointer;
+  display: inline-block;
+  -webkit-transition: color 200ms ease 0s;
+  transition: color 200ms ease 0s;
+}
+
+.collections .close:hover,
+.collections .close:active {
+  filter: alpha(opacity=75);
+  opacity: 0.75;
+}
+/* adjust icon fonts for consistency in Explore menu and elsewhere */
+.shanticon-visuals {
+  font-size: 110%;
+}
+
+.shanticon-images {
+  font-size: 90%;
+}
+/*--- END collections panel ---*/
+/* MINIMUM WIDTH Begins */
+
+
+@media screen and (min-width: 400px) {
+
+}
+
+@media screen and (min-width: 500px) {
+    
+  .navbar-header .site-slogan {
+    display: inline-block;
+  }
+
+  .collections ul li {
+    width: 40%;
+    margin-left: 10%;
+  }
+}
+
+@media screen and (min-width: 600px) {
+
+  .navbar-default h1 .icon {
+    line-height: 1.68em;
+    padding-left: 12px;
+    position: relative;
+    top: 0.5rem;
+  }
+
+  .navbar-header .site-slogan {
+    font-size: 100%;
+    position: relative;
+    top: 0.025rem;
+    /* text-shadow: 0.05rem 0.05rem #fff; */
+  }
+
+  .navbar-header .site-slogan:hover,
+  .navbar-header .site-slogan:active {
+    /*text-shadow: 0.05rem 0.05rem #555;*/
+    text-shadow:none;
+  }
+    /* .navbar-header .navbar-brand{ line-height: 3.75em;} */
+  .collections ul li {
+    width: 20%;
+  }
+
+  .collections ul li a.disabled, 
+  .collections ul li a.disabled:hover,
+  .collections ul li a.disabled:active,
+  .collections ul li a.disabled .icon,  
+  .collections ul li a.disabled:hover .icon {
+    color: #707070;
+    cursor: default;
+  }
+}
+
+
+@media screen and (min-width: 768px) {
+   
+  html body.admin-menu {
+    margin-top: 3rem !important;
+  } /* adjust height of admin bar */
+  
+  .navbar-default .menu-explore {
+    display: none;
+  }
+
+  .menu-toggle {
+    display: inline-block;
+  }
+
+  .collections h4 {
+    font-size: 1.06em;
+    letter-spacing: 0.25em;
+    margin-top: 8px !important;
+  }
+
+  .collections ul li {
+    width: 15%;
+    margin-left: 8%;
+  }
+
+}
+
+@media screen and (min-width: 850px) {
+
+}
+
+@media screen and (min-width: 992px) {
+  
+  .titlearea.has-tabs-secondary ul.tabs.secondary,
+  .titlearea.has-tabs-secondary .row-offcanvas > section.content-section .tab-content:nth-of-type(1) {
+    margin-top: 0;
+  }
+
+  .collections h4 {
+    font-size: 1.12em;
+  }
+
+  .collections ul {
+    margin-left: -5%;
+  }
+
+  .collections ul li {
+    width: 12%;
+    margin-left: 7%;
+  }
+
+  .collections ul li a {
+    font-size: 0.75em;
+  }
+
+  .collections ul li a.disabled, 
+  .collections ul li a.disabled:hover, .collections ul li a.disabled:active, 
+  .collections ul li a.disabled .icon, .collections ul li a.disabled:hover .icon, .collections ul li a.disabled:active .icon {
+    color: #707070;
+    cursor: default;
+  }
+}
+
+@media screen and (min-width: 1280px) {
+}
+
+@media all and (orientation:portrait) {
+}
+
+@media all and (orientation:landscape) {
+}
+
+

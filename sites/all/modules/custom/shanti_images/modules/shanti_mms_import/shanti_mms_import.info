@@ -1,0 +1,8 @@
+name = Shanti Images MMS Import Module
+description = Module for importing files from MMS into Shanti Images
+core = 7.x
+package = Images
+version = 7.x-1.0
+configure = admin/config/media/shanti_images/import
+dependencies[] = shanti_images
+dependencies[] = shanti_kmaps_fields

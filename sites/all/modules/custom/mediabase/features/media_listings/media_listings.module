@@ -1,0 +1,96 @@
+<?php
+/**
+ * @file
+ * Code for the Media Listings feature.
+ */
+
+include_once('media_listings.features.inc');
+
+function media_listings_init() {
+    if (current_path() == 'mycontent/workflow') {
+        drupal_add_js(drupal_get_path('module', 'media_listings') . '/media_listings.js');
+    }
+}
+
+function media_listings_form_alter(&$form, &$form_state, $form_id) {
+    if ($form_id == 'views_exposed_form') {
+        $cp =  current_path();
+        if ($cp == 'mycontent/workflow' || $cp == 'workflow/all' ) {
+            // Reconfigure options for video entry operator to use as Media Present drop down
+            $form['field_video_entryid_op']['#options'] = array(
+                'regular_expression' => t('- Any -'),
+                 'empty' => t('No Media Present'),
+                 'not empty' => t('Media Present')
+            );
+            // Reconfigure options for transcript
+            $form['field_transcript_fid_op']['#options'] = array(
+                'regular_expression' => t('- Any -'),
+                 'empty' => t('No Transcript Present'),
+                 'not empty' => t('Transcript Present')
+            );
+        }
+    } else if ($form_id == 'views_form_shanti_av_content_admin_page_page') {
+        drupal_add_css('.views-exposed-form .views-exposed-widget > div { float: left; padding: .1em 1em 0 0;}', array('type' => 'inline'));
+    }
+}
+
+/**
+ * Implements hook_views_query_alter for the list of AV resources by place
+ */
+function media_listings_views_query_alter(&$view, &$query) {
+    // In browse_media the page_kmaps_place display uses two fields in the contextual filter. Change the boolean to "OR" for those
+    // This gets both the recorded place kmaps field and the referenced place kmaps field
+    if ($view->name == 'browse_media' && $view->current_display == 'page_kmaps_place') {
+        $where = $query->where;
+        $query->where[0]['type'] = 'OR';
+    }    
+}
+
+/**
+ * Implements hook_views_pre_render
+ * 
+ * For Browse Media view's by kmaps pages. Move first text area in header above view so it has full width.
+ * Certain place-holder strings can be used in the text header to be replaced by contextual information about the kmap (i.e., name, id, popover).
+ * The place-holder strings are replaced as follows:
+ *      __PID__         : with the Place ID from the contextual filter (i.e. URL)
+ *      __PLACE__     : with the Place Name calculated from the PID
+ *      __SID__         :  with the Subject ID from the contextual filter
+ *      __SUBJECT__  : with the Subject Name calculated from the SID
+ *      __POPOVER__ : with the html for the info popover generated from domain and kmap id for either subjects or places.
+ */
+function media_listings_views_pre_render(&$view) {
+    if ($view->name == 'browse_media') {
+        // Remove text area and place contents in $view->introtext variable to place outside filters
+        if (!empty($view->header['area']) && !empty($view->header['area']->options['content'])) {
+            $view->introtext = $view->header['area']->options['content'];
+            unset($view->header['area']);
+        }
+        
+        // Get place info and update the introtext for the by kmaps places page
+        if ($view->current_display == 'page_kmaps_place' && !empty($view->introtext)) {
+            $pid = $view->args[0];
+            $info = shanti_kmaps_fields_get_popover_array('places', $pid);
+            if (!empty($info['#label'])) {
+                $view->place_name = $info['#label'];
+                $introtext = str_replace('__PID__', $pid, str_replace('__PLACE__', $view->place_name, $view->introtext));
+                $popover = theme('info_popover', $info);
+                $view->introtext = str_replace('__POPOVER__', $popover, $introtext);
+            } else {
+                $introtext = str_replace('__PID__', '', str_replace('__PLACE__', '', $view->introtext));
+               $view->introtext = str_replace('__POPOVER__', '', $introtext);
+            }
+        } else if ($view->current_display == 'page_kmaps_subject' && !empty($view->introtext)) {
+            $sid = $view->args[0];
+            $info = shanti_kmaps_fields_get_popover_array('subjects', $sid);
+            if (!empty($info['#label'])) {
+                $view->place_name = $info['#label'];
+                $introtext = str_replace('__SID__', $sid, str_replace('__SUBJECT__', $view->place_name, $view->introtext));
+                $popover = theme('info_popover', $info);
+                $view->introtext = str_replace('__POPOVER__', $popover, $introtext);
+            } else {
+                $introtext = str_replace('__SID__', '', str_replace('__SUBJECT__', '', $view->introtext));
+               $view->introtext = str_replace('__POPOVER__', '', $introtext);
+            }
+        }
+    }
+}

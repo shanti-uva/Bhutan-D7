@@ -1,0 +1,111 @@
+diff --git a/handlers/views_handler_sort.inc b/handlers/views_handler_sort.inc
+index 99574e4..a2d0cdc 100644
+--- a/handlers/views_handler_sort.inc
++++ b/handlers/views_handler_sort.inc
+@@ -196,7 +196,7 @@ class views_handler_sort extends views_handler {
+       '#required' => TRUE,
+       '#size' => 40,
+       '#weight' => -1,
+-   );
++    );
+   }
+ 
+   /**
+@@ -208,6 +208,52 @@ class views_handler_sort extends views_handler {
+       'label' => $this->definition['title'],
+     );
+   }
++
++  function store_exposed_input($input, $status) {
++    if (empty($this->options['exposed'])) {
++      return TRUE;
++    }
++
++    if (empty($this->view->display_handler->display->display_options['exposed_form']['options']['sort_remember'])) {
++      return;
++    }
++
++    // Check if we store exposed value for current user.
++    global $user;
++    $allowed_rids = empty($this->view->display_handler->display->display_options['exposed_form']['options']['sort_remember_roles']) ?
++      array() : array_filter($this->view->display_handler->display->display_options['exposed_form']['options']['sort_remember_roles']);
++    $intersect_rids = array_intersect_key($allowed_rids, $user->roles);
++    if (empty($intersect_rids)) {
++      return;
++    }
++
++    // Figure out which display id is responsible for the filters, so we
++    // know where to look for session stored values.
++    $display_id = ($this->view->display_handler->is_defaulted('filters')) ? 'default' : $this->view->current_display;
++
++    // false means that we got a setting that means to recuse ourselves,
++    // so we should erase whatever happened to be there.
++    if (!$status && isset($_SESSION['views'][$this->view->name][$display_id])) {
++      $session = &$_SESSION['views'][$this->view->name][$display_id];
++
++      if (isset($session['sort_by'])) {
++        unset($session['sort_by']);
++      }
++      if (isset($session['sort_order'])) {
++        unset($session['sort_order']);
++      }
++    }
++
++    if ($status) {
++      if (!isset($_SESSION['views'][$this->view->name][$display_id])) {
++        $_SESSION['views'][$this->view->name][$display_id] = array();
++      }
++
++      $session = &$_SESSION['views'][$this->view->name][$display_id];
++      $session['sort_by'] = $input['sort_by'];
++      $session['sort_order'] = $input['sort_order'];
++    }
++  }
+ }
+ 
+ /**
+diff --git a/plugins/views_plugin_exposed_form.inc b/plugins/views_plugin_exposed_form.inc
+index 5d54600..ed8cf2b 100644
+--- a/plugins/views_plugin_exposed_form.inc
++++ b/plugins/views_plugin_exposed_form.inc
+@@ -44,6 +44,8 @@ class views_plugin_exposed_form extends views_plugin {
+     $options['expose_sort_order'] = array('default' => TRUE, 'bool' => TRUE);
+     $options['sort_asc_label'] = array('default' => 'Asc', 'translatable' => TRUE);
+     $options['sort_desc_label'] = array('default' => 'Desc', 'translatable' => TRUE);
++    $options['sort_remember'] = array('default' => FALSE, 'bool' => TRUE);
++    $options['sort_remember_roles'] = array('default' => array());
+     $options['autosubmit'] = array('default' => FALSE, 'bool' => TRUE);
+     $options['autosubmit_hide'] = array('default' => TRUE, 'bool' => TRUE);
+     return $options;
+@@ -110,6 +112,31 @@ class views_plugin_exposed_form extends views_plugin {
+       '#dependency' => array('edit-exposed-form-options-expose-sort-order' => array(TRUE)),
+     );
+ 
++    $form['sort_remember'] = array(
++      '#type' => 'checkbox',
++      '#title' => t('Remember the last selection'),
++      '#description' => t('Enable to remember the last selection made by the user.'),
++      '#default_value' => $this->options['sort_remember'],
++      '#dependency' => array('edit-exposed-form-options-expose-sort-order' => array(TRUE)),
++    );
++
++    $role_options = array_map('check_plain', user_roles());
++    $form['sort_remember_roles'] = array(
++      '#type' => 'checkboxes',
++      '#title' => t('User roles'),
++      '#description' => t('Remember exposed selection only for the selected user role(s). If you select no roles, the exposed data will never be stored.'),
++      '#default_value' => $this->options['sort_remember_roles'],
++      '#options' => $role_options,
++      '#dependency' =>  array(
++        'edit-exposed-form-options-expose-sort-order' => array(TRUE),
++      ),
++      '#states' => array(
++        'visible' => array(
++          '#edit-exposed-form-options-sort-remember' => array('checked' => TRUE),
++        ),
++      ),
++    );
++
+     $form['autosubmit'] = array(
+       '#type' => 'checkbox',
+       '#title' => t('Autosubmit'),

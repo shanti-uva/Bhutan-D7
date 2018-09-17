@@ -1,0 +1,44 @@
+/**
+ * 	Styles Needed to make three tabs fit horizontally in the search flyout.
+ */
+ /*
+.view-section .nav-tabs>li.km-facet-tab, .view-section .nav-tabs>li:first-child{ width: 33%;}
+.view-section .nav-tabs>li.km-facet-tab a {font-size: 0.88em;}
+.view-section .nav-tabs>li.km-facet-tab.active>a,
+.view-section .nav-tabs>li.km-facet-tab.active>a:hover,
+.view-section .nav-tabs>li.km-facet-tab.active>a:active{ font-size: 0.93em;}
+*/
+
+
+.active-kmfacets-list {
+    border: 2px inset rgba(0,0,0,0.1);
+    padding: 4px 4px 2px 4px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    font-size: 90%;
+    overflow: hidden;
+}
+
+.active-kmfacets-list .facet-item {
+    float: left;
+    max-height: 1.5em;
+    margin: 0px 2px 2px 0px;
+    padding: 0px 6px 0px 0px;
+    text-transform: capitalize;
+    font-weight: normal;
+    font-size: 90%;
+}
+
+.active-kmfacets-list .facet-item .kmfacet-item-delete {
+    padding-right: 4px;
+}
+
+.shanti-kmaps-facets-block .kmf-no-results {
+    padding: 6px 12px;
+    font-style: italic;
+}
+
+/* scrolling */
+.km-facet-div > div{
+  overflow-y: scroll;
+}

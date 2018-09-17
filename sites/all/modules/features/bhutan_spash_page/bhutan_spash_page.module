@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Bhutan Spash Page feature.
+ */
+
+include_once 'bhutan_spash_page.features.inc';

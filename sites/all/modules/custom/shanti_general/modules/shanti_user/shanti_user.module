@@ -1,0 +1,259 @@
+<?php 
+/**
+ * shanti_user.module: For a standard user presentation and experience across Shanti
+ * 
+ * 
+ */
+
+ /**
+  * Implements hook_menu
+  */
+function shanti_user_menu() {
+    // Shanti User Settings Page
+    $items = array();
+    $items['admin/config/people/shanti'] = array(
+            'title' => 'SHANTI Users',
+            'description' => 'Menu items for SHANTI Users',
+            'page callback' => 'drupal_get_form',
+            'page arguments' => array('shanti_user_settings_form'),
+            'access arguments' => array('add multi shanti_users'),
+    );
+    $items['admin/config/people/shanti/config'] = array(
+        'title' => 'Configure',
+        'type' => MENU_DEFAULT_LOCAL_TASK,
+    );
+    $items['admin/config/people/shanti/addmulti'] = array(
+            'title' => 'Add Users',
+            'type' => MENU_LOCAL_TASK,
+            'description' => 'Add multiple SHANTI Users',
+            'page callback' => 'drupal_get_form',
+            'page arguments' => array('shanti_user_add_multi_form'),
+            'access arguments' => array('add multi shanti_users'),
+            'weight' => 1,
+    );
+    $items['user/collections/autolist'] = array(
+        'page callback' => '_shanti_user_collections_autolist',
+        'access arguments' => array('add multi shanti_users'),
+        'type' => MENU_CALLBACK
+    );
+    return $items;   
+}
+
+/**
+ * Implements hook_permission
+ */
+function shanti_user_permission()
+{
+    return array(
+        'administer shanti_users' => array(
+            'title' => t('Administer Shanti Users'),
+        ),
+        'add multi shanti_users' => array(
+            'title' => t('Add Multiple SHANTI Users'),
+            'description' => t('Allow user to add multiple users by computing ID'),
+            'restrict access' => TRUE,
+        ),
+    );
+}
+
+function shanti_user_settings_form($form, &$form_state) {
+    $form['shanti_user'] = array(
+        '#type' => 'fieldset',
+        '#title' => t('Shanti User Settings'),
+        '#description' => t('There are currently no settings for the Shanti User module.'),
+    );
+    return $form;
+}
+
+function shanti_user_add_multi_form($form, &$form_state) {
+    $form['shanti_users_add'] = array(
+        '#type' => 'fieldset',
+        '#title' => t('Add Multiple SHANTI Users'),
+        '#description' => t('This form will allow you to add multiple users to the site, if they have not already signed in, and, if desired, assign those users all to a particular collection. This only works with those with UVa computing IDs.'),
+    );
+    $form['shanti_users_add']['user_list'] = array(
+        '#type' => 'textarea',
+        '#title' => t('List of Computing IDs'),
+        '#description' => t('Enter the list of computing IDs for the UVa people you want to add. One ID per line.'),
+        '#default_value' => (isset($form_state['input']['user_list'])) ? $form_state['input']['user_list'] : '',
+        '#required' => TRUE,
+    );
+     $form['shanti_users_add']['coll_id'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Collection to Join'),
+        '#autocomplete_path' => 'user/collections/autolist',
+        '#default_value' => (isset($form_state['input']['coll_id'])) ? $form_state['input']['coll_id'] : '',
+        '#required' => FALSE,
+    );
+     $form['shanti_users_add']['submit_btn'] = array(
+        '#type' => 'submit',
+        '#value' => t('Add Users'),
+    );
+    return $form;
+}
+
+/**
+ * Custom function for collection field autocomplete called from path: user/collections/autolist
+ */
+function _shanti_user_collections_autolist($string) {
+    $string = strtolower($string);
+    $colls = shanti_collections_get_groups_for_user('edit', FALSE);
+    $newcolls = array();
+    foreach($colls as $cid => $cname) {
+        if (strstr(strtolower($cname), $string)) {
+            $id = check_plain($cname) . " ($cid)";
+            $newcolls[$id] = $id;
+        }
+    }
+    drupal_json_output($newcolls);
+}
+
+/**
+ * submit function for the shanti_user_add_multi_form
+ * parses input 
+ */
+function shanti_user_add_multi_form_submit($form, &$form_state) {
+    $form_state['rebuild'] = TRUE;
+    // user ids
+    $users_str = $form_state['values']['user_list'];
+    $uids = explode("\n", $users_str);  // Split uids field value on returns to get list
+    $collstr = $form_state['values']['coll_id'];
+    preg_match('/\((\d+)\)/', $collstr, $mtch); // Value of coll field is coll title with nid in parentheses. Just get NID.
+    $cid = ($mtch) ? $mtch[1] : FALSE;
+    _shanti_user_add_users($uids, $cid); // Call function to add users for initial collection or subcollection
+    
+    // Add users to a collection's subcollections if they inherit from parent
+    $gnode = node_load($cid);
+    if ($gnode->type == "collection") {
+        $gew = entity_metadata_wrapper('node', $gnode);
+        $inherits = $gew->og_user_inheritance->value();
+        if ($inherits) {
+            $sc = shanti_collections_get_subcollections($cid); // Does it have subcollections?
+            if (!empty($sc)) {
+                foreach(array_values($sc) as $scid) {
+                    _shanti_user_add_users($uids, $scid, FALSE);
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Function for adding multiple users with option to add them to a group too
+ */
+ function _shanti_user_add_users($uids, $cid=FALSE, $display_msg=TRUE) {
+     $added = $already = array();
+     foreach ($uids as $uname) {
+        $uname = trim($uname, " \t\n\r\0\x0B,;:");
+        if (empty($uname)) { continue; }
+        $pwd = user_password(10);
+        $email = $uname .  '@Virginia.EDU';
+        $usr = user_load_by_name($uname); // Check to see if user exists
+        // If user does not exist, then add them and put them in the added list
+        if (!$usr) {
+            $new_user = array(
+                'name' => $uname,
+                'pass' => $pwd, 
+                'mail' => $email,
+                'status' => 1,
+                'init' => $email,
+                'roles' => array(
+                    DRUPAL_AUTHENTICATED_RID => 'authenticated user',
+                ),
+            );
+            $usr = user_save('', $new_user);
+            _shanti_user_add_auth($usr);
+            $added[] = $uname;
+        } else {
+            $already[] = $uname; // Otherwise just record $uname as already existing
+        }
+        // Add user to collection if they have a uid
+        if (!empty($usr->uid) && $cid) {
+            _shanti_user_add_to_group($cid, $usr->uid);
+        }
+     }  
+     if ($display_msg) {
+         if (count($added) > 0 ) {
+             drupal_set_message(t('Added the following users: @users', array('@users' => implode(', ', $added))));
+         }
+         if (count($already) > 0) {
+             drupal_set_message(t('The following users already had accounts: @users', array('@users' => implode(', ', $already))));
+         }
+     }
+ }
+
+/**
+ * Add a user by uid to a group by nid (= gid)
+ */
+ function _shanti_user_add_to_group($gid, $uid) {
+     $account = user_load($uid);
+     $mem = og_group('node', $gid, array(
+            "entity type"       => "user",
+            "entity"        => $account,
+            "membership type"   => OG_MEMBERSHIP_TYPE_DEFAULT,
+        ));
+      return $mem;
+ }
+
+ function _shanti_user_add_auth($usr) {
+    $uainsert = db_insert('authmap')
+        ->fields(array(
+            'uid' => $usr->uid,
+            'authname' => $usr->name,
+            'module' => 'simplesamlphp_auth',
+        ))
+        ->execute();
+    if ($uainsert != '1') {
+        watchdog('shanti_user', "Could not add {$usr->name} to Authmap table!");
+    }
+}
+ 
+/**
+ *    shanti_user_login:  Implements hook_user_login
+ *
+ * Using simplesaml auth information get the first and last name of user and 
+ * add to profile if they haven't already entered it.
+ *  AV has deprecated profile module enabled.
+ * All other sites should define a field_fname and field_lname for their 
+ */
+function shanti_user_user_login(&$edit, &$account) {
+    if (module_exists('simplesamlphp_auth')) {
+        $attributes = (array)simplesamlphp_auth_get_attributes();
+        $fn = (!empty($attributes['urn:oid:2.5.4.42'][0])) ? $attributes['urn:oid:2.5.4.42'][0] : FALSE;
+        $ln = (!empty($attributes['urn:oid:2.5.4.4'][0])) ? $attributes['urn:oid:2.5.4.4'][0] : FALSE;
+        $rn = FALSE;
+        // Profile is a deprecate D7 module only used by AV
+        if (module_exists('profile')) {
+            if ($ln && empty($account->profile_lastname)) {
+                if ($fn && empty($account->profile_firstname)) {
+                    $edit['profile_firstname'] = $fn;
+                }
+                $edit['profile_lastname'] =  $ln;
+                profile_save_profile($edit, $account, 'Personal Information');
+                user_save($account, $edit);
+                cache_clear_all();
+                if (!$fn) { $fn = ''; }
+                $rn = $fn . ' ' . $ln;
+            }
+        } else {
+            // All other site must have field_fname and field_lname defined in the user entity type
+            // If the fields are not there, no names will be saved. Hence, isset($user->field_lname) 
+            $user = user_load($account->uid);
+            if ($ln && isset($user->field_lname) && empty($user->field_lname)) {
+                if ($fn && empty($user->field_fname)) {
+                    $user->field_fname['und'][0]['value'] = $fn;
+                }
+                $user->field_lname['und'][0]['value'] = $ln;
+                user_save($user);
+                cache_clear_all();
+                if (empty($fn)) { $fn = ''; }
+                $rn = $fn . ' ' . $ln;
+            }
+        }
+        if (!empty($rn)) {
+            $link = '/user/' . $account->uid . '/edit';
+            if (module_exists('profile')) { $link .= '/Personal%20Information'; }
+            drupal_set_message(t('Your first and last name have been set to <a href="@lnk">@rn</a>', array('@lnk' => $link, '@rn' => $rn)), 'status', FALSE);
+        }
+    }
+}

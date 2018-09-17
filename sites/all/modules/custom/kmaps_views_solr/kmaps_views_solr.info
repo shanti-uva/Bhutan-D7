@@ -1,0 +1,20 @@
+name = Solr Views Integration for Audio-Video
+description = This module exposes Solr API as fields in Views for Audio-Video related assets.
+core = 7.x
+package = Shanti
+
+dependencies[] = views:views
+dependencies[] = views:views_ui
+dependencies[] = pagerer:pagerer
+dependencies[] = better_exposed_filters:better_exposed_filters
+
+stylesheets[all][] = css/kmaps_views_solr.css
+scripts[] = js/kmaps_views_solr.js
+
+files[] = handlers/kmaps_views_solr_handler_field.inc
+files[] = handlers/kmaps_views_solr_handler_filter_title.inc
+files[] = handlers/kmaps_views_solr_handler_filter_asset_type.inc
+files[] = handlers/kmaps_views_solr_handler_sort_title.inc
+files[] = handlers/kmaps_views_solr_handler_sort_created_date.inc
+files[] = handlers/kmaps_views_solr_handler_sort_creator.inc
+files[] = plugins/kmaps_views_solr_plugin_query.inc

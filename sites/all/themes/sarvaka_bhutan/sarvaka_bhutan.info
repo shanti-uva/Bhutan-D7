@@ -1,0 +1,56 @@
+name = Bhutan Oral Traditions Theme
+description = A sub-theme of the Drupal 7 Shanti Sarvaka Theme for the Bhutan Oral Traditions Site
+core = 7.x
+base theme = sarvaka_kmaps
+version = 7.x-1.x
+
+dependencies[] = jquery_update ; requires jquery v 1.10+
+
+;;;;;;;;;;;;;;;;;;;;;
+;; Regions
+;;;;;;;;;;;;;;;;;;;;;
+
+regions[header]         = Top Bar Header
+regions[banner]         = Banner Strip or Grid
+regions[content]        = Content
+regions[search_flyout]  = Search Fly Out
+regions[search_results]  = Search Results
+regions[sidebar_first]  = Primary Sidebar
+regions[sidebar_second] = Secondary Sidebar
+regions[highlighted]    = Highlighted
+regions[help]           = Help
+regions[page_top]       = Page top
+regions[page_bottom]    = Page bottom
+regions[footer]         = Footer
+regions[admin_footer]   = Admin Footer
+
+;;;;;;;;;;;;;;;;;;;;;
+;; Stylesheets
+;;;;;;;;;;;;;;;;;;;;;
+
+stylesheets[all][] =  css/normalize.css
+stylesheets[all][] =  css/bhutan-main.css
+stylesheets[all][] =  css/bhutan-search.css
+stylesheets[all][] =  fonts/shanticon/css/style.css
+stylesheets[all][] =  css/grayscale.css
+stylesheets[all][] =  css/banner-colors.css
+  
+;;;;;;;;;;;;;;;;;;;;;;
+;;; Scripts
+;;;;;;;;;;;;;;;;;;;;;;
+;scripts[] = js/modernizr.custom.js
+scripts[] = js/grayscale.js
+scripts[] = js/imagesloaded.pkgd.min.js
+scripts[] = js/jquery.columnizer.min.js
+scripts[] = js/bhutan-main.js
+scripts[] = js/bhutan-search.js
+
+;;;;;;;;;;;;;;;;;;;;;
+;; Theme Settings   
+;;;;;;;;;;;;;;;;;;;;;
+;
+; These theme settings can be changed in the admin interface as well.
+; Furthermore, base color is primarily determined in CSS
+;
+;settings[shanti_sarvaka_base_color] = '#dc3c47' 
+;settings[shanti_sarvaka_icon_class] = 'av'

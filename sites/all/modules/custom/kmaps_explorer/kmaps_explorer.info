@@ -1,0 +1,24 @@
+name = Shanti Kmaps Explorer Module
+description = "Intergrates Shanti knowledge map functionality into any Drupal site"
+core = 7.x
+package = Shanti
+
+files[] = kmaps-explorer.module
+dependencies[] = jquery_update
+dependencies[] = shanti_kmaps_admin
+dependencies[] = shanti_kmaps_typeahead
+dependencies[] = shanti_kmaps_tree
+
+stylesheets[all][] = css/photoswipe.css
+stylesheets[all][] = css/pswp-default-skin.css
+stylesheets[all][] = css/shanti-images-gallery.css
+
+stylesheets[all][] = css/kmaps-explorer.css
+
+scripts[] = js/handlebars.min-latest.js
+scripts[] = js/jquery.columnizer.min.js
+scripts[] = js/custom-ajax.js
+scripts[] = js/kmaps_relations_tree.js
+scripts[] = js/solr-utils.js
+scripts[] = js/jquery.kmapsCollapsibleList.js
+scripts[] = js/jquery.kmaps-popup.js

@@ -1,0 +1,7 @@
+<?php
+
+function shanti_footnotes_init() {
+  $path = drupal_get_path('module', 'shanti_footnotes');
+  drupal_add_js($path . '/js/shanti_footnotes.js');
+  drupal_add_css($path . '/css/shanti_footnotes.css');
+}

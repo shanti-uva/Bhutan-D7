@@ -1,0 +1,42 @@
+<?php
+
+/**
+ * Implements hook_schema to define table for storing user preferences
+ */
+function user_prefs_schema() {
+  $schema['user_prefs'] = array(
+    'description' => 'The base table for nodes.',
+    'fields' => array(
+      'rid' => array(
+        'description' => 'The primary identifier for a record.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE),
+      'uid' => array(
+        'description' => 'The id for the user associated with these preferences',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE),
+      'preferences' => array(
+        'description' => 'The json text defining the users preference settings',
+        'type' => 'text',
+        'size' => 'normal',
+        'not null' => TRUE),
+      'created' => array(
+        'description' => 'The Unix timestamp when the record was created.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0),
+      'changed' => array(
+        'description' => 'The Unix timestamp when the record was most recently saved.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0),
+      ),
+    'unique keys' => array(
+      'uid'     => array('uid')
+      ),
+    'primary key' => array('rid'),
+  );
+  return $schema;
+}

@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Kmaps Views Solr Features feature.
+ */
+
+include_once 'kmaps_views_solr_features.features.inc';

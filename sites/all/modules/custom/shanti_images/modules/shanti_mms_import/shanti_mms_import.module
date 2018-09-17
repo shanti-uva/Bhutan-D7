@@ -1,0 +1,1435 @@
+<?php
+
+define('MMS_DEV', 'http://staging-mms.thlib.org/media_objects/'); // MMS dev is down. Use staging instead.
+define('MMS_PROD', 'http://mms.thlib.org/media_objects/');
+define('CONV_LIMIT', 1000);
+
+/**
+ * Implement hook_menu
+ * placeholder until needed
+ */
+function shanti_mms_import_menu() {
+    $items = array();
+    $items['admin/config/media/shanti_images/import'] = array(
+        'title' => 'Shanti Images MMS Import',
+        'description' => 'Import images from MMS',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('shanti_mms_import_admin_form'),
+        'access arguments' => array('administer shanti images'),
+        'type' => MENU_LOCAL_TASK | MENU_NORMAL_ITEM,
+    );
+    $items['mms-import/collections/autocomplete'] = array(
+        'page callback' => 'shanti_mms_import_collections_autocomplete',
+        'access arguments' => array('administer shanti images'),
+        'type' => MENU_CALLBACK
+    );
+    $items['mms-import/logs/delete'] = array(
+        'title' => 'Delete MMS Import Logs',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('shanti_mms_import_delete_logs'),
+        'access arguments' => array('administer shanti images'),
+        'type' => MENU_NORMAL_ITEM,
+    );
+    return $items;
+}
+
+
+function shanti_mms_import_admin_form($form, &$form_state) {
+    $form = array();
+    
+    $form['intro'] = array(
+        '#markup' => '<p>This is the form for importing images from mms. Enter info below and press "Import". ' .
+            'You can also <a href="/mms-import/logs/delete">View Past Logs</a> or see a ' .
+            '<a href="/admin/config/media/shanti_images/mms/summary">Summary of MMS Import Status</a>.</p>',
+    );
+    
+    $form['source'] = array(
+        '#type' => 'select',
+        '#title' => 'MMS Source Server',
+        '#options' => array(
+            'dev' => t('Dev'),
+            'prod' => t('Production'),
+        ),
+        '#required' => TRUE,
+        '#default_value' => 'prod',
+    );
+    
+    $form['mms_ids'] = array(
+        '#type' => 'textfield',
+        '#title' => t('MMS IDs'),
+        '#prefix' => "<p><em>Either:  </em></p>",
+        '#suffix' => "<p><em>Or ...</em></p>",
+        '#size' => 50,
+        '#required' => FALSE,
+    );
+
+    $form['mms_coll_id'] = array(
+        '#type' => 'textfield',
+        '#title' => t('MMS Collection ID'),
+        '#size' => 10,
+        '#required' => FALSE,
+    );
+
+    $form['default_agent'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Default Photographer'),
+        '#size' => 50,
+        '#description' => t('If no photographer is given by the mms api, provide a default name to use.'),
+        '#required' => FALSE,
+        '#default_value' => "Unknown",
+    );
+
+    $form['image_coll_node'] = array (
+        '#type'		=>	'textfield',
+        '#title'	=>	t('Image Collection'),
+        '#size' => 50,
+        '#required' =>	 FALSE,
+        '#autocomplete_path' => 'mms-import/collections/autocomplete',
+        '#description' => t('Import Images into this Shanti Images collection or subcollection'),
+    );
+/* Not used yet maybe never
+    $form['additional_metadata'] = array(
+        '#type' => 'file',
+        '#title' => t('Additional Metadata'),
+        '#description' => t('Optionally add CSV file with additional metadata associated with each MMS ID'),
+        '#size' => 22,
+    );
+    // if used then this code needs to be in the validate function to retrieve file
+$file1 = file_save_upload('additional_metadata', array(
+        'file_validate_extensions' => array('js json'),
+    ));
+    if (isset($file1)) {
+        $form_state['values']['additional_metadata'] = shanti_mms_import_process_addition_data($file1);
+*/
+    $form['publish'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Publish New Nodes?'),
+        '#required' => FALSE,
+        '#default_value' => FALSE,
+    );
+    
+    $form['submit'] = array(
+        '#type' => 'submit',
+        '#value' => t('Import')
+    );
+
+    return $form;
+}
+
+/**
+ * Autocomplete function used in import form for entering an OG collection or subcollection into which
+ * MMS images are to be imported
+ *
+ * @param $str
+ */
+function shanti_mms_import_collections_autocomplete($str) {
+    $q = db_query("select nid, title, type from {{node}} where (type='collection' or type='subcollection') and title like '%{$str}%'");
+    $res = $q->fetchAll();
+    $matches = array();
+    foreach($res as $item) {
+        $itstr = $item->title . " ({$item->nid})";
+        if ($item->type == 'subcollection') {
+            $pcoll = shanti_collections_get_parent_collection($item->nid);
+            $itstr = $pcoll->title . " > " . $itstr;
+        }
+        $matches[$itstr] = $itstr;
+    }
+    drupal_json_output($matches);
+}
+
+/**
+ * MMS import form submit validator
+ *
+ * Makes sure a valid range of MMSIDs or a MMS Coll ID as been given and adds an array of IDs as integers to form state
+ *
+ * @param $form
+ * @param $form_state
+ */
+function shanti_mms_import_admin_form_validate($form, &$form_state) {
+    if ($form_state['triggering_element']['#value'] == t('Delete Logs')) { return; }
+
+    // Checking beginning and end mms ids if they are there
+    if (!empty($form_state['input']['mms_ids'])) {
+        $mmsids = $form_state['input']['mms_ids'];
+        if (strstr($mmsids, ',')) {
+            $mmsids = str_replace(' ', '', $mmsids);
+            $mmsids = explode(',', $mmsids);
+        } elseif (strstr($mmsids, ' ')) {
+            $mmsids = explode(' ', $mmsids);
+        } elseif (strstr($mmsids, '-')) {
+            $mmsids = _convert_string_to_range($mmsids);
+        } elseif (is_numeric($mmsids)) {
+            $mmsids = array($mmsids);
+        } else {
+            form_set_error('mms_ids', t("You did not enter valid series of MMS IDs to convert: @mmsids",
+                array('@mmsids' => $mmsids)));
+        }
+    } elseif (!empty($form_state['input']['mms_coll_id'])) {
+        $mms_coll = $form_state['input']['mms_coll_id'];
+        $mmsids = shanti_mms_import_get_mms_coll_ids($mms_coll);
+    } else {
+        form_set_error('mms_ids', t('You must either set a start and end MMS ID value or enter the ID for an MMS collection to import'));
+    }
+
+    // In case a range is included in a comma separated list, check each value for a dash and expand
+    $expanded = array();
+    foreach ($mmsids as $mid) {
+        if (strstr($mid, '-')) {
+            $newids = _convert_string_to_range($mid);
+            $expanded = array_merge($expanded, $newids);
+        } else {
+            $expanded[] = $mid;
+        }
+    }
+
+    // Make each val and integer so we can check that each value is an integer, if not intval returns 0
+    $mmsids = array_map('intval', $expanded);
+    if (empty($mmsids)) {
+        form_set_error('mms_ids', "No valid MMS IDs were found!");
+    } elseif (count($mmsids) > CONV_LIMIT) {
+        form_set_error('mms_ids', "Are you sure you want to convert more than " . CONV_LIMIT .
+            " MMS records. If so, you must up the CONV_LIMIT constant in the Shanti MMS Import module");
+    } else if (in_array(0, $mmsids)) {
+        form_set_error("mms_ids", t("Not all MMSIDs given were valid integers"));
+    }
+    sort($mmsids);
+    $form_state['values']['mmsids'] = $mmsids;
+}
+
+function _convert_string_to_range($rstr) {
+    $pts = explode('-', $rstr);
+    return range($pts[0], $pts[1]);
+}
+
+function shanti_mms_import_get_mms_coll_ids($mms_coll) {
+    $solr_base = variable_get('shanti_kmaps_admin_server_solr', FALSE);
+    if ($solr_base) {
+        $solr_url = $solr_base . "/select?q=asset_type:picture%20AND%20kmapid:subjects-" . $mms_coll . "&fl=id&rows=10000&wt=json";
+        //dpm($solr_url, 'sol url in func');
+        $jtxt = file_get_contents($solr_url, false, stream_context_create(
+            array('ssl' => array(
+                'verify_peer' => isset($_ENV['AH_PRODUCTION']) && $_ENV['AH_PRODUCTION'] == 1 ? true : false,
+                'verify_peer_name' => isset($_ENV['AH_PRODUCTION']) && $_ENV['AH_PRODUCTION'] == 1 ? true : false
+            ))
+        ));
+        $myjson = json_decode($jtxt);
+        if (isset( $myjson->response->docs)) {
+            $mmsids = array();
+            foreach ($myjson->response->docs as $n => $item) {
+                if (!empty($item->id)) {
+                    $mmsids[] = $item->id;
+                }
+            }
+            sort($mmsids);
+            return $mmsids;
+        } else {
+            return $myjson;
+        }
+    }
+}
+
+/**
+ * Function to process uploaded CSV file with additional metadata
+ */
+/*
+function shanti_mms_import_process_addition_data($datafile) {
+    $fpath = drupal_realpath($datafile->uri);
+    $jsontxt = file_get_contents($fpath);
+    $json = json_decode($jsontxt);
+    return $json;
+}
+*/
+
+/**
+ * MMS Data Import Form Submit function. Begin a batch process to convert the given range of MMSIDs
+ *
+ *   The two MMS fields (IDs and Collection) are parsed in the form validate function and a list of single
+ *   IDs is created and put in the $form_state['values']['mmsids'] so this can be iterated through
+ *
+ * @param $form
+ * @param $form_state
+ */
+function shanti_mms_import_admin_form_submit($form, &$form_state)
+{
+    global $publish;
+    //dpm($form_state, 'form state on submission');
+    $mmsids = $form_state['values']['mmsids'];
+    $mms_coll = $form_state['input']['mms_coll_id'];
+    $coll = '';
+    if (!empty($form_state['input']['image_coll_node'])) {
+        preg_match('/ \((\d+)\)$/', $form_state['input']['image_coll_node'],$mtchs);
+        if ($mtchs && count($mtchs) > 1) {
+            $coll = $mtchs[1];
+        }
+    }
+
+    $mmssource = $form_state['input']['source'];
+    $publish = $form_state['input']['publish'];
+
+    $photographer = $form_state['input']['default_agent'] ?: 'Unknown';
+    $batch = array(
+        'operations' => array(),
+        'finished' => 'shanti_mms_import_finished',
+        'title' => t('MMS Import Range'),
+        'init_message' => t('Importing MMS records to Shanti Images'),
+        'progress_message' => t('Processed @current out of @total.'),
+        'error_message' => t('Importing MMS records has encountered an error.')
+    );
+
+    foreach ($mmsids as $mmsid) {
+        $batch['operations'][] = array('shanti_mms_import_create_mms_node', array($mmssource, $mmsid, $publish, $photographer, $coll, $mms_coll));
+    }
+    batch_set($batch);
+    batch_process('admin/config/media/shanti_images/import');
+}
+
+/**
+ *
+ * Callback for finish of batch processing MMS import nodes.
+ * Creates a .CSV file that is a list of MMS IDs and resulting data
+ * Creates a .json file that is a summary of this conversion run.
+ *
+ * @param $success
+ * @param $results
+ * @param $operations
+ */
+function shanti_mms_import_finished($success, $results, $operations) {
+    if ($success) {
+        $dir = "public://mms-import";
+        file_prepare_directory($dir, FILE_CREATE_DIRECTORY);
+        $outdata = shanti_mms_import_results_to_csv($results['data']);
+        $tm = time();
+        $smid = $results['start_mms_id'];
+        $emid = $results['end_mms_id'];
+        $tmpfile = file_unmanaged_save_data($outdata, "public://mms-import/mms-import-data-{$smid}-{$emid}-{$tm}.csv");
+        $turl = file_create_url($tmpfile);
+        $total = count($results['data']);
+        unset($results['data']);
+        $tmpfile2 = file_unmanaged_save_data(json_encode($results), "public://mms-import/mms-import-info-{$smid}-{$emid}-{$tm}.json");
+        $turl2 = file_create_url($tmpfile2);
+        array_unshift($results['commands'], '#!/usr/bin/env bash');
+        $results['commands'] = implode("\n", $results['commands']);
+        $tmpfile3 = file_unmanaged_save_data($results['commands'], "public://mms-import/mms-import-move-{$smid}-{$emid}-{$tm}");
+        $turl3 = file_create_url($tmpfile3);
+        $done = $results['successes'];
+        $failed = $results['failures'];
+        //watchdog('shanti mms import', $results['collid']);
+        $sicollid = $results['collid'];
+        $collnode = node_load($sicollid);
+        if ($collnode) {
+            $clnk = ', imported into ' . l($collnode->title, drupal_get_path_alias('node/' . $sicollid));
+        } else {
+            $clnk = ': ';
+        }
+        drupal_set_message(t('@count MMS records processed: @done converted, @failed not converted' . $clnk . ': ', array(
+                                '@count' => $total,
+                                '@done' => count($done),
+                                '@failed' => count($failed),
+                            )));
+        drupal_set_message('Data file is at: <a href="' . $turl . '" target="_blank">' . $tmpfile . '</a>.');
+        drupal_set_message('Conversion info is at: <a href="' . $turl2 . '" target="_blank">' . $tmpfile2 . '</a>.');
+        drupal_set_message('Move commands are at: <a href="' . $turl3 . '" target="_blank">' . $tmpfile3 . '</a>.');
+        if (!empty($operations[0][4])) {
+            $collid = $operations[0][4];
+            if (is_numeric($collid)) {
+                $collnode = node_load($collid);
+                $colllink = l($collnode->title, drupal_get_path_alias("node/$collid"));
+                drupal_set_message("Items imported into " . $colllink);
+            }
+        }
+    } else {
+        // An error occurred.
+        // $operations contains the operations that remained unprocessed.
+        $error_operation = reset($operations);
+        drupal_set_message(t('An error occurred while processing @operation with arguments : @args', array('@operation' => $error_operation[0], '@args' => print_r($error_operation[0], TRUE))));
+    }
+}
+
+/**
+ * A helper function to turn the array of results from the batch conversion into a CSV file.
+ *
+ * @param $data
+ * @return string
+ */
+function shanti_mms_import_results_to_csv($data) {
+    $outdata = array('MMS ID,Node ID,IIIF Image Name,Title,Drupal URL,MMS URL,Status');
+    foreach ($data as $line) {
+        foreach($line as &$item) {
+            $item = addslashes($item);
+        }
+        $outdata[] = implode(',', $line);
+    }
+    return implode("\n", $outdata);
+}
+
+/**
+ * The "operation" function called for each MMSID in the batches operation array. Takes an MMS ID and other variables
+ * And creates a Drupal node for it with all the information from MMS
+ *
+ * @param $mmssource : The source from which to get the MMS record: 'dev' or 'prod'
+ * @param $mmsid : The MMSID to create a node from
+ * @param $mmspublish : Whether or not to publish the node thus created
+ * @param $defptgr : The default photographer name is no photographer is given in MMS (Photographer is requires in Drupal)
+ * @param $collid : The node ID for the collection in Drupal to which to add the image
+ * @param $context : The persistent batch variable passed on through iterations for storing result information
+ */
+function shanti_mms_import_create_mms_node($mmssource, $mmsid, $mmspublish, $defptgr, $collid='', $mms_coll='', &$context) {
+    // Get Record XML
+    $context['message'] = "Processing MMS ID $mmsid ...";
+    if (!isset($context['results']['date'])) {
+        // Context[results] array used to keep track of information about this conversion
+        $context['results'] = array(
+            'date' => date('Y-m-d h:i:s a'),
+            'start_mms_id' => $mmsid, // The start mms id
+            'end_mms_id' => $mmsid, // The finish mms id
+            'collid' => $collid, // Collection ID to import into
+            'mmscollid' => $mms_coll, // Collection Subject Kmap ID
+            'successes' => array(), // an array of successs as mmsid => node id : IIIF file name
+            'failures' => array(),  // an array of failures as mmsid => reason for failure
+            'data' => array(),  // an array to turn into a CSV file for record keeping (see below)
+            'commands' => array(),  // an array of terminal commands to rename the images on IIIF server based on new IIIF file names
+        );
+    }
+    $imported = FALSE;
+    $fail_reason = '';
+    // If the mms id  has not yet been imported, then import it!
+    if(!_mms_is_imported($mmsid)) {
+        // Get the sanitize/organized data from the MMS XML API for this ID
+        $mmsdata = _shanti_mms_import_get_xml($mmsid, $mmssource, $defptgr);  // MMS XML data is more complete than JSON
+        if ($mmsdata === false) {
+            $fail_reason = "Could not retrieve XML data from MMS";
+        } elseif ($mmsdata['type'] == 'Picture' && $mmsdata['resource_type_id'] == 2660) {
+            // Create the Drupal node from the data retrieved.
+            $node = shanti_mms_import_create_node($mmsdata, $mmspublish, $collid);
+            if (!isset($node->error)) {
+                $i3fid = array_shift($node->i3ffiles);
+                // Keep track of information about conversion in the context[results] array
+                // results->data is an array to be converted to CSV file
+                // columns are: mms id, node id, IIIF id, title, drupal url, mms url, notes
+                $context['results']['data'][] = array(
+                    'mmsid' => $mmsid,
+                    'nid' => $node->nid,
+                    'i3fid' => $i3fid,
+                    'title' => $node->title,
+                    'durl' => url('/node/' . $node->nid, array('absolute' => TRUE)),
+                    'mmsurl' => _get_mms_base($mmssource) . $mmsid,
+                    'notes' => "success",
+                );
+                $context['results']['commands'][] = _shanti_mms_import_build_move_command($mmsid, $i3fid, $mmssource);
+                $context['results']['successes'][] = array($mmsid => "{$node->nid}:{$i3fid}");
+                //$newfid = explode('-', $i3fid);
+                //$newfid = array_pop($newfid);
+                // $context['results']['commands'][] = "./moveMMSFile.sh $mmsid $newfid";
+                $imported = TRUE;
+            } else {
+                $fail_reason = "Error on saving node!";
+            }
+        } else {
+            $fail_reason = "Not an image";
+        }
+    } else {
+        $siobj = _shanti_images_get_record($mmsid, 'mmsid');
+        $fail_reason = "Already imported";
+        if (is_object($siobj)) {
+            $fail_reason .= ":{$siobj->nid}:{$siobj->i3fid}";
+        }
+    }
+    if (!$imported) {
+        $context['results']['data'][] = array(
+            'mmsid' => $mmsid,
+            'nid' => '',
+            'i3fid' => '',
+            'title' => '',
+            'durl' => '',
+            'mmsurl' => $mmssource . $mmsid,
+            'notes' => "not converted: " . $fail_reason,
+        );
+        $context['results']['failures'][] = array($mmsid => $fail_reason);
+    }
+    $context['results']['end_mms_id'] = $mmsid;
+}
+
+/**
+ * A helper function to test if an mmsid has already been imported.
+ * An mmsid columns is added to shanti_images table in update 7002.
+ * When an mmsid is converted, its record in the shanti_images table records the mms id.
+ * If that ID already exists in the table, then the mms photo has already been imported.
+ *
+ * @param $mmsid
+ * @return bool
+ */
+function _mms_is_imported($mmsid) {
+    $q = db_query('select * from {shanti_images} where mmsid= :mid', array(
+        ':mid' => $mmsid,
+    ));
+    $res = $q->rowCount();
+    if ($res > 0) { return TRUE; } else { return FALSE; }
+}
+
+function _shanti_mms_import_build_move_command($mmsid, $i3fid, $serv) {
+    $mms_fold = '0000';
+    if (strlen($mmsid) > 4) {
+        $mms_fold = '000' . substr($mmsid,0,1);
+        $mmsid = substr($mmsid, 1);
+    }
+    $source_path = '../iiif-live/shanti/prod/';
+    $mmsint = (int)$mmsid;
+    if ($mms_fold == '0000' && $mmsint < 1055) {
+        $source_path = '../0000missing';
+        $mmsid = str_pad($mmsid, 4, '0', STR_PAD_LEFT);
+        $mms_fold = '';
+    }
+    $dest_fold = ($serv == 'prod') ? 'prod' : 'test';
+    $dest_dir = '../iiif-live/shanti/' . $dest_fold . '/';
+    $cmd = "rsync -ah --progress {$source_path}{$mms_fold}/{$mmsid}.jp2 {$dest_dir}{$i3fid}.jp2";
+    return $cmd;
+}
+
+/**
+ * Creates a new Shanti Image node given an array of data with MMS data
+ * This data was previously from the JSON API. Now it is gotten from the XML API and sanitized
+ * See _shanti_mms_import_get_xml() and _shanti_mms_import_extract_data_xml()
+ * This function goes through that sanitized data and uses it to create a Drupal node
+ *
+ *          This is a simple associative array $mobj has become $mmsdata
+ *
+ * @param $data : the sanitized data from MMS
+ * @param $publish : a boolean whether or not to publish the resulting node
+ * @param string $admin_note : an optional note to go in the admin notes field
+ *
+ * @return StdClass : returns a drupal node object
+ */
+function shanti_mms_import_create_node($data, $publish, $collid='', $admin_note='') {
+    global $user;
+
+    $img_notes = $tech_notes = $admin_notes = '';
+
+    // Create New Node Object with standard info
+    $node = new StdClass();
+    $node->type = 'shanti_image';
+    $node->uid = $user->uid;
+    $node->status = $publish;
+    $node->active = 1;
+    $node->promote = 0;
+
+    if (!empty($collid) && is_numeric($collid)) {
+        $node->field_og_collection_ref[LANGUAGE_NONE][0]['target_id'] = $collid;
+    }
+
+    // Node Title: Get MMS Caption for the Image Title
+    $title = (!empty($data['titles'][0]['title'])) ? $data['titles'][0]['title'] : FALSE;
+    $main_caption = (!empty($data['captions'][0]['caption'] )) ? $data['captions'][0]['caption'] : FALSE ;
+    $main_desc = (!empty($data['descriptions'][0]['description'] )) ? $data['descriptions'][0]['description'] : FALSE ;
+    //$caption_start = 0; // the index of the first caption to use in the caption field
+    if (!$title) {
+        // if there's no title use the first caption
+        if ($main_caption) {
+            $title = $main_caption;
+            if (strlen($title) > 255) {
+                $title = substr($title, 0, 255);
+                if (strrpos($title, ' ')) {
+                    $title = substr($title, 0, strrpos($title, ' '));
+                }
+            } else {
+                unset($data['captions'][0]);
+            }
+        } elseif ($main_desc && strlen($main_desc) < 256) {
+          $title = $main_desc;
+          unset($data['descriptions'][0]);
+        } else {
+            $title = "(Untitled)";
+        }
+    }
+    $node->title = html_entity_decode(strip_tags($title));
+
+    // No image used in creation anymore. All imported into IIIF directly
+    $node->field_image = array();
+
+    // Add the MMS ID for reference
+    $mmsid = 'MMS-' . $data['mmsid'];
+    $node->field_other_ids['und'][] = array(
+        'value' => $mmsid,
+        'format' => NULL,
+        'safe_value' => check_plain($mmsid),
+    );
+
+    // Captions & Descriptions
+    if (count($data['captions']) > 0 || !empty($data['descriptions'])) {
+        // Create the array for all descriptions and initialize counter
+        $dct = 0;
+        $node->field_image_descriptions = array(
+            'und' => array(),
+        );
+
+       // TODO: Deal with description author once Andres includes in API see MMS 69376 for desc with author
+       $author = ($data['photographer']) ? $data['photographer'] : '';
+
+       // First deal with extra captions
+       foreach($data['captions'] as $n => $cap) {
+           $lang = $cap['lang'] ?: 'eng';
+           $dnode = _shanti_mms_import_create_desc($title, $cap['caption'], $lang, $author);
+           $node->field_image_descriptions['und'][$dct] = array( 'target_id' => $dnode->nid );
+           $dct++;
+           $admin_note .= "\nCaption {($dct + 1)}: {$cap['id']}, {$cap['lang']}";
+       }
+
+       // Now add descriptions
+       if (!empty($data['descriptions'])) {
+
+           $desct = 0;
+           $desc = $data['descriptions'];
+           foreach ($desc as $n => $subdesc) {
+               $lang = $subdesc['lang'] ?: 'eng';
+               $summ = $subdesc['type'] ?: '';
+               $dnode = _shanti_mms_import_create_desc($title, $subdesc['description'], $lang, $author, $summ);
+               $node->field_image_descriptions['und'][$dct] = array('target_id' => $dnode->nid);
+               $dct++;
+               $desct++;
+               $admin_note .= "\Description {$desct}: {$cap['id']}, {$cap['lang']}";
+           }
+       }
+
+    }
+
+    // Photographer & Date
+    $photographer = $data['photographer'] ?: "Unknown";
+    $date = $data['taken_on'] ?: FALSE;
+    $ploc = $data['locations'][0] ?: FALSE;
+    $photographer = _shanti_mms_import_create_agent($photographer, $date, 'photographer', $ploc);
+    $node->field_image_agents = array(
+        'und' => array(
+            0 => array(
+                'target_id' => $photographer->nid,
+            ),
+        ),
+    );
+
+    // Publisher
+    if (!empty($data['publisher'])) {
+        $publisher = $data['publisher'];
+        $note = '';
+        if (!empty($data['publisher_country'])) {
+            $note = "<strong>Publisher Country: </strong> {$data['publisher_country']} ({$data['publisher_country']})";
+        }
+        $publer = _shanti_mms_import_create_agent($publisher, FALSE, 'publisher', FALSE, $note);
+        if (!empty($node->field_image_agents['und'])) {
+            $node->field_image_agents['und'][] = array(
+                'target_id' => $publer->nid,
+            );
+        } else {
+            $node->field_image_agents = array(
+                'und' => array(
+                    0 => array(
+                        'target_id' => $publer->nid,
+                    ),
+                ),
+            );
+        }
+    }
+
+    // Sponsor
+    if (!empty($data['affiliations']['sponsor'])) {
+        $sponsor = _shanti_mms_import_create_agent($data['affiliations']['sponsor'],
+            FALSE, 'sponsor');
+        if (!empty($node->field_image_agents['und'])) {
+            $node->field_image_agents['und'][] = array(
+                'target_id' => $sponsor->nid,
+            );
+        } else {
+            $node->field_image_agents = array(
+                'und' => array(
+                    0 => array(
+                        'target_id' => $sponsor->nid,
+                    ),
+                ),
+            );
+        }
+    }
+
+    // **** KMAPS DONE HERE ***** Add Kmaps to node
+    _shanti_mms_import_add_kmaps($node, $data);
+
+    // Technical Info
+    //    Rotation
+    if (!empty($data['rotation'])) {
+        $node->field_image_rotation[LANGUAGE_NONE][0]['value'] = $data['rotation'];
+    }
+
+    if (!empty($data['recording_orientation'])) {
+        $tech_notes .= "<p><strong>Recording Orientation: </strong> {$data['recording_orientation']} " .
+                             " ({$data['recording_orientation_id']})</p>";
+    }
+
+    //    Capture Device
+    if (!empty($data['capture_device'])) {
+        $cdstr = $data['capture_device'];
+        if (!empty($data['capture_device_maker_title'])) { $cdstr = $data['capture_device_maker_title'] . ' ';}
+        if (!empty($data['capture_device_model_title'])) { $cdstr .= $data['model_title']; }
+        if (!empty($data['capture_device_maker_exif'])) {
+            $cdstr .= ' (EXIF: ' . $data['capture_device_maker_exif'] . ' ' . $data['capture_device_exif'] . ')';
+        }
+        $node->field_image_capture_device[LANGUAGE_NONE][0] = array(
+            'value' => $cdstr,
+            'format' => NULL,
+            'safe_value' => check_plain($cdstr),
+        );
+    }
+
+    //     Original Filename
+
+    $fn = $data['workflow']['original_filename'] ?: FALSE;
+    if ($fn) {
+        $node->field_original_filename[LANGUAGE_NONE][0] = array(
+            'value' => $fn,
+            'format' => NULL,
+            'safe_value' => check_plain($fn),
+        );
+    }
+
+    // Quality
+
+    $qtype = $data['quality_type'] ?: FALSE;
+    if (!empty($qtype)) {
+        $val = '';
+        $vals = array( 'Excellent', 'Good', 'Average', 'Poor','Unusable' );
+        $qtype = ucfirst(strtolower($qtype));
+        if (in_array($qtype, $vals)) {
+            $node->field_image_quality['und'][0]['value'] = $qtype;
+        } else {
+            $tech_notes .= "<p><strong>Quality: </strong> {$qtype} ({$data['quality_type_id']})</p>";
+        }
+    }
+
+    // Copyright information
+    $node->field_license_url[LANGUAGE_NONE][0] = array(
+        'value' => 'https://creativecommons.org/licenses/by-nc/4.0/',
+        'title' => '',
+        'attributes' => array(),
+    );
+
+    if (!empty($data['copyrights'])) {
+        $cpr = $data['copyrights'][0];
+        $cpnotes = '';
+        if (!empty($cpr['holder'])) {
+            $node->field_copyright_holder[LANGUAGE_NONE][0] = array(
+                'value' => $cpr['holder'],
+                'format' => NULL,
+                'safe_value' => $cpr['holder'],
+            );
+        }
+        if (!empty($cpr['holder_url'])) {
+            $node->field_license_url[LANGUAGE_NONE][0]['value'] = $cpr['holder_url'];
+            $cpnotes .="<p>Copyright holder Website: {$cpr['holder_url']}</p>";
+        }
+        if (!empty($cpr['reproduction_type'])) {
+            $node->field_copyright_statement[LANGUAGE_NONE][0] = array(
+                'value' => $cpr['reproduction_type'],
+                'format' => NULL,
+                'safe_value' => $cpr['reproduction_type'],
+            );
+        }
+        if (!empty($cpr['reproduction_type_url'])) {
+            $node->field_license_url[LANGUAGE_NONE][0]['value'] = $cpr['reproduction_type_url'];
+        }
+
+        foreach ($data['copyrights'] as $n => $cp) {
+            if ($n > 0) {
+                $nstr = $n + 1;
+                $cpnotes .= "<p>Copyright holder {$nstr}: {$cp['holder']} {$cp['holder_url']}";
+                $cpnotes .= "<br/>Reproduction type: {$cp['reproduction_type']} {$cp['reproduction_type_url']}</p>";
+            }
+        }
+
+        if (!empty($cpnotes)) {
+            $node->field_rights_notes[LANGUAGE_NONE][0] = array(
+                'value' => $cpnotes,
+                'format' => 'filtered_html',
+                'safe_value' => check_markup($cpnotes),
+            );
+        }
+    }
+
+
+    // ADD NOTES : Each type of note has a variable to which any number of field notes can be added
+
+    //   Image Notes
+
+    //      Organization and Project
+    if (!empty($data['affiliations']['organization'])) {
+        $img_notes .= '<p><strong>Organization: </strong> ' . $data['affiliations']['organization']['title'];
+        if (!empty($data['affiliations']['organization']['website'])) {
+            $url = $data['affiliations']['organization']['website'];
+            $img_notes .= ' (<a href="' . $url . '" target="_blank">' . $url . '</a>)';
+        }
+        $img_notes .= '</p>';
+    }
+    if (!empty($data['affiliations']['project'])) {
+        $img_notes .= '<p><strong>Project: </strong> ' . $data['affiliations']['project'] . '</p>';
+    }
+    //      Recording Note
+    if (!empty($data['recording_note'])) {
+        $rec_notes = $data['recording_note'];
+        if (!preg_match('/^<p>/', $rec_notes)) {
+            $rec_notes = "<p><strong>Recording note: </strong> {$rec_notes}</p>";
+        }
+        $img_notes .= $rec_notes;
+    }
+
+    //      Keywords (MMS)
+    if (is_array($data['keywords']) && count($data['keywords']) > 0 && !empty($data['keywords'][0]['label'])) {
+        $img_notes .= "<p><strong>Keywords: </strong> ";
+        $kws = array();
+        foreach($data['keywords'] as $kw) {
+            $kws[] = $kw['label'];
+        }
+        $img_notes .= implode(', ', $kws) . '</p>';
+    }
+
+    if ($img_notes) {
+        $node->field_image_notes[LANGUAGE_NONE][0] = array(
+            'value' => $img_notes,
+            'format' => 'filtered_html',
+            'safe_value' => check_markup($img_notes),
+        );
+    }
+
+    //    Tech Notes
+    if (!empty($data['workflow']['notes'])) {
+        $tech_notes .= "<p><strong>Workflow Note:</strong> {$data['workflow']['notes']} </p>\n";
+    }
+    if (!empty($data['workflow']['original_medium_id'])) {
+        $tech_notes .= "<p><strong>Original Medium ID:</strong> {$data['workflow']['original_medium_id']} </p>\n";
+    }
+    if (!empty($data['workflow']['other_id'])) {
+        $tech_notes .= "<p><strong>Alternate MMS ID:</strong> {$data['workflow']['other_id']} </p>\n";
+    }
+    if (!empty($data['workflow']['sequence_order'])) {
+        $tech_notes .= "<p><strong>Sequence Order:</strong> {$data['workflow']['sequence_order']} </p>\n";
+    }
+    if (!empty($data['workflow']['metadata_source'])) {
+        $tech_notes .= "<p><strong>Metadata Source:</strong> {$data['workflow']['metadata_source']} </p>\n";
+    }
+    if (!empty($data['workflow']['original_path'])) {
+        $tech_notes .= "<p><strong>Original Path:</strong> {$data['workflow']['original_path']} </p>\n";
+    }
+    if (!empty($tech_notes)) {
+        $node->field_technical_notes[LANGUAGE_NONE][0] = array(
+            'value' => $tech_notes,
+            'format' => 'filtered_html',
+            'safe_value' => check_markup($tech_notes),
+        );
+    }
+
+    //   Admin Notes
+    if (!empty($data['private_note'])) {
+        $admin_notes = $data['private_note'];
+        if (is_object($admin_notes)) { $admin_notes = json_encode($admin_notes); }
+        $node->field_admin_notes[LANGUAGE_NONE][0] = array(
+            'value' => $admin_notes,
+            'format' => 'filtered_html',
+            'safe_value' => check_markup($admin_notes),
+        );
+    }
+
+    // Finally Save the node
+    _shanti_mms_import_save_node($node);
+
+    unset($_SESSION['image_files_to_add']); // No files to upload because they are already there
+    $siid = _shanti_images_create_record($node->nid, 0, $fn, $data['width'], $data['height']);
+    $siobj = new ShantiImage($siid);
+    $siobj->updateTable(array(  'mmsid' => $data['mmsid'],  ));
+    $node->i3ffiles = array($siobj->getIIIFName(TRUE));
+    return $node;
+}
+
+/**
+ * Takes a SimpleXMLElement which is an XML record read from MMS XML API
+ * Goes through it and creates a simplified data array to be used by shanti_mms_import_create_node()
+ *
+ * @param $xml : the SimpleXMLElement returned from _shanti_mms_import_get_record()
+ * @param $defptgr : the value for the default photographer name (required in Drupal but not in MMS)
+ *
+ * @return array : an array of data simplified for node creation
+ */
+function _shanti_mms_import_extract_data_xml($xml, $defptgr) {
+    $nostr = '';
+    $data = array();
+
+    /* ID */
+    $data['mmsid'] = (string)$xml->id;
+
+    // Type:
+    $data['type'] = (string)$xml->type;
+
+    /* Width & Height: Use the largest image size */
+    $width = 0;
+    $height = 0;
+    foreach ($xml->images->image as $n => $img) {
+        $newwidth = (int)$img['width'];
+        if ($newwidth > $width) {
+            $width = $newwidth;
+            $height = (int)$img['height'];
+        }
+    }
+    $data['width'] = $width;
+    $data['height'] = $height;
+
+    /* Photographer: photographer (id, fullname) */
+    $data['photographer'] = (isset($xml->photographer)) ? (string)$xml->photographer['fullname'] : $defptgr;
+    $data['photographer_id'] = (isset($xml->photographer)) ? (string)$xml->photographer['id'] : '';
+
+    /* Resource Type: resource_type (id, header) */
+    $data['resource_type'] = (isset($xml->resource_type)) ? (string)$xml->resource_type['header'] : '';
+    $data['resource_type_id'] = (isset($xml->resource_type)) ? (string)$xml->resource_type['id'] : '';
+
+    /* Taken On: taken_on */
+    $data['taken_on'] = (isset($xml->taken_on)) ? (string)$xml->taken_on : '';
+
+    /* Quality Type: quality_type (id, title) */
+    $data['quality_type'] = (isset($xml->quality_type)) ? (string)$xml->quality_type['title'] : '';
+    $data['quality_type_id'] = (isset($xml->quality_type)) ? (string)$xml->quality_type['id'] : '';
+
+    /* Notes: recording_note and private_note */
+    $data['recording_note'] = (isset($xml->recording_note)) ? (string)$xml->recording_note : '';
+    $data['private_note'] = (isset($xml->private_note)) ? (string)$xml->private_note : '';
+
+    /* Rotation: rotation (in degrees) */
+    $data['rotation'] = (isset($xml->rotation)) ? (string)$xml->rotation : '0';
+
+    /* Recording Orientation: recording_orientation (id, title)  */
+    $data['recording_orientation'] = (isset($xml->recording_orientation)) ? (string)$xml->recording_orientation['title'] : '';
+    $data['recording_orientation_id'] = (isset($xml->recording_orientation)) ? (string)$xml->recording_orientation['id'] : '';
+
+    /* Publisher: publisher (id, title, country_id, country) */
+    $data['publisher'] = (isset($xml->publisher)) ? (string)$xml->publisher['title'] : '';
+    $data['publisher_id'] = (isset($xml->publisher)) ? (string)$xml->publisher['id'] : '';
+    $data['publisher_country'] = (isset($xml->publisher)) ? (string)$xml->publisher['country'] : '';
+    $data['publisher_country_id'] = (isset($xml->publisher)) ? (string)$xml->publisher['country_id'] : '';
+
+    /* Capture Device: capture_device (model_id, model_title, model_exif_tag, maker_id, maker_title, exif_tag) */
+    $data['capture_device'] = (isset($xml->capture_device)) ? (string)$xml->capture_device['model_title'] : '';
+    $data['capture_device_id'] = (isset($xml->capture_device)) ? (string)$xml->capture_device['model_id'] : '';
+    $data['capture_device_exif'] = (isset($xml->capture_device)) ? (string)$xml->capture_device['model_exif_tag'] : '';
+    $data['capture_device_maker'] = (isset($xml->capture_device)) ? (string)$xml->capture_device['maker_title'] : '';
+    $data['capture_device_maker_id'] = (isset($xml->capture_device)) ? (string)$xml->capture_device['maker_id'] : '';
+    $data['capture_device_maker_exif'] = (isset($xml->capture_device)) ? (string)$xml->capture_device['exif_tag'] : '';
+
+    /* Deal with Titles including translated ones: titles (title, translated_titles(id, lang, title)) */
+    $data['titles'] = array();
+    if (isset($xml->titles)) {
+        $ti = array();
+        foreach($xml->titles as $xmlt) {
+            if (isset($xmlt->title->title)) {
+                $lang = (isset($xmlt->title['lang'])) ? (string)$xmlt->title['lang'] : 'eng';
+                $id = (!empty($xmlt->title['id'])) ? (string)$xmlt->title['id'] : '';
+                $ti[] = array(
+                    'title' => (string)$xmlt->title->title,
+                    'lang' => $lang,
+                    'type' => "main",
+                    'id' => $id,
+                );
+            }
+            if (isset($xmlt->title->translated_titles)) {
+                foreach($xmlt->title->translated_titles as $tt) {
+                    $lang = (isset($tt->title['lang'])) ? (string)$tt->title['lang'] : 'eng';
+                    $title = (isset($tt->title->title)) ? (string)$tt->title->title : FALSE;
+                    $id = (isset($tt->title['id'])) ? (string)$tt->title['id'] : FALSE;
+                    if ($title) {
+                        $ti[] =  array(
+                            'title' => $title,
+                            'lang' => $lang,
+                            'type' => "translation",
+                            'id' => $id,
+                        );
+                    }
+                }
+            }
+        }
+        if (!empty($ti)) {
+            $data['titles'] = $ti;
+        }
+    }
+
+    /* Captions: captions (id, lang, title, caption_type(id, title)) */
+    $data['captions'] = array();
+    if (isset($xml->captions)) {
+        $caps = array();
+        foreach($xml->captions->caption as $caption) {
+            $lang = (isset($caption['lang'])) ? (string)$caption['lang'] : 'eng';
+            $type = (isset($caption->caption_type['title'])) ? (string)$caption->caption_type['title'] : '';
+            $cap = (isset($caption->title)) ? (string)$caption->title : FALSE;
+            $id = (!empty($caption['id'])) ? (string)$caption['id'] : FALSE;
+            if ($cap) {
+                $caps[] = array(
+                    'caption' => $cap,
+                    'lang' => $lang,
+                    'type' => $type,
+                    'id' => $id,
+                );
+            }
+        }
+        if (!empty($caps)) {
+            $data['captions'] = $caps;
+        }
+    }
+
+    /* Descriptions: descriptions (id, lang, title, description_type(id, title)) */
+    $data['descriptions'] = array();
+    if (isset($xml->descriptions)) {
+        $desclist = array();
+        foreach($xml->descriptions->mms_description as $desc) {
+            $did = (isset($desc['id'])) ? (string)$desc['id'] : '';
+            $lang = (isset($desc['lang'])) ? (string)$desc['lang'] : 'eng';
+            $type = $nostr;
+            if (isset($desc->description_type) && !empty($desc->description_type['title'])) {
+                $type = (string)$desc->description_type['title'];
+            }
+            $title = (isset($desc->title)) ? (string)$desc->title: FALSE;
+            if ($title) {
+                $desclist[] = array(
+                    'description' => $title,
+                    'lang' => $lang,
+                    'type' => $type,
+                    'id' => $did,
+                );
+            }
+        }
+        if (!empty($desclist)) {
+            $data['descriptions'] = $desclist;
+        }
+    }
+
+    /* Copyrights: copyrights (copyright_holder(id, title, website), reproduction_type(id, type, title, website)) */
+    $data['copyrights'] = array();
+    if (isset($xml->copyrights)) {
+        $cprlist = array();
+        foreach($xml->copyrights->copyright as $cpr) {
+            $holder = (isset($cpr->copyright_holder['title'])) ? (string)$cpr->copyright_holder['title'] : FALSE;
+            $holder_url = (isset($cpr->copyright_holder['website'])) ? (string)$cpr->copyright_holder['website'] : $nostr;
+            $rep_type = (isset($cpr->reproduction_type['title'])) ? (string)$cpr->reproduction_type['title'] : $nostr;
+            $rep_type_url = (isset($cpr->reproduction_type['website'])) ? (string)$cpr->reproduction_type['website'] : $nostr;
+            if ($holder) {
+                $cprlist[] = array(
+                    'holder' => $holder,
+                    'holder_url' => $holder_url,
+                    'reproduction_type' => $rep_type,
+                    'reproduction_type_url' => $rep_type_url,
+                );
+            }
+        }
+        if (!empty($cprlist)) {
+            $data['copyrights'] = $cprlist;
+        }
+    }
+
+    /* Locations: locations */
+    $data['locations'] = array();
+    if (isset($xml->locations)) {
+        $locs = array();
+        foreach($xml->locations->location as $location) {
+            $locs[] = (string)$location;
+        }
+        if (!empty($locs)) {
+            $data['locations'] = $locs;
+        }
+    }
+
+    /* Keywords:  keywords (id, title) */
+    $data['keywords'] = array();
+
+    if (isset($xml->keywords)) {
+        $kws = array();
+        foreach($xml->keywords->keyword as $keyword) {
+            $kw = (string)$keyword['title'];
+            if (!empty($kw)) {
+                $kws[] = array(
+                    'label' => $kw,
+                    'id' => (string)$keyword['id'],
+                );
+            }
+        }
+        if (!empty($kws)) {
+            $data['keywords'] = $kws;
+        }
+    }
+
+    /* Affiliations: affiliations (sponsor(id, title), organization(id, title, website), project (id, title)) */
+    if (isset($xml->affiliations) && isset($xml->affiliations->id)) {
+        $af = $xml->affiliations;
+        $afid = (string)$af->id;
+        $afout = array(
+            'id' => $afid,
+        );
+
+        if (isset($af->organization)) {
+            $afout['organization'] = array(
+                'title' => (string)$af->organization['title'],
+                'website' => (string)$af->organization['website'],
+                'id' => (string)$af->organization['id'],
+            );
+        }
+
+        if (isset($af->sponsor)) {
+            $afout['sponsor'] = (string)$af->sponsor;
+        }
+
+        if (isset($af->project)) {
+            $afout['project'] = (string)$af->project;
+        }
+        $data['affiliations'] = $afout;
+    }
+
+    /* Workflow: workflow (id, original_filename, original_medium_id, other_id, notes,
+                    sequence_order, metadata_source(id, filename), original_path) */
+
+    if (isset($xml->workflow)) {
+        $wf = $xml->workflow;
+        $data['workflow'] = array(
+            'id' => (isset($wf->id)) ? (string)$wf->id : '',
+            'original_filename' => (isset($wf->original_filename)) ? (string)$wf->original_filename : '',
+            'original_medium_id' => (isset($wf->original_medium_id)) ? (string)$wf->original_medium_id : '',
+            'other_id' => (isset($wf->other_id)) ? (string)$wf->other_id : '',
+            'notes' => (isset($wf->notes)) ? (string)$wf->notes : '',
+            'sequence_order' => (isset($wf->sequence_order)) ? (string)$wf->sequence_order : '',
+            'metadata_source' => (isset($wf->metadata_source)) ? (string)$wf->metadata_source['filename'] : '',
+            'original_path' => (isset($wf->original_path)) ? (string)$wf->original_path : '',
+        );
+
+    }
+
+    # Associated Categories: associated_category (id, root_id, string_value, numeric_value)
+    if (isset($xml->associated_categories)) {
+        $data['associated_categories'] = array();
+        foreach($xml->associated_categories->associated_category as $acat) {
+            $data['associated_categories'][] = array(
+                'id' => (isset($acat['id'])) ? (string)$acat['id'] : '',
+                'root_id' => (isset($acat['root_id'])) ? (string)$acat['root_id'] : '',
+                'string_value' => (isset($acat['string_value'])) ? (string)$acat['string_value'] : '',
+                'numeric_value' => (isset($acat['numeric_value'])) ? (string)$acat['numeric_value'] : '',
+            );
+        }
+    }
+
+    # Locations: locations
+    if (isset($xml->locations)) {
+        $data['locations'] = array();
+        $loclist = array();
+        foreach($xml->locations as $loc) {
+            $loclist[] = (string)$loc->location;
+        }
+        if (!empty($loclist)) {
+            $data['locations'] = $loclist;
+        }
+    }
+
+    # Typescript: typescript (url, size, content_type)
+    if (isset($xml->typescript)) {
+        $data['typescript'] = array();
+        foreach(array('url', 'size', 'content_type') as $attr) {
+            if(isset($xml->typescript[$attr])) {
+                $data['typescript'][$attr] = $xml->typescript[$attr];
+            }
+        }
+    }
+
+    # Web Address: web_address (url, parent_resource_id)
+    if (isset($xml->web_address)) {
+        $data['web_address'] = array();
+        foreach(array('url', 'parent_resource_id') as $attr) {
+            if(isset($xml->web_address[$attr])) {
+                $data['web_address'][$attr] = $xml->web_address[$attr];
+            }
+        }
+    }
+
+    return $data;
+}
+
+/**
+ * Custom Save Node function to catch any exceptions
+ *
+ * @param $node
+ */
+function _shanti_mms_import_save_node(&$node) {
+    try {
+        node_save($node);
+    } catch (Exception $e) {
+        watchdog('Shanti MMS Import', "Exception when saving node: " . json_encode($e));
+        $node->error = TRUE;
+    }
+}
+
+/**
+ * Given an MMS ID this function returns a simplified array of data
+ *
+ * @param $mmsid : the MMS id to retrieve data for
+ * @param string $mmssource : the source for the mms information, either 'dev' or 'prod'
+ * @param string $defptgr : the default photographer name to use if not supplied by MMS (Required by Drupal)
+ *
+ * @return array : an array of simplified data to use for node creation
+ */
+function _shanti_mms_import_get_xml($mmsid, $mmssource='prod', $defptgr='') {
+    // First get the XML record from MMS
+    //watchdog('shanti mms import', "doing mmsid: {$mmsid}");
+    $xml =  _shanti_mms_import_get_record($mmsid, $mmssource, 'xml');
+    if ($xml === false) { return $xml; }
+    // Then process it into an array of data
+    return _shanti_mms_import_extract_data_xml($xml, $defptgr);
+}
+
+/** Using JSON is deprecated for now. to implement will need to write a function similar to _shanti_mms_import_extract_data_xml()
+function _shanti_mms_import_get_json($mmsid, $mmssource='prod') {
+    return _shanti_mms_import_get_record($mmsid, $mmssource, 'json');
+} */
+
+/**
+ * Gets a record (XML or JSON) from MMS for a specific ID
+ *
+ * @param $mmsid  : The ID to retrieve information for
+ * @param $mmssource : The MMS source to use, either 'dev' or 'prod'
+ * @param $type : The type of API to use, either 'xml' or 'json'
+ *
+ * @return mixed|SimpleXMLElement : returns a json object for JSON API or a SimpleXMLElement for the XML API
+ */
+function _shanti_mms_import_get_record($mmsid, $mmssource, $type) {
+    $mmsbase = _get_mms_base($mmssource);
+    $jurl = $mmsbase . $mmsid . '.' . $type;
+    if ($type == 'xml') {
+        $xml = simplexml_load_file($jurl);
+        return $xml;
+    } else {
+        $jtxt = file_get_contents($jurl, false, stream_context_create(
+            array('ssl' => array(
+                'verify_peer' => isset($_ENV['AH_PRODUCTION']) && $_ENV['AH_PRODUCTION'] == 1 ? true : false,
+                'verify_peer_name' => isset($_ENV['AH_PRODUCTION']) && $_ENV['AH_PRODUCTION'] == 1 ? true : false
+            ))
+        ));
+    }
+    $jobj = json_decode($jtxt, TRUE);
+    if (!empty($jobj['picture'])) { $jobj = $jobj['picture']; }
+    return $jobj;
+}
+
+/**
+ * A helper function to get the base URL for MMS depending on the source value given.
+ * The MMS URLS are stored as constants at the top of this file
+ *
+ * @param $src : either 'dev' or 'prod'
+ *
+ * @return string : the URL
+ */
+function _get_mms_base($src) {
+    $src = strtolower($src);
+    if ($src == 'prod') { return MMS_PROD; }
+    return MMS_DEV; // Defaults to DEV. Is this wise?
+}
+
+/**
+ * Create an agent object (node) to link to new node
+ *
+ * @param $name
+ * @param bool $date
+ * @param string $role
+ * @param bool $ploc
+ * @param bool $notes
+ * @return StdClass
+ */
+function _shanti_mms_import_create_agent($name, $date=FALSE, $role='photographer', $ploc=FALSE, $notes=FALSE) {
+    global $user;
+    $node = new StdClass();
+    $node->type = 'image_agent';
+    $node->uid = $user->uid;
+    $node->status = 1;
+    $node->active = 1;
+    $node->promote = 0;
+    $node->title = $name;
+    $node->agent_role['und'][0]['value'] = $role;
+
+    if ($date) {
+        $node->field_agent_dates_approx['und'][0]['value'] = $date;
+        $datepts = _shanti_mms_import_process_date($date);
+
+        if (isset($datepts['value1'])) {
+            $node->field_agent_dates[LANGUAGE_NONE][0] = array(
+                'value' => format_date($datepts['value1'], 'custom', 'Y-m-d H:i:s', $datepts['timezone']),
+                'timezone' => $datepts['timezone'],
+                'timezone_db' => $datepts['timezone'],
+            );
+            if (isset($datepts['value2'])) {
+                $node->field_agent_dates[LANGUAGE_NONE][0]['value2'] = format_date($datepts['value2'],
+                    'custom','Y-m-d H:i:s', $datepts['timezone']);
+            }
+        }
+    } else {
+        $node->field_agent_dates_approx['und'][0]['value'] = "";
+    }
+    if ($ploc) {
+        shanti_kmaps_fields_add_kmap_to_node($node, 'field_places', 'places', $ploc);
+    }
+    // Do Agent notes
+    if ($notes) {
+        $node->field_agent_notes[LANGUAGE_NONE][0] = array(
+            'value' => $notes,
+            'format' => NULL,
+            'safe_value' => check_markup($notes),
+        );
+    }
+    _shanti_mms_import_save_node($node);
+    return $node;
+}
+
+/**
+ *
+ * Form for processing inexact dates from MMS, determining whether there is a ? for uncertainty or simply a year given
+ * When possible convert inexact dates to a date range for the exact date field and returns the values.
+ * E.g. given "1991?" it returns array(value1 => 01/01/1991 and value2 => 12/31/1991 and uncertain => TRUE)
+ *
+ * @param $dstr
+ * @return array
+ */
+function _shanti_mms_import_process_date($dstr) {
+    $dpts = array(
+        'timezone' => 'UTC',
+    );
+    // See if we can convert the string to a timestamp, if so use that.
+    $ts = strtotime($dstr);
+    if ($ts !== FALSE)  {
+        $dpts['value1'] = $ts;
+    } elseif (preg_match("/(\d{2}\/\d{2}\/\d{4})(\?*)/", $dstr, $mtchs)) {
+        // Check for mm/dd/yyyy? with question mark
+        $dpts['value1'] = strtotime("{$mtchs[1]}");
+        if ($mtchs[2] == '?') { $dpts['uncertain'] = TRUE; }
+    } elseif (preg_match("/(\d{2}\-\d{2}\-\d{4})(\?*)/", $dstr, $mtchs)) {
+        // Check for mm-dd-yyyy? with question mark
+        $dpts['value1'] = strtotime("{$mtchs[1]}");
+        if ($mtchs[2] == '?') { $dpts['uncertain'] = TRUE; }
+    } elseif (preg_match("/(\d{4})(\?*)/", $dstr, $mtchs)) {
+        // Check for yyyy? with question mark
+        $dpts['value1'] = strtotime("01/01/{$mtchs[1]}");
+        $dpts['value2'] = strtotime("12/31/{$mtchs[1]}");
+        if ($mtchs[2] == '?') { $dpts['uncertain'] = TRUE; }
+    } elseif (preg_match("/(\d{4})(\?*)\s*\-\s*(\d{4})(\?*)/", $dstr, $mtchs)) {
+        // Check for yyyy? - yyyy? range with question mark(s)
+        $dpts['value1'] = strtotime("01/01/{$mtchs[1]}");
+        $dpts['value2'] = strtotime("12/31/{$mtchs[3]}");
+        if ($mtchs[2] == '?' || $mtchs[4] == '?') { $dpts['uncertain'] = TRUE; }
+    } elseif (preg_match("/(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{4})")) {
+        $dpts['value1'] = strtotime($mtchs[1]);
+    }
+    return $dpts;
+}
+
+/**
+ * Create a description object to link to a new node
+ */
+function _shanti_mms_import_create_desc($title, $desc, $lang='eng', $author='', $summary='') {
+    global $user;
+    $safe_desc = '<p>' . check_plain($desc) . '</p>';
+    $node = new StdClass();
+    $node->type = 'image_descriptions';
+    $node->uid = $user->uid;
+    $node->status = 1;
+    $node->active = 1;
+    $node->promote = 0;
+    $node->title = $title;
+    $node->field_description['und'][0] = array(
+        'value' => $desc,
+        'format' => 'filtered_html',
+        'safe_value' =>$safe_desc,
+    );
+    //$node->field_language['und'][0]['value'] = $lang;
+    if (!empty($author)) {
+        $node->field_author['und'][0]['value'] = $author;
+    }
+    if (!empty($summary)) {
+        $node->field_summary['und'][0]['value'] = $summary;
+    }
+    _shanti_mms_import_save_node($node);
+    return $node;
+}
+
+/**
+ * Function to add kmaps from a mms json object to the new node being created
+ */
+function _shanti_mms_import_add_kmaps(&$node, $data) {
+    // Subject Kmaps including Kmap Collections
+    if (!empty($data['associated_categories'])) {
+        foreach ($data['associated_categories'] as $n => $cat) {
+            if ($cat['root_id'] == '2823') {
+                shanti_kmaps_fields_add_kmap_to_node($node, 'field_kmap_collections', 'subjects', $cat['id']);
+            }
+        }
+        foreach ($data['associated_categories'] as $n => $cat) {
+            if ($cat['root_id'] != '2823') {
+                shanti_kmaps_fields_add_kmap_to_node($node, 'field_subjects', 'subjects', $cat['id']);
+            }
+        }
+    }
+    // Places Kmaps
+    if (!empty($data['associated_features'])) {
+        foreach ($data['associated_features'] as $n => $cat) {
+            shanti_kmaps_fields_add_kmap_to_node($node, 'field_places', 'places', $cat['fid']);
+        }
+    }
+    // Places Kmaps location of photograph (Also added with photographer)
+    if (!empty($data['locations'])) {
+        foreach ($data['locations'] as $fid) {
+            shanti_kmaps_fields_add_kmap_to_node($node, 'field_places', 'places', $fid);
+        }
+    }
+}
+
+/**
+ *
+ * Form for listing and deleting past mms conversion log files stored in the directory: public://mms-import/
+ *
+ * @param $form
+ * @param $form_state
+ * @return array
+ */
+function shanti_mms_import_delete_logs($form, &$form_state) {
+    $dir = 'public://mms-import/';
+    $files = file_scan_directory($dir, '/^.*$/');
+    $items = array();
+    foreach ($files as $fl) {
+        $items[] = l($fl->filename, file_create_url($fl->uri));
+    }
+    $form = array();
+    $form['intro'] = array(
+        '#markup' => '<div style="float:right;"><a href="/admin/config/media/shanti_images/import">Return to MMS Import Page</a></div><p>Log files in the ' . $dir . ' directory: </p>',
+    );
+    $form['list'] = array(
+        '#markup' => theme_item_list(array(
+                'items' => $items,
+                'title' => "List of files",
+                'type' => 'ul',
+                'attributes' => array('class' => 'file-list'),
+            )),
+    );
+    $form['instructions'] = array(
+        '#markup' => '<p>To delete <b>ALL</b> the MMS import logs stored in the folder public://mms-import, click the button. ' .
+                    ' Warning: There is no confirmation.</p>',
+    );
+    $form['submit'] = array(
+        '#type' => 'submit',
+        '#value' => t('Delete logs'),
+    );
+    return $form;
+}
+
+/**
+ *
+ * Submit function for deleting past log files in the directory public://mms-import/
+ *
+ * @param $form
+ * @param $form_state
+ */
+function shanti_mms_import_delete_logs_submit($form, &$form_state) {
+    $dir = 'public://mms-import/';
+    $files = file_scan_directory($dir, '/^.*$/');
+    foreach ($files as $fl) {
+        $res = file_unmanaged_delete($fl->uri);
+        $msg = ($res) ? "successfully deleted" : "failed to delete";
+        drupal_set_message("{$fl->filename} {$msg}!");
+    }
+}

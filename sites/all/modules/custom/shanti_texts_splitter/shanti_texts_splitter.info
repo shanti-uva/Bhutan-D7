@@ -1,0 +1,5 @@
+name = SHANTI Texts Splitter 
+description = Fork of HTML2Book for modding. Adds option to split book body into new book pages at each HTML heading in the text.
+package = SHANTI
+core = 7.x
+dependencies[] = book

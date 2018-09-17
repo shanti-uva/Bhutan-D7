@@ -1,0 +1,8 @@
+name = Shanti Sarvaka Carousel 
+description = "A universal carousel for all Shanti Mandala sites"
+core = 7.x
+package = Shanti
+
+configure = admin/config/user-interface/shanti_carousel
+
+dependencies[] = entity

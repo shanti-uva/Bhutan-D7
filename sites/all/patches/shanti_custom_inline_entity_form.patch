@@ -1,0 +1,12 @@
+diff --git a/inline_entity_form.module b/inline_entity_form.module
+index c1a7d82..6b4a4b1 100644
+--- a/inline_entity_form.module
++++ b/inline_entity_form.module
+@@ -1716,6 +1716,7 @@ function theme_inline_entity_form_entity_table($variables) {
+         $property = $wrapper->{$field_name};
+         // label() returns human-readable versions of token and list properties.
+         $data = $property->label() ? $property->label() : $property->value();
++        if (is_array($data)) { $data = implode(', ', $data); }
+         $data = empty($field['sanitized']) ? check_plain($data) : $data;
+       }
+       elseif ($field['type'] == 'field' && isset($entity->{$field_name})) {

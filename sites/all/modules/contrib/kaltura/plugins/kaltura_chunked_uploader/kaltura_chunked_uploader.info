@@ -1,0 +1,7 @@
+name = Kaltura Chunked Uploader
+package = Kaltura Media Management
+description = Upload media in chunks directly to Kaltura servers
+core = 7.x
+dependencies[] = kaltura
+
+scripts[] = 'js/kaltura-chunked-uploader.js'

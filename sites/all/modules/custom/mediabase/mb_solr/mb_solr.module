@@ -1,0 +1,928 @@
+<?php
+/**
+ * @file
+ * Mediabase module that interfaces with solr to provide a collection view
+ * as well as facet hierarchies on both collection and non-search pages.
+ *
+ * NOTE: functions that post to Kidx global SOLR index are found in mb_services.module
+ *
+ */
+define('MB_SOLR_MLT_ITEM_NUMBER', 60);
+
+ /**
+  * Implemente hook_menu
+  * 	Collections and Home page are done through Solr Search Pages
+  */
+function mb_solr_menu() {
+  $items = array();
+  // Return results of facet search in gallery form
+  $items['services/facet/%/%'] = array(
+    'title' => 'Facet search results',
+    'description' => 'Return raw HTML for mbase facet search results',
+    'page callback' => 'mb_solr_facet_search',
+    'page arguments' => array(2,3),
+    'access callback' => TRUE,
+  );
+
+  // Return HTML results of facet search for AJAX embedding
+  $items['services/facets/%'] = array(
+    'title' => 'Facet search results',
+    'description' => 'Return HTML for AJAX facet search results',
+    'type' => MENU_CALLBACK,
+    'page callback' => 'mb_solr_facets_ajax',
+    'page arguments' => array(2),
+    'access arguments' => array('access content'),
+    'delivery callback' => 'mb_solr_ajax_delivery',  // Magic goes here
+  );
+
+  // Return results of search in gallery form for Ajax calls
+  $items['services/ajaxsearch'] = array(
+    'title' => 'Ajax Search Results',
+    'description' => 'Return raw HTML of a search of particular type',
+    'page callback' => 'mb_solr_ajax_search',
+    'page arguments' => array(),
+    'access callback' => TRUE,
+  );
+
+  // Return a solr add doc for the nid id given
+  $items['services/solrdoc/%'] = array(
+    'title' => 'Solr Add Doc',
+    'description' => 'Return a solr add doc for the given nid',
+    'page callback' => 'mb_solr_get_solrdoc',
+    'page arguments' => array(2),
+    'access callback' => TRUE,
+  );
+
+  // Return a solr add doc for the nid id given
+  $items['services/mlt/%'] = array(
+    'title' => 'More Like This',
+    'description' => 'Return an embeddable fragment with more-like-this a/v resources.',
+    'type' => MENU_CALLBACK,
+    'page callback' => 'mb_solr_get_mlt',
+    'page arguments' => array(2),
+    'access callback' => TRUE,
+  );
+  return $items;
+}
+
+function mb_solr_transcripts_editor_exclude_tiers($node)
+{
+    //Wylie transliteration is algorithmically derived from Tibetan script, so it should not be edited
+    return array('ts_content_wylie');
+}
+
+ /**
+  * Implemente hook_menu_alter
+  */
+function mb_solr_menu_alter(&$items) {
+  $items['transcript/%']['page callback'] = 'mb_solr_transcripts_redirect';
+}
+
+function mb_solr_transcripts_redirect($trid, $tcuid = '') {
+  $transcript = db_query("SELECT * FROM {transcripts_apachesolr_transcript} WHERE trid=:trid", array(':trid' => $trid))
+    ->fetchAssoc();
+
+  if (count($transcript) > 0) {
+    $fragment = !intval($tcuid) ? NULL : 'tcu/' .$tcuid;
+    $path = 'node/'.$transcript['id'];
+    if ($fragment === NULL) {
+      drupal_goto($path);
+    }
+    else {
+      drupal_goto($path, array('fragment' => $fragment));
+    }
+  }
+}
+
+/**
+ * Implements of hook_apachesolr_index_document_build
+ * Adds collection parent gids of a subcollection
+ *
+ * @param ApacheSolrDocument $document
+ * @param object $entity
+ * @param string $entity_type
+ * @param string $env_id
+ *   The machine name of the environment.
+ */
+function mb_solr_apachesolr_index_document_build(ApacheSolrDocument $document, $entity, $entity_type, $env_id) {
+    // only modify solr docs for nodes of subtype audio or video
+    if (isset($entity->type)  && in_array($entity->type, array('video','audio'))) {
+        $parent_group_gid = !empty($entity->og_collection_ref['und']) ? $entity->og_collection_ref['und'][0]['target_id'] : null;
+        if (!empty($parent_group_gid)) {
+            $gids=array($parent_group_gid);
+            $parent_group = node_load($parent_group_gid); // og_get_group('group',$parent_group_gid);
+            $group_node = node_load($parent_group->etid);
+            if ($group_node->type == 'subcollection') {
+                $coll_ancestor_node = get_collection_ancestor_node($group_node);
+                $ancestor_group = node_load($coll_ancestor_node->nid) ; //og_get_group('node',$coll_ancestor_node->nid);
+                $gids[] = $ancestor_group->gid;
+            }
+            foreach ($gids as $gid) {
+                $document->addField('im_collection_gid', $gid);
+            }
+        }
+        if (module_exists('shanti_kmaps_fields')) {
+            // Add KMap IDs for faceting in direct index callse (see mb_solr_add_facet_data)
+            $kmaps = shanti_kmaps_fields_get_kmaps_for_node($entity);
+            foreach ($kmaps as $n => $kmid) {
+                $document->addField('sm_kmapid', $kmid);
+            }
+        }
+
+        try {
+            // Add Media Create Date (see also mediabase.module mediabase_preprocess_node() )
+            $media_create_date = $entity->created;
+            $ew = entity_metadata_wrapper('node', $entity);
+            $field_inst = $ew->field_pbcore_instantiation->value();
+            $flang = field_language('node',$entity, 'field_pbcore_instantiation');
+            if(!empty($field_inst->field_date_created)) {
+                // Sometimes lang is "eng" sometimes "und":
+                $date_created = (isset($field_inst->field_date_created[$flang])) ? $field_inst->field_date_created[$flang][0]['value'] : FALSE;
+                $date_created = (!$date_created && isset($field_inst->field_date_created['und'])) ? $field_inst->field_date_created['und'][0]['value'] : $date_created ;
+                $media_create_date = ($date_created) ? strtotime($date_created) : FALSE;
+                // make sure something in $media_create_date;
+                if(empty($media_create_date)) { $media_create_date = (is_int($entity->created)) ? $entity->created : time(); }
+                // media create date
+                $document->addField('im_media_create_date', $media_create_date);
+            }
+            // Using description for content & teaser fields
+            $description = '';
+            $emw = entity_metadata_wrapper('node', $entity);
+            if(!empty($emw) && !empty($emw->field_pbcore_description)) {
+                foreach ($emw->field_pbcore_description->getIterator() as $delta => $term_wrapper) {
+                    if(!empty($term_wrapper) && !empty($term_wrapper->field_description)) {
+                        // Added to ensure description is string after enabling text-formats/wysiwyg (ndg, 2016-02-19)
+                        $desc = $term_wrapper->field_description->value();
+                        if (is_array($desc) && !empty($desc['safe_value'])) { $desc = $desc['safe_value']; }
+                        if (!is_string($desc)) { $desc = ''; }
+                        $description .= $desc . " ";
+                    }
+                }
+                if(!empty($description)) {
+                    $document->setField('content', $description);
+                    $document->setField('teaser', $description);
+                }
+            }
+            // Add flag for whether there is an attached transcript
+            if (module_exists('transcripts_apachesolr')) {
+                module_load_include('inc', 'transcripts_apachesolr', 'transcripts_apachesolr.index');
+                $tiers = transcripts_apachesolr_already_indexed_tiers('transcripts_node', 'node', $entity->nid);
+                if ($tiers === FALSE) {
+                    $document->setField('bs_has_transcript', false);
+                }
+                else {
+                    $document->setField('bs_has_transcript', true);
+                    if (!is_null($tiers)) {
+                        foreach (explode(' ', $tiers) as $tier) {
+                            $document->setMultiValue('sm_has_tier', $tier);
+                        }
+                    }
+                }
+            }
+        //watchdog('mb_solr', 'Built audio-video document with nid = @nid', array('@nid' => $entity->nid));
+        } catch (Exception $e) {
+            $eid = (isset($entity->entity_id)) ? $entity->entity_id : FALSE;
+            $eid = (!$eid && !empty($entity->nid)) ? $entity->nid : FALSE;
+            $eid = (!$eid && is_object($entity)) ? implode(', ', array_keys((array)$entity)) : $eid;
+            watchdog('mb_solr',
+                    'Exception thrown in building solr index doc for eid @eid (@file, @line): @message',
+                    array(
+                        '@eid' => $eid,
+                        '@message' => $e->getMessage(),
+                        '@file' => $e->getFile(),
+                        '@line' => $e->getLine(),
+                    ));
+        }
+    } // End modifications for audio and video nodes
+}
+
+/**
+ * Implements hook_apachesolr_search_page_alter
+ */
+function mb_solr_apachesolr_search_page_alter(&$build, $search_page) {
+    //dpm(array($build, $search_page));
+    // Remove title from homepage
+    if($search_page['page_id'] == 'homepage') {
+        drupal_set_title('');
+    } else if (strpos(current_path(), 'search/descriptions') > -1) {
+        drupal_set_title(t('Searching Descriptions'));
+    } else if (strpos(current_path(), 'search/transcripts') > -1) {
+        drupal_set_title(t('Searching Transcripts'));
+    }
+}
+
+
+/*
+ * mb_solr_apachesolr_query_alter():
+ *
+ *    Implements hook_apachesolr_query_alter
+ *    adds collection GIDs to solr Queries when there is a im_collection_gid filter that is defined in the search page for the new collection page
+ *    see:  /admin/config/search/apachesolr/search-pages/collection_home/edit
+ *
+ *    Also adds a random sort filter as described by http://realize.be/random-results-apache-solr-and-drupal
+ *
+ */
+
+function mb_solr_apachesolr_query_alter($query) {
+   //dpm(array('query'=>(array)$query, 'params' => $query->getParams()), 'in hook_apachesolr_query_alter');
+   $path = $query->getPath(); // only alter query for collection pages. Solr re-indexing page urls begin with collection
+   if ($path == "homepage/") {
+   	 // Add field im_media_create_date to fl param
+     $query->setSolrsort('ds_created', 'desc'); // sort by date created so there can be pagination
+     $fl = $query->getParam('fl');
+     $fl[] = 'im_media_create_date';
+     $fl[] = 'bs_has_transcript';
+     $fl[] = 'sm_has_tier';
+     $query->replaceParam('fl', $fl);
+
+     // Random Sort filter
+     /*
+     $seed = rand(0, 9999);
+     $sort_name = "random_$seed";
+     $order = (rand(0, 1) == 0) ? 'asc' : 'desc';
+     $query->setAvailableSort($sort_name, array('title'=> 'random', 'default' => 'asc'));
+     $query->setSolrsort($sort_name, $order);
+      */
+   }
+
+   if (preg_match("/^collection\//",$path) && !preg_match("/admin\/config/", $path))  {
+     $fl = $query->getParam('fl');
+     $fl[] = 'bs_has_transcript';
+     $fl[] = 'sm_has_tier';
+     $query->replaceParam('fl', $fl);
+
+    // Collection id (gid) filter
+     $gid_filters = $query->getFilters('im_collection_gid');
+     foreach ($gid_filters as $idx => $gid_filter) {
+          $value = $gid_filter['#value'];
+          if (is_numeric($value) ) { // we've likely got a gid as the value already
+             continue;
+          }
+          // we've likely got an alias as the filter value
+          $alias_path = "collection/$value";
+          $node_path = drupal_lookup_path('source', $alias_path);
+					if(strpos($_SERVER['HTTP_REFERER'], 'node/add/collection') > -1) { return; }
+          /*if ( empty($node_path) ) {
+            // redirect to page not found to avoid error when non-existent collection is searched. (2014-01-21)
+            drupal_not_found();
+            module_invoke_all('exit');
+            exit();
+          }*/
+          $parts = explode('/', $node_path);
+          $nid = array_pop( $parts );
+         //$group = og_get_group('node', $nid);
+          $query = $query->removeFilter('im_collection_gid', $value);
+          $query->addFilter('im_collection_gid', $nid); // $group->gid);
+     }
+
+     $gid_filters = $query->getFilters('im_collection_gid');
+
+     $query->setSolrsort('ds_created', 'desc'); // sort by date created so there can be pagination
+     /*
+      * // Random Sort filter
+     $seed = rand(0, 9999);
+     $sort_name = "random_$seed";
+     $order = (rand(0, 1) == 0) ? 'asc' : 'desc';
+     $query->setAvailableSort($sort_name, array('title'=> 'random', 'default' => 'asc'));
+     $query->setSolrsort($sort_name, $order);
+      */
+
+   }
+   else if (preg_match("/^search\/descriptions/", $path)) {
+     $fl = $query->getParam('fl');
+     $fl[] = 'bs_has_transcript';
+     $fl[] = 'sm_has_tier';
+     $query->replaceParam('fl', $fl);
+   }
+   //dpm($query, 'solr query');
+}
+
+/*
+*   mb_solr_apachesolr_process_results():
+*
+*     Implementation of hook_apachesolr_process_results
+*     Add thumbnail url to the result items
+**/
+function mb_solr_apachesolr_process_results(&$results, DrupalSolrQueryInterface $query) {
+
+   //dpm(array('results' => $results, 'query'=>(array)$query, 'params' => $query->getParams()), 'in hook_apachesolr_process_results');
+   $path = $query->getPath();
+
+   //if ($path == "homepage/" || (preg_match("/^collection\//",$path) && !preg_match("/admin\/config/", $path)))  {
+   if(preg_match("/search\/transcripts/",$path)) {
+   		foreach ( $results as $idx => &$item ) {
+			if ($item['fields']['entity_type'] == 'tcu') {
+				$query = "SELECT id FROM {transcripts_apachesolr_transcript} WHERE trid=:trid";
+				$nid = db_query($query, array(':trid' => $item['fields']['is_trid']))->fetchField();
+				$node = node_load($nid);
+				if($node) {
+					$item['transcripts_node']['title'] = $node->title;
+					$item['transcripts_node']['link'] = url('node/'.$nid, array('absolute' => TRUE));
+					$item['transcripts_node']['bundle'] = $node->type;
+          $item['transcripts_node']['thumb_url'] = $node->thumbnail_url;
+					$item['transcripts_node']['duration'] = $node->duration;
+					$item['transcripts_node']['created'] = $node->created;
+					$coll = get_collection_ancestor_node($node);
+          $item['transcripts_node']['coll'] = $coll ? $coll : ''; //_get_collection_name($nid);
+				}
+			}
+		}
+   } else if (!preg_match("/admin\/config/", $path))  {
+       // If there's a query param then add the facet data for shanti_kmaps_facets
+       if (!empty($query->getParam('q'))) {
+           mb_solr_add_facet_data($query);
+       }
+
+     //$transcript_tiers = transcripts_ui_tiers();
+     $exclude_tiers = array('ts_content_wylie');
+     foreach ( $results as $idx => &$item ) {
+        $bundle = $item['bundle'];
+        if ($bundle == 'audio' || $bundle == 'video') {
+          $media_field_table = "field_data_field_$bundle";
+          $entryid_column = "field_$bundle" . "_entryid";
+          $entity_id = $item['fields']['entity_id'];
+          $coll = get_collection_ancestor_node(node_load($entity_id));
+          $results[$idx]['coll'] = $coll ? $coll : ''; //$results[$idx]['coll'] = _get_collection_name($entity_id);
+          if ('video' == $bundle) {
+            $query = "SELECT kaltura_thumbnail_url, kaltura_duration
+           FROM {field_data_field_video} 
+           JOIN {node_kaltura} ON field_video_entryid = kaltura_entryid
+           WHERE entity_id = :etid";
+          } else if ('audio' == $bundle) {
+            $query = "SELECT kaltura_thumbnail_url, kaltura_duration
+           FROM {field_data_field_audio} 
+           JOIN {node_kaltura} ON field_audio_entryid = kaltura_entryid
+           WHERE entity_id = :etid";
+          }
+          // Add thumbnail url and duration
+          $res = db_query($query, array(':etid' => $entity_id));
+          $qres = $res->fetchAll();
+          if (is_array($qres) && count($qres) > 0) {
+            $thumb_url = $qres[0]->kaltura_thumbnail_url;
+            $item['thumb_url'] = $thumb_url;
+            $dur = $qres[0]->kaltura_duration;
+            if ($dur) {
+              $item['duration'] = array(
+                'seconds' => $dur,
+                'formatted' => mediabase_format_duration($dur),
+              );
+            }
+          }
+          // Add transcript tiers
+          $item['has_transcript'] = $item['fields']['bs_has_transcript'];
+          if (isset($item['fields']['sm_has_tier'])) {
+            $langs = array();
+            foreach ($item['fields']['sm_has_tier'] as $tier_name) {
+              if (!in_array($tier_name, $exclude_tiers)) {
+                $langs[] = substr($tier_name, strrpos($tier_name, '_') + 1);
+              }
+            }
+            $item['transcript_tiers'] = implode(', ', $langs);
+          }
+        }
+
+        // Implode thumbnail classes
+        $classes = array();
+        $classes[] = $item['bundle'];
+        if (isset($item['has_transcript']) && $item['has_transcript']) $classes[] = 'has-transcript';
+        $item['thumbnail_classes'] = implode(' ', $classes);
+      }
+   }
+}
+
+/**
+ * Makes an independent call to solr index for kmap facet data (based on current query) and saves this data
+ * as a json object in shanti_kmaps_facets settings. This is used to filter the kmaps_facet trees if installed. Otherwise, ignored.
+ * Kmap facet data is added with custom code in mb_solr_apachesolr_index_document_build
+ */
+function mb_solr_add_facet_data($query="") {
+    if (!empty($query) && !empty($query->getParam('q')) && module_exists('shanti_kmaps_facets')) {
+       $newquery = $query->replaceParam('facet.field', 'sm_kmapid');
+       $res = $newquery->search();
+       if (!empty($res->facet_counts->facet_fields->sm_kmapid)) {
+            Drupal_add_js(array(
+                'shanti_kmaps_facets' => array(
+                    'core_search' => true,
+                    'core_search_query' => json_encode($query->getParams()),
+                    'search_filter_data' => json_encode($res->facet_counts->facet_fields->sm_kmapid)
+            )), 'setting');
+        }
+    }
+}
+
+/**
+ * Implements hook_node_facet_hits from the shanti_kmaps_facets.module
+ * Must return an array of:
+ *          qids => an array of all node ids for query
+ *          facet_data => the facet data array of kmap ids => counts.
+ */
+function mb_solr_node_facet_hits($qstr="", $kmids=array()) {
+    $qinfo = FALSE;
+
+    // This search code requires apachesolr module
+    if (module_exists('apachesolr') && !empty($qstr)) {
+        // Set up the query parameters
+        $keys = array(
+            'q'=>$qstr,
+            'qf' => array('content^40', 'label^5.0', 'tags_h1^5.0', 'tags_h4_h5_h6^2.0', 'tags_inline^1.0', 'taxonomy_names^2.0', 'tos_content_extra^0.1', 'tos_name^3.0') ,
+            'fl' => 'entity_id',
+            'facet' => TRUE,
+            'facet.field' => 'sm_kmapid',
+            'rows' => 5000,
+         );
+
+         // Add kmap filter query if there are kmaps given
+         if ($kmids && count($kmids) > 0 && $kmids[0] != '*') {
+             $keys['fq'] = "sm_kmapid:(" .  implode(' AND ', $kmids)  . ")";
+         }
+
+        // Do an apache solr query with those settings (keys)
+        $q = apachesolr_drupal_query('facet-hit-query', $keys);
+        $res = $q->search();
+
+        // Get an array of all node ids hit
+        $qids = array();
+        foreach($res->response->docs as $doc) {
+            $qids[] = $doc->entity_id;
+        }
+
+        // Create the associative array of kmaps and counts
+        $kmdata = (array)$res->facet_counts->facet_fields->sm_kmapid;
+        $kmdata = array_filter($kmdata, function($ct) { return ($ct > 0); });
+
+        // Combined data into single array
+        $qinfo = array('qids' => $qids, 'facet_data' => $kmdata);
+    }
+
+    return $qinfo; // Return data
+}
+
+/**
+* Implements hook_theme().
+*/
+function mb_solr_theme($existing) {
+ return array(
+    'search_results__apachesolr_search' => array(
+        'variables' => array('search_results' => NULL, 'module' => array()),
+       ),
+    'search_results__apachesolr_search__transcripts' => array(
+        'template' => 'transcripts_search_results',
+        'path' => drupal_get_path('module', 'mediabase') . '/templates',
+        'variables' => array('search_results' => NULL, 'module' => array()),
+       ),
+ /* 'search_results__apachesolr_search__homepage' => array(
+        'variables' => array('search_results' => NULL, 'module' => array()),
+       ),*/
+    'search_result__apachesolr_search' => array(
+        'template' => 'mediabase_thumbnail',
+        'path' => drupal_get_path('module', 'mediabase') . '/templates',
+        'variables' => array('result' => NULL, 'coll' => NULL),
+       ),
+    'search_result__apachesolr_search__tcu' => array(
+        'template' => 'transcripts_search_result',
+        'path' => drupal_get_path('module', 'mediabase') . '/templates',
+        'variables' => array('result' => NULL, 'coll' => NULL),
+       ),
+    'mediabase_thumbnail' => array(
+        'template' => 'mediabase_thumbnail',
+        'path' => drupal_get_path('module', 'mediabase') . '/templates',
+        'variables' => array('result' => NULL, 'coll' => NULL),
+      ),
+     'mb_solr_results' => array(
+	          'variables' => array('results' => NULL, 'node' => NULL)
+	   ),
+	   'mb_solr_facets' => array(
+	   		'variables' => array('item' => NULL),
+		 ),
+   );
+}
+
+/**
+ * Implements hook_form_alter to alter the search block form with checkboxes for description or transcript
+ */
+function mb_solr_form_alter(&$form, &$form_state, $form_id) {
+  if ($form_id == 'search_block_form') {
+      ///$form['search_block_form']['#prefix'] = '<label><span>Search:</span>Audio-Video</label>';
+		$form['shanti_options'] = array(
+			'mbscope' => array(
+				'#type' => 'radios',
+				'#default_value' => 0,
+				'#options' => array(0 => t('Descriptions'), 1 => t('Transcripts')),
+				'#attributes' => array('class' => array('shanti-options')),
+			),
+		);
+        $form['actions']['submit']['#submit'][] = 'mb_solr_search_submit';
+		$form['#validate'] = array('mb_solr_search_validate');
+	}
+}
+
+// Deal with situation where kmaps facets are chosen. Hidden input named "kmap_filters" is added in shanti_kmaps_facets.js
+function mb_solr_search_submit($form, &$form_state) {
+    // Adds existing kmaps filters to a search box search. See MANU-3419
+    if (!empty($form_state['input']['kmap_filters'])) {
+        $ss = $form_state['input']['search_block_form'];
+        $kmfilters = $form_state['input']['kmap_filters'];
+        $url = "/kmaps/facets/{$kmfilters}/search/{$ss}/nojs";
+        drupal_goto($url);
+    } else {
+        // Else if no kmaps chosen, just do regular search
+        search_box_form_submit($form, $form_state);
+    }
+}
+
+function mb_solr_search_validate($form, &$form_state) {
+	$scope = $form_state['values']['mbscope'];
+	$trans = ($scope == 1) ? TRUE : FALSE;
+	if($trans) {
+		$url = 'search/transcripts/' . $form_state['input']['search_block_form'];
+		drupal_goto($url);
+	}
+}
+
+function theme_search_results__apachesolr_search(&$vars) {
+	global $base_path;
+	$q = $vars['query']->getParam('q');
+	$response = $vars['response']->response;
+	$start = $response->start + 1;
+	$end = $response->start + count($response->docs);
+	$total = $response->numFound;
+	$output = '<div class="mb-solr-results"><div class="head">';
+	if(strlen($q) > 0) {
+		$output .= "<h4>Search on &ldquo;{$q}&rdquo;</h4>";
+	}
+	$output .= sprintf('<span class="label">Related Media:</span> <span class="count">(Displaying %d-%d of %d)</span>', $start, $end, $total);
+  $output .= $vars['pager'] . '</div><div class="results"><ul class="shanti-gallery">';
+  foreach ($vars['results'] as $k => $v) {
+		if(empty($v['coll'])) { $v['coll'] = array(); }
+  	$output .=  theme('mediabase_thumbnail', array('result' => $v, 'coll' => $v['coll']));
+  }
+  $output .= '</ul></div><div class="foot">' . $vars['pager'] . '</div></div>';
+  return $output;
+}
+
+/**
+ *  Function called by theming function above to create the markup for a a/v "teaser" in the standard Mediabase model from the home page.
+ *    (Note: check to see how the home page creates its teasers for a function that might return the bulk of the markup)
+ *    Params:
+ *      $entity: Search result entity such as node but not full node object
+ *      $coll: the colleciton object to which the entity belongs.
+ *
+ */
+
+function mb_solr_make_teaser($entity, $coll = FALSE) {
+	module_load_include('inc', 'mb_kaltura', 'mb_kaltura');
+  $entity['place_link'] = array();
+  $node = node_load($entity['fields']['entity_id']);
+  $entry_id = _get_entry_id_from_node($node);
+  if($node) {
+    $entity['thumb_url'] = mb_kaltura_get_thumbnail_url($entry_id, 360, 270);
+    // Add Place Links to Render array
+    // Updated from field_pbcore_coverage_spatial to field_location
+    if(!empty($node->field_location)) {
+      $place_fields = field_get_items('node', $node, 'field_location');
+			$plinks = array();
+			foreach ($place_fields as $pfield) {
+				$plinks[] = l($pfield['header'], 'list/places/' . $pfield['id']);
+			}
+			$variables['place_link'] = implode(', ', $plinks);
+    }
+  } else {
+    $mbpath = drupal_get_path('module', 'mediabase');
+    $entity['thumb_url'] = (isset($entity['thumb_url'])) ? $entity['thumb_url'] : url($mbpath, array('absolute' => true)) . '/images/generic-video-thumb.jpg';
+  }
+  $html = theme('mediabase_thumbnail', array('result' => $entity, 'coll' => $coll));
+  return $html;
+}
+
+/**
+ * Implements hook_node_view:
+ *    Call the search page to get the list of a collections a/v items and adds these to the node's display.
+ *    Because they come from the search page, these results are linked to the subcollection facet block which is made to appear on the node page through the block admin interface.
+ *    Thus, when a facet is chosen, it filters the results on the collections home page
+ *
+ *  NOTE: the path 'collection/%' is set by the Path module's URL Alias setting on the configuration page
+ */
+
+function mb_solr_node_view($node, $view_mode, $langcode) {
+    /* Commenting out unnecessary code (release 1.0: 2017-03-10, MANU-3542)
+	if($node->type == 'collection' && $view_mode == 'full') {
+	    watchdog('mb_solr', 'In collection node view returning!!');
+        return;
+		$alias = str_replace('collection/', '', drupal_get_path_alias(current_path()));
+		if(strpos($_SERVER['HTTP_REFERER'], 'node/add/collection') > -1) { return; } // prevent solr error
+		module_load_include('inc','apachesolr','apachesolr_search.pages');
+		$search_page = apachesolr_search_custom_page('collection_home','', $alias);
+		$node->content['collcontent'] = array(
+			'#markup' => theme('mb_solr_results', array('results' => $search_page['search_results'], 'node' => $node)),
+			'#weight' => 45,  // set high weight so it appears after the body's description
+		);
+	} else
+	*/
+	if($view_mode == 'full') {
+	    // This is necessary for the more like this tab.
+	    module_load_include('inc','apachesolr','apachesolr_search.pages');
+	    $cpage = apachesolr_search_custom_page('core_search');
+	}
+}
+
+function theme_mb_solr_results($vars) {
+	$results = $vars['results'];
+    // Add generic thumbnail when one is not there
+    if (!empty($results['#results']) && is_array($results['#results'])) {
+        foreach ($results['#results'] as $n => &$res) {
+            if (empty($res['thumb_url'])) {
+                $res['thumb_url'] = url(drupal_get_path('module', 'mediabase') . '/images/generic-' . $res['bundle'] . '-thumb.jpg', array('absolute' => TRUE));
+            }
+        }
+    }
+	$node = $vars['node'];
+	$html = '<div class="mb-solr-results block-inner">'. drupal_render($results) . '</div>';
+	return $html;
+}
+
+function unicode_escape_sequences($str){
+	$working = json_encode($str);
+	$working = preg_replace('/\\\u([0-9a-z]{4})/', '&#x$1;', $working);
+	return json_decode($working);
+}
+
+/** 
+ * Implement this function if you need to change the doc sent to the solr KM asset index.
+ *   Called from _shanti_kmaps_fields_get_solr_doc in shanti_kmaps_fields.module in shanti_kmaps_fields_get_solr_doc() at the bottom
+ **/
+function mb_solr_kmaps_fields_solr_doc_alter(&$solrdoc) {
+   foreach ($solrdoc as $n => &$sdoc) {
+       $node = node_load($sdoc['id']);
+       $lang = $node->language;
+       if (empty($node->field_pbcore_description[$lang]) && !empty($node->field_pbcore_description[LANGUAGE_NONE])) {
+           $lang = LANGUAGE_NONE;
+       }
+       // Old images on AV site have type = "MISSING_TYPE" Do Not Index
+       if ($node->type == 'MISSING_TYPE') {
+           $sdoc = array();
+           continue;
+       }
+       $sdoc['asset_subtype'] = $node->type;
+       if (!empty($node->field_language_kmap)) { $sdoc['node_lang'] = $node->field_language_kmap['und'][0]['header']; }
+       
+       // Get Summary and Caption (use the description types if available. Otherwise, trim existing descriptions)
+       // Cannot use EntityMetadataWrapper here because crashes with the Tibetan values (Hotfix 7.-1.10.7; MANU-4943)
+       $summ = FALSE;
+       $capt = FALSE;
+       if (!empty($node->field_pbcore_description)) {
+           foreach ($node->field_pbcore_description[$lang] as $n => $desc) {
+               $fcid = $desc['value'];
+               $fci = field_collection_item_load($fcid);
+               $desc = (!empty($fci->field_description[LANGUAGE_NONE][0]['safe_value'])) ?
+                   strip_tags($fci->field_description[LANGUAGE_NONE][0]['safe_value']) : '';
+               $type = (!empty($fci->field_description_type[LANGUAGE_NONE][0]['value'])) ?
+                   strtolower($fci->field_description_type[LANGUAGE_NONE][0]['value']) : '';
+               $fcilang = (!empty($fci->field_language[LANGUAGE_NONE][0]['value'])) ?
+                   shanti_general_get_lang_code($fci->field_language[LANGUAGE_NONE][0]['value']) : 'en';
+               if (!$fcilang) { $fcilang = 'und'; }
+               // $lang = $fci->field_language[LANGUAGE_NONE][0]['value']; // Language of desc not used yet.
+               if ($type == 'summary') {
+                   if (!$summ) {
+                       $summ = $desc;
+                   } else if ($fcilang == $lang || ($lang == 'und' && $fcilang == 'en')) {
+                        $summ = $desc;
+                   }
+               } else if ($type == 'caption') {
+                   if (!$capt) {
+                       $capt = $desc;
+                   } else if ($fcilang == $lang || ($lang == 'und' && $fcilang == 'en')) {
+                       $capt = $desc;
+                   }
+               } else if ($n == 0) {
+                   // Use first description to fill in summary and caption for defaults if none explicitly given
+                   $summ = mb_substr($desc, 0, 747);
+                   if (!empty($summ) && strlen($desc) > 747) {$summ .= '...';}
+                   $capt = mb_substr($desc, 0, 137);
+                   if (!empty($capt) && strlen($desc) > 137) { $capt .= '...';}
+               }
+           }
+       }
+
+       // Make sure summary and caption have some value
+       if (empty($summ) && !empty($capt)) { $summ = $capt;}
+       if (empty($capt) && !empty($summ)) {
+           $capt = $summ;
+           if (strlen($capt) > 137) {
+               $capt = mb_substr($capt, 0, 137) . '...';
+           }
+       }
+       if (!$summ) {$summ = ' ';}
+       if (!$capt) {$capt = ' ';}
+       $sdoc['summary'] = array($summ);
+       $sdoc['caption'] = array($capt);
+
+       // Use EntityMetadataWrapper for Creators and Date but if these start to fail replace as well
+       $ew = entity_metadata_wrapper('node', $node);
+
+       // Do Creators
+       $sdoc['creator'] = array();
+       if (!empty($ew->field_pbcore_creator)) {
+           $crs = $ew->field_pbcore_creator->value();
+           foreach ($crs as $cr) {
+               if (isset($cr->field_creator['und'][0]['safe_value'])) {
+                  $sdoc['creator'][] = $cr->field_creator['und'][0]['safe_value'];
+               }
+           }
+       }
+       
+       // Do Date Created
+       if (isset($ew->field_pbcore_instantiation)) {
+           $pi = $ew->field_pbcore_instantiation->value();
+           if (isset($pi->field_date_created['und'][0]['value'])) {
+               $date = date_create($pi->field_date_created['und'][0]['value']);
+               $sdoc['date_start'] = date_format($date, "Y-m-d\TH:i:s\Z");
+           }
+       }
+
+       // Do Thumbnail sizes (video 190 x 107; audio 120 x 80)
+       if ($node->type == 'video') {
+           $sdoc['url_thumb_width']= "190";
+           $sdoc['url_thumb_height']= "107";
+           $sdoc['url_thumb_size']= "30000";
+       } elseif ($node->type == 'audio') {
+           $sdoc['url_thumb_width']= "120";
+           $sdoc['url_thumb_height']= "80";
+           $sdoc['url_thumb_size']= "30000";
+       }
+
+       // Add trid if it exists
+       if (!empty($node->trid)) {
+           $sdoc['trid_i'] = $node->trid;
+       }
+   }
+}
+
+function mb_solr_get_solrdoc($node, $format = 'xml') {
+	global $base_url;
+	// Allow for a nid to be passed instead of an object
+	$nid = (is_int($node)) ? $node : $node->nid;
+	$node = (is_int($node)) ? node_load($nid) : $node;
+	//module_load_include('inc', 'kmap_taxonomy', 'includes/kmap');
+	//module_load_include('inc', 'mb_location', 'mb_location');
+	$is_api_call = FALSE;
+	if(strpos($nid,'.') > -1) { // if the url has "." in it, it's an api call. Otherwise it's a function call
+		$is_api_call = TRUE;
+		$pts = explode('.', $nid);
+		$nid = $pts[0];
+		if($pts[1] == 'json') { $json = TRUE; }
+	} else if($format == 'json') { $json = TRUE; }
+	$servpts = explode('//', $base_url);
+	$service = str_replace('.', '_', $servpts[1]);
+	$uid = $service . '-' . $nid;
+	if($node) {
+ 		$alias = drupal_get_path_alias('node/' . $nid);
+		$kmaps = array(); // array of associated kmaps
+		$metadata = array();  // metadata for node
+		$fields = array('field_subject', 'field_subcollection_new', 'field_location', 'field_recording_location_new');
+		foreach ($fields as $field) {
+			if(isset($node->{$field})) {
+				$prefix = (strpos($field, 'location') > -1) ? 'places' : 'subjects';
+				$fits = field_get_items('node', $node, $field);
+				if(!empty($fits)) {
+					foreach($fits as $fitem) {
+						$lineage = mediabase_process_raw_lineage($fitem['raw']);  // ancester includes self in this instance
+						foreach($lineage as $ancestor_id) {
+							$basestr = $prefix . '-' . $ancestor_id;
+							$kmaps[] = $basestr;
+						}
+					}
+				}
+			}
+		}
+
+		// Metadata
+		$ew = entity_metadata_wrapper('node', $node);
+		$grp = $ew->field_og_collection_ref->value();
+		$metadata['collection'] = $grp->title;
+		$metadata['date'] = gmdate('Y-m-d\TH:i:s\Z',  $ew->created->value());
+		$metadata['length'] = $node->duration['formatted'];
+		$kmaps = array_values(array_unique($kmaps));
+		$kmaps = '<str>' . implode('</str><str>', $kmaps) . '</str>';
+		$url_html = $base_url . '/' . $alias;
+		$url_ajax = $base_url . '/services/node/ajax/' . $nid;
+		$url_json = $base_url . '/api/v1/media/node/' . $nid . '.json';
+		$thumb = (!empty($node->thumbnail_url)) ? $node->thumbnail_url : '';
+
+		// Return JSON if url ends in .json
+		if($json) {
+			$jsonout = array('doc' => array());
+			$jsonout['doc']['service'] = $service;
+			$jsonout['doc']['asset_type'] = "audio-video"; //$node->type;
+			$jsonout['doc']['id'] = $nid;
+			$jsonout['doc']['uid'] = $uid;
+			$jsonout['doc']['collection'] = $metadata['collection'];
+			$jsonout['doc']['date'] = $metadata['date'];
+			$jsonout['doc']['duration_s'] = $metadata['length'];
+			$jsonout['doc']['url_html'] = $url_html;
+			$jsonout['doc']['url_ajax'] = $url_ajax;
+			$jsonout['doc']['url_json'] = $url_json;
+			$jsonout['doc']['url_thumb'] = $thumb;
+			$jsonout['doc']['caption'] = $node->title;
+			if (!empty($node->trid)) {
+                $jsonout['doc']['transid_i'] = $node->trid;
+            }
+			//$jsonout['doc']['metadata'] = json_encode($metadata);
+			$jsonout['doc']['kmapid'] = $kmaps;
+			if($is_api_call) {
+				drupal_json_output($jsonout);
+			} else {
+				return $jsonout;
+			}
+		} else {
+			// Otherwise Return XML
+		  // Convert Solr Doc to XML and add to output string
+			$doc = '<doc><str name="service">' . $service . '</str>
+			<str name="asset_type">audio-video</str>
+			<str name="id">' . $nid . '</str>
+			<str name="uid">' . $uid . '</str>
+			<str name="collection">' . $metadata['collection'] . '</str> 
+			<str name="date">' . $metadata['date'] . '</str> 
+			<str name="duration_s">' . $metadata['length'] . '</str> 
+			<str name="url_html">' . $url_html . '</str>
+			<str name="url_ajax">' . $url_ajax . '</str>
+			<str name="url_json">' . $url_json . '</str>
+			<str name="url_thumb">' . $thumb . '</str>
+			<str name="caption">' . $node->title . '</str>
+			<arr name="kmapid">' . $kmaps . '</arr></doc>';
+			if (!empty($node->trid)) {
+			    $addxml = "<str name=\"trid_i\">$node->trid</str></doc>";
+			    $doc = str_replace('</doc>', $addxml, $doc);
+            }
+		  if($is_api_call) {
+			  drupal_add_http_header('Content-Type', 'text/xml');
+			  print '<?xml version="1.0"?>' . $doc;
+			} else {
+				return $doc;
+			}
+		}
+	// If node does not exist, Return 404 not found respones
+	} else if($is_api_call) {
+		drupal_add_http_header('Status', '404 Not Found');
+		if($json) {
+			drupal_json_output(array(
+				"error" => "Node $nid not found.",
+				"status" => 404,
+				"service" => $service,
+				"uid" => $uid,
+			));
+		} else {
+			drupal_add_http_header('Content-Type', 'text/xml');
+		  print "<?xml version=\"1.0\"?><result>
+		  	<error>Node $nid not found.</error>
+		  	<status>404</status>
+		  	<service>$service</service>
+		  	<uid>$uid</uid>
+		  </result>";
+		}
+	} else {
+		return FALSE;
+	}
+}
+
+/**
+ * mb_solr_get_mlt: Returns a html fragment with a gallery of more-like-this thumbnails
+ */
+function mb_solr_get_mlt($nid, $ct = MB_SOLR_MLT_ITEM_NUMBER) {
+  global $base_path, $user;
+  $asdoc = apachesolr_document_id($nid);
+  $search_blocks = variable_get('apachesolr_search_mlt_blocks', array());
+  $sb = $search_blocks['mlt-001'];
+  $sb['num_results'] = $ct;
+  $suggestions = apachesolr_search_mlt_suggestions($sb, $asdoc);
+  $output = '<ul class="shanti-gallery">';
+  $done = 0;
+  if($suggestions) {
+    foreach($suggestions as $n => $entity) {
+      if($entity->entity_type == 'node') {
+        $node = node_load($entity->entity_id);
+        $has_access = node_access('view', $node, $user);
+			  if($node && $has_access) {
+		          $item = array(
+		            'fields' => array(
+		              'entity_id' => $entity->entity_id,
+		              'created' => $node->created,
+		             ),
+		            'bundle' => $node->type,
+		            'title' => $node->title,
+		            'duration' => (isset($node->duration)) ? $node->duration : 0,
+		            'link' => $base_path . drupal_get_path_alias('node/' . $node->nid),
+		          );
+		          $nid = $entity->entity_id;
+		          $node = node_load($nid);
+		          $coll = get_collection_ancestor_node($node);
+		          if($coll) {
+		              $coll->url = $base_path . drupal_get_path_alias('node/' . $coll->nid);
+		          }
+		          $output .=  mb_solr_make_teaser($item, $coll);
+			  }
+      }
+    }
+    $output .= '</ul>';
+		print $output;
+  }
+}

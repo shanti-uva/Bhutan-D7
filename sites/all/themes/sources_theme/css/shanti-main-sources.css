@@ -1,0 +1,1297 @@
+/**
+* Mandala Sources - Development
+*
+* version 1.x - shanti-main-sources.css
+* ---------------------------------------------------
+* University of Virginia / SHANTI MANDALA / SOURCES
+* ---------------------------------------------------
+*
+*/
+
+/**
+* BODY Class Structure Guide for CSS Selectors
+* -----------------------------------------------------------------
+* Bibliography Listing Page - class= 'page-sources-search'
+* Individual Bibliography Info Page - class= 'page-sources-search-biblio'
+*
+*/
+
+
+/* BEGIN sub-theme colors */
+.titlearea,
+.breadcrumb .icon,
+.carousel-control,
+.nav-tabs.nav-justified>li.active>a,
+.nav-tabs.nav-justified>li.active>a:focus,
+.nav-tabs.nav-justified>li.active>a:hover,
+.carousel-indicators li:hover,
+.carousel-indicators li.active,
+.ui-resizable-handle.ui-resizable-nw.active,
+.ui-resizable-handle.ui-resizable-nw:active {
+  background: #6f69ae !important;
+}
+.ui-fancytree li a,
+.custom-sort-container .selectpicker>li.selected>a .check-mark,
+.custom-sort-container .selectpicker>li>a:hover .check-mark,
+.page-sources-search .views-row .shanticon-essays,
+.view-section .nav-tabs>li.active>a,
+.view-section .nav-tabs>li.active>a:hover,
+.view-section .nav-tabs>li.active>a:active,
+.view-section .fancytree-container .glyphicon,
+.view-section .fancytree-container .fancytree-node:hover > .glyphicon,
+.view-section .fancytree-container .fancytree-node:active > .glyphicon,
+.view-section .fancytree-node.fancytree-active > .glyphicon,
+.view-section .fancytree-node.fancytree-selected > .glyphicon,
+.selectpicker .caret::before,
+.page-home .taxonomy-list-tree .fancytree-container .glyphicon,
+.page-sources-search .views-field-field-zotero-tags ul::before,
+.node-biblio-form .bootstrap-select.show-tick .dropdown-menu li>a:hover .glyphicon-ok,
+.node-biblio-form .bootstrap-select.show-tick .dropdown-menu li.selected>a:hover .glyphicon-ok,
+.node-biblio-form .bootstrap-select.show-tick .dropdown-menu li.selected>a .glyphicon-ok,
+.page-sources-search .views-field-biblio-abst-e .field-content:not(:empty)::before {
+  color: #6f69ae !important;
+}
+
+.nav-tabs.nav-justified>li.active,
+.view-section .nav-tabs > li.active > a { border-top-color: #6f69ae !important; }
+
+.carousel-indicators li:hover,
+.carousel-indicators li.active{ border-color:#6f69ae; }
+
+.carousel-indicators li:hover, .carousel-indicators li.active,
+.kmaps-tt-suggestion:hover:not(.kmaps-tt-selected)::before,
+.node-biblio-form .kmaps-tt-menu .kmaps-tt-suggestion:hover::before,
+.node-biblio-form .bootstrap-select.btn-group .dropdown-menu li>a:hover::before,
+.node-biblio-form .bootstrap-select.btn-group .dropdown-menu li.selected>a::before,
+.node-biblio-form .bootstrap-select.btn-group .dropdown-menu li.disabled>a::before{
+  border-color: #6f69ae;
+  background-color: #6f69ae !important;
+}
+
+.ui-resizable-handle.ui-resizable-w,
+.ui-resizable-handle.ui-resizable-w:hover,
+.ui-resizable-handle.ui-resizable-w:active { border-color: #645F9D transparent transparent transparent; }
+
+@media screen and (min-width: 500px) {
+  .navbar-header .site-slogan{ color: #6f69ae !important; } /* Darker shade for banner site-slogan text */
+  .navbar-brand:hover .site-slogan{ color: #555 !important; }
+  .navbar-header:active .site-slogan{ color: #6f69ae !important; }
+}
+
+@media screen and (min-width: 768px) {
+  .nav-tabs.nav-justified>li.active::before{
+    color: #645F9D !important;
+  }
+}
+
+::-moz-selection { background: #E1CA7A !important; color:blue !important;}
+::selection { background: #E1CA7A !important; color:blue !important;}
+
+/*** END - colors ***/
+
+
+
+
+/* override system.menus.css #36 */
+article.main-col li a.active{
+  color: rgb(0, 0, 139);
+}
+
+
+.page-home article.main-col > .region.region-content{
+  max-width: 400px;
+}
+
+
+.library-dropdown, .breadcrumb-child-container{ width: 380px; }
+
+.library-dropdown{ display:none; }
+
+
+
+
+.node-type-collection .content-section{
+  padding-bottom: 7rem;
+}
+
+.page-sources-search .tab-pane.main-col > div.region-content{
+  max-width: 1050px !important;
+  margin: 0 auto;
+}
+
+/* testing white background */
+.page-sources-search div#block-system-main.block.block-system,
+.page-sources-search-biblio div#block-system-main.block.block-system,
+.node-type-biblio .content .source-full {
+  float: none;
+  background: #fff;
+  box-shadow: inset 0 0 5px #999;
+  border-radius: 2px;
+  padding-top: 2rem;
+  padding-bottom: 5.5rem;
+  margin-bottom: 5rem;
+}
+
+
+/* testing white background */
+.node-type-collection div.panel-pane.pane-php.pane-1{
+  padding: 0.5rem 1.5rem 2rem 2.2rem;
+  background-color: #fff;
+  box-shadow: inset 0 0 7px #aaa;
+  border-radius: 4px;
+  margin-top: 2rem;
+}
+
+
+
+
+
+/* list sorting */
+.custom-sort-container .selectpicker>li>a .check-mark{
+  float: right;
+  position:relative;
+  top:.55rem;
+  color:#ccc;
+}
+
+
+
+
+/**
+ *     Home Page styles added by ndg8f (2017-03-04)
+ *     can't just use body.front because when sort filters are chosen and parameters added the "front" class is taken off <body> but "page-home" remains
+ */
+.page-home.page-sources-search #block-shanti-carousel-shanti-carousel-block-1 {
+    padding-bottom: 20px;
+}
+
+.page-home.page-sources-search #block-views-exp-biblio-search-api-allpage {
+    width: 45%;
+    margin-left: 0px;
+    float: left;
+}
+
+.page-home.page-sources-search .views-exposed-widget.views-widget-filter-search_api_views_fulltext label {
+    display: none;
+}
+
+.page-home.page-sources-search #block-views-exp-biblio-search-api-allpage .views-exposed-form .views-exposed-widget .form-submit {
+    margin-top: 0;
+    padding: .3rem 1.5rem .1rem;
+}
+
+.page-home.page-sources-search #views-exposed-form-biblio-search-api-allpage{
+  position: relative;
+  top: -0.5rem;
+}
+
+.page-home .carousel-title .shanticon-stack:before{
+  content: '\e632';
+}
+
+
+
+
+
+.page-home.page-sources-search #block-sources-views-custom-sort-filter {
+    height: 3em;
+    padding: 0 2.4rem 0.8rem 4.2rem;
+    width: 55%;
+    clear: none;
+    float: right;
+}
+
+.page-home.page-sources-search #block-system-main {
+    clear: both;
+}
+
+
+
+
+
+/**
+* Editing form
+*/
+/* bug: temporarily hide second Language menus in edit forms */
+.chosen-container.form-control{
+  display: none !important;
+}
+.page-node-edit .fieldset-wrapper .form-item{
+  margin:0;
+}
+
+.page-node-edit .media-widget a.button{
+  position: relative;
+  bottom: -0.1rem;
+  padding: .7rem 1.5rem .5rem;
+  filter: alpha(opacity=85);
+  opacity: 0.85;
+}
+.page-node-edit .media-widget a.button:hover,
+.page-node-edit .media-widget a.button:active{
+  color:#fff;
+  filter: alpha(opacity=100);
+  opacity: 1;
+}
+
+/* hide breadcrumbs on page banner for edit page */
+.page-node-edit .breadcrumb{
+  display:none;
+}
+
+.page-node-edit .field-name-field-featured-image{
+  margin: 3rem;
+}
+
+/* accordion bottom spacing in groups */
+.page-node-edit.node-type-biblio .panel.panel-default{
+  margin-bottom:0.3rem;
+}
+
+/*  Publication Type: Select dropdown menu
+.node-biblio-form .form-item-biblio-type,
+.node-biblio-form .form-item-title:first-of-type{
+  padding-left: 5.5rem;
+}
+*/
+
+.node-biblio-form .form-item-title:first-of-type input.form-control{
+  max-width: 93%;
+}
+
+.node-biblio-form .form-type-link-field .link-field-column{
+  padding-top: .75rem;
+}
+
+/* Authors */
+.node-biblio-form #edit-biblio-contributors{
+  width:100%;
+}
+
+.node-biblio-form .vertical-tabs-panes{
+  padding: 0;
+  padding: 1rem 0 0 1rem;
+}
+
+#biblio-contributors-wrapper .sticky-table .biblio-contributor-category  .form-item{
+  padding: 1.25rem 1.5rem 1rem 0;
+}
+
+#biblio-contributors-wrapper .sticky-table tr.even,
+#biblio-contributors-wrapper .sticky-table tr.odd{
+  background-color: #f9f9f9;
+}
+
+#accordionedit-biblio-authors--2 a.tabledrag-toggle-weight{
+  position: relative;
+  top: -0.8rem;
+}
+
+/* Places Subjects - Typeahead sections */
+.field-type-shanti-kmaps-fields-default input.form-control{
+  padding-left: 2.9rem;
+  max-width: 37rem;
+}
+
+.field-widget-kmap-typeahead-picker .searchreset{
+  position: relative;
+  left: 34.2rem;
+  top: -2.2rem;
+}
+
+
+
+
+.node-biblio-form .kmaps-tt-menu .kmaps-tt-suggestion::before{
+  position: relative;
+  right: 0;
+  bottom: -0.55rem;
+  margin-left: -1rem;
+  margin-right: 1rem;
+}
+
+.node-biblio-form .kmaps-tt-menu .kmaps-tt-dataset-places .kmaps-tt-suggestion::before{
+  position: relative;
+  right: -2rem;
+}
+
+.node-biblio-form .kmaps-tt-menu .kmaps-place-result{
+  padding: 0.3rem 0 .5rem;
+}
+
+.node-biblio-form #field_kmap_subjects-typeahead-wrapper .kmaps-tt-menu .kmaps-tt-suggestion::before{
+  right: 1rem;
+}
+
+
+
+.node-biblio .wysiwyg-toggle-wrapper{
+  position: relative;
+  bottom: 2rem;
+  left:.5rem;
+}
+
+
+
+.field-name-field-zotero-tags input.form-control,
+.field-name-field-zotero-fetch-url input.form-control,
+.field-name-field-zotero-canonical-url input.form-control{
+  max-width:98%;
+  margin-left: 1rem;
+}
+
+.field-name-field-zotero-tags input.form-control{
+  padding-right:3rem;
+  background-position: 99.5% center !important;
+}
+
+
+
+
+
+/* target Zotero Collection dropdown */
+.node-biblio-form .field-widget-options-select .bootstrap-select.btn-group .dropdown-menu li,
+.node-biblio-form .field-widget-options-select .bootstrap-select.btn-group .dropdown-menu li>a{
+  line-height: 2.12em;
+}
+
+.node-biblio-form .kmaps-tt-menu .kmaps-tt-selected::before,
+.node-biblio-form .kmaps-tt-menu .kmaps-tt-selected:hover::before{
+  background:#aaa !important;
+  border-color:#aaa !important;
+}
+
+.node-biblio-form .field-type-shanti-kmaps-fields-default .kmap-typeahead-picker{
+  height:5.3rem;
+}
+
+.node-biblio-form .bootstrap-select.btn-group .dropdown-menu li>a{
+  padding-left: 2.8rem;
+}
+
+.node-biblio-form .field-widget-options-select .bootstrap-select.btn-group .dropdown-menu li>a{
+  line-height: 0.93em;
+}
+
+.node-biblio-form .field-widget-options-select.field-name-field-biblio-language .bootstrap-select.btn-group .dropdown-menu li>a{
+  line-height: 2em;
+  padding-left: 1.8rem;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.page-sources-search .main-content .content-section {
+  padding: 0;
+}
+
+.page-sources-search .content-section .main-col.active {
+  /*padding-bottom: 0;*/
+}
+
+.operation-option-container {
+  padding: 1rem 0;
+}
+
+.page-sources-search .main-content .content-section .view-content,
+.page-sources-search .main-content .content-section .view-empty {
+  padding: 0 1.2rem 2rem;
+
+  display: block;
+  width: 100%;
+}
+
+.page-sources-search .main-content .content-section .view-empty p {
+  text-align: center;
+  font-size: 1em;
+  margin-top:1rem;
+}
+
+.page-sources-search .main-content .content-section .view-content.expanded {
+  width: 100%;
+  max-width: 100%;
+}
+
+.page-sources-search .views-field-biblio-authors,
+.node-type-biblio .content .source-full .source-field-authors {
+  font-size: 1em;
+  overflow: visible;
+  padding: .5rem .5rem 1rem 4.85rem;
+}
+
+.page-sources-search .views-field-biblio-authors:empty{
+  padding:0;
+  display:none;
+}
+
+.page-sources-search-biblio .views-field-biblio-authors{
+  padding-left: 5rem;
+}
+
+.node-type-biblio .content .source-full .source-field-authors {
+    padding: 0 0 2rem 3.25rem;
+}
+
+.page-sources-search .views-field-biblio-authors ul,
+.node-type-biblio .content .source-full .source-field-authors ul {
+  padding: 0 0 0 .3rem;
+  margin: 0;
+  display: block;
+}
+
+.page-sources-search .views-field-biblio-authors ul li,
+.node-type-biblio .content .source-full .source-field-authors ul li {
+  display: inline;
+  float: left;
+  line-height:1.25em;
+}
+
+.page-sources-search .views-field-biblio-authors ul li:first-child::before,
+.node-type-biblio .content .source-full .source-field-authors ul li:first-child::before {
+  content: "\e600";
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  position: relative;
+  bottom: 0.05rem;
+  right: 0.45rem;
+  font-family: 'shanticon';
+  font-size: 1.5rem;
+  color: #8982d7;
+  float: left;
+  margin-left: -1.6rem;
+}
+
+.page-sources-search .views-field-biblio-authors ul:empty{
+  display:none;
+}
+
+.page-sources-search .title-link-container{
+  padding-bottom: .2rem;
+  width: 95%;
+  margin-left: 3.25rem;
+}
+
+.page-sources-search .title-link-container a{
+  font-weight:bold;
+}
+
+.page-sources-search .title-link-container > .shanticon-sources{
+  margin-left: -3.3rem;
+}
+
+.page-sources-search .title-link-container .shanticon-sources::before{
+  font-size: 1.5em;
+  color: #6f69ae;
+  margin-right: .8rem;
+  position: relative;
+  top: .4rem;
+  opacity: .85;
+}
+
+.views-field-biblio-place-published {
+  margin:0 0 0 3.6rem;
+  padding-top: 2.7rem;
+}
+
+.views-field-biblio-place-published span {
+  /* margin-bottom: 0.25em;
+  margin-top: 1em;
+  margin-left: 1rem;
+  font-size: 1em; */
+}
+
+.views-field-biblio-place-published span::before{
+  /*
+  content: '';
+  width: 12px;
+  height: 12px;
+  background-color: #8982d7;
+  display: inline-block;
+  position: relative;
+  margin-right: 1.4rem;
+  top: 0.15rem;
+  left: .38rem;
+  border: 3px double #fff;
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  transform: rotate(45deg);
+  display: inline-block;
+  */
+  content: "\e625";
+  display: inline-block;
+  position: relative;
+  bottom: 0.25rem;
+  font-family: 'shanticon';
+  font-size: 1.68rem;
+  float: left;
+  margin-left: -2.15rem;
+  margin-right:.5rem;
+  color: #8982d7;
+}
+
+
+
+.page-sources-search .views-field-biblio-abst-e,
+.page-sources-search .views-field-field-zotero-tags {
+  clear: left;
+  font-size: 0.93em;
+  margin-top: .5rem;
+}
+
+/* biblio list descriptive text */
+.page-sources-search .views-field-biblio-abst-e {
+  margin: 0 0 1rem 3.7rem;
+  line-height: 1.82em;
+  color: #000;
+  clear: both;
+}
+
+.page-sources-search .views-field-biblio-abst-e .field-content:not(:empty){
+  padding-top: 0;
+  padding-left: 1.5rem;
+  border-left: 5px solid #eee;
+  float: left;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+}
+
+.page-sources-search .views-field-biblio-abst-e .field-content:not(:empty)::before{
+  content: "\f0f6";
+  width: 24px;
+  height: 24px;
+  display: inline-block;
+  position: relative;
+  font-family: 'FontAwesome';
+  font-size: 1.5rem;
+  color: #645F9D !important;
+  margin-right: 0rem;
+  margin-left: -2.25rem;
+  background: #fff;
+}
+
+.page-sources-search .views-field-field-zotero-tags{
+  /* font-style: italic; */
+  letter-spacing: 0.025rem;
+  border-top: 2px dashed #eee;
+  padding-top: .5rem;
+  padding-right: 1rem;
+  padding-left: 0rem;
+  padding-bottom: 1rem;
+  margin-left: 3rem;
+  margin-right: 1.3rem;
+}
+
+.page-sources-search .views-label-field-zotero-tags{
+  float:left;
+  font-style:italic;
+}
+
+.page-sources-search .views-field-field-zotero-tags ul::before{
+  content: "\f02c";
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  position: relative;
+  font-family: 'FontAwesome';
+  font-size: 1.5rem;
+  color: #8982d7 !important;
+  margin-right: .7rem;
+  float: left;
+  top: -0.2rem;
+  margin-left: -2.2rem;
+  font-style: normal;
+}
+
+.page-sources-search .views-field-field-zotero-collections{
+  padding: 0 0.5rem 0 5.65rem;
+  clear:both;
+  font-style:italic;
+}
+
+.page-sources-search:not(.page-sources-search-biblio) .views-label-field-zotero-tags,
+.page-sources-search:not(.page-sources-search-biblio) .views-field-field-zotero-collections > strong{
+  display:none;
+}
+
+.page-sources-search .views-field-field-zotero-collections a{
+  font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
+}
+
+.page-sources-search-biblio .views-label.views-field-biblio-url a{
+  word-break: break-all;
+}
+
+.page-sources-search-biblio .views-field-field-zotero-collections{
+  padding-left:0;
+}
+/*.page-sources-search:not(.page-home):not(.page-sources-search-biblio) .views-field-field-zotero-collections .field-content::before,*/
+.page-sources-search:not(.page-sources-search-biblio) .views-field-field-zotero-collections ul::before{
+  content: '\e61b';
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  position: relative;
+  top: 0.175rem;
+  font-family: 'shanticon';
+  font-size: 1.5rem;
+  color: #8982d7 !important;
+  margin-left: -2.1rem;
+  margin-right: 0.2rem;
+  font-style: normal;
+}
+
+.page-sources-search:not(.page-home):not(.page-sources-search-biblio) .views-field-field-zotero-collections .field-content::before{
+  margin-left: -2rem !important;
+  margin-right:.5rem !important;
+}
+
+.page-sources-search:not(.page-sources-search-biblio) .views-field-field-zotero-collections .views-field-title{
+  position: relative;
+  top: -0.3rem;
+}
+
+.page-sources-search .views-field-field-zotero-tags a{
+  color: rgb(0, 0, 139);
+}
+
+/*.page-sources-search .view-biblio-search-api .views-field-title,*/
+.node-type-biblio .content .source-full .source-field-title {
+  display: block;
+  color: #555;
+  font-weight: bold;
+  line-height: 1.32em;
+  font-size: 1.32em;
+  font-family: 'Palatino', 'Palatino Linotype', 'Palatino LT STD', 'Book Antiqua', Georgia, serif;
+}
+
+.node-type-biblio .content .source-full .source-field-title {
+    padding-left: .5rem;
+    padding-bottom: .7rem;
+    border-bottom: 2px solid #eee;
+}
+
+.page-sources-search .view-biblio-search-api .views-row {
+  padding: 0.5rem 0 0.75rem 1rem;
+  margin: 0 4rem 0 0;
+  border-top: 1px solid #fff;
+  border-bottom: 1px solid #ccc;
+  position: relative;
+  overflow: visible;
+}
+
+.node-type-biblio .content .source-full {
+    padding: 3rem 2.5rem 6rem;
+}
+
+/** Featured image on node full page **/
+.node-type-biblio .content .source-full .field-name-field-featured-image {
+  float: right !important;
+  margin: 20px 0 8px 12px !important;
+}
+
+.page-sources-search .view-biblio-search-api .views-row:after{
+  display: table;
+  content: " ";
+  clear: both;
+}
+
+.page-sources-search .view-content .views-row:first-of-type{
+  border-top-color:#ccc;
+}
+
+.page-sources-search .views-row .shanticon-essays {
+  margin-right: 0.8rem;
+  position: relative;
+  top: .25rem;
+  font-size: 1.32em;
+  margin-left: -2.8rem;
+}
+
+.page-sources-search .views-row .fa-plus{
+  font-size: 2rem;
+  border-radius: 50%;
+  color: #6f69ae;
+  filter: alpha(opacity=50);
+  opacity:.5;
+  cursor: pointer;
+  display: inline-block;
+  position: absolute;
+  top: 0.1rem;
+  right: -4.25rem;
+  z-index: 1;
+  padding: 0.5rem 0.8rem;
+  background: #fff;
+  border: 1px solid transparent;
+  /*-webkit-transition: all .15s ease-out !important;
+  -o-transition: all .15s ease-out !important;
+  transition: all .15s ease-out !important; */
+  -webkit-transform: rotate(0deg);
+  -moz-transform: rotate(0deg);
+  -ms-transform: rotate(0deg);
+  -o-transform: rotate(0deg);
+  transform: rotate(0deg);
+}
+
+.page-sources-search .views-row .fa-plus:hover{
+  color: #888;
+  border-color: #e0e0e0;
+  opacity:.8;
+}
+
+.page-sources-search .views-row .fa-plus::before{
+  position: relative;
+  top: 0.125rem;
+}
+
+.page-sources-search .views-row .fa-plus.on {
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+
+
+
+
+
+.page-sources-search .views-field-field-zotero-tags ul {
+  list-style: none;
+  overflow: hidden;
+  padding-left: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-left: 2.5rem;
+}
+
+.page-sources-search .views-field-field-zotero-tags ul li {
+  display: inline-block;
+  width: auto;
+  float: left;
+}
+
+/* Bibio lists Author and Collection's links */
+.page-sources-search .views-field-biblio-authors li a,
+.page-sources-search .views-field-field-zotero-tags li a{ font-style:italic; padding: 0 .15rem; font-size: 1em; font-family: 'Helvetica Neue', helvetica, arial, sans-serif;}
+
+.page-sources-search .views-field-biblio-authors li a{
+  font-size: .93em;
+}
+
+.page-sources-search .view-empty {
+  padding: 35px 24px 8px 24px;
+}
+
+
+
+
+
+/* individual biblio listing */
+
+.page-sources-search-biblio .view-biblio-search-api .attachment-after .custom-pager{
+  display:none;
+}
+
+.page-sources-search-biblio .main-content .content-section .view-content {
+  width: 100%;
+  max-width: 100%;
+}
+
+.page-sources-search-biblio .views-row{
+  border-color: transparent !important;
+  padding-top: 1.5rem;
+  padding-bottom: 0;
+}
+
+/* To allow room for kmaps popovers at bottom of listing (ndg) */
+.page-sources-search.page-sources-search-biblio article.main-content {
+    margin-bottom: 250px;
+}
+.page-node.node-type-biblio .content .source-full {
+    margin-bottom: 300px;
+}
+
+/* Biblio node page */
+.page-node.node-type-biblio .submitted {
+    margin-top: 12px;
+}
+
+.node-type-biblio .field-name-field-zotero-collections {
+    margin: 12px 0px;
+}
+
+.node-type-biblio .field-name-field-zotero-collections .field-label-span {
+    color: #505050;
+    font-family: Arial;
+    font-size: 1.32em;
+}
+
+.node-type-biblio .block-system .node-biblio .content {
+    margin-bottom: 12px;
+}
+
+.node-type-biblio ul.links {
+    margin: 12px 0px 0px;
+}
+
+.node-type-biblio .links li {
+    padding: 0px;
+}
+
+.node-type-biblio .links li a[title~=Google]:before {
+    content: "Link to: ";
+    color: #505050;
+}
+
+.node-type-biblio .field-name-field-kmap-subjects.field-label-above,
+.node-type-biblio .field-name-field-kmaps-places.field-label-above {
+    margin-top: 20px;
+    margin-bottom: 5px;
+
+}
+
+/* Biblio node page (added) */
+.node-type-biblio  .source-full .source-field,
+.node-type-biblio  .source-full .field-type-shanti-kmaps-fields-default {
+    /**clear: both; - removing for featured image */
+    margin: 1rem 0 0 1.4rem;
+}
+
+/* For authors see style for .page-sources-search .views-field-biblio-authors around line 440 */
+
+.node-type-biblio .source-full .source-field .field-label {
+    color: #444;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-family: 'museo-sans-500', helvetica, arial, sans-serif;
+}
+
+.node-type-biblio .field-name-field-kmap-subjects.field-label-above .field-label,
+.node-type-biblio .field-name-field-kmaps-places.field-label-above .field-label {
+    color: #505050;
+    font-size: 1.32em;
+    letter-spacing: 0.015rem;
+    font-weight: normal;
+    font-family: 'Helvetica Neue',helvetica,arial,sans-serif;
+}
+
+
+/* Custom Sort Option */
+
+#block-sources-views-custom-sort-filter .bootstrap-select.select-wrapper .btn {
+  height: 29px;
+}
+
+#block-sources-views-custom-sort-filter .bootstrap-select.select-wrapper label {
+  display: block;
+  padding: .5rem 0 0.2rem 1.5rem;
+  font-weight: bold;
+  color: #555;
+  background: #f0f0f0;
+  margin:0.2rem 0;
+  float: left;
+  width: 100%;
+  border-top:1px solid #e5e5e5;
+  border-bottom:1px solid #e5e5e5;
+}
+
+#block-sources-views-custom-sort-filter .bootstrap-select.select-wrapper label:first-of-type {
+  border-radius:.5rem .5rem 0 0;
+  margin-top: -1rem;
+  padding: .6rem 0 0.2rem 1.5rem;
+}
+
+#block-sources-views-custom-sort-filter {
+  text-align: right;
+  clear: both;
+  height: 3em;
+  padding: 0 2.4rem 0.8rem 4.2rem;
+}
+
+#block-sources-views-custom-sort-filter span.select-wrapper {
+  display: inline-block;
+  position: relative;
+}
+
+#block-sources-views-custom-sort-filter.expanded {
+  width: 80%;
+  position: relative;
+  z-index: 1;
+}
+
+#block-sources-views-custom-sort-filter .content .left-side {
+  width: auto;
+  float: left;
+  display: inline-block;
+}
+
+#block-sources-views-custom-sort-filter .content .left-side h1 {
+  font-family: 'museo-sans-900', helvetica, arial, sans-serif;
+  text-transform: uppercase;
+  color: #333;
+  margin: 0;
+  font-size: 2.30em;
+  letter-spacing: 5px;
+}
+
+#block-sources-views-custom-sort-filter .content .right-side {
+  width: auto;
+  display: inline-block;
+  float: right;
+}
+
+#block-sources-views-custom-sort-filter .select-wrapper,
+#block-sources-views-custom-sort-filter .select-wrapper select {
+  width: 197px;
+  margin-left: 1px;
+  left: 0;
+}
+
+#block-sources-views-custom-sort-filter span.select-wrapper {
+  padding: 0 5px;
+}
+
+#block-sources-views-custom-sort-filter .select-wrapper select option,
+#block-sources-views-custom-sort-filter .select-wrapper select optgroup {
+  font-size: 0.938em;
+  font-family: 'museo-sans-500', helvetica,arial, sans-serif;
+}
+
+#block-sources-views-custom-sort-filter .select-wrapper  .holder {
+  font-size: 0.813em;
+}
+
+#block-sources-views-custom-sort-filter .select-wrapper span.holder {
+  display: block;
+  margin-left: 5px;
+  position: absolute;
+  margin-top: -1px;
+}
+
+#block-sources-views-custom-sort-filter .dropdown-menu.open ul > li > a{
+  line-height:1.88em;
+  padding-left:2rem;
+  color: #555;
+}
+
+#block-sources-views-custom-sort-filter .dropdown-menu.open ul > li > a::before{ display:none; }
+
+#block-sources-views-custom-sort-filter .dropdown-menu.open ul > li.selected>a,
+#block-sources-views-custom-sort-filter .dropdown-menu.open ul > li.selected>a>span.text{
+  background:#f9f9f9;
+}
+
+#block-sources-views-custom-sort-filter .dropdown-menu.open ul:first-child{
+  margin-bottom:.5rem;
+}
+
+#block-sources-views-custom-sort-filter .dropdown-menu.open ul:first-child li > a{
+  display:none;
+}
+/*
+#block-sources-views-custom-sort-filter .dropdown-menu.inner:not(.dropdown-menu.inner:first-child) li .text{
+  padding-left: 0;
+}
+*/
+#block-sources-views-custom-sort-filter .dropdown-menu.inner:not(.dropdown-menu:first-child) li .text{
+  padding-left: 0;
+}
+
+
+
+/* Level Detail Option */
+
+.detail-level-container,
+.custom-sort-container {
+  width: auto;
+  display: inline-block;
+  float: left;
+}
+
+.detail-level-container {
+  width: 20rem;
+  margin-bottom: 0.5rem;
+}
+
+.detail-level-container span {
+  line-height: 2.06em;
+  float: left;
+  margin-right: 1rem;
+  font-size: 1.06em;
+  color: #555;
+  letter-spacing: 0.09rem;
+  font-family: 'museo-sans-500',helvetica,arial,sans-serif;
+}
+
+.detail-level-container ul {
+  list-style: none;
+  padding: 0;
+  overflow: hidden;
+  /*float: right;*/
+  margin: 0;
+  border-radius: 3px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+}
+
+.detail-level-container ul li {
+  display: inline-block;
+  width: 29px;
+  height: 30px;
+  float: left;
+  text-align: center;
+}
+
+.detail-level-container ul li a {
+  text-indent: -9999em;
+  width: 29px;
+  height: 30px;
+  display: block;
+}
+
+.detail-level-container ul li a:hover,
+.detail-level-container ul li a:active{
+  border-bottom-color: transparent;
+}
+
+a#short-detail {
+  background: url(../images/short-detail-inactive.png) no-repeat;
+}
+
+a#short-detail.active  {
+  background: url(../images/short-detail-active.png) no-repeat;
+}
+
+a#medium-detail {
+  background: url(../images/medium-detail-inactive.png) no-repeat;
+  border-right: 1px solid #eaebeb;
+  border-left: 1px solid #eaebeb;
+}
+
+a#medium-detail.active {
+  background: url(../images/medium-detail-active.png) no-repeat;
+}
+
+a#long-detail {
+  background: url(../images/long-detail-inactive.png) no-repeat;
+}
+
+a#long-detail.active {
+  background: url(../images/long-detail-active.png) no-repeat;
+}
+
+
+/*
+.page-sources-search .attachment.attachment-after {
+  background: #eaeceb;
+}
+*/
+.page-sources-search .attachment.attachment-after.expanded {
+  position: relative;
+  z-index: 10000;
+}
+
+/**
+ *     Miscellaneous
+ */
+.view-display-id-my_source_page #edit-biblio-year-wrapper .form-item {
+    float: left;
+    width: 80px;
+}
+
+.view-display-id-my_source_page #edit-biblio-year-wrapper .form-item.form-item-biblio-year-max {
+    margin-left: 12px;
+}
+
+.view-display-id-my_source_page #edit-biblio-year-wrapper .form-item.form-item-biblio-year-max > label {
+   display: none;
+}
+
+
+/**
+* BEGIN pagers
+*/
+
+.view-biblio-search-api .pagerer {
+  margin: 0 2rem 2rem 0;
+  /*font-size: 1em;*/
+}
+.view-biblio-search-api > .pagerer{
+  margin-right:3rem;
+}
+
+#block-system-main .view-biblio-search-api .shanti-filters div.control-box-cell-header {
+  font-size: 0.93em;
+  white-space: nowrap;
+  padding-left:2.5rem;
+}
+
+/* Old custom pager code. (ndg8f removed code adding custom pager template from sources_views.module and implemented Shanti Pager module) */
+.main-wrapper .custom-pager {
+  padding: 1.2rem 2.5rem;
+  font-size: 0.93em;
+  white-space: nowrap;
+}
+.main-wrapper .custom-pager .custom-pager-left {
+  float: left;
+}
+.main-wrapper .custom-pager .custom-pager-right{
+  font-size: 0.82em;
+  padding-right: 1rem;
+}
+
+.main-wrapper table.pagerer ul li{
+  /*padding: 0 0.8rem;*/
+}
+.main-wrapper table.pagerer ul li.pager-next{
+  /*float:left;*/
+}
+.main-wrapper ul.pager li > a{
+  /*color: #999 !important;*/
+}
+
+
+
+
+.kWidgetIframeContainer{
+  max-width: 320px !important;
+}
+
+/**
+* ---------------------------------------------
+* BEGIN Collections page & Related Edit pages
+* ---------------------------------------------
+*/
+
+/* for biblio entries in a collections page for hanging first line */
+.page-taxonomy .node-biblio.node-teaser {
+  margin: 1rem 0;
+}
+
+
+.page-taxonomy #block-system-main.block.block-system{
+  float: none;
+  background: #fff;
+  box-shadow: inset 0 0 5px #999;
+  border-radius: 2px;
+  padding: 2rem 3rem 7rem;
+}
+
+.page-taxonomy .biblio-authors a{
+  font-weight:bold;
+}
+
+.page-taxonomy .biblio-title{
+  font-weight:normal;
+}
+
+
+/* TEMP */
+.shanti-collection-body{
+  margin-top: -2rem !important;
+}
+
+/**
+* OLDER css
+*/
+/**** Collections ******/
+.node-type-collection .pane-node-body.shanti-collection-body,
+.node-type-subcollection .pane-node-body.shanti-collection-body {
+    min-height: 180px;
+}
+
+.view.view-biblio-list.view-display-id-panel_pane_1 .view-result-count-info {
+    /*font-style: italic;
+    margin-bottom: 6px;*/
+}
+
+.view.view-biblio-list .views-field {
+    /* font-size: 1em; */
+}
+
+.view.view-biblio-list.view-display-id-panel_pane_1 .views-field.views-field-citation {
+    /* margin-left: 16px;
+    text-indent: -16px; */
+}
+/*
+.node-type-collection .shanti-collection-body h2.pane-title{
+  margin-bottom: 0.56rem;
+  margin-top: 1.38rem;
+}
+
+.node-type-collection .field-name-field-general-featured-image{
+  margin: 0.5rem 1rem 0.5rem 0;
+}
+
+.node-type-collection .shanti-collection-body p{
+  line-height: 1.68em;
+}
+*/
+.view-biblio-list .view-content > div {
+  padding-top: 1.5rem;
+}
+
+.view-biblio-list a {
+  font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
+}
+
+.views-field-citation span.biblio-title-mla {
+  font-weight: bold;
+  filter: alpha(opacity=85);
+  opacity: 0.85;
+  letter-spacing: -0.03em;
+}
+/* authors */
+.views-field-citation span.field-content {
+  font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
+}
+.views-field-citation i,
+.views-field-citation em {
+  font-size: 0.93em;
+  color: #333;
+}
+
+/*
+.panel-panel.right.col-sm-3 .view-collections{
+  font-size: 100%
+}
+*/
+
+
+.view.bibliography .view-content .views-row .content {
+  text-indent: -24px;
+  margin-left: 24px;
+  margin-bottom: 6px;
+}
+
+
+.wysiwyg-toggle-wrapper{
+  position: relative;
+  top: -1.9rem;
+  left: 1rem;
+}
+
+
+
+
+
+
+
+/**
+* END Older
+*/

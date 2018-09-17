@@ -1,0 +1,20 @@
+/**
+ *     Special styles for the media browser popup in Shanti Images
+ */
+
+.media-browser-tab form #edit-field-sharedshelf-ssid,
+.media-browser-tab form #edit-field-sharedshelf-creator,
+.media-browser-tab form #edit-field-sharedshelf-title,
+.media-browser-tab form #edit-field-sharedshelf-project-id,
+.media-browser-tab form #edit-field-sharedshelf-place,
+.media-browser-tab form #edit-field-sharedshelf-date,
+.media-browser-tab form #edit-field-sharedshelf-photographer,
+.media-browser-tab form #edit-field-sharedshelf-worktype,
+.media-browser-tab form #edit-field-sharedshelf-description,
+.media-browser-tab form #edit-field-sharedshelf-kmaps,
+.media-browser-tab form #edit-field-sharedshelf-solr-search,
+.media-browser-tab form #edit-field-og-collection-ref
+ {
+    display: none;
+}
+

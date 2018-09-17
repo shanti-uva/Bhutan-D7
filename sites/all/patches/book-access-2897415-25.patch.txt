@@ -1,0 +1,13 @@
+diff --git a/book_made_simple.module b/book_made_simple.module
+index aba702f..d423e7f 100644
+--- a/book_made_simple.module
++++ b/book_made_simple.module
+@@ -301,7 +301,7 @@ function book_made_simple_form_alter(&$form, &$form_state, $form_id) {
+       }
+     }
+     else {
+-      $form['book']['#type'] = 'hidden';
++      $form['book']['#access'] = FALSE;
+       //$form['book']['bid']['#default_value'] = 0;
+     }
+     return $form;

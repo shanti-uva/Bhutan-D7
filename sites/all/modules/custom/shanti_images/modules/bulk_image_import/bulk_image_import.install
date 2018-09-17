@@ -1,0 +1,61 @@
+<?php
+
+function bulk_image_import_schema() {
+  $schema['bulk_image_import_task'] = array(
+    'fields' => array(
+      'tid' => array(
+        'description' => 'The primary identifier for a Bulk Image Import task.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'xml_data' => array(
+        'description' => 'The uploaded XML file data from the image import.',
+        'type' => 'text',
+        'size' => 'big',
+      ),
+      'catalog' => array(
+        'description' => 'The catalog name for this import.',
+        'type' => 'varchar',
+        'length' => '128',
+      ),
+      'external_uid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+      ),
+      'group_id' => array(
+        'description' => 'The unique group id assigned to this batch of import tasks',
+        'type' => 'varchar',
+        'length' => 12,
+      ),
+      'image_linked' => array(
+        'description' => 'Whether or not an image for the record has been successfully linked.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => '0',
+      ),
+      'node_id' => array(
+        'description' => 'The Node for the imported record.',
+        'type' => 'int',
+      ),
+      'complete' => array(
+        'description' => 'The status of the Bulk Image Import task.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => '0',
+      ),
+      'errors' => array(
+        'description' => 'Any errors the interrupted the Bulk Image Import task.',
+        'type' => 'text',
+      ),
+    ),
+    'primary key' => array(
+      'tid',
+    ),
+    'unique keys' => array(
+      'tid_gid' => array('tid', 'group_id')
+    )
+  );
+
+  return $schema;
+}

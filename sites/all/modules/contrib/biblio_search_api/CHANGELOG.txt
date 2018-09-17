@@ -1,0 +1,11 @@
+biblio_search_api 1.02, 2014-02-11
+-----------------------
+- Issue #2155223 by JacobSanford: Update to fixing authors returning as CSV
+  string.
+- by JacobSanford: Function documentation improvement
+- by JacobSanford: Check for array before looping over author fields
+
+biblio_search_api 1.01, 2013-12-12
+-----------------------
+- Issue #2155223 by JacobSanford: Fixed authors returning as CSV string.
+- by JacobSanford: Updated documentation to include parameters and returns.

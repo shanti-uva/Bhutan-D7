@@ -1,0 +1,14 @@
+
+.mms-range-list.missing a.shanti-image-rem-mmsid {
+    margin-left: 125px;
+    background-color: lightgrey;
+    padding: 0 4px 2px 3px;
+    border-radius: 12px;
+    font-size: 85%;
+}
+
+
+.mms-range-list.missing span.mms-removed {
+    padding-left: 8px;
+    font-style: italic;
+}

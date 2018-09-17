@@ -1,0 +1,33 @@
+<?php
+function shanti_kmaps_solr_libraries_info()
+{
+    $libraries['shanti_kmaps_solr'] = array(
+        'name' => 'SHANTI KMaps SOLR',
+        'download url' => '',
+        'version' => '0.1', //arbitrary but must be set unless 'version callback' is set
+        'dependencies' => array(),
+        'version callback' => 'simple_version_callback',
+        'files' => array(
+            'js' => array(
+                'dist/jquery.kmapsSolr.js',
+            ),
+        ),
+    );
+    return $libraries;
+}
+
+function shanti_kmaps_solr_init()
+{
+    $module_path = drupal_get_path('module', 'shanti_kmaps_solr');
+    if (module_exists('handlebars')) {
+      foreach (glob($module_path . '/templates/*.hbr') as $template) {
+        handlebars_add_template(array(
+          'template' => basename($template),
+          'path' => dirname($template),
+        ));
+      }
+    } else {
+      watchdog('kmaps_module', 'handlebars is not enabled, please enable!');
+      drupal_set_message('The shanti_kmaps_solr module requires that the handlebars module is enabled!', 'warning');
+    }
+}

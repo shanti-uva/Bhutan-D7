@@ -1,0 +1,904 @@
+<?php
+/**
+ * @file
+ * Media: SharedShelf provides a stream wrapper and formatters for images
+ * provided by SharedShelf, available at http://catalog.sharedshelf.artstor.org/
+ *
+ * @TODO use hook_entity_info_alter to add SharedShelf specific view mode?
+ */
+
+// A registry of variable_get defaults.
+include_once 'includes/media_sharedshelf.variables.inc';
+
+// Hooks and callbacks for integrating with File Entity module for display.
+include_once 'includes/media_sharedshelf.formatters.inc';
+
+/**
+ * Implements hook_help().
+ */
+function media_sharedshelf_help($path, $arg) {
+  switch ($path) {
+    case 'admin/help#media_sharedshelf':
+      return '<p>' . t("Provides access to ARTStor SharedShelf content from within the Media module.") . '<p>';
+  }
+}
+
+/**
+ * Implements hook_admin_path() 
+ */
+ function media_sharedshelf_admin_paths() {
+ 	return array(
+		'files/admin' => TRUE,
+		'media/add/media_sharedshelf' => TRUE,
+	);
+ }
+ 
+/**
+ * Implements hook_permission().
+ */
+function media_sharedshelf_permission() {
+  return array(
+    'configure Media SharedShelf' => array(
+      'title' => t('Configure Media SharedShelf settings'),
+      'description' => t('Set user account credentials. Configure default project and image size settings.'),
+      'restrict access' => TRUE,
+    ),
+    'add Media SharedShelf' => array(
+      'title' => t('Add Media SharedShelf settings'),
+      'description' => t('Add SharedShelf images via the media browser'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function media_sharedshelf_menu() {
+  $items = array();
+  // Add a menu item to the media admin configuration for SharedShelf API
+  // authentication info.
+  $items['admin/config/media/media_sharedshelf/api'] = array(
+    'title' => 'SharedShelf API settings',
+    'description' => 'Configure required API settings for Media: SharedShelf.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('media_sharedshelf_api_form'),
+    'access arguments' => array('configure Media SharedShelf'),
+    'file' => 'includes/media_sharedshelf.admin.inc',
+  );
+  // Add a menu item to the media admin configuration for default settings to
+  // use with this plugin.
+  $items['admin/config/media/media_sharedshelf/settings'] = array(
+    'title' => 'SharedShelf media settings',
+    'description' => 'Configure optional settings for Media: SharedShelf.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('media_sharedshelf_settings_form'),
+    'access arguments' => array('configure Media SharedShelf'),
+    'file' => 'includes/media_sharedshelf.admin.inc',
+  );
+  // Add a menu item to the media content section for adding SharedShelf images
+  // as media objects.
+  $items['media/add/media_sharedshelf'] = array(
+    'title' => 'Add media from SharedShelf',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('media_sharedshelf_add'),
+    'access arguments' => array('add Media SharedShelf'),
+    'type' => MENU_LOCAL_ACTION,
+    'file' => 'includes/media_sharedshelf.admin.inc',
+    'weight' => -1,
+  );
+  // To act as a proxy for loading http:// shared shelf pdfs with titles
+  $items['media/sharedshelf/view/pdf/%'] = array(
+    'title' => 'View a SharedShelf PDF',
+    'page callback' => 'media_sharedshelf_view_pdf',
+    'page arguments' =>array(4),
+    'access arguments' => array('access content'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+  /* Commenting out to get to work with new Images site (ndg8f, 2017/11/21)
+	// Path to update an images Shared Shelf metadata
+	// Calls media_sharedshelf_update_confirm in media_sharedshelf.admin.inc
+	$items['media/%/update'] = array(
+    'title' => 'Update',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('media_sharedshelf_update_confirm', 1),
+    'access callback' => 'file_entity_access',
+    'access arguments' => array('udpate', 1),
+    'weight' => -1,
+    'type' => MENU_LOCAL_TASK,
+    'context' => MENU_CONTEXT_INLINE,
+    'file' => 'includes/media_sharedshelf.admin.inc',
+  );
+	
+  $items['admin/content/media/add/media_sharedshelf'] = $items['media/add/media_sharedshelf'];
+   * */
+  return $items;
+}
+
+/**
+ * Create stream wrapper for SharedShelf videos.
+ */
+function media_sharedshelf_stream_wrappers() {
+  return array(
+    'sharedshelf' => array(
+      'name' => t('SharedShelf media'),
+      'class' => 'MediaSharedShelfStreamWrapper',
+      'description' => t('Media available from SharedShelf.'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_theme().
+ */
+function media_sharedshelf_theme($existing, $type, $theme, $path) {
+  return array(
+    'media_sharedshelf_preview_style' => array(
+      'variables' => array(
+        'field_type' => NULL,
+        'container_name' => NULL,
+        'style_name' => NULL,
+      ),
+      'file' => 'media_sharedshelf.theme.inc',
+      'path' => $path . '/themes',
+    ),
+    'media_sharedshelf_field_formatter_styles' => array(
+      'variables' => array('element' => NULL, 'style' => NULL),
+      'file' => 'media_sharedshelf.theme.inc',
+      'path' => $path . '/themes',
+    ),
+    'media_sharedshelf_embed' => array(
+      'variables' => array(
+        'style_name' => NULL,
+        'uri' => NULL,
+        'alt' => NULL,
+        'title' => NULL,
+      ),
+      'file' => 'media_sharedshelf.theme.inc',
+      'path' => $path . '/themes',
+    ),
+    'media_sharedshelf_styles' => array(
+      'variables' => array('element' => NULL, 'style' => NULL),
+      'file' => 'media_sharedshelf.theme.inc',
+      'path' => $path . '/themes',
+    ),
+    'media_sharedshelf_custom_field' => array(
+      'variables' => array('class' => NULL, 'inline' => NULL, 'label' => NULL, 'value' => NULL),
+      'template' => 'media_sharedshelf.custom_field',
+      'path' => $path . '/themes',
+    ),
+  );
+}
+
+/**
+ * Implements hook_theme_registry_alter
+ *   To add this module's theme folder to the theme registry
+ */
+ function media_sharedshelf_theme_registry_alter(&$theme_registry) {
+	$mod_path = drupal_get_path('module', 'media_sharedshelf');
+	$theme_registry_copy = $theme_registry;
+	// munge on a copy
+	_theme_process_registry($theme_registry_copy, 'phptemplate', 'theme_engine', 'pow', $mod_path);
+	$theme_registry += array_diff_key($theme_registry_copy, $theme_registry);
+}
+
+/**
+ * Implements hook_file_styles_filter().
+ */
+function media_sharedshelf_file_styles_filter($object) {
+  $file = isset($object->file) ? $object->file : $object;
+  if ((file_uri_scheme($file->uri) == 'sharedshelf') && (strpos($file->filemime, 'image') !== FALSE)) {
+    return 'media_sharedshelf';
+  }
+  elseif ((file_uri_scheme($file->uri) == 'sharedshelf') && (strpos($file->filemime, 'video') !== FALSE)) {
+    return 'media_sharedshelf';
+  }
+}
+
+/**
+ * Implements hook_form_alter(). 
+ */
+function media_sharedshelf_form_alter(&$form, &$form_state, $form_id) {
+    return; // To get it to work with new images site (ndg8f, 2017-11-21)
+  if ($form_id == 'media_sharedshelf_api_form') {
+    $form['#validate'][] = 'media_sharedshelf_api_form_connect_to_server';
+  }
+	// Disable the Shared Shelf ID field populated by shared shelf on file importation (added by ndg8f)
+	if ($form_id == 'file_entity_edit') {
+		$form['field_sharedshelf_ssid']['#disabled'] = TRUE;
+		$form['field_sharedshelf_ssid']['#suffix'] = '<div class="form-item form-type-textfield form-item-field-sharedshelf-ssid-und-0-value form-disabled">
+  				<label for="edit-field-sharedshelf-ssid-und-0-value">File URI </label>
+ 					<input class="text-full form-text" disabled="disabled" type="text" value="' . $form['#entity']->uri .'" size="60" maxlength="255">
+ 					<div class="description">URI for image on this site</div></div>';
+		// Add button to update metadata from Shared Shelf
+		$form['actions']['ssupdate'] = array(
+			'#type' => 'submit',
+			'#value' => t('Update'),
+			'#weight' => 12,
+			'#submit' => array('media_sharedshelf_update'),
+			'#attributes' => array('title' => t("Update Shared Shelf Metadata")),
+		);
+		drupal_add_css('#edit-field-sharedshelf-ssid {float: left; padding-right: 25px;}', array('group' => CSS_THEME, 'type' => 'inline'));
+	}
+	
+	if ($form_id == 'media_sharedshelf_add') {
+		drupal_add_css('.view-content .item { float: left; padding: 5px; } ', array( 'group' => CSS_THEME, 'type' => 'inline'));
+	}
+    
+}
+
+/**
+ * Update Shared Shelf Information
+ * Called from the file edit form in drupal to which form_alter has added an update button.
+ * Calls media/{fid}/update
+ * TODO: Add trigger to admin interface to update all files, or allow for updating when reimporting a set.
+ */
+function media_sharedshelf_update($form, &$form_state) {
+	$destination = array();
+  if (isset($_GET['destination'])) {
+    $destination = drupal_get_destination();
+    unset($_GET['destination']);
+  }
+  $fid = $form['fid']['#value'];
+  $form_state['redirect'] = array('media/' . $fid . '/update', array('query' => $destination));
+}
+
+
+/**
+ * Determine if a stream belongs to Media: SharedShelf.
+ */
+function media_sharedshelf_formatter_filter($variables) {
+  if (isset($variables['object'])) {
+    $object = $variables['object'];
+    return (file_uri_scheme($object->uri) == 'sharedshelf');
+  }
+}
+
+/**
+ * Based on the internal URI, this will return the full size image URL.
+ *
+ * @param string $url
+ *   The module's internal uri format for a SharedShelf image depending on how
+ *   it was added.
+ * @param int $width
+ *   Width used to guess the actual size provided by SharedShelf.
+ * @param int $height
+ *   We use this to guess the actual size provided by SharedShelf.
+ * @param bool $refresh
+ *   Optional; if TRUE, then we'll force a new load of the XML. Otherwise,
+ *   a cached version will be retrieved if possible.
+ */
+function media_sharedshelf_image_url($url, $width = 0, $height = 0, $refresh = FALSE) {
+  module_load_include('inc', 'media_sharedshelf', 'includes/media_sharedshelf.utilities');
+  return _media_sharedshelf_image_url($url, $width, $height, $refresh);
+}
+
+/**
+ * Return the representation image's mimetype and bytestream.
+ *
+ * @param int $asset_id
+ *   The asset id number for the SharedShelf image to be retrieved.
+ * @param int $size
+ *   The size indicator for the appropriate image representation wanted.
+ *
+ * @return array
+ *   An associative array containing:
+ *   'mimetype' - the mimetype for the image representation.
+ *   'bytestream' - the bytes for the image representation.
+ */
+function media_sharedshelf_image_representation($asset_id, $size = 0) {
+  module_load_include('inc', 'media_sharedshelf', 'includes/media_sharedshelf.utilities');
+  return _media_sharedshelf_api_representation_size_get($asset_id, $size);
+}
+
+/**
+ * Gets the image mimetype.
+ *
+ * @param string $url
+ *   The internal schema url for the SharedShelf image.
+ *
+ * @return string
+ *   The URL to the image located on the SharedShelf server.
+ */
+function media_sharedshelf_image_mimetype($url) {
+  module_load_include('inc', 'media_sharedshelf', 'includes/media_sharedshelf.utilities');
+  return _media_sharedshelf_get_image_mimetype($url);
+}
+
+/**
+ * Implements hook_media_parse().
+ */
+function media_sharedshelf_media_parse($url) {
+  module_load_include('inc', 'media_sharedshelf', 'includes/media_sharedshelf.utilities');
+  return _media_sharedshelf_media_parse($url);
+}
+
+/**
+ * Implements hook_ctools_plugin_api().
+ */
+function media_sharedshelf_ctools_plugin_api($owner, $api) {
+  if ($owner == 'file_entity' && $api == 'file_type') {
+    return array('version' => 1);
+  }
+}
+
+/**
+ * Implements hook_file_type().
+ */
+function media_sharedshelf_file_type($file) {
+  // Shared Shelf allows for TIFF images which seem to be treated as undefined
+  // by the Media module so we need to override this.
+  if (strstr($file->filemime, 'image')) {
+    return array('image');
+  }
+  // Shared Shelf will support audio, video, and pdf so put this in here now.
+  elseif (strstr($file->filemime, 'video')) {
+    return array('video');
+  }
+  elseif (strstr($file->filemime, 'audio')) {
+    return array('audio');
+  } 
+  elseif (strstr($file->filemime, 'pdf')) {
+    return array('image'); // Treat pdfs from shared shelf as images (ndg, 2015-08-28)
+  }
+}
+
+/**
+ * Implements hook_file_mimetype_mapping_alter().
+ */
+function media_sharedshelf_file_mimetype_mapping_alter(&$mapping) {
+  // Since Shared Shelf full size images may be TIFF format make sure this is
+  // recognized by Drupal.
+  $new_mapping['tif'] = 'image/tiff';
+  foreach ($new_mapping as $extension => $mime_type) {
+    if (!in_array($mime_type, $mapping['mimetypes'])) {
+      $mapping['mimetypes'][] = $mime_type;
+    }
+    $index = array_search($mime_type, $mapping['mimetypes']);
+    $mapping['extensions'][$extension] = $index;
+  }
+}
+
+/**
+ * Implements hook_file_default_types_alter().
+ */
+function media_sharedshelf_file_default_types_alter(&$types) {
+  // Since Shared Shelf full size images may be TIFF format make sure this is
+  // recognized by Drupal.
+  $types['image']->mimetypes[] = 'image/tiff';
+}
+
+/**
+ * Implements hook_views_api().
+ */
+function media_sharedshelf_views_api() {
+  return array(
+    'api' => 3,
+    'path' => drupal_get_path('module', 'media_sharedshelf'),
+  );
+}
+
+/**
+ * Implements hook_apachesolr_index_document_build_ENTITY_TYPE().
+ */
+ /*
+function media_sharedshelf_apachesolr_index_document_build_file(ApacheSolrDocument $document, $file, $env_id) {
+  module_load_include('inc', 'media_sharedshelf', 'includes/media_sharedshelf.utilities');
+  // Use an entity wrapper to retrieve the fields for this file.
+  $file_type = media_sharedshelf_file_type($file);
+  $info_bundle = array('bundle' => $file_type[0]);
+  $wrapper = entity_metadata_wrapper('file', $file, $info_bundle);
+  // Loop through the basic fields to get data values to add to the document.
+  // The content field in the Solr document is used for handling any text you
+  // want to to be searchable for the entity.
+  foreach (media_sharedshelf_basic_fields() as $info) {
+    if (!is_array($wrapper->{$info['field_name']}->value())) {
+      $value = strval($wrapper->{$info['field_name']}->value());
+    }
+    else {
+      $value = implode('; ', $wrapper->{$info['field_name']}->value());
+    }
+    if ($value != '') {
+      $document->content .= $info['settings']['label'] . ': ' . $value . '<br />';
+    }
+  }
+}
+*/
+/**
+ * SharedShelf search tab for the Media browser.
+ */
+
+/**
+ * Implements hook_media_browser_plugin_info().
+ */
+function media_sharedshelf_media_browser_plugin_info() {
+  $info['sharedshelf'] = array(
+    'title' => t('SharedShelf'),
+    'class' => 'MediaSharedShelfBrowser',
+  );
+
+  return $info;
+}
+
+/**
+ * Provides WYSIWYG plugin form for adding media items from SharedShelf search.
+ */
+function media_sharedshelf_wysiwyg_add($form, &$form_state = array()) {
+  module_load_include('inc', 'media', 'includes/media.browser');
+  module_load_include('inc', 'media_sharedshelf', 'includes/media_sharedshelf.utilities');
+
+  // Our search criteria can come from the form, or from the pager.
+  $project = isset($form_state['values']['project']) ? $form_state['values']['project'] : (isset($_GET['project']) ? check_plain($_GET['project']) : '0');
+  $keyword = isset($form_state['values']['keyword']) ? $form_state['values']['keyword'] : (isset($_GET['keyword']) ? check_plain($_GET['keyword']) : '');
+
+  // Retrieve the a list of projects from SharedShelf to use.
+  $projects = _media_sharedshelf_get_projects();
+  $default_project = !empty($project) ? $project : media_sharedshelf_variable_get('default_project');
+  $form['project'] = array(
+    '#type' => 'select',
+    '#title' => t('Project'),
+    '#description' => t('Choose a project to search.'),
+    '#options' => (array('0' => '') + $projects),
+    '#default_value' => $default_project,
+  );
+  $form['keyword'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Keyword'),
+    '#description' => t('Input a phrase or keyword to find.'),
+    '#default_value' => $keyword,
+  );
+  $form['search_ss'] = array(
+    '#type' => 'button',
+    '#value' => t('Search SharedShelf'),
+  );
+
+  // This is a simple pager.
+  $page_ss = isset($_GET['page-ss']) ? $_GET['page-ss'] : 0;
+  if (isset($form_state['values']['keyword'])) {
+    // Reset the pager when we press search.
+    $page_ss = 0;
+  }
+  if (!empty($keyword) and (($project != '0') or ($project != ''))) {
+    $limit = 12;
+    $start = $page_ss * $limit;
+    $search = _media_sharedshelf_api_project_assets_get($project, $start, $limit, TRUE, $keyword);
+  }
+  $form['images']['#prefix'] = '<div id="container"><div id="scrollbox"><ul id="media-browser-library-list" class="media-list-thumbnails">';
+  $form['images']['#suffix'] = '</ul><div id="status"></div></div></div>';
+
+  $empty = FALSE;
+  $files = array();
+  if (!isset($search['assets'])) {
+    $empty = TRUE;
+  }
+  else {
+    foreach ($search['assets'] as $image) {
+      $asset = _media_sharedshelf_api_assets_representation_details_get($image['id']);
+      if ($asset['success']) {
+        $uri = _media_sharedshelf_build_uri(array('a' => $image['id']));
+      }
+      else {
+        // Ignore missing images.
+        continue;
+      }
+      // Create a temporary file object for our retrieved image.
+      $file = file_uri_to_object($uri);
+      $file->filename = $image['filename'];
+      $file->type = 'image';
+      if (!isset($file->fid)) {
+        $file->fid = 0;
+      }
+      media_browser_build_media_item($file);
+      $file->preview = l($file->preview, 'media/browser', array(
+        'html' => TRUE,
+        'attributes' => array(
+          'data-uri' => $uri,
+        ),
+        'query' => array('render' => 'media-popup', 'uri' => $uri),
+      ));
+      $form['images'][$uri] = array(
+        '#markup' => $file->preview,
+        '#prefix' => '<li>',
+        '#suffix' => '</li>',
+      );
+      $files[$uri] = $file;
+    }
+  }
+
+  if (!count($files)) {
+    $empty = TRUE;
+  }
+  if ($empty) {
+    $form['empty'] = array(
+      '#markup' => '<div class="empty-message">' . t('No images match your search criteria. Please try again.') . '</div>',
+    );
+  }
+
+  $query = $_GET;
+  if ($keyword !== '') {
+    $query['keyword'] = $keyword;
+  }
+  if ($project !== '') {
+    $query['project'] = $project;
+  }
+
+  $dest = $query['q'];
+  unset($query['q']);
+  $prev = $next = '';
+  if ($page_ss) {
+    $query['page-ss'] = $page_ss - 1;
+    $prev = l(t('previous'), $dest, array('query' => $query));
+    $prev = l(t('previous'), $dest, array('query' => $query, 'fragment' => 'media-tab-sharedshelf'));
+  }
+  $query['page-ss'] = $page_ss + 1;
+  if (!$empty) {
+    $next = l(t('next'), $dest, array('query' => $query));
+    $next = l(t('next'), $dest, array('query' => $query, 'fragment' => 'media-tab-sharedshelf'));
+  }
+
+  $form['pager'] = array(
+    '#markup' => $prev . ' ' . $next,
+  );
+
+  $form['submitted-image'] = array(
+    '#type' => 'hidden',
+    '#default_value' => FALSE,
+  );
+
+  // Add the files to JS so that they are accessible inside the browser.
+  drupal_add_js(array('media' => array('files' => $files)), 'setting');
+
+  // Add media browser javascript and CSS.
+  drupal_add_js(drupal_get_path('module', 'media_sharedshelf') . '/javascript/media-sharedshelf.browser.js');
+
+  $form['actions'] = array('#type' => 'actions');
+  // NOTE: All other tabs in the WYSIWYG embed feature use Submit as the label
+  // of the button. So that is used here for consistency, even though the better
+  // term to use might be Select or Embed.
+  $form['actions']['submit'] = array(
+    '#type' => 'submit',
+    // @ignore style_button_submit
+    '#value' => t('Submit'),
+  );
+  return $form;
+}
+
+/**
+ * Allow stream wrappers to have their chance at validation.
+ *
+ * @see media_parse_to_uri()
+ */
+function media_sharedshelf_wysiwyg_add_validate($form, &$form_state) {
+  if ($form_state['values']['op'] == t('Search SharedShelf')) {
+    return;
+  }
+  $uri = $form_state['values']['submitted-image'];
+  try {
+    $file = file_uri_to_object($uri, TRUE);
+  }
+  catch (Exception $e) {
+    form_set_error('url', $e->getMessage());
+    return;
+  }
+
+  if (!$file->uri) {
+    form_set_error('url', t('Please select an image.'));
+    return;
+  }
+}
+
+/**
+ * Save the image added via WYSIWYG and allow editing before embedding.
+ */
+function media_sharedshelf_wysiwyg_add_submit($form, &$form_state) {
+  module_load_include('inc', 'media_sharedshelf', 'includes/media_sharedshelf.utilities');
+  $uri = $form_state['values']['submitted-image'];
+  try {
+    // Save the remote file.
+    $file = file_uri_to_object($uri, TRUE);
+    file_save($file);
+    _media_sharedshelf_add_metadata($file);
+  }
+  catch (Exception $e) {
+    form_set_error('url', $e->getMessage());
+    return;
+  }
+
+  if (!$file->fid) {
+    form_set_error('url', t('The file %file could not be saved. An unknown error has occurred.', array('%file' => $uri)));
+    return;
+  }
+  else {
+    $form_state['file'] = $file;
+  }
+
+  // Redirect to the file edit page after submission.
+  if (file_entity_access('update', $file)) {
+    $destination = array('destination' => 'admin/content/file');
+    if (isset($_GET['destination'])) {
+      $destination = drupal_get_destination();
+      unset($_GET['destination']);
+    }
+    $form_state['redirect'] = array('file/' . $file->fid . '/edit', array('query' => $destination));
+  }
+  else {
+    $form_state['redirect'] = 'admin/content/file';
+  }
+}
+
+/**
+ * Implements hook_image_default_styles
+ * 	Defines default image styles for shareshelf module
+ */
+function media_sharedshelf_image_default_styles() {
+  $styles = array();
+  $styles['media_large'] = array(
+    'label' => 'Media Large (w800)',
+    'effects' => array(
+      array(
+        'name' => 'image_scale',
+        'data' => array(
+        		'width' => 800,
+             'height' => '',
+        		'upscale' => 1,
+		),
+        'weight' => 0,
+      ),
+    ),
+  );
+  $styles['media_lightbox_large'] = array(
+    'label' => 'Media Lightbox Large (w1200)',
+    'effects' => array(
+      array(
+        'name' => 'image_scale',
+        'data' => array(
+          'width' => 1200,
+          'height' => '',
+          'upscale' => 1,
+        ),
+        'weight' => 0,
+      ),
+    ),
+  );
+
+  return $styles;
+}
+
+
+/**
+ * Implement hook_file_presave to convert Spatial data to Geofield, if both exist
+ * 
+ * If the file entity has a geofield called field_spatial_coordinates and the Shared shelf metadata has spatial coordiates
+ * process the SS data into the geofield
+ */
+ function media_sharedshelf_file_presave($file) {
+	$fw = entity_metadata_wrapper('file', $file);
+	if (isset($file->field_spatial_coordinates) && empty($file->field_spatial_coordinates['und'])) {
+		module_load_include('inc', 'media_sharedshelf', 'includes/media_sharedshelf.utilities');
+        if (isset($fw->field_sharedshelf_solr_search)) {
+        		$ssfields = _media_sharedshelf_process_raw($fw->field_sharedshelf_solr_search->value());
+        		if (!empty($ssfields['Spatial Coordinates'])) {
+        			$latlon = explode(',', $ssfields['Spatial Coordinates']);
+        			$values = array(
+        				'lat' => $latlon[0],
+        				'lon' => $latlon[1],
+        			);
+        			$values = geofield_compute_values($values, 'latlon');
+        			$file->field_spatial_coordinates['und'] = array($values);
+        			//dpm($file, 'spatial coordinates added');
+        		} 
+        }
+	}  
+ }
+ 
+ /**
+  * Implements hook_file_insert
+  * 	calls create derivatives function
+  */
+ function media_sharedshelf_file_insert($file) {
+	media_sharedshelf_create_img_derivatives($file->uri);
+ }
+ 
+  /**
+  * Implements hook_file_save
+  * 	calls create derivatives function
+  */
+ function media_sharedshelf_file_save($file) {
+	media_sharedshelf_create_img_derivatives($file->uri);
+ }
+ 
+ /** Need to implement this for Images
+ function _media_sharedshelf_create_solr_doc($file) {
+     $doc[] = array(
+            'service' => SHANTI_KMAPS_ADMIN_SERVICE,
+            'asset_type' => variable_get('shanti_kmaps_fields_asset_type__' . $node->type),
+            'id' => $node->nid,
+            'uid' => SHANTI_KMAPS_ADMIN_SERVICE . '-' . $node->nid,
+            'url_html' => url(str_replace('__NID__', $node->nid, variable_get('shanti_kmaps_fields_url_html__' . $node->type)), array('absolute' => TRUE)),
+            'url_ajax' => url(str_replace('__NID__', $node->nid, variable_get('shanti_kmaps_fields_url_ajax__' . $node->type)), array('absolute' => TRUE)),
+            'url_json' => url(str_replace('__NID__', $node->nid, variable_get('shanti_kmaps_fields_url_json__' . $node->type)), array('absolute' => TRUE)),
+            'url_thumb' => url(str_replace('__NID__', $node->nid, variable_get('shanti_kmaps_fields_url_thumb__' . $node->type)), array('absolute' => TRUE)),
+            'caption' => $node->title,
+            'kmapid' => array_values(array_unique($kmapids)),
+            //'kmapid_strict' => array_unique($kmapids_strict),
+        );
+ }
+ */
+ 
+ /**
+  * Implements hook_file_load
+  */
+  function media_sharedshelf_file_load($files) {
+      if (current_path() == "media/browser") {return;} // Crashes media browser by overwriting metadata
+      module_load_include('inc', 'media_sharedshelf', 'includes/media_sharedshelf.utilities');
+      foreach($files as $fid => $file) {
+          $ew = entity_metadata_wrapper('file', $file);
+          if (isset($ew->field_sharedshelf_solr_search)) {
+              $raw = $ew->field_sharedshelf_solr_search->value();
+              $meta = _media_sharedshelf_process_ssdata($raw);
+              $file->metadata = $meta['ssmetadata'];
+              $file->ssfields = $meta['ssfields'];
+          } else {
+              $file->metadata = array();
+              $file->ssfields = array();
+          }
+      }
+  }
+  
+ /**
+  * Function to create necessary image derivatives.
+  */
+ function media_sharedshelf_create_img_derivatives($uri) {
+     module_load_include('inc', 'media_sharedshelf', 'includes/media_sharedshelf.utilities');
+     _media_sharedshelf_create_img_derivatives($uri);
+ }
+ 
+/**
+ * Implement hook_file_delete to clear views cache when files deleted
+ */
+function media_sharedshelf_file_delete($file) {
+	cache_clear_all('*', 'cache_views_data', TRUE);
+}
+
+/**
+ * Implements hook_preprocess_html to adjust global body clases and the like
+ */
+function media_sharedshelf_preprocess_html(&$variables) {
+    
+	// Add "pdf" to body class if pdf file (for styling)
+	$sysmain = (isset($variables['page']['content']['system_main'])) ? $variables['page']['content']['system_main'] : FALSE;
+	// First check if it's a file entity
+	if($sysmain && isset($sysmain['#entity_type']) && $sysmain['#entity_type'] == 'file') {
+		// Then check if mime type is application/pdf and if so, add or adjust body class using "page-file-"
+		if(!empty($sysmain['file']['#file']->filemime) && $sysmain['file']['#file']->filemime == 'application/pdf') {
+			if ($index = array_search('page-file-', $variables['classes_array'])) {
+				$variables['classes_array'][$index] = 'page-file-pdf';
+			} else {
+				$variables['classes_array'][] = 'page-file-pdf';
+			}
+		}
+	}
+}
+
+/**
+ * Implements hook_preprocess_file_entity 
+ *   Adds an array of shared shelf custom meta data
+ *   For PDFs adds the iframe_url for displaying the pdf in page.
+ */
+function media_sharedshelf_preprocess_file_entity(&$variables) {
+    global $base_url, $base_path;
+    if ($variables['filemime'] == 'application/pdf') {
+        if (isset($variables['field_sharedshelf_ssid'][LANGUAGE_NONE][0]['value'])) {
+            $asset_id = $variables['field_sharedshelf_ssid'][LANGUAGE_NONE][0]['value'];
+            $variables['thumb_path'] = media_sharedshelf_variable_get('host_server') . "/assets/$asset_id/representation/size/3";
+        }
+        if ($variables['view_mode'] == 'full') {
+            $title = $variables['filename'];
+            // If PDF full view, add iframe_url variable to Shared Shelf version of PDF
+            $variables['iframe_url'] = '/media/sharedshelf/view/pdf/' . $title . '?url=' . file_create_url($variables['uri']) . '_noredirect';
+        }
+    } else {
+        $style_name = (in_array($variables['view_mode'], array('preview', 'teaser'))) ? 'media_thumbnail' : 'full';
+        $uri = str_replace('sharedshelf://a/', 'public://media-sharedshelf/', $variables['uri']);
+        $variables['image_url'] = image_style_url($style_name, $uri);
+    }
+    if ($variables['view_mode'] == 'full') {
+        if (isset($variables['field_sharedshelf_solr_search'][0]['value'])) {
+            module_load_include('inc', 'media_sharedshelf', 'includes/media_sharedshelf.utilities');
+            $type = (strpos($variables['filemime'], 'pdf') > -1) ? 'pdf' : 'image';
+            $ssfields = _media_sharedshelf_process_ssdata($variables['field_sharedshelf_solr_search'][0]['value'], $type);
+            $variables += $ssfields;
+        }
+    }
+}
+
+function media_sharedshelf_view_pdf($title) {
+    $qp = drupal_get_query_parameters();
+    drupal_add_http_header('Content-Type', 'application/pdf');
+    $filename = $qp['url'];
+    $chunk_size = 1024*1024;
+    $buffer = '';
+    $handle = fopen($filename, 'rb');
+
+    if ($handle === false) {
+        return false;
+    }
+
+    while (!feof($handle)) {
+        $buffer = fread($handle, $chunk_size);
+        echo $buffer;
+        @ob_flush();
+        flush();
+    }
+
+    $status = fclose($handle);
+}
+
+/** Add a VBO Assign Collection actioin to the list of VBO actions for file admin view **/
+ function media_sharedshelf_action_info() {
+     return array(
+        'media_sharedshelf_assign_collection_action' => array(
+          'type' => 'file',
+          'label' => t('Assign file to a specific collection'),
+          'behavior' => array('changes_property'),
+          'configurable' => TRUE,
+          'vbo_configurable' => FALSE,
+          'triggers' => array('any'),
+        ),
+      );
+ }
+ 
+ function  media_sharedshelf_assign_collection_action_form($options) {
+    $form['colselect'] = media_sharedshelf_collection_select(TRUE);
+    return $form;
+}
+
+function media_sharedshelf_assign_collection_action_submit($form, &$form_state) {
+    $cid = $form_state['values']['colselect'];
+    $coll = node_load($cid);
+    drupal_set_message('<em>You chose to move files to the following collection</em>: <strong>' . $coll->title . ' (' . $cid . ')</strong>.');
+    return array( 'cid' => $cid);
+}
+
+function media_sharedshelf_assign_collection_action(&$file, $context) {
+    if (!empty($context['cid'])) {
+        $file->field_og_collection_ref['und'][0]['target_id'] = $context['cid'];
+        file_save($file);
+    }
+}
+
+/** Collection select: used above and also in admin on import forms **/
+
+/**
+ * Get a select widget for user to choose which collection to import items to
+ */
+ function media_sharedshelf_collection_select($admin=FALSE) {
+    global $user;
+    $gs = ($admin) ? og_get_all_group() : og_get_groups_by_user($user);
+    if (!$admin) { $gs = $gs['node']; }
+    $gnodes = node_load_multiple($gs); // og_get_all_group()
+    $groups = array();
+    $subgroups = array();
+    foreach($gnodes as $n => $group) {
+      if ($group->type == 'subcollection') {
+       $subgroups[$group->nid] = $group->title;
+      } else {
+        $groups[$group->nid] = $group->title;
+      }
+    }
+
+    $selarr = array(
+       '#title' => t('Target Collection'),
+       '#type' => 'select',
+       '#description' => t('Select the collection these item(s) should be imported into'),
+       '#empty_value' => -1,
+       '#required' => FALSE,
+       '#options' => array(
+            'Collections' => $groups,
+            'Subcollections' => $subgroups,
+       ),
+    );
+    if  (isset($_GET['field_og_parent_collection_ref'])) {
+        $selarr['#default_value'] = $_GET['field_og_parent_collection_ref'];
+    }
+    return $selarr;
+ }

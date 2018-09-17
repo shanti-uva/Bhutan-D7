@@ -1,0 +1,82 @@
+/**
+* -------------------------------------------
+* DO NOT EDIT THIS PAGE'S CODE
+* REFER TO IFRAME CSS BELOW TO EDIT IFRAME
+* /shanti-main-mediabase.css
+* -------------------------------------------
+*/
+
+
+/**
+*
+* DO NOT EDIT
+*
+*/
+
+.in-frame .main-wrapper.container-fluid{
+	padding:0;
+}
+
+.in-frame article.main-col{
+  max-width: 1150px !important;
+}
+
+.in-frame.has-transcript article.main-col{
+  max-width: 1600px !important;
+}
+
+
+.in-frame .site-banner,
+.in-frame .titlearea .breadwrap, 
+.in-frame .titlearea .banner-tabs,
+.in-frame #search-flyout,
+.in-frame footer,
+.in-frame #admin-footer,
+.in-frame #admin-menu
+{
+	display: none !important;
+	height: 0px !important;
+	width: 0px !important;
+}
+
+body.in-frame.html {
+	margin-top: 0px !important;
+	background: #e0e0e0 !important;
+}
+
+.in-frame .titlearea, 
+.in-frame .titlearea.has-tabs,
+.in-frame .titlearea > div,
+.in-frame .titlearea header
+{
+	background-color: transparent !important;
+	box-shadow: none !important;
+	border: none !important;
+	height: 0;
+}
+
+.in-frame  .titlearea .page-title-text {
+	text-shadow: none !important;
+	color: #444 !important;
+	padding-left: 12px !important;
+	box-shadow: none !important;
+	border: none !important;
+	line-height: 2em !important;
+	position: absolute;
+	left: 2rem;
+	top: -.1rem;
+	font-size: 105%;
+}
+
+.in-frame .titlearea .page-title {
+	padding-top: 0px;
+}
+
+.in-frame .titlearea .page-title .icon{
+	display:none;
+}
+
+/** Hide JIRA feedback button **/
+.in-frame .atlwdg-trigger.atlwdg-SUBTLE {
+	display: none;
+}

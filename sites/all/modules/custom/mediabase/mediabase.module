@@ -1,0 +1,707 @@
+<?php
+
+/**
+ * This module provides general customizations for the Mediabase Drupal application
+ */
+
+function mediabase_init()
+{
+  $path = drupal_get_path('module', 'mediabase');
+  drupal_add_js(array(
+    'mediabase' => array(
+      'path' => $path,
+      'kmapServer' => variable_get('kmap_server', 'http://subjects.kmaps.virginia.edu') . '/',
+      'placeServer' => variable_get('place_server', 'http://places.kmaps.virginia.edu') . '/',
+      'facets' => array(),
+      'carouselBlockSpeed' => variable_get('carousel_block_speed', '8'),
+    )), 'setting');
+
+  libraries_load("KalturaClient");
+}
+
+function mediabase_permission()
+{
+  return array(
+    'administer mediabase' => array(
+      'title' => t('Administer Mediabase'),
+      'description' => t('Perform administration tasks for mediabase.'),
+    ),
+  );
+}
+
+function mediabase_js_alter(&$javascript) {
+   /**
+    * Update javascript so that the URL for Kaltura script has https:// in it and does violate security directive
+    *  Kaltura by default adds the http://www.kaltura.com url
+    */
+   $kkey = FALSE;
+   $kobj = FALSE;
+   // Find the www.kaltura.com javascript entry and save it to $kkey and $kobj variables
+   foreach($javascript as $key => $jsobj) {
+       if (strstr($key, 'http://www.kaltura.com')) {
+           $kkey = $key;
+           $kobj = $jsobj;
+           break;
+       }
+   }
+   if ($kkey && $kobj) {
+       // Unset the old entry
+       unset($javascript[$kkey]);
+       // Update the key and the object['data'] to use a non-specific protocol
+       $kkey = str_replace('http://www.kaltura.com', '//www.kaltura.com', $kkey);
+       $kobj['data'] = str_replace('http://www.kaltura.com', '//www.kaltura.com', $kobj['data']);
+       $javascript[$kkey] = $kobj;
+   }
+}
+
+function mediabase_menu()
+{
+  $items = array();
+
+  $items['admin/config/media/mediabase'] = array(
+    'title' => 'Mediabase Settings',
+    'description' => 'Settings for Mediabase',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('mediabase_settings_form'),
+    'access arguments' => array('administer mediabase'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  $items['browse/media'] = array(
+    'title' => 'Browse Mediabase Content',
+    'description' => 'Settings for Mediabase',
+    'file' => 'includes/mediabase.browse.inc',
+    'page callback' => 'browse_media',
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  $items['persistent/%'] = array(
+    'title' => '',
+    'description' => 'Redirects a NID to its titled url',
+    'page callback' => 'mediabase_persistent_nid',
+    'page arguments' => array(1),
+    'access callback' => 'node_access',
+    'access arguments' => array('view', 1),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  return $items;
+}
+
+function mediabase_menu_local_tasks_alter(&$data, $router_item, $root_path)
+{
+  // Replace title of tab "Group" with "Members"
+  if (!empty($data['tabs'][0]['output'])) {
+    foreach ($data['tabs'][0]['output'] as $n => &$tab) {
+      if ($tab['#link']['path'] == 'node/%/group') {
+        $tab['#link']['title'] = t("Members");
+      }
+    }
+  }
+}
+
+function mediabase_settings_form($form_id, $form_state)
+{
+
+  $form['partner_data'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Partner data prefix patterns'),
+    '#description' => t('A list of pipe-delimited values (prefix | label | delimiter). Prefix is the prefix used in a Kaltura Batch Upload CSV in the partner data field, e.g. thl-3918.'),
+    '#default_value' => variable_get('mediabase_partner_data_prefixes'),
+    '#rows' => 10,
+  );
+
+  if (user_access('administer knowledge maps')) {
+    $form['kmap_server'] = array(
+      '#title' => t('Kmap Server'),
+      '#type' => 'textfield',
+      '#default_value' => variable_get('kmap_server', 'http://subjects.kmaps.virginia.edu'),
+      '#size' => 60,
+      '#maxlength' => 255,
+      '#required' => TRUE,
+    );
+    $form['place_server'] = array(
+      '#title' => t('Places Server'),
+      '#type' => 'textfield',
+      '#default_value' => variable_get('place_server', 'http://places.kmaps.virginia.edu'),
+      '#size' => 60,
+      '#maxlength' => 255,
+      '#required' => TRUE,
+    );
+
+    $form['kmaps_site_root'] = array(
+      '#title' => t('Kmaps Site Root'),
+      '#type' => 'textfield',
+      '#default_value' => variable_get('kmaps_site_root', 'http://badger.drupal-dev.shanti.virginia.edu/'),
+      '#size' => 60,
+      '#maxlength' => 255,
+      '#required' => TRUE,
+    );
+
+    $form['kmaps_site_subjects'] = array(
+      '#title' => t('Subjects URL'),
+      '#type' => 'textfield',
+      '#default_value' => variable_get('kmaps_site_subjects', 'http://badger.drupal-dev.shanti.virginia.edu/subjects/'),
+      '#size' => 60,
+      '#maxlength' => 255,
+      '#required' => TRUE,
+    );
+
+    $form['kmaps_site_places'] = array(
+      '#title' => t('Places URL'),
+      '#type' => 'textfield',
+      '#default_value' => variable_get('kmaps_site_places', 'http://badger.drupal-dev.shanti.virginia.edu/places/'),
+      '#size' => 60,
+      '#maxlength' => 255,
+      '#required' => TRUE,
+    );
+
+    $form['kmaps_site_path_format'] = array(
+      '#title' => t('KMaps Site Sprint Format'),
+      '#type' => 'textfield',
+      '#default_value' => variable_get('kmaps_site_path_format', '/%d/overview/nojs'),
+      '#size' => 60,
+      '#maxlength' => 255,
+      '#required' => TRUE,
+    );
+
+    $form['kmaps_solr_index'] = array(
+      '#title' => t('Solr Index for Kmaps Associations'),
+      '#type' => 'textfield',
+      '#description' => 'The URL for the solr index to which Kmap associations get posted',
+      '#default_value' => variable_get('kmaps_solr_index', ''),
+      '#size' => 60,
+      '#maxlength' => 255,
+      '#required' => FALSE,
+      /*
+      '#prefix' => '<div style="float:left; padding-right: 12px;">',
+      '#suffix' => '</div>',*/
+    );
+    /** Now done by saving all nodes in admin/content2 Quicker that way. (2016-04-08)
+     * if(variable_get('kmaps_solr_index', FALSE)) {
+     * $form['index_nodes'] = array(
+     * '#type' => 'button',
+     * '#executes_submit_callback' => TRUE,
+     * '#value' => t('Index All Nodes (KMaps)'),
+     * '#attributes' => array('title' => t('Submit all nodes to the global kmaps solr index')),
+     * '#prefix' => '<div class="form-item" style="padding-top: 2.5em;">',
+     * '#suffix' => '<div id="em-update-msg"></div></div><br style="clear:both;" />',
+     * );
+     * } else {
+     * $form['br'] = array( '#markup' => '<br style="clear:both;" />');
+     * }
+     */
+    $form['#validate'][] = 'mediabase_settings_form_validate';
+    $form['#submit'][] = 'mediabase_settings_form_submit';
+  }
+
+  return system_settings_form($form);
+}
+
+function mediabase_settings_form_validate($form, &$form_state)
+{
+  // Make sure urls do not end with /
+  $fields = array('kmap_server', 'place_server', 'kmaps_site_root', 'kmaps_site_places', 'kmaps_site_subjects', 'kmaps_solr_index');
+  foreach ($fields as $fieldnm) {
+    if (substr($form_state['values'][$fieldnm], -1) == "/") {
+      $form_state['values'][$fieldnm] = substr($form_state['values'][$fieldnm], 0, strlen($form_state['values'][$fieldnm]) - 1);
+    }
+  }
+  // And make sure path format begins with a /
+  $path_format = &$form_state['values']['kmaps_site_path_format'];
+  if (substr($path_format, 0, 1) != '/') {
+    $path_format = '/' . $path_format;
+  }
+}
+
+function mediabase_settings_form_submit($form, &$form_state)
+{
+  // partner data prefixes are a way of managing imports from kaltura
+  variable_set('mediabase_partner_data_prefixes', $form_state['values']['partner_data']);
+  //drupal_set_message(t('The settings have been saved')); // Drupal has built in message for this
+}
+
+/*
+function mediabase_do_batch_solr_index() {
+	$query = "select count(nid) from node where type in ('audio', 'video');";
+	$result = db_query($query)->fetchCol();
+	$max = (array)$result;
+	$max = $max[0];
+	$batch = array(
+		'title' => t('Sending Nodes to Solr Index'),
+		'operations' => array(
+			array('mediabase_solr_index_nodes', array($max)),
+		),
+		'finished' => 'mediabase_solr_index_nodes_finished',
+	);
+	batch_set($batch);
+}
+
+function mediabase_solr_index_nodes($max, &$context) {
+	if (empty($context['sandbox'])) {
+        $context['sandbox']['progress'] = 0;
+        $context['sandbox']['current_node'] = 0;
+        $context['sandbox']['max'] = $max;
+    }
+    $limit = 5;
+    $result = db_select('node')
+        ->fields('node', array('nid'))
+        ->condition('nid', $context['sandbox']['current_node'], '>')
+    		->condition('type', array('audio','video'), 'IN')
+        ->orderBy('nid')
+        ->range(0, $limit)
+        ->execute();
+    foreach ($result as $row) {
+        $context['sandbox']['progress']++;
+        $node = node_load($row->nid, NULL, TRUE);
+    		$res = mb_services_post_to_solr($node);
+    		$resval = $node->nid . ' : ' . check_plain($node->title);
+    		if(isset($res->code)) { $resval .= " ({$res->code})"; }
+    		$resmsg = t("Sending A/V Nodes to master index... (@progress of @max)",
+    								array('@progress' => $context['sandbox']['progress'], '@max' => $max));
+    		$context['results'][] = $resval;
+    		$context['sandbox']['current_node'] = $node->nid;
+    		$context['message'] = $resmsg;
+    }
+    if ($context['sandbox']['progress'] < $context['sandbox']['max']) {
+        $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
+    }
+}
+
+function mediabase_solr_index_nodes_finished($success, $results, $operations) {
+  // The 'success' parameter means no fatal PHP errors were detected. All
+  // other error management should be handled using 'results'.
+  if ($success) {
+    $message = format_plural(count($results), 'One av node indexed.', '@count av nodes indexed.');
+  }
+  else {
+    $message = t('Finished with an error.');
+  }
+  drupal_set_message($message);
+}
+*/
+/**
+ * Implements hook page alter
+ * Adds back to video link to transcript only pages.
+ */
+function mediabase_page_alter(&$page)
+{
+  if (preg_match('/node\/(\d+)\/transcript/', current_path(), $match)) {
+    $mu = $page['content']['system_main']['main']['#markup'];
+    $lnk = l(t('Back to Video'), 'node/' . $match[1]);
+    $page['content']['system_main']['main']['#markup'] = '<div class="av-transcript-back">' . $lnk . '</div>' . $mu;
+  }
+}
+
+
+function mediabase_form_alter(&$form, &$form_state, $form_id)
+{
+  if (in_array($form_id, array('search_block_form', 'apachesolr_search_custom_page_search_form'))) {
+    drupal_add_js(drupal_get_path('module', 'mediabase') . '/js/mediabase.js', array('preprocess' => FALSE));
+  }
+  if (isset($form['#node_edit_form']) && $form['#node_edit_form']) {
+    $form['actions']['Cancel'] = array(
+      '#access' => 'TRUE',
+      '#type' => 'submit',
+      '#value' => 'Cancel',
+      '#weight' => '14',
+      '#submit' => array('mediabase_node_form_cancel'),
+    );
+  }
+}
+
+function mediabase_node_form_cancel(&$form, &$form_state)
+{
+  form_clear_error();
+  $node = $form['#node'];
+  $alias = drupal_lookup_path('alias', "node/$node->nid");
+  drupal_goto($alias);
+}
+
+function mediabase_persistent_nid($nid)
+{
+  $alias = drupal_lookup_path('alias', "node/$nid");
+  drupal_goto($alias);
+}
+
+/**
+ * THEMING FUNCTIONS
+ */
+
+/* old code:
+function mediabase_theme() {
+  return array(
+
+  'info_popover' => array(
+    'variables' => array(
+              'label' => '',
+              'desc' => '',
+              'parents' => '',
+              'links' => NULL,
+          ),
+  ),
+);
+}
+*/
+//function mediabase_video_node_form_alter()
+
+/**
+ * Implements hook_theme_registry_alter()
+ *    Taken from https://www.drupal.org/node/715160
+ *    which is based on http://www.metachunk.com/blog/adding-module-path-drupal-7-theme-registry
+ *    Registers template folder for: node--audio, node--collection, node--video
+ **/
+function mediabase_theme_registry_alter(&$theme_registry)
+{
+  $theme_registry_copy = $theme_registry;
+  $module_path = drupal_get_path('module', 'mediabase');
+  _theme_process_registry($theme_registry_copy, 'phptemplate', 'theme_engine', 'shanti_sarvaka', $module_path);
+  $theme_registry += array_diff_key($theme_registry_copy, $theme_registry);
+  // A list of templates the module will provide templates for
+  $hooks = array('node--audio', 'node--collection', 'node--video');
+  foreach ($hooks as $hook) {
+    // Add the key 'theme paths' if it doesn't exist in this theme's registry
+    if (!isset($theme_registry[$hook]['theme paths'])) {
+      $theme_registry[$hook]['theme paths'] = array();
+    }
+    // Shift this module's directory to the top of the theme path list
+    if (is_array($theme_registry[$hook]['theme paths'])) {
+      $first_element = array_shift($theme_registry[$hook]['theme paths']);
+      if ($first_element) {
+        array_unshift($theme_registry[$hook]['theme paths'], $first_element, $module_path);
+      } else {
+        array_unshift($theme_registry[$hook]['theme paths'], $module_path);
+      }
+    }
+  }
+}
+
+/**
+ *   Implements hook_preprocess_node to add url for transcript and collection
+ *      Adds: 1. transcript url, 2. collection object, 3. media creation date
+ */
+function mediabase_preprocess_node(&$variables)
+{
+  global $base_path, $language;
+  $node = $variables['node'];
+  $currlang = $language->name;
+  if (strpos($currlang, 'Chinese') !== FALSE) {
+    $currlang = 'Chinese';
+  } // Normalize Chinese, Simplified/Traditional
+  $variables['currlang'] = $currlang;
+
+  if (in_array($variables['type'], array('audio', 'video'))) {
+
+    $emw = entity_metadata_wrapper('node', $node);
+    // Create Transcript URL, set to false if missing
+    if (empty($variables['field_transcript'])) {
+      $variables['transcript_url'] = FALSE;
+    } else {
+      $variables['transcript_url'] = $base_path . 'node/' . $node->nid . '/transcript';
+    }
+    // Add $coll object to variables for template
+
+    $variables['parentcoll'] = FALSE;
+    $variables['coll'] = FALSE;
+    if ($coll = get_collection_ancestor_node($node)) {
+      #$coll->url = $base_path . drupal_get_path_alias('node/' . $coll->nid); # Done above in get_collection function in mb_structure
+      $variables['parentcoll'] = FALSE;
+      $variables['coll'] = $coll;
+
+      // Subcollection
+      if ($subcoll = get_subcollection_node($node)) {
+        #$subcoll->url = $base_path . drupal_get_path_alias('node/' . $subcoll->nid); # Done above in get_subcollection function in mb_strucutrue
+        $variables['parentcoll'] = $coll;
+        $variables['coll'] = $subcoll;
+      }
+    }
+
+    // Use create date when available for display (See mb_solr.module mb_solr_apachesolr_index_document_build() ln 83)
+    $field_inst = $emw->field_pbcore_instantiation->value();
+    $flang = field_language('node', $node, 'field_pbcore_instantiation');
+    $create_date = $node->created; // Default to node creation date.
+    if (!empty($field_inst->field_date_created[$flang][0]['value'])) {
+      $create_date = strtotime($field_inst->field_date_created[$flang][0]['value']);
+    }
+    $variables['media_create_date'] = $create_date;
+    // Modify if Full view mode
+    if ($variables['view_mode'] == "full") {
+      // Hide Descriptions Not of Current Language
+      if (!empty($variables['content']['field_pbcore_description']) && is_array($variables['content']['field_pbcore_description'])) {
+        $ct = 0;
+        foreach ($variables['content']['field_pbcore_description']['#items'] as $n => $item) {
+          // Add label and wrapper to each lang description. If not current language, then add hidden class to hide.
+          $fci = field_collection_item_load($item['value']);
+          $fcid = $item['value'];
+          // Put langcode as attribute of content
+          $dclass = $dlabel = '';
+          if (!empty($fci->field_language['und'][0]['value'])) {
+            $dclass = convert_lang_name_to_code($fci->field_language['und'][0]['value']);
+            // Make lang name label for when showing all languages
+            $langname = (empty($fci->field_language['und'][0]['value'])) ? t("English") : t($fci->field_language['und'][0]['value']);
+            $dlabel = "<label class=\"hidden pb-desc-label langname\">" . $langname . ':</label> ';
+            // Initially hide alt languages
+            if (isset($fci->field_language['und'][0]) && $fci->field_language['und'][0]['value'] != $variables['currlang']) {
+              $dclass .= ' altlang';
+            } else {
+              // Hide 2nd and following descriptions in current language
+              if ($ct > 0) {
+                $dclass .= ' hidden';
+              }
+              $ct++;
+            }
+          }
+          $variables['content']['field_pbcore_description'][$n]['entity']['field_collection_item'][$fcid]['field_description']['#prefix'] = '<div class="' . $dclass . '">' . $dlabel;
+          $variables['content']['field_pbcore_description'][$n]['entity']['field_collection_item'][$fcid]['field_description']['#suffix'] = '</div>';
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook admin paths
+ *
+ *  Define custom paths that are either admins or not.
+ *    Most paths removed because of checkbox issue in Sarvaka theme
+ */
+function mediabase_admin_paths_alter(&$paths)
+{
+  $paths['node/*/group'] = FALSE;
+  //$paths['group/*/*/admin/*'] = FALSE;
+  //group/node/3665/admin/permissions
+  //$paths['group/node/*/admin/people'] = FALSE;
+  //$paths['group/node/*/admin/people/*'] = FALSE;
+}
+
+function convert_lang_name_to_code($lname)
+{
+  $ll = language_list();
+  foreach ($ll as $cd => $lang) {
+    if ($lang->name == $lname) {
+      return $cd;
+    }
+  }
+  if ($lname == "Tibetan") {
+    return "bo";
+  } // Always account for Tibetan even if not installed (hack)
+  return FALSE;
+}
+
+/**
+ * Implements hook_node_load adds fields to video and audio node info for api services and other things
+ * Fields   added: thumbnail Url, duration[seconds, format]
+ */
+function mediabase_node_load($nodes, $types)
+{
+  if (empty($nodes)) { return; }
+  if (in_array('audio', $types) || in_array('video', $types)) {
+    module_load_include('inc', 'mb_kaltura', 'mb_kaltura');
+    foreach ($nodes as &$node) {
+      if ($node === FALSE) { continue; }
+      if (in_array($node->type, array('audio', 'video'))) {
+        $query = '';
+        if ($node->type == 'video') {
+          $query = "SELECT kaltura_thumbnail_url, kaltura_duration
+           FROM {field_data_field_video} 
+           JOIN {node_kaltura} ON field_video_entryid = kaltura_entryid
+           WHERE entity_id = :etid";
+        } else if ($node->type == 'audio') {
+          $query = "SELECT kaltura_thumbnail_url, kaltura_duration
+           FROM {field_data_field_audio} 
+           JOIN {node_kaltura} ON field_audio_entryid = kaltura_entryid
+           WHERE entity_id = :etid";
+        }
+
+        $res = db_query($query, array(':etid' => $node->nid));
+        $qres = $res->fetchAll();
+        if (is_array($qres) && count($qres) > 0) {
+          $node->thumbnail_url = $qres[0]->kaltura_thumbnail_url; // had . '/height/140' (2015-07-21)
+          $node->duration = array(
+            'seconds' => $qres[0]->kaltura_duration,
+            'formatted' => mediabase_format_duration($qres[0]->kaltura_duration),
+          );
+        }
+
+        if (empty($node->thumbnail_url)) {
+          $node->thumbnail_url = url(drupal_get_path('module', 'mediabase'), array('absolute' => TRUE)) . '/images/generic-' . $node->type . '-thumb.jpg';
+        }
+        if (empty($node->duration)) {
+          $node->duration = array('seconds' => '', 'formatted' => '');
+        }
+
+        // add trid to node
+        $query = "select trid from {transcripts_apachesolr_transcript} where id = :etid";
+        $query = db_query($query, array(':etid' => $node->nid));
+        $res = $query->fetchCol();
+        if (!empty($res)) {
+            $node->trid = $res[0];
+        }
+      }
+    }
+    // If collection or team, add an array of all children media node ids
+  } else if (in_array('collection', $types) || in_array('subcollection', $types)) {
+    if (current_path() != 'node/add/collection' && current_path() != 'node/add/subcollection') {
+      foreach ($nodes as $node) {
+        if (in_array($node->type, array('collection', 'subcollection'))) {
+          $query = new EntityFieldQuery();
+          $result = $query
+            ->entityCondition('entity_type', 'og_membership')
+            // Type can be "node" or "user"
+            ->propertyCondition('entity_type', 'node', '=')
+            // This is the group ID
+            ->propertyCondition('gid', $node->nid, '=')
+            // Get only the active members
+            ->propertyCondition('state', OG_STATE_ACTIVE, '=')
+            ->count()
+            ->execute();
+          $node->child_count = $result;
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook node view
+ */
+function mediabase_node_view($node, $view_mode, $langcode)
+{
+  // If it is full view mode of audio or video
+  if (in_array($node->type, array('audio', 'video')) && $view_mode == 'full') {
+    //dpm($node, 'node in node view');
+    $emw = entity_metadata_wrapper('node', $node); // Get this nodes entity metadata wrapper
+    // If the current display language is not English
+    if ($langcode != 'en') {
+      // Get Current Language
+      global $language;
+      $currlang = $language->name;
+      if (strpos($currlang, 'Chinese') !== FALSE) {
+        $currlang = 'Chinese';
+      } // Normalize Chinese, Simplified/Traditional
+
+      // Use first title of same language as display for node page title
+      $titles = $emw->field_pbcore_title->value();
+      foreach ($titles as $n => $title) {
+        if ($title->field_language['und'][0]['value'] == $currlang) {
+          drupal_set_title($title->field_title['und'][0]['value']);
+        }
+      }
+    }
+
+    // Add metadata to audio/video nodes
+    /* Removed for speed issue testing: 2014-09-10
+        if(!empty($node->thumbnail_url)) {
+            // Add an og:image meta tag for sharing
+            // <meta property="og:image" content="http://davidwalsh.name/wp-content/themes/klass/img/facebooklogo.png"/>
+            $element = array(
+              '#tag' => 'meta', // The #tag is the html tag - <link />
+              '#attributes' => array( // Set up an array of attributes inside the tag
+                'property' => 'og:image',
+                'content' => $node->thumbnail_url,
+              ),
+            );
+            drupal_add_html_head($element, 'meta_og_image');
+        }
+        */
+  }
+}
+
+/**
+ * Function to format duration
+ */
+function mediabase_format_duration($secs = 0)
+{
+  // TODO: Check I18N documentation for time strings to makes sure this is right below
+  $mins = 0;
+  if ($secs > 60) {
+    $mins = floor($secs / 60);
+    $secs = $secs % 60;
+  }
+  $hrs = 0;
+  if ($mins > 60) {
+    $hrs = floor($mins / 60);
+    $mins = $mins % 60;
+  }
+  $durstr = ($hrs > 0) ? $hrs . t(" hr ") : "";
+  if ($mins > 0) {
+    $durstr .= $mins . t(" min ");
+  }
+  if ($secs > 0) {
+    $durstr .= $secs . t(" sec");
+  }
+  return $durstr;
+}
+
+/**
+ * Function to return all av nodes tagged with a kmap id using new shanti kmap fields
+ *
+ * TODO: Do join with permissions table to filter out non-public nodes to speed up search
+ *       Then move node loading mb_services_get() out of the filtering and just load nodes for the requested page of results
+ */
+function mediabase_nodes_by_kmap($kmids, $is_place = FALSE)
+{
+  if (is_numeric($kmids)) {
+    $kmids = array($kmids);
+  }
+  $tables = ($is_place) ? array('field_data_field_location', 'field_data_field_recording_location_new') :
+    array('field_data_field_subject', 'field_data_field_subcollection_new');
+  $nids = array();
+  foreach ($tables as $table) {
+    $field_name = str_replace('field_data_', '', $table) . '_id';
+    $query = db_select($table, 'fd');
+    $query->condition('fd.' . $field_name, $kmids, 'IN')->fields('fd', array('entity_id'));
+    $res = $query->execute();
+    $rrows = $res->fetchAll();
+    foreach ($rrows as $obj) {
+      $nids[] = $obj->entity_id;
+    }
+  }
+  return $nids;
+}
+
+/***
+ * Function to process the "raw" value from a shanti kmap field into an ancestor lineage array
+ *
+ * @param $raw
+ *    The 'raw' value from a shanti kmaps field
+ *
+ * @param $include_self
+ *    Defaults to TRUE and includes the current kmap id being queried
+ *    If FALSE will return only ancestors of current kmap id
+ *
+ * @return array()
+ *    A list of ancestors in descending order (i.e., most inclusive first)
+ */
+function mediabase_process_raw_lineage($raw, $include_self = TRUE)
+{
+  // example:  <6403> <4576> <2724> <2724>
+  $items = explode('> <', $raw);
+  // remove duplicate last item
+  $ct = count($items);
+  if ($ct > 1 && $items[$ct - 2] == $items[$ct - 1]) {
+    array_pop($items);
+  }
+  foreach ($items as &$value) {
+    $value = str_replace('<', $value);
+    $value = str_replace('>', $value);
+  }
+  return $items;
+}
+
+function mediabase_site_environment()
+{
+  global $base_url;
+
+  if (isset($_ENV['AH_SITE_ENVIRONMENT']) && $_ENV['AH_SITE_ENVIRONMENT'] === 'prod') {
+    return 'prod';
+  } else {
+    $a = preg_split('/[.:\/]+/', $base_url);
+    $b = preg_split('/-/', $a[1]);
+    if ($a[2] == 'dd') {
+      return 'dd';
+    } else {
+      return end($b);
+    }
+  }
+}

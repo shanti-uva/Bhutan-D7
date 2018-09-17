@@ -1,0 +1,28 @@
+.kmap-filter {
+    clear: both;
+    padding-top:1rem;
+}
+.kmap-filter-box{
+    padding-left: 1rem;
+    min-height: 1rem;
+}
+.kmap-filter-box .selected-kmap:not(:first-child)::before{
+    content: '(or)';
+    width: 2.2em;
+    color: #888;
+    display: inline-block;
+}
+.kmap-filter-box.kmaps-conjunctive-filters .selected-kmap:not(:first-child)::before{
+    content: '(and)';
+    width: 3em;
+    color: #888;
+    display: inline-block;
+}
+.kmap-filter label{
+    text-transform: capitalize;
+    margin-left:1.5rem;
+}
+.kmap-filter label span{
+    text-transform: uppercase;
+    font-weight: bold;
+}

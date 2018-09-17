@@ -1,0 +1,29 @@
+<?php
+
+/*
+ * Implements hook_install
+ */
+function shanti_kmaps_install() {
+}
+
+/*
+ * Implements hook_uninstall
+ */
+function shanti_kmaps_uninstall() {
+}
+
+/**
+* Implements hook_schema().
+*/
+function kmaps_explorer_schema() {
+  $schema['cache_kmaps_explorer'] = drupal_get_schema_unprocessed('system', 'cache');
+  return $schema;
+}
+
+/**
+* Implements hook_update().
+*/
+function kmaps_explorer_update_7001(&$sandbox) {
+  $schema['cache_kmaps_explorer'] = drupal_get_schema_unprocessed('system', 'cache');
+  db_create_table('cache_kmaps_explorer', $schema['cache_kmaps_explorer']);
+}

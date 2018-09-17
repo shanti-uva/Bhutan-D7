@@ -1,0 +1,62 @@
+/*header, 
+article.main-content div.row:first-of-type,
+div.node > h2:first-of-type,
+#search-flyout.extruder.right .flap.on-flap,
+#shanti-texts-sidebar-tabs li.last,
+.footer,
+#admin-menu,
+#admin-menu-wrapper {
+  display: none!important;
+}
+
+body, .page-wrapper {
+  height: 700px;
+}
+
+html #shanti-texts-container {
+  height: 700px;
+  background-color: #EEE;
+  padding-bottom: 18px;
+}
+*/
+html #shanti-texts-body {
+  /* width: 70%; */
+ /*
+  padding: 0 24px;
+  margin-right: 18px;
+  */
+}
+/*
+html #shanti-texts-sidebar {
+  background-color: #EEE;
+}
+
+html main.main-wrapper,
+.main-wrapper {
+  height: 100%;
+  min-height: unset;
+}
+*/
+/* Doesn't work */
+/*html body.shanti-text.admin-menu {
+  margin-top: 0!important;
+}
+
+html .content-section {
+  padding: 0;
+}
+
+#shanti-texts-sidebar-tabs {
+  margin-top: 0;
+}
+
+#shanti-texts-sidebar-tabs>li.active a,
+#shanti-texts-sidebar-tabs>li.active a:hover,
+#shanti-texts-sidebar-tabs>li.active a:focus {
+  background: #505050;
+}
+
+#shanti-texts-sidebar-tabs>li.active:before {
+  color: #505050;
+}
+*/

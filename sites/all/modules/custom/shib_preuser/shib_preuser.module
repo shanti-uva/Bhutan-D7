@@ -1,0 +1,315 @@
+<?php
+/**
+ * @file
+ * A custom module that updates shibboleth tables when a user is pre-created.
+ * 
+ */
+ 
+define('SHIB_PREREG', 'shib_user_registration'); // Name of variable to record whether bulk registration has been done
+ 
+define('SHIB_PRESUSER_STATUSVIEW', FALSE); // Default setting for shib_preuser_statusview variable
+
+  
+/**
+ * shib_preuser_menu: Add a tab to the shib_auth settings for pre-user registration
+ * 
+ */
+function shib_preuser_menu() {
+  
+  $items = array();
+  $items['admin/config/people/shib_auth/preregistration'] = array(
+    'title'            => ' User Registration',
+    'type'             => MENU_LOCAL_TASK,
+    'page callback'    => 'drupal_get_form',
+    'page arguments'   => array('shib_preuser_config'),
+    'access arguments' => array('administer shibboleth authentication'),
+    'weight'           => -6,
+    'file'             => 'shib_preuser.module',
+  );
+  return $items;
+}
+
+/**
+ * Implements hook_help().
+ */
+function shib_preuser_help($path, $arg) {
+  $output = '';
+  switch ($path) {
+    case 'admin/help#shib_preuser':
+      $output  = t('<p>The Shibboleth pre-user registration module allows admins to enable users registered prior to the enabling of the Shibboleth module to user Shibboleth login.');
+      $output .= t('<br/>It also allows admins to register or unregister users in the shib_auth table on an individual basis.');
+      $output .= t('<br/>To register pre-existing users, please go to the ') . l('Shibboleth Configuration Page', 'admin/config/people/shib_auth/preregistration') . '</p>';
+      break;
+  }
+  return $output;
+} 
+
+/**
+* Implements hook_permission().
+*/
+function shib_preuser_permission() {
+  return array(
+    'change shibboleth auth status' => array(
+      'title' => t('Add or Remove Users from Shibboleth Authentication Tables'),
+    ),
+  ); 
+}
+
+/**
+ * shib_preuser_user_insert(): Implements hook_user_insert
+ * 
+ *      Adds user to shib_auth table whenever insert so that if LTI module or admin creates a user they are entered
+ *         into the shibboleth authentication table.
+ * 
+ */
+ 
+function shib_preuser_user_insert(&$edit, $account, $category) {
+  
+  if(db_table_exists('shib_authmap')) {
+    if( shib_preuser_is_registered($account->uid) === FALSE ) {
+      shib_preuser_add($account);
+      drupal_set_message($account->name . " has been added to Shibboleth authentication tables. Permission can be removed from the " .
+        l("user's profile edit page.", "user/" . $account->uid . "/edit"));
+    }
+  }
+}
+
+function shib_preuser_config() {
+  
+  $form = array();
+  
+  
+  if(variable_get(SHIB_PREREG, FALSE) === TRUE) {
+      
+    $form['shib_preuser_settings_header'] = array(
+      '#markup' => '<h3>Shibboleth Registration of Existings Users</h3>' .
+        '<p>' . t('Users created prior to the enabling of the Shibboleth module have already been registered in the Shibboleth authentication tables!') . '<br/>' .
+                t('When new users are added, they will automatically be entered into the Shibboleth authentication tables.') . '<br/>' .
+                t('Admins can adjust an individual user\'s registration through editing that user\'s account.') . '</p>',
+    );
+    
+  } else {
+    
+    $form['shib_preuser_settings_header'] = array(
+      '#markup' => '<h3>Shibboleth Registration of Existings Users</h3>' .
+        '<p>' . t('When Shibboleth is enabled on a site with pre-existing users, those users need to be added to the authentication tables ' .
+          'to be able to use the Shibboleth logon, such as Netbadge. If you would like to register pre-existing users into the Shibboleth ' .
+          'authentication tables, click the checkbox and save the configuration.') . '</p>',
+    );
+    
+    
+    $form['shib_preuser_registration'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Register All Users'),
+      '#prefix' => '<div id="shiv_prereg_div"><p>',
+      '#suffix' => '</p></div>',
+    );
+  
+    $form['#submit'][] = 'shib_preuser_reg';
+    
+  }
+  
+  $form['shib_preuser_settings_statusview'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Allow Users to see Shibboleth status'),
+    '#description' => t('Allows users to see whether or not they have been added to the Shibboleth authentication tables when they edit their user profile'),
+    '#default_value' => variable_get('shib_preuser_settings_statusview', SHIB_PRESUSER_STATUSVIEW),
+  );
+  return system_settings_form($form);
+}
+
+
+function shib_preuser_reg(&$form, &$form_state) {
+  if(isset($form_state['values']['shib_preuser_registration']) && $form_state['values']['shib_preuser_registration'] == 1 ) {
+    $result = shib_preuser_do_registeration();
+    if($result === TRUE) {
+      variable_set(SHIB_PREREG, TRUE);
+    }
+  }
+}
+
+function shib_preuser_do_registeration() {
+  /*
+INSERT INTO shib_authmap (uid, targeted_id)
+  SELECT uid, name
+  FROM users
+  WHERE uid > 1 AND (uid) NOT IN
+    (SELECT uid
+    FROM shib_authmap);
+   */
+  $message = "";
+  $reg_result = TRUE;
+  if(db_table_exists('shib_authmap')) {
+    $result = db_query('SELECT uid, name FROM {users} WHERE uid > 1 and (uid) NOT IN (SELECT uid FROM {shib_authmap})');
+    $message = '';
+    $numItems = $result->rowCount();
+    $i = 0;
+    foreach($result as $record) {
+      $sainsert = db_insert('shib_authmap')
+        ->fields(array(
+          'uid' => $record->uid,
+          'targeted_id' => $record->name,
+        ))
+        ->execute();
+      $i++;
+    }
+    
+    $message = $i . t(" users have been added to the shib_authmap table");
+    $status = 'status';
+  } else {
+    $status = "error";
+    $message = t('shib_authmap table does not exist! Check is Shibboleth module is installed.');
+    $reg_result = FALSE;
+  }
+  drupal_set_message(check_plain($message), $status);
+   /*
+ 
+    INSERT INTO authmap (uid, authname)
+      SELECT uid, targeted_id
+      FROM shib_authmap
+      WHERE (uid) NOT IN
+        (SELECT uid
+        FROM authmap);
+ */
+  if(db_table_exists('authmap')) {
+    $result = db_query('SELECT uid, targeted_id FROM {shib_authmap} WHERE (uid) NOT IN (SELECT uid FROM {authmap})');
+    $message = '';
+    $numItems = $result->rowCount();
+    $i = 0;
+    foreach($result as $record) {
+      $sainsert = db_insert('authmap')
+        ->fields(array(
+          'uid' => $record->uid,
+          'authname' => $record->targeted_id,
+        ))
+        ->execute();
+      $i++;
+    }
+    
+    $message = $i . t(" users have been added to the authmap table.");
+    drupal_set_message(check_plain($message), 'status');
+    
+     /*
+    UPDATE authmap SET module = 'shib_auth'
+    WHERE (uid) IN
+      (SELECT uid
+      FROM shib_authmap);
+       */
+    $message = '';
+    $uids = db_query('SELECT uid FROM {shib_authmap}')->fetchCol('uid');
+    if (count($uids) > 0 ) {
+      $update = db_update('authmap')
+        ->fields(array(
+          'module' => 'shib_auth',
+        ))
+        ->condition('uid', $uids, 'IN')
+        ->execute();
+      $message .=  $update . ' rows in the authmap table were updated to add shib_auth as their module.';
+      drupal_set_message(check_plain($message), 'status');
+    }
+  } else {
+    drupal_set_message(check_plain(t('authmap table does not exist! Check is Shibboleth module is installed.')), 'error');
+    $reg_result = FALSE;
+  }
+  return $reg_result;
+}
+
+function shib_preuser_is_registered($uid) {
+  $result = FALSE;
+  if(db_table_exists('shib_authmap')) {
+    $qres = db_query('SELECT uid, targeted_id FROM {shib_authmap} WHERE uid = :uid', array(
+                ':uid' => $uid,
+              ));
+    $query = db_select('shib_authmap', 'sa')
+                ->condition('sa.uid', $uid, '=')
+                ->fields('sa', array('uid', 'targeted_id'))
+                ->execute();
+    $numItems = count($query->fetchCol());
+    if($numItems > 0) { $result = TRUE; }
+  }
+  return $result;
+}
+
+function shib_preuser_add($account) {
+  $muid = $account->uid;
+  if(!shib_preuser_is_registered($muid)) {
+   $mname = $account->name;
+   $sainsert = db_insert('shib_authmap')
+        ->fields(array(
+          'uid' => $muid,
+          'targeted_id' => $mname,
+        ))
+        ->execute();
+   $sainsert = db_insert('authmap')
+        ->fields(array(
+          'uid' => $muid,
+          'authname' => $mname,
+          'module' => 'shib_auth',
+        ))
+        ->execute();
+  }
+}
+
+function shib_preuser_remove($account) {
+  $muid = $account->uid;
+  if(shib_preuser_is_registered($muid)) {
+    $mname = $account->name;
+    $sadel = db_delete('shib_authmap')->condition('uid', $muid)->execute();
+    $adel = db_delete('authmap')->condition('uid', $muid)->execute();
+    if($sadel == 1 && $adel == 1 ) {
+      drupal_set_message(t('User @uid removed from the Shibboleth authentication tables', array('@uid' => $muid)),'status');
+    } else {
+      drupal_set_message(t('Something went wrong. @sadel rows removed brom the "shib_authmap" table. @adel rows removed from the "authmap" table.', 
+        array('@sadel' => $sadel, '@adel' => $adel)),'error');
+    }
+  } else {
+    drupal_set_message(t('User @uid is not registered in the Shibboleth authentication tables', array('@uid' => $muid)),'warning');
+  }
+}
+
+function shib_preuser_form_alter(&$form, &$form_state, $form_id) {
+  if($form_id == 'user_profile_form') {
+    $isreg = (shib_preuser_is_registered($form['#user']->uid) == TRUE)? 2 : 1;
+    if(user_access('change shibboleth auth status')) {  
+      $form['shibauth'] = array(
+        '#type' => 'radios',
+        '#options' => array(
+          2 => 'Yes',
+          1 => 'No',
+        ),
+        '#default_value' => $isreg,
+        '#title' => t('In Shibboleth authentication tables'),
+        '#description' => t('Shows whether this user has been registered in the Shibboleth Authentication tables. To unregister a user click \'No\'. To register, click \'Yes\'. '),
+        '#weight' => 40,
+      );
+      $form['#submit'][] = 'shib_preuser_check';
+    } else if (variable_get('shib_preuser_settings_statusview', SHIB_PRESUSER_STATUSVIEW)) {
+      $form['shibauth'] = array(
+        '#type' => 'fieldset',
+        '#title' => t('Shibboleth Authentication'),
+        '#collapsible' => FALSE,
+        '#weight' => 40,
+      );
+      $form['shibauth']['message'] = array(
+        '#type' => 'markup',
+        '#markup' => '<p>You <strong>are' . (($isreg == 1)? ' not' : '') . '</strong> registered in the Shibboleth authentication tables. <br/>' .
+          (($isreg == 1)?'If this is in error, please contact your site administrator.':'You should be able to logon via Netbadge.'),
+
+      );
+    }
+  }
+}
+
+/**
+ * shib_preuser_check : an extra user form submission handler to make sure user is or is not registered
+ *                      in Shibboleth authentication tables.
+ */
+function shib_preuser_check(&$form, &$form_state) {
+  $account = $form_state['user'];
+  $uid = $account->uid;
+  if($form_state['values']['shibauth'] == 2 && !shib_preuser_is_registered($uid)) {
+    shib_preuser_add($account);
+  } else   if($form_state['values']['shibauth'] == 1 && shib_preuser_is_registered($uid)) {
+    shib_preuser_remove($account);
+  }
+}

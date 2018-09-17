@@ -1,0 +1,138 @@
+<?php 
+
+define('BOOK_PUBREADER_PATH',drupal_get_path('module','book_pubreader'));
+
+function book_pubreader_menu() {
+  return array(
+    'book_pubreader' => array(
+      'page callback' => 'book_pubreader_default',
+      'type' => MENU_CALLBACK,
+      'access arguments' => array('access content'),
+    ),
+    'book_pubreader/%' => array(
+      'page callback' => 'book_pubreader_pubreader',
+      'page arguments' => array(1),
+      'type' => MENU_CALLBACK,
+      'delivery callback' => 'book_pubreader_content_callback',
+      'access arguments' => array('access content'),
+    ),
+    'admin/config/user-interface/book_pubreader' => array(
+      'title' => t('Book PubReader Settings'),
+      'description' => t('Adjust the look and feel of PubReader.'),
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('book_pubreader_admin'),
+      'access arguments' => array('admin book_pubreader'),
+      'type' => MENU_NORMAL_ITEM,
+    ),
+  );
+}
+
+function book_pubreader_admin() {
+  $form = array();
+  $form['book_pubreader_header_color'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Color of headers'),
+    '#default_value' => variable_get('book_pubreader_header_color', 'darkblue'),
+    '#size' => 20,
+    '#maxlength' => 20,
+    '#description' => t("The color of the headers in PubReader view. Use any value that makes sense to CSS."),
+    '#required' => TRUE,
+  );
+  return system_settings_form($form);
+}
+
+function book_pubreader_permission() {
+  return array(
+    'admin book_pubreader' => array(
+      'title' => t('Administer Book PubReader'),
+      'description' => t('Perform administration tasks, such as setting header colors.'),
+    ),
+  );
+}
+
+function book_pubreader_content_callback($page_callback_result) {
+  drupal_page_header();
+  if (isset($page_callback_result) && is_null(drupal_get_http_header('Content-Type'))) {
+    print  $page_callback_result;
+  }
+  drupal_page_footer();
+}
+
+function book_pubreader_default(){
+  drupal_goto("");
+}
+
+function book_pubreader_entity_info_alter(&$entity_info) {
+  $entity_info['node']['view modes']['book_pubreader'] = array(
+    'label' => t('PubReader'),
+    'custom settings' => TRUE,
+  );
+}
+     
+function book_pubreader_pubreader($nid) {
+  $node = node_load($nid);
+  if (!$node) {
+    return MENU_NOT_FOUND;
+  }
+  if (!node_access('view', $node)) {
+    return MENU_ACCESS_DENIED;
+  }
+  if (user_access('access content')) {
+    if (isset($node->book)) {
+      $tree         = book_menu_subtree_data($node->book);
+      $contents     = book_export_traverse($tree, 'book_pubreader_node');
+      return theme('book_pubreader_html', array('title' => $node->title, 'book_id' => $node->book['bid'], 'contents' => $contents, 'depth' => $node->book['depth']));
+    } 
+    else {
+      drupal_not_found();
+    }
+  } 
+  else {
+    drupal_access_denied();
+  }
+}
+
+function book_pubreader_node($node, $children = '') {
+  $build = node_view($node, 'book_pubreader');
+  unset($build['#theme']); 
+  hide($build['group_content_access']);
+  hide($build['links']);
+  $node->rendered = drupal_render($build);
+  return theme('book_pubreader_node_html', array('node' => $node, 'children' => $children));
+}
+
+function template_preprocess_book_pubreader_html(&$vars) {
+  $vars['pubreader_path'] = "/" . BOOK_PUBREADER_PATH . "/pubreader";
+}
+
+function template_preprocess_book_pubreader_node_html(&$vars) {
+  $vars['depth']    = $vars['node']->book['depth'];
+  $vars['title']    = check_plain($vars['node']->title);
+  $vars['content']  = $vars['node']->rendered;
+}
+
+function book_pubreader_help($path, $arg) {
+  if ($path == "admin/help#book_pubreader") {
+    return '<p>' . t('To use Book PubReader, simply create a URL like so: [your_drupal_site]/book_pubreader/[book_id]. You may want to create a view that generates these views for all books, or create a link in a Panel for book nodes that does this for each book.') . '</p>';
+  }
+}
+
+function book_pubreader_theme($existing, $type, $theme, $path) {
+  return array(
+    'book_pubreader_html' => array(
+      'variables' => array('title' => NULL, 'contents' => NULL, 'depth' => NULL),
+      'template' => 'book-pubreader-html',
+      'path' => BOOK_PUBREADER_PATH,
+    ),
+    'book_pubreader_node_html' => array(
+      'variables' => array('node' => NULL, 'children' => NULL),
+      'template' => 'book-pubreader-node-html',
+      'path' => BOOK_PUBREADER_PATH,
+    ),
+  );
+}
+
+function book_pubreader_enable() {
+  drupal_set_message($message = t('Book PubReader activated. To use it, simply append the node ID of a book to the path /book_pubreader/.'), $type = 'status');
+  drupal_theme_rebuild();
+}

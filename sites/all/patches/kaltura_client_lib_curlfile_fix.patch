@@ -1,0 +1,14 @@
+diff --git a/docroot/sites/all/libraries/KalturaClient/KalturaClientBase.php b/docroot/sites/all/libraries/KalturaClient/KalturaClientBase.php
+index f47e3cd..b77a99a 100644
+--- a/docroot/sites/all/libraries/KalturaClient/KalturaClientBase.php
++++ b/docroot/sites/all/libraries/KalturaClient/KalturaClientBase.php
+@@ -477,7 +477,8 @@ class KalturaClientBase
+ 			if (count($files) > 0)
+ 			{
+ 				foreach($files as &$file)
+-					$file = "@".$file; // let curl know its a file
++				    $file = new CurlFile($file);
++					// old code: $file = "@".$file; // let curl know its a file
+ 				curl_setopt($ch, CURLOPT_POSTFIELDS, array_merge($params, $files));
+ 			}
+ 			else

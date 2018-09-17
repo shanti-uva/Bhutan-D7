@@ -1,0 +1,1 @@
+<h1>This is the homepage for Mandala</h1>

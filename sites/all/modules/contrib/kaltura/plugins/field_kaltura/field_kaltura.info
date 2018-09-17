@@ -1,0 +1,5 @@
+name = Kaltura field
+package = Kaltura Media Management
+dependencies[] = kaltura
+core = 7.x
+description = Provides a field for Kaltura media

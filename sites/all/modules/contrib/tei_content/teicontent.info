@@ -1,0 +1,13 @@
+; $Id$
+name = "TEI Content"
+description = "Lets you upload TEI/XML files as nodes into Drupal"
+core = 7.x
+
+package = "TEICHI"
+files[] = teicontent.install
+files[] = teicontent.module
+files[] = teicontent.cssfile.inc
+;datestamp = "1279282194"
+;dependencies[] = field
+;dependencies[] = xmlcontent
+configure = admin/config/teichsettings/teicontent

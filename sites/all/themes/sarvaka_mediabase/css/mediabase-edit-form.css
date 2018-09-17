@@ -1,0 +1,1426 @@
+  /**
+* Mandala Audio-Video (Media Admin Editor) - Development
+*
+* version 1.x - mediabase-edit-form.css
+* -------------------------------------------------------
+* University of Virginia / SHANTI MANDALA / AUDIO-VIDEO
+* -------------------------------------------------------
+*
+*/
+
+/**
+* -----------------------------------------------------------------------
+* FORM GUIDE - CLASS NAMES for each form group = 'group-name'
+* - Title and Description / 'group-title-desc'
+* - Media / 'group-media'
+* - Transcript / 'group-transcript'
+* - Classification / 'group-details'
+* - - 'field-name-field-location' = kmaps_filter & kmaps_search
+* - - 'field-name-field-subject' = kmaps_search
+* - - 'field-name-field-subcollections' = kmaps_search
+* - Right & Licensing / 'group-rights'
+* - Availability & Access / 'group-availability-access'
+* - People and Copyrights / 'group-people'
+* - Technical Metadata / 'group-technical'
+* - Workflow / 'group-workflow'
+* -----------------------------------------------------------------------
+*/
+
+/* BEGIN sub-theme (Admin) colors */
+.mb-av-form .fancytree-container .glyphicon,
+.mb-av-form .fancytree-container .fancytree-node:hover > .glyphicon,
+.mb-av-form .fancytree-container .fancytree-node:active > .glyphicon,
+.mb-av-form .fancytree-node.fancytree-active > .glyphicon,
+.mb-av-form .fancytree-node.fancytree-selected > .glyphicon{
+  color: #31acb6 !important;
+}
+
+
+/* END colors */
+
+
+/* Page layout */
+.mb-av-form #block-system-main.block.block-system { width: 100%; }
+.main-content .content-section .view-content { max-width: 100%; }
+.page-node-edit.node-type-video.no-sidebars .tab-pane.main-col,
+.page-node-edit.node-type-audio.no-sidebars .tab-pane.main-col{
+	max-width:1050px !important;
+}
+
+
+
+
+
+.mb-av-form{
+	margin: 1rem 1.5rem;
+}
+
+/* Accordions: space at top, 'mb-av-form' selectors overide Sarvaka */
+.mb-av-form .field-accordion .panel-body{
+    padding: 1rem 2rem 2rem;
+}
+
+.mb-av-form .field-accordion:first-of-type .panel-body{
+	padding-top: 0;
+}
+/* Note: nested accordions */
+.mb-av-form .field-accordion .field-accordion .panel-body{
+	padding-top: 2rem;
+}
+
+.mb-av-form .group-details.field-accordion .field-accordion .panel-body{
+	padding-top:1rem;
+}
+
+
+.mb-av-form .mb_oldthumb{
+  float:left;
+}
+
+.mb-av-form .mb_oldthumb #edit-field-video-en-0-button,
+.mb-av-form .mb_oldthumb .field-accordion.panel,
+.mb-av-form .mb_oldthumb .kaltura_field_thumb img,
+.mb-av-form .mb_oldthumb > a {
+    display: none;
+}
+
+#edit-media-upload-button{
+  margin: 20% 50% 5%;
+  position:relative;
+  left: -4em;
+}
+
+.mb-av-form .mb_oldthumb .kaltura_field_thumb img.img-generic{
+  height:150px !important;
+}
+
+.mb-av-form .kmfaceted-list-clear{
+  display: none;
+}
+
+.mb-av-form .kmfaceted-list-clear span{
+  background-color: transparent;
+}
+
+/* Glyphicon fix - is too general, so need to target */
+/*.btn-icon .glyphicon {
+	font-size: 1.5em;
+	margin-top: -2px;
+}*/
+
+.form-type-textfield,
+.field-widget-text-textfield,
+.field-widget-options-select{
+  padding-bottom: 0.7rem;
+}
+
+.field-name-field-pbcore-instantiation .form-type-textfield,
+.field-name-field-transcript-workflow-notes .field-widget-text-textfield,
+.field-name-field-og-collection-ref.field-type-entityreference{
+  padding-bottom:0;
+}
+
+.form-type-textfield,
+.form-item.form-type-textfield input.form-text,
+.form-item.form-type-textfield input.form-control{
+  display:inline-block;
+}
+
+
+
+/*--- the block editing icon dropdown for drupal that shows top-right of blocks on-hover ---*/
+.contextual-links-wrapper {
+  position: absolute;
+  top: -0.15rem !important;
+}
+
+.contextual-links-wrapper a:hover,
+.contextual-links-wrapper a:active {
+  border-bottom: none !important;
+}
+
+
+
+
+input.form-inline {
+	display: inline;
+}
+
+/**
+* not sure what this is so commenting it out
+#module-filter-tabs a,
+#module-filter-tabs a:hover,
+#module-filter-tabs a:active {
+  border-bottom: none;
+}
+*/
+
+
+.form-control.role-weight {
+	font-size: 80%;
+	width: 4em;
+	height: 1.5em;
+	line-height: 1.5em;
+}
+
+.tabledrag-toggle-weight-wrapper {
+	display: inline;
+	float: right;
+	position:relative;
+	top:2rem;
+	right:1rem;
+	clear:both;
+}
+
+
+
+.mb-av-form table tr td.permission .form-item {
+  line-height: normal;
+  margin-top: 0;
+}
+
+.mb-av-form table tr.odd.add-new:last-child {
+  border-bottom: 20px solid transparent;
+}
+
+.mb-av-form tr .form-item {
+  line-height: normal;
+}
+
+
+.form-item.form-type-select { padding: 0 0.25em 0 0; }
+
+.form-type-textfield label,
+.form-item.form-type-select label{
+	font-size: 0.88em;
+	margin-left: 1.5rem;
+	margin-top: .75rem;
+}
+
+.form-item.form-type-select .edit-field-og-collection-ref-und{
+  margin-top: 1.75rem;
+}
+
+.field-name-group-content-access.field-widget-options-select{
+  padding-bottom:1rem;
+}
+
+.group-people .panel-body > .field-widget-text-textfield{
+  width: 33.333%;
+  float: left;
+  padding-top:1rem;
+}
+
+
+
+
+form table td.label {
+  padding-top: 0.68em !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+* Textarea
+*/
+
+textarea {
+  border: 1px solid #ccc;
+}
+
+/* Wysiwyg Hide  double display of toolbar in TinyMCE */
+.wysiwygToolbar + .wysiwygToolbar {
+    display: none;
+}
+/* for margin space below textarea - adjustable Rich-text area */
+.resizable-textarea .grippie{
+  margin-bottom: 0.5rem;
+}
+
+.mb-av-form tr .form-item.form-type-textarea{
+  margin-bottom:0.5rem;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+table.field-multiple-table {
+  margin-bottom: 0em;
+}
+
+table.field-multiple-table tbody {
+  border: 2px solid #ddd;
+}
+
+
+.field-multiple-table .panel-body > div{
+  margin: 12px 0px;
+}
+
+
+.field-multiple-table tr.odd,
+.field-multiple-table tr.even {
+  background: #f7f7f7;
+}
+
+/* Title Group */
+form .field-multiple-table td.field-multiple-drag a.tabledrag-handle { padding-right:0; width:4rem;}
+
+
+.field-type-field-collection tr.draggable td div.field-type-text-long {
+	width: 70%;
+	padding-right:1rem;
+}
+
+/* Make description text areas take up full width of wrapper div */
+.field-type-field-collection tr.draggable td div.field-type-text-long.field-widget-text-textarea {
+    width: 100%;
+}
+
+
+
+
+
+
+
+
+#kmap_annotation_json {
+  margin-left: 2em;
+} /* textbox on bottom */
+
+
+#edit-filter-settings-title {
+  margin-bottom: 0 !important;
+}
+
+
+
+.field-name-field-transcript .form-select{
+  float: left;
+  margin-right: 1.5rem;
+}
+
+
+
+.node-video-form .form-item{
+  margin:0;
+}
+
+.node-video-form .fieldset-wrapper .form-item{
+  /*margin:1rem;*/
+}
+
+.form-item-field-video-und-0-settings-default-settings-entry-widget,
+.form-item-field-audio-und-0-settings-default-settings-entry-widget {
+  margin-left: 2rem; /* add space to left of video player in - override format settings > default view mode */
+}
+
+.field-type-field-kaltura-entryid .form-item.form-type-item{
+    margin: 0 0 1rem !important;
+}
+
+.field-type-field-kaltura-entryid .form-item.form-type-item .form-required {
+    margin-left: 1.2rem !important;
+}
+
+.page-node-edit.av-has-media .mb-av-form .kaltura_field_thumb::after{
+  content: 'Remove';
+  color: #777;
+  display: inline-block;
+  position: relative;
+  left: 0;
+  top: -0.6rem;
+  font-family: helvetica, arial, sans-serif;
+  height: 40px;
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+/*.page-node-add .mb-av-form .kaltura_field_thumb { display: none; } */
+.page-node-add .mb-av-form .kaltura_field_thumb::after{ content: ''; }
+
+/* Hide unwanted button and accordion after video has been added */
+.page-node-edit.av-has-media #field-video-add-more-wrapper #edit-field-video-en-0-button,
+.page-node-edit.av-has-media #field-video-add-more-wrapper > a,
+.page-node-edit.av-has-media #field-audio-add-more-wrapper > a,
+.page-node-edit.av-has-media #field-video-add-more-wrapper .field-accordion.panel,
+.page-node-edit.av-has-media #field-audio-add-more-wrapper #edit-field-audio-und-0-button,
+.page-node-edit.av-has-media #field-video-add-more-wrapper #edit-field-video-und-0-button,
+.page-node-add.av-has-media #field-audio-add-more-wrapper #edit-field-audio-und-0-button,
+.page-node-add.av-has-media #field-video-add-more-wrapper #edit-field-video-und-0-button{
+    display: none;
+}
+
+.mb-av-form .field-accordion:first-child .panel-body .field-video-add-more-wrapper p{
+  max-width: 40rem !important;
+  display: inline-block;
+}
+
+.page-node-edit.av-no-media #accordionedit-field-video-en-0-settings {
+    display: none; /* hides kaltura video setting form when no video present in form */
+}
+
+
+.node-audio-form .mb-av-form #accordionedit-field-audio-und-0-settings {
+    display: none;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+.mb-av-form .table-select-processed th:first-child .icheckbox_minimal-red { margin-left: 6px; }
+
+th.checkbox,
+td.checkbox { display: table-cell; }
+
+th.checkbox {
+  padding-right: 20px;
+  padding-left: 5px;
+  text-align: left;
+  line-height: 1.12em;
+  width: 12%;
+}
+*/
+
+/* td.checkbox .form-type-checkbox > .icheckbox_minimal-red { margin-top: 5px; } */
+
+
+
+
+
+/* admin make checkboxes plain in features table */
+.mb-av-form .content .features .status {
+  padding: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+
+
+
+
+
+
+
+table.sticky-table,
+table.sticky-header {
+  width: 100%;
+}
+
+table.sticky-header{
+	position: absolute !important;
+}
+
+table.sticky-header th {
+  padding-left: 1em;
+  position:static;
+}
+
+table.sticky-table td {
+  background: transparent;
+	padding-bottom: 1rem;
+	padding-top: 0.5rem;
+}
+
+table.sticky-table td ul {
+  margin-bottom: 0;
+  -webkit-margin-before: 0;
+  -webkit-margin-after: 0;
+  -webkit-margin-start: 0;
+  -webkit-margin-end: 0;
+  -webkit-padding-start: 0;
+}
+
+table.sticky-table td ul li {
+  line-height: 1em;
+}
+
+table.sticky-table a {
+  border-bottom-width: 1px;
+  white-space: nowrap;
+  /*font-weight: bold;*/
+}
+
+
+
+
+
+.table-select-processed.tableheader-processed {
+  margin-top: 1.5em;
+}
+
+
+
+.mb-av-form .content table td {
+  padding: 5px;
+  text-align: left;
+}
+
+.mb-av-form .content table.spaces td.option {
+  width: 4%;
+}
+
+.mb-av-form .content table td.status {
+  padding: 0;
+}
+
+
+
+
+
+
+/* overwrite mb_location-selector module in audio-video */
+.location-selector-item {
+  padding: 0.2em 0.6em 0.1em 0.4em;
+  border: 1px solid #ddd;
+  margin-right: 0.3em;
+  line-height: normal;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+*
+* CLASSIFICATION - Details Field Group
+*
+*/
+.field-name-field-subject .panel-body,
+.field-name-field-subcollection-new .panel-body{
+  padding-top: 1.5rem !important;
+}
+
+.field-name-field-subject .kmap-search-header,
+.field-name-field-subcollection-new .kmap-search-header{
+  display:none;
+}
+
+.kmap-search-header p{
+  margin: 1rem 0 .5rem 1rem;
+  font-size: 0.93em;
+  font-style: italic;
+}
+
+.field-name-field-location .kmap-search-header p span{
+  font-family: 'museo-sans-500',helvetica,arial,sans-serif;
+  font-style: normal;
+  font-size: 1.06em;
+  font-weight: bold;
+  letter-spacing: -0.07rem;
+}
+
+.form-type-textfield.form-item-field-subject-search-term{
+  display:block;
+}
+
+
+/* Collections dropdown label */
+.field-name-field-og-collection-ref label{
+	margin-left: 1.8rem
+}
+
+div#node_video_form_group_details > .panel-body > div,
+div#node_audio_form_group_details > .panel-body > div {
+	width: 100%;
+	background-color: #f0f0f0;
+	padding: 12px;
+	margin: 18px 0px;
+}
+
+div#edit-group-audience > div.form-item > label {
+	font-family: 'museo-sans-700',Helvetica,Arial,sans-serif;
+	font-size: 100%;
+	text-transform: uppercase;
+	color: #555;
+	margin: 0 0 0.5rem 2rem;
+}
+
+div#edit-group-audience > div.form-item > div.collection-details-audience {
+	margin-left: 8px;
+}
+
+
+
+
+
+
+.field-widget-kmap-typeahead-picker .field-type-taxonomy-term-reference > label {
+	border-bottom: 1px solid #ccc;
+	padding-bottom: 6px;
+	margin-bottom: 12px;
+	width: 99%;
+	font-family: 'museo-sans-700',Helvetica,Arial,sans-serif;
+	text-transform: uppercase;
+	color: #555;
+}
+
+.field-widget-kmap-typeahead-picker .field-type-taxonomy-term-reference > .form-item.kmap-selector .branch-filter {
+	margin-top: -12px;
+}
+
+.field-widget-kmap-typeahead-picker .field-type-taxonomy-term-reference > .form-item.kmap-selector .browse-link {
+	margin-top: -6px;
+}
+
+
+
+
+
+
+.field-name-field-location .kmap-filter{
+  clear:none;
+  float: left;
+  padding-top: 0;
+  margin-top:1rem;
+  width: 49%;
+  padding-bottom: 0.5rem;
+}
+
+.field-name-field-location .kmap-filter:nth-of-type(2){
+  margin-right:1%;
+  margin-bottom: 1rem;
+}
+
+.field-name-field-location .kmap-filter:nth-of-type(3){
+  border-left: 1px solid #ddd;
+  margin-left:1%;
+  margin-bottom: 1rem;
+  padding-left: 2%;
+}
+.field-name-field-location .kmap-typeahead-picker .selected-kmap{
+  background-color: #f0f0f0;
+}
+
+.field-name-field-location .kmap-filter:nth-of-type(3) label{
+  text-transform: capitalize;
+  font-weight: normal;
+}
+
+
+
+.field-name-field-location .kmap-result-box{
+  background: #eee;
+  float: left;
+  width: 100%;
+  padding-left: 4rem;
+  padding-bottom: 1rem;
+  border: 1px solid #ddd;
+  border-width: 0 2px 2px;
+  position: relative;
+  left: 0;
+}
+.field-name-field-location .kmap-typeahead-picker{
+  border: 1px solid #ddd;
+  border-width: 3px 2px 0px;
+  border-top-color: #ccc;
+  background: #eee;
+  padding: 1.3rem 2rem 0.2rem;
+}
+
+
+
+
+.field-name-field-subject .kmap-tree-picker .searchreset,
+.field-name-field-subcollection-root .kmap-tree-picker .searchreset,
+.field-type-shanti-kmaps-fields-default .kmap-tree-picker .searchreset{
+  position: absolute;
+  right: 11.5rem;
+  top: 2.4rem;
+}
+
+.field-name-field-subcollection-root .kmap-tree-picker .searchreset{
+  top: 2.8rem;
+}
+
+.group-technical .field-type-shanti-kmaps-fields-default .kmap-tree-picker .searchreset{
+  top:2.85rem;
+}
+
+.field-name-field-location .kmap-typeahead-picker .searchreset{
+  position: absolute;
+  left: 33rem;
+  top: 4.05rem;
+}
+
+.field-name-field-subject .kmap-tree-picker .searchreset{
+  right: 15.5rem;
+  top: 2.85rem;
+}
+
+.field-name-field-language-kmap .kmap-typeahead-picker .searchreset {
+  position: absolute;
+  left: 31.1rem;
+  bottom: -.65rem;
+}
+
+
+
+.field-type-shanti-kmaps-fields-default input.kmap-search-term{
+  max-width: 49%;
+  display: inline-block;
+  padding-left: 3rem;
+  padding-right: 3.3rem;
+}
+/*
+.field-name-field-subject input.kmap-search-term{
+  width: 27rem;
+  max-width: 100%;
+}
+
+.field-name-field-subcollection-root input.kmap-search-term,
+.field-type-shanti-kmaps-fields-default input.kmap-search-term{
+  max-width: 27rem
+}
+
+.field-name-field-location .kmap-typeahead-picker input.kmap-search-term{
+  max-width: 32rem;
+}
+*/
+.kmap-typeahead-picker input.kmap-search-term{
+  max-width: 34rem;
+}
+
+
+.field-name-field-location .kmap-typeahead-picker .shanticon-magnify{
+  position: absolute;
+  top: 4.2rem;
+  left: 3rem;
+}
+
+
+.twitter-typeahead .kmaps-tt-input{
+  font-weight: normal;
+}
+
+
+
+
+
+
+
+
+
+.field-type-taxonomy-term-reference .form-item.kmap-selector label {
+	margin-left: 6px;
+}
+
+.field-widget-field-collection-hidden {
+	display: none;
+}
+
+/* KMap Fields */
+#field_pbcore_coverage_spatial_location_selector {
+	min-height: 60px;
+}
+
+.kmap-selector .autocomplete-input label {
+	margin: 0px 6px;
+}
+
+.form-item.location-selector label {
+	margin: 12px 8px 6px 12px !important;
+}
+
+.form-item.location-selector .results {
+	margin-left: 12px;
+}
+
+div.kmap-selector button.selectpicker {
+	min-width: 300px;
+}
+
+.field-type-file .file-link a{
+	font-size: 0.88em;
+}
+
+.browse-link a {
+	display: inline-block;
+	margin-left: -120px;
+}
+
+.form-item.kmap-selector a.show-annot {
+	font-size: 90%;
+	margin-left: 8px;
+}
+
+.kmap-selector .autocomplete-input {
+	float: left;
+}
+
+.kmap-selector .autocomplete-input input, .location-selector .autocomplete-input {
+	margin-right: 6px;
+}
+
+.location-selector .autocomplete-input{ display:inline; float:left;}
+
+.kmap-selector-item .icon::before {
+	font-size: 1.5em;
+	vertical-align: middle;
+}
+
+.kmap-selector-item,
+.location-selector-item {
+	line-height: 19px;
+	white-space: nowrap;
+	margin: 6px 3px 3px 0px;
+	padding: 2px 6px 2px 2px;
+	color: #404040;
+	background-color: #fdfdfd;
+	border: 1px #b1b1b1 solid;
+	font-size: 80%;
+	display: block;
+	float: left;
+}
+
+.kmap-selector .results {
+	width: 100%;
+	border-bottom: 1px solid #ccc;
+	padding-bottom: 8px;
+	margin-bottom: 8px;
+	margin-left: -4px;
+}
+
+.location-selector{background:transparent !important;}
+
+.location-selector button.btn.btn-sm {
+	float: none;
+	width: 25px;
+	height: 25px;
+	margin: 0px 6px;
+}
+
+.location-selector button.btn-remove:hover {
+	background-color: red;
+}
+
+.location-selector button.btn.btn-sm .icon {
+	font-size: 2.5em;
+	padding: 0px !important;
+	line-height: 2em;
+	margin: -0.4em 0em 0em 0em;
+	float: none;
+	width: 25px;
+	height: 25px;
+}
+
+.location-selector button.btn.btn-sm .icon.shanticon-magnify {
+	font-size: 1.75em;
+	padding-top: 4px !important;
+}
+
+/* classification section filters */
+.form-item-field-location-search-term,
+.form-item-field-location-search-filter-associated-subject,
+.form-item-field-location-search-filter-feature-type{
+	display:block;
+}
+
+
+
+.mb-av-form .bootstrap-select.btn-group .dropdown-menu.open{
+  max-height: 400px !important;
+}
+
+.mb-av-form div.btn-group.bootstrap-select.ss-select .dropdown-menu li:first-child a{
+  line-height:2em;
+}
+
+.mb-av-form div.btn-group.bootstrap-select.ss-select .dropdown-menu li:first-child a::before{
+  width:0;
+  height:0;
+  display:none;
+}
+
+
+.field-name-field-subject .kmap-typeahead-picker .searchreset,
+.field-name-field-subcollection-new .kmap-typeahead-picker .searchreset{
+  position: absolute;
+  left: 31rem;
+  top: 2.72rem;
+}
+
+
+
+
+/**
+* Transcript Section
+*/
+
+/* Transcript upload file feature */
+  .file-widget.form-managed-file {
+  /*padding-left: 1.75em;*/
+}
+  .file-widget.form-managed-file .btn-sm.btn-icon.btn-delete{
+    margin-top: 0;
+  }
+.form-item-field-transcript-und-0 > label{
+	margin-left: 0.5rem;
+	margin-bottom:2.2rem;
+  margin-top: 1.7rem
+}
+
+.form-item-field-transcript-und-0 label .fa-comments-o:before{
+	font-size: 1.5em;
+}
+
+input#edit-field-transcripts-xsl-und-0-upload.form-file,
+input#edit-field-transcript-und-0-upload--2.form-file{ width:20rem;}
+
+input#field_transcript_value.text-full.form-control.form-inline{
+  margin-right: 0.5rem;
+  color: #444;
+}
+
+.form-item-field-transcript-und-0 button{
+	font-size: .75em;
+	padding: .38em 1.5em .25em;
+	position: relative;
+	/*top:3.5rem;*/
+	display: inline;
+}
+#edit-field-transcript .ajax-progress .message{
+  display: none;
+}
+
+
+
+
+
+
+
+/** Workflow Fields **/
+
+#edit-field-workflow-und-0-field-edl-log-files,
+#accordionfield_collection_item_field_workflow_form_group_catalog_record_workflow div.panel-body > div.field-type-text-long,
+#field_collection_item_field_workflow_form_group_transcript_workflow div.panel-body > div.field-type-text-long {
+	clear: both;
+	margin-right: 12px;
+	width: 45%;
+}
+
+#field_collection_item_field_workflow_form_group_media_workflow div.panel-body > .field-type-text-long {
+	float: left;
+	width: 45%;
+}
+
+
+
+
+
+
+
+
+/**
+*  page-mycontent-workflow
+*/
+/** Workflow Form on My Workflow Page **/
+.page-workflow-all article.main-col,
+.page-mycontent-workflow article.main-col {
+    max-width: 1600px !important;
+}
+
+.page-mycontent-workflow .tab-content.container-fluid,
+.page-workflow-all .tab-content.container-fluid {
+  padding-right: 2.5rem;
+  padding-left: 2.5rem;
+}
+
+.view-my-workflow .views-exposed-form .views-exposed-widget {
+  padding-left: 2rem;
+}
+
+.view-my-workflow .view-filters{
+  background: #a0a0a0;
+  padding: 4rem 0 1rem 2rem;
+  border-radius: .5rem;
+  margin-bottom: 2rem;
+}
+
+.view-my-workflow #edit-title-1-wrapper {
+    clear: both;
+}
+
+.view-my-workflow .views-exposed-form #edit-field-transcript-fid-wrapper .views-widget,
+.view-my-workflow .views-exposed-form #edit-field-video-entryid-wrapper .views-widget {
+    display: none;
+}
+
+.view-my-workflow .view-filters .views-exposed-form label{
+  color:#fff;
+  font-size: 0.68em;
+}
+
+.page-mycontent-workflow .views-exposed-form .panel-group label{
+  font-size:0.75em;
+}
+/* #edit-title-wrapper is for collections label only */
+.view-my-workflow .views-exposed-form #edit-title-wrapper label {
+    display: block;
+    font-size: 0.88em;
+    text-transform: uppercase;
+    font-size: 0.68em;
+    margin-left: 1.5rem;
+    margin-top: 0;
+    padding-bottom: 0.2rem;
+}
+
+.view-my-workflow #edit-nid-wrapper .form-item input,
+.view-my-workflow #edit-nid-1-wrapper .form-item input {
+    max-width: 100px;
+}
+
+.view-my-workflow #edit-nid-wrapper .form-item.form-item-nid-max label,
+.view-my-workflow #edit-nid-1-wrapper .form-item.form-item-nid-1-max label {
+  display: none;
+}
+
+.view-my-workflow .views-exposed-widget.views-reset-button {
+    float:right;
+}
+/* bottom row */
+.view-my-workflow .views-widget-filter-title_1,
+.view-my-workflow .views-widget-filter-realname,
+.view-my-workflow .views-widget-filter-title,
+.view-my-workflow .views-widget-filter-nid,
+.view-my-workflow .views-widget-filter-nid_1{
+  border-top: 1px solid #ccc;
+  margin-top: 2rem;
+  width:49%;
+}
+
+
+
+
+
+
+
+/* Availability & Access Section */
+.group-availability-access fieldset.date-combo.form-wrapper{
+	margin-bottom: 0;
+}
+
+.group-rights .field-widget-text-textfield{ padding-bottom: 0 !important; }
+
+.group-rights .form-type-textfield{ margin-left:0; }
+
+.group-rights .form-type-textfield,
+.field-name-field-workflow .field-widget-options-select,
+.field-type-field-collection .field-widget-options-select { float:left; display:inline; width:33.333%; border-bottom:none; padding-bottom: 1rem;}
+
+#node_video_form_group_rights .form-type-textfield { padding-bottom: 0;}
+
+.field-name-field-workflow .bootstrap-select.form-control,
+.field-type-field-collection  .bootstrap-select.form-control { min-width: 15rem; max-width:95%; margin-left:1rem;}
+
+.group-rights .form-type-textfield input.form-text.form-control { width:91% !important; margin-left:0.5rem;}
+
+.field-widget-text-textfield.form-wrapper input.form-text.form-control { max-width:70% !important;}
+
+.field-widget-text-textfield.form-wrapper input.form-text.form-control[placeholder="Enter Title"]{ max-width:100% !important; }
+
+.field-type-field-collection input.form-text.form-control.date-clear { max-width: 25rem !important;}
+
+.form-item-field-pbcore-extension-und-0-field-extension-authority-und-0-value .field-widget-text-textfield.form-wrapper input.form-control{
+  max-width:100% !important;
+}
+
+div.field-type-field-collection tr.draggable td div[class*="field-type-"] {
+	float: left;
+	border: none;
+	margin-right:1.5rem;
+}
+
+div.field-type-field-collection tr.draggable td div.field-name-field-title{
+  width:100%;
+}
+
+.field-widget-text-textfield.form-wrapper div.field-name-field-title input.form-text.form-control{
+  max-width: 100% !important;
+}
+
+.pagerer_admin_panes_config .form-type-select label {
+  display: none;
+}
+
+
+
+
+
+
+
+
+
+table.field-multiple-table .bootstrap-select.btn-group .dropdown-menu {
+  max-width: 25rem !important;
+}
+
+
+
+
+/* admin video edit forms section under title and description */
+.filter-guidelines{
+  padding: 2rem 5em 0 1rem;
+}
+
+table.sticky-table .filter-guidelines ul li{
+  line-height: 1.5em;
+  padding-top: 0.7rem
+}
+
+
+
+
+/* BEGIN Typeahead */
+.field-widget-kmap-typeahead-picker .form-type-textfield{
+	display:block;
+}
+
+.group-details .field-add-more-submit.btn.btn-primary{
+	position: relative;
+	top: -1rem;
+}
+
+
+.field-name-field-og-collection-ref .bootstrap-select.btn-group:not(.input-group-btn){
+  /*margin-bottom:2rem;*/
+}
+
+.field-name-field-og-collection-ref .form-item-field-og-collection-ref-und{
+  float: left;
+  width: 50%;
+}
+
+
+/**
+* BEGIN - Technical Metadata > Versions > Dates
+*/
+
+/* editing form techincal metadata */
+/* Date created - Date issued */
+#node_video_form_group_technical .node-video-form{
+  margin: 0 !important;
+}
+
+.group-technical fieldset.date-combo .container-inline-date .date-padding{
+	padding: 0 0 0 1rem;
+}
+
+.group-technical  fieldset.date-combo .container-inline-date > .form-item{
+	margin-bottom:0;
+}
+
+.group-technical .field-type-datetime{
+	width: 50%;
+	float: left;
+}
+
+.group-technical .field-type-datetime.field-name-field-pbcore-date-available{
+	width: 100%;
+}
+
+.group-technical .field-type-textfield,
+.group-technical .field-widget-text-textfield {
+	float:left;
+	width:33.333%;
+}
+
+.group-technical .field-name-field-duration,
+.group-technical .field-name-field-file-size,
+.group-technical .field-name-field-channel-conf{
+	float:none;
+}
+
+.group-technical .field-name-field-duration > div,
+.group-technical .field-name-field-file-size > div,
+.group-technical .field-name-field-channel-conf > div{
+	float:left;
+}
+
+.group-technical .field-widget-text-textfield.form-wrapper input.form-text.form-control{
+	max-width: 94% !important;
+}
+
+.group-technical .field-type-text.field-name-field-extension-authority .form-control{
+	max-width: 100% !important;
+}
+
+/* technical metadata section dates & times */
+.group-technical .form-type-date-popup > div > .form-item:nth-of-type(1){
+  margin-right: 3rem;
+}
+
+.group-technical .form-type-date-popup > div > .form-item:nth-of-type(2) input{
+  width: 19rem
+}
+
+.group-technical .field-name-field-pbcore-annotation .field-multiple-table td .text-format-wrapper {
+	padding: 1rem 3rem 0 0;
+}
+
+.group-technical .field-name-field-pbcore-date-available .date-float{
+	margin-top: 2rem;
+}
+
+.group-technical .field-name-field-pbcore-date-available .date-no-float.start-date-wrapper{
+	display: inline;
+	margin-left: 5rem;
+}
+
+
+
+
+/**
+* -----------------------------
+* Technical Metadata Fields - migrated from shanti-main-mb.css May 23, 2016
+* -----------------------------
+*/
+.field-name-field-recording-location-new .kmap-typeahead-picker .searchreset{
+  position: absolute;
+  left: 31rem;
+  top: 2.75rem;
+}
+
+.form-item-field-recording-location-new-search-term { width: 100%; }
+
+
+.field-name-field-recording-location-new>.field-label-span {
+    font-weight: bold;
+}
+
+.field-name-field-recording-location-new .field-items-span,
+.field-name-field-recording-location-new .field-items-span ul,
+.field-name-field-recording-location-new .field-items-span li {
+    display: inline;
+    padding:0px;
+}
+
+.mb-identifier.field.field-label-inline.clearfix,
+.mb-identifier.field.field-label-inline.clearfix * {
+    float: none;
+}
+
+.mb-identifier * {
+    display: inline-block !important;
+}
+
+.field-name-field-identifier-source,
+.field-name-field-identifier-source .field-items {
+    display: inline !important;
+}
+
+.field-name-field-identifier-source .field-item {
+    display: inline !important;
+    font-weight: bold;
+}
+
+.field-name-field-identifier,
+.field-name-field-identifier div {
+    display: inline;
+}
+
+.field-name-field-identifier-source .field-item:after {
+    content: ':';
+}
+
+
+.node-type-audio .field-name-field-thumbnail-image .image-preview {
+  display: none;
+}
+
+.page-node-edit.node-type-audio .field-type-image.field-name-field-thumbnail-image,
+.page-node-add.page-node-add-audio .field-type-image.field-name-field-thumbnail-image {
+    clear: both;
+}
+
+
+
+/**
+* ----------------
+* Group Workflow
+* ----------------
+*/
+.group-workflow .panel.field-group-fieldset{
+	margin-bottom:1rem;
+}
+
+
+.container-inline-date .description{
+	margin-left: 2rem;
+}
+
+
+.modal-content .file-image-form div.vertical-tabs {
+    display: none;
+}
+.modal-content .progress .bar {
+    border: none;
+    margin-bottom: 6px;
+}
+.modal-content .progress .anchor {
+    position: absolute;
+    font-weight: normal;
+}
+
+.modal-content .relative .cancelBtn {
+    position: absolute;
+    top: 100px;
+    right: 20px;
+}
+
+.modal-content #fileupload .description {
+    margin-bottom: 12px;
+}
+
+.modal-content div#successmsg {
+    margin-top: 30px;
+}
+
+
+
+
+.field-type-field-kaltura-entryid .form-type-item{
+  margin: 0 0 1rem 1rem;
+}
+
+.field-type-field-kaltura-entryid .form-type-item a{
+  color: #fff;
+  text-shadow: 0 0 2px #333;
+  border: none;
+  background: #5b68ce;
+  filter: alpha(opacity=95);
+  opacity: 0.95;
+  border-radius: .25rem;
+  letter-spacing: 0.1rem;
+  display: inline-block;
+  padding: 0 2.3rem .5rem;
+  text-transform:uppercase;
+  margin-left:-4rem;
+}
+.field-type-field-kaltura-entryid .form-type-item a:hover{
+  color:#fff;
+  filter: alpha(opacity=100);
+  opacity: 1;
+}
+.field-type-field-kaltura-entryid .form-type-item a:active{
+  filter: alpha(opacity=85);
+  opacity: 0.85;
+}
+.field-type-field-kaltura-entryid .form-type-item a::before{
+  content: '+';
+  font-size: 1.5em;
+  position: relative;
+  top: 0.2rem;
+  left: -0.6rem;
+}
+
+
+
+
+.mb-av-form .kaltura-thumb-wrap {
+  float: left;
+  margin:1.5rem 3rem 0 2rem !important;
+}
+.mb-av-form .group-media #edit-actions--3{
+  margin: 2rem auto 0;
+  text-align: center;
+  font-size: 1.25em;
+}
+/* default-open accordion for media admin edit */
+.group-media .panel-body:first-of-type{
+  padding-top: 1.8rem;
+}
+/* Upload button for media panel */
+.group-media button#edit-field-thumbnail-image-und-0-upload-button--3.form-submit{
+  margin-bottom: 2rem;
+}
+
+
+
+
+/** jquery ui dialog **/
+.mb-kaltura-msg > * {
+    font-family: 'droidserif',georgia,palatino,'Palatino Linotype',serif;
+}
+
+.mb-kaltura-msg > .ui-dialog-titlebar {
+    padding: 8px 10px 0px;
+}
+
+.mb-kaltura-msg > .ui-dialog-titlebar  button.ui-dialog-titlebar-close {
+    margin: -2px 0px 6px;
+    border-radius: 4px;
+}
+
+.mb-kaltura-msg .ui-dialog-titlebar.ui-widget-header {
+    background: #ccc !important;
+}
+
+.mb-kaltura-msg .ui-dialog-titlebar button.ui-dialog-titlebar-close,
+.mb-kaltura-msg .ui-dialog-buttonset button.btn-cancel  {
+    float: right;
+}
+
+.mb-kaltura-msg .ui-dialog-titlebar button.ui-dialog-titlebar-close:after {
+    content: 'x';
+    font-size: small;
+}
+
+.mb-kaltura-msg > .ui-dialog-content {
+    padding: 0 6px;
+}
+
+.field-type-field-kaltura-entryid .mb-kaltura-remove-msg {
+    margin-top: 12px;
+    padding: 4px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #C80000;
+    border: thin solid #C80000;
+}

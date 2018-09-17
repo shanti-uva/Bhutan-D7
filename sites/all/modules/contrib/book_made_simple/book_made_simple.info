@@ -1,0 +1,14 @@
+name = BookMadeSimple
+description = Automatic creation of a book and simple creation of child pages.
+package = Content
+files[] = book_made_simple.module
+dependencies[] = book
+core=7.x
+configure = admin/config/book_made_simple/config
+
+; Information added by Drupal.org packaging script on 2016-01-07
+version = "7.x-3.6+17-dev"
+core = "7.x"
+project = "book_made_simple"
+datestamp = "1452171240"
+

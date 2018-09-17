@@ -1,0 +1,10 @@
+<?php
+/**
+ * Implements of hook_uninstall().
+ */
+function jira_collector_uninstall() {
+  // Delete config variables
+   variable_del('jira_collector_type');
+   variable_del('jira_collector_include_admin');
+   variable_del('jira_collector_exclude_paths');
+}

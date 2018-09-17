@@ -1,0 +1,51 @@
+<?php
+
+/**
+ * @file
+ * Install file for shibuser module.
+ *
+ * On installing this module, check authentication databases to insert pre-registered users
+ *
+ */
+ 
+ /**
+ * Implements hook_install(). 
+ *
+ *  sets the weight of the module to 1000 so it is executed after the others.
+ * 
+ **/
+ 
+function shib_preuser_install() {
+  $spiweight = 1000;
+  db_update('system')
+    ->fields(array('weight' => $spiweight))
+    ->condition('name', 'shib_preuser', '=')
+    ->execute();
+}
+
+function shib_preuser_uninstall() {
+  variable_del('shib_user_registration');
+  variable_del('shib_preuser_settings_statusview');
+}
+
+ /**
+ * Implements hook_enable(). 
+ *
+ *  redirects to the configuration page.
+ * 
+ **/
+
+function shib_preuser_enable() {
+
+  drupal_set_message(check_plain(t('The Shibboleth pre-user registrations module has been enabled. ' .
+    'No changes have yet been made to the authentication tables. Go to the ')) . l('config page', 'admin/config/people/shib_auth/preregistration'));
+}
+
+function shib_preuser_disable() {
+  // Moving variable deletion to hook_uninstall
+  //variable_set(SHIB_PREREG, FALSE);
+  //variable_set('shib_preuser_settings_statusview', SHIB_PRESUSER_STATUSVIEW);
+   drupal_set_message(check_plain(t('The Shibboleth pre-user registrations module has been disabled. ' .
+    'No changes made to the authentication tables.')));
+}
+

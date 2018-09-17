@@ -1,0 +1,1 @@
+<?php include('node--collection--teaser.tpl.php'); ?>

@@ -1,0 +1,1243 @@
+<?php
+/**
+ * @file
+ * Code for the Shanti Images
+ */
+
+define('MMS_DEL_VAR', 'shanti_images_mms_ignore_list');
+
+module_load_include('inc', 'shanti_images', 'includes/shanti_images');
+
+/**
+ * Implement hook_init
+ */
+function shanti_images_init() {
+    drupal_add_js(array('shanti_images' => array(
+        'debug' => variable_get('shanti_images_debug', FALSE),
+    )), 'setting');
+}
+
+/**
+ * Implement hook_menu
+ * placeholder until needed
+ */
+ function shanti_images_menu() {
+    $items = array();
+    $items['admin/config/media/shanti_images'] = array(
+        'title' => 'Shanti Images',
+        'description' => 'Configuration for Shanti Images module',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('shanti_images_admin_form'),
+        'access arguments' => array('administer shanti images'),
+        'file' => 'includes/shanti_images.admin.inc',
+        'type' => MENU_LOCAL_TASK | MENU_NORMAL_ITEM,
+    );
+
+    $items['admin/config/media/shanti_images/iiif'] = array(
+        'title' => t('IIIF'),
+        'type' => MENU_DEFAULT_LOCAL_TASK,
+        'weight' => -20,
+    );
+
+     $items['admin/config/media/shanti_images/settings'] = array(
+         'title' => t('Other Settings'),
+         'type' => MENU_LOCAL_TASK,
+         'page callback' => 'drupal_get_form',
+         'page arguments' => array('shanti_images_admin_form_other'),
+         'access arguments' => array('administer shanti images'),
+         'file' => 'includes/shanti_images.admin.inc',
+         'weight' => -15,
+     );
+
+    $items['admin/config/media/shanti_images/list'] = array(
+        'title' => t('Shanti Image List'),
+        'type' => MENU_LOCAL_TASK,
+        'page callback' => 'drupal_goto',
+        'page arguments' => array('/admin/config/media/shanti_images/iiif-list-view'),
+        'access arguments' => array('administer shanti images'),
+        'weight' => -10,
+    );
+
+     $items['admin/shanti_images/list/removeid/%'] = array(
+         'title' => t('Shanti Image List: Remove MMS ID'),
+         'type' => MENU_CALLBACK,
+         'page callback' => array('shanti_images_remove_mmsid_from_list'),
+         'pages arguments' => array(4),
+         'access arguments' => array('administer shanti images'),
+     );
+
+/* Used to update iiif file names. Saving in case another update is needed
+     $items['admin/config/media/shanti_images/update'] = array(
+         'title' => t('Update'),
+         'type' => MENU_LOCAL_TASK,
+         'page callback' => 'drupal_get_form',
+         'page arguments' => array('shanti_images_admin_update_form'),
+         'access arguments' => array('administer shanti images'),
+         'file' => 'includes/shanti_images.admin.inc',
+         'weight' => -5,
+     );
+*/
+     /**
+      * Path to MMS Summary Page
+      */
+     $items['admin/config/media/shanti_images/mms/summary'] = array(
+         'title' => t('MMS Import Summary'),
+         'page callback' => 'shanti_images_mms_summary_page',
+         'type' => MENU_CALLBACK,
+         'access arguments' => array('administer shanti images'),
+     );
+
+    /**
+     * Path called by ajax to upload image to IIIF server for better performance
+     * The three parameters in order are: NID, FID, and SIID
+     */
+    $items['image/upload/%/%/%'] = array(
+        'page callback' => 'shanti_images_upload_iiif_callback',
+        'page arguments' => array(2,3,4),
+        'type' => MENU_CALLBACK,
+        'access callback' => 'user_access',
+        'access arguments' => array('create shanti_image content'),
+    );
+
+    // Path for downloading an shanti IIIF image (see _shanti_images_process_image_files and )
+    $items['image/download/%/%'] = array(
+        'page callback' => 'shanti_images_image_download',
+        'page arguments' => array(2,3),
+        'type' => MENU_CALLBACK,
+        'access callback' => 'user_access',
+        'access arguments' => array('access content'),
+    );
+
+    // Path to get raw HTML check to embed elsewhere (used with image descriptions)
+    $items['shanti-images/node-embed/%'] = array(
+        'page callback' => 'shanti_images_node_embed',
+        'page arguments' => array(2),
+        'type' => MENU_CALLBACK,
+        'access callback' => 'user_access',
+        'access arguments' => array('access content'),
+    );
+
+     $items['image/iiif/remove/%'] = array(
+         'page callback' => 'drupal_get_form',
+         'page arguments' => array('shanti_images_iiif_image_remove',3),
+         'access callback' => 'user_access',
+         'access arguments' => array('administer shanti images'),
+         'file' => 'includes/shanti_images.admin.inc',
+     );
+
+    // Path to delete an IIIF image from the IIIF server, used by admin page
+    $items['image/iiif/remove/%'] = array(
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('shanti_images_iiif_image_remove',3),
+        'access callback' => 'user_access',
+        'access arguments' => array('administer shanti images'),
+        'file' => 'includes/shanti_images.admin.inc',
+    );
+
+    /*** API Functions ***/
+    // Return SHIVA json of a single node
+    $items['api/ajax/%'] = array(
+        'title' => 'Embeddable Image',
+        'description' => 'Return an embeddable HTML DIV fragment for an image',
+        'page callback' => 'shanti_images_node_embed',
+        'page arguments' => array(2),
+        'access callback' => TRUE,
+    );
+    $items['api/json/%'] = array(
+        'title' => 'Image JSON Ingo',
+        'description' => 'Return info about an image in JSON',
+        'page callback' => 'shanti_images_node_json',
+        'page arguments' => array(2),
+        'access callback' => TRUE,
+    );
+    $items['api/thumb/%'] = array(
+        'title' => 'Image JSON Ingo',
+        'description' => 'Return info about an image in JSON',
+        'page callback' => 'shanti_images_node_thumb',
+        'page arguments' => array(2),
+        'access callback' => TRUE,
+    );
+
+     /**
+      * Given an mms id return its iiif file name
+      */
+     $items['api/mms/iiif/%'] = array(
+         'title' => '',
+         'description' => 'Return the iiif filename for this mms image',
+         'page callback' => 'shanti_images_get_mms_filename',
+         'page arguments' => array(3),
+         'access callback' => TRUE,
+    );
+
+    /** Open Seadragon map */
+     $items['image/openseadragon.min.js.map'] = array(
+         'title' => 'OpenSeadragon Map',
+         'description' => 'Return OpenDragon JS from image/... url',
+         'page callback' => 'shanti_images_js_map',
+         'page arguments' => array('openseadragon'),
+         'access callback' => TRUE,
+     );
+
+    return $items;
+ }
+
+
+/**
+ * Implements hook_permission
+ */
+function shanti_images_permission()
+{
+    return array(
+        'administer shanti images' => array(
+            'title' => t('Administer Shanti Images'),
+        ),
+    );
+}
+
+/**
+ * Implements hook_views_api()
+ */
+function shanti_images_views_api() {
+    return array(
+        'api' => 3,
+        'path' => drupal_get_path('module', 'shanti_images') . '/includes/views',
+        'template path' => drupal_get_path('module', 'shanti_images') . '/includes/views/theme',
+    );
+}
+
+/**
+ * Adds css and  js files for the shanti image list view
+ *
+ * @param $vars
+ */
+function shanti_images_preprocess_views_view(&$vars) {
+    global $base_path;
+    if ($vars['view']->name == 'shanti_image_list_view') {
+        $me = $base_path . drupal_get_path('module', 'shanti_images');
+        drupal_add_css($me . '/css/shanti-image-list-view.css', 'external');
+        drupal_add_js($me . '/js/shanti-image-list-view.js', 'file');
+    }
+}
+
+ /**
+  * Implements hook_cron to
+  *
+  */
+ function shanti_images_cron() {
+     // Add IIIF server to security kit settings if missing
+     $iiif_view_url = variable_get('shanti_images_view_url', FALSE);
+     if ($iiif_view_url) {
+        $xss =variable_get('seckit_xss');
+        $def_src = $xss['csp']['default-src'];
+        if (!strstr($def_src, $iiif_view_url)) {
+            $def_src .= " $iiif_view_url";
+            $xss['csp']['default-src'] = $def_src;
+            variable_set('seckit_xss', $xss);
+        }
+     }
+
+     // Remove images uploaded to IIIF when their waiting period has expired
+     if (variable_get('shanti_images_cron', FALSE)) {
+         // Get Shanti Image setting for file age past which to delete
+         $minage = variable_get('shanti_images_cron_age', FALSE);
+         $unit = str_replace('(s)', '', variable_get('shanti_images_cron_unit', "hour(s)"));
+         $batch_size = variable_get('shanti_images_cron_batch_size', 10);
+
+         if ($minage) {
+             // convert age to timestamp from now
+             $minage = "-{$minage} {$unit}";
+             $ago = strtotime($minage);
+             // Find the batch size number of shanti-image nodes with a file that is older than the expunge limit
+             $res = db_select('shanti_images', 'si')
+                 ->fields('si', array('nid'))
+                 ->condition('fid', 0, '>')->condition('created', $ago, '<')
+                 ->orderBy('siid', 'asc')->range(0, $batch_size)
+                 ->execute();
+             $nids = $res->fetchCol();
+             $nodes = node_load_multiple($nids);
+             $ct = 0;
+             foreach ($nodes as $nd) {
+                 $fid = $nd->field_image[LANGUAGE_NONE][0]['fid'];
+                 $fn = $nd->field_image[LANGUAGE_NONE][0]['filename'];
+                 watchdog('shanti_images', "Expunging image attached to node ({$nd->nid}): {$fn} ({$fid})");
+                 // call the expunge function and update count if successful
+                 if(_shanti_images_expunge_image_file($nd)) {  $ct++; }
+             }
+             if ($ct > 0) {
+                 watchdog('shanti_images',
+                         t("@count files expunged from site because they are stored on IIIF server.",
+                         array('@count' => $ct)));
+             }
+         }
+     }
+ }
+
+/**
+ * Implementing hook_libraries_info()
+ */
+ function shanti_images_libraries_info() {
+    // Expected to be extracted into 'sites/all/libraries/flexslider'.
+    $libraries['flexslider'] = array(
+        'name' => 'FlexSlide',
+        'vendor url' => 'http://flexslider.woothemes.com/',
+        'download url' => 'https://github.com/woothemes/FlexSlider/zipball/master',
+        'version arguments' => array(
+            'file' => 'jquery.flexslider.js',
+            'pattern' => '/ jQuery FlexSlider v(\d+\.\d+\.?\d*)/',
+            'lines' => 5,
+        ),
+        'files' => array(
+            'js' => array('jquery.flexslider.js'),
+            'css' => array('flexslider.css'),
+        ),
+    );
+    $libraries['columnizer'] = array(
+        'name' => 'Columnizer',
+        'vendor url' => 'https://welcome.totheinter.net/columnizer-jquery-plugin/',
+        'download url' => 'https://github.com/adamwulf/Columnizer-jQuery-Plugin/archive/master.zip',
+        'version arguments' => array(
+            'file' => 'src/jquery.columnizer.js',
+            'pattern' => '/version (\d+\.\d+\.?\d*)/',
+            'lines' => 5,
+        ),
+        'files' => array(
+            'js' => array('src/jquery.columnizer.js'),
+        ),
+    );
+    return $libraries;
+}
+
+ /**
+  * Form Functions Section
+  */
+
+ /**
+  * Form Alter Functions
+  * Starting with the general form alter
+  * @param $form
+  * @param $form_state
+  * @param $form_id
+  */
+ function shanti_images_form_alter(&$form, &$form_state, $form_id)
+ {
+     // Media Internet Add Upload (Adds css)
+     if ($form_id == 'media_internet_add_upload') {
+         drupal_add_css(drupal_get_path('module', 'shanti_images') . '/css/shanti-image-media-browser.css', array('group' => CSS_THEME));
+
+
+     }
+     /* Unnecessary to confirm IIIF delete
+     // Shanti Image Node Delete Confirm Form
+     else if ($form_id == 'node_delete_confirm' && $form['#node']->type == 'shanti_image') {
+         $pref = '';
+         $suff = '';
+         if (!user_has_role(3)) {
+             $pref = '<div class="hidden">';
+             $suff = '</div>';
+         }
+         $form['delete_iiif'] = array(
+             '#type' => 'checkbox',
+             '#title' => t("Remove image from the IIIF server?"),
+             '#description' => t('Checking this box will remove the image that has been uploaded to the <a href="@serv" target="_blank">IIIF server</a>',
+                 array(
+                     '@serv' => variable_get('shanti_images_view_url', 'https://iiif.lib.virginia.edu'),
+                 )),
+             '#default_value' => TRUE,
+             '#prefix' => $pref,
+             '#suffix' => $suff,
+         );
+         array_unshift($form['#submit'], 'shanti_images_delete_confirm_submit');
+         //dpm($form, 'the delete confirm form');
+     }
+     */
+ }
+
+/**
+ * Form Alter method for Shanti Image Node Form
+ *
+ * @param $form
+ * @param $form_state
+ * @param $form_id
+ */
+ function shanti_images_form_shanti_image_node_form_alter(&$form, &$form_state, $form_id) {
+     // Shanti Image Node Form
+     // Image edit form
+     //dpm($form, 'form var');
+     //dpm($form['#fieldgroups']['group_image_info']);
+     $fnid = (isset($form_state['node']->nid)) ? $form_state['node']->nid : FALSE;
+     $siobj = ($fnid) ? _shanti_images_get_node_image($form_state['node']->nid) : FALSE;
+     $flang = $form['field_image']['#language'];
+     if (!empty($form['field_image'][$flang][0]['#description'])) {
+         $form['field_image']['#prefix'] = $form['field_image'][$flang][0]['#description'];
+         unset($form['field_image'][$flang]['#description'],$form['field_image'][$flang][0]['#description']);
+     }
+
+     // If it exists, insert IIIF image and ability to Delete.
+     if ($siobj && $siobj->imageExists()) {
+         #dpm($form['field_image'][LANGUAGE_NONE][0]['#entity'], 'form image field entity');
+         #dpm($form_state, 'form state');
+         $img_url = $siobj->getURL(400);
+
+         $form['image_pane'] = array(
+             '#type' => 'fieldset',
+             '#title' => $form_state['node']->title ,
+             '#prefix' => '<div id="image-ajax-replace">',
+         );
+         $i3info = '<div class="image-iiif-info clearfix">';
+         $i3info .= '<span class="label">Original Filename: </span>' . $siobj->filename . '<br/>';
+         $i3info .= '<span class="label">Image URL: </span><a class="imgurl" href="' . $img_url .
+             '" target="_blank">' . $img_url . '</a><br/>';
+         if (!empty($siobj->fid)) {
+             $i3info .= '<span class="label">FID: </span>' . $siobj->fid . '<br/>';
+         }
+         $i3info .= '<span class="label">Width: </span>' . $siobj->width . '<br/>';
+         $i3info .= '<span class="label">Height: </span>' . $siobj->height . '<br/>';
+         $i3info .= '<span class="label">Rotation: </span>' . $siobj->rotation . '<br/>';
+         $form['image_pane']['image'] = array(
+             '#markup' => '<div class="image-placeholder-wrapper"><div class="image-placeholder">' .
+                    '<img src="' . $img_url . '" />' .
+                    '<div class="image-placeholder-desc">' . t('This is the image currently uploaded to the server') .
+                    '</div></div>' . $i3info . '</div>',
+         );
+         $form['image_pane']['replace_link'] = array(
+             '#type' => 'button',
+             '#value' => t('Replace Image'),
+             '#ajax' => array(
+                 'callback' => '_shanti_images_remove_callback',
+                 'wrapper' => 'image-ajax-replace',
+                 'method' => 'replace',
+                 'effect' => 'fade',
+             ),
+         );
+         array_unshift($form['#groups']['group_image_info']->children, 'image_pane');
+         array_unshift($form['#fieldgroups']['group_image_info']->children, 'image_pane');
+         $form['#group_children']['image_pane'] = 'group_image_info';
+
+         $form['field_image']['#prefix'] = '<div id="image-field-div" style="display: none;">';
+         $form['field_image']['#suffix'] = '</div></div>'; // Second closing is for #image-ajax-replace
+     }
+
+     $valid_ext = variable_get('shanti_images_extensions', 'jpg jpeg jp2 png tif tiff');
+     foreach(element_children($form['field_image'][$flang]) as $n) {
+        $form['field_image'][$flang][$n]['#upload_validators']['file_validate_extensions'][0] = $valid_ext;
+     }
+     if (!empty($form['field_image'][$flang]['#file_upload_description'])) {
+         $form['field_image'][$flang]['#file_upload_description'] = str_replace(
+             'jpg jpeg png', $valid_ext,
+             $form['field_image'][$flang]['#file_upload_description']
+         );
+     }
+
+     // Change add button for Descriptions
+     $form['field_image_descriptions']['und']['actions']['ief_add']['#value'] = t('Add new description');
+     $form['field_image_descriptions']['und']['form']['actions']['ief_add_save']['#value'] = t('Create description');
+
+     // Change add series button
+     $form['field_image_series']['und']['add_more']['#value'] = t('Add a series');
+
+     // External classification button
+     $form['field_external_classification']['und']['actions']['ief_add']['#value'] = t('Add new classification');
+
+     // Image Agents
+     $form['field_image_agents']['und']['actions']['ief_add']['#value'] = t('Add new agent');
+     $form['field_image_agents']['und']['form']['actions']['ief_add_save']['#value'] = t('Create agent');
+
+     // Notes Add buttons
+      $form['field_admin_notes']['und']['add_more']['#value'] =
+          $form['field_admin_notes']['und']['add_more']['#value'] =
+          $form['field_classification_notes']['und']['add_more']['#value'] =
+          $form['field_image_notes']['und']['add_more']['#value'] =
+          $form['field_origin_notes']['und']['add_more']['#value'] =
+          $form['field_rights_notes']['und']['add_more']['#value'] =
+          $form['field_technical_notes']['und']['add_more']['#value'] = t('Add a note');
+      // Insert License title in form
+      $license_url = $form['field_license_url']['und'][0]['value']['#default_value'] ;
+      $ltitle = shanti_images_get_license_title($license_url);
+      $form['field_license_url']['und'][0]['value']['#suffix'] = '<div><strong>License: </strong>' . $ltitle . '</div>' . $form['field_license_url']['und'][0]['value']['#suffix'];
+ }
+
+/**
+ * Custom confirm delete submit function to check if IIIF image should be deleted and delete it
+ *
+ * @param $form
+ * @param $form_state
+ */
+/* Removed because unnecessary
+function shanti_images_delete_confirm_submit($form, &$form_state) {
+    if ($form_state['values']['confirm']) {
+        if ($form_state['values']['delete_iiif']) {
+            $si = _shanti_images_get_node_image($form_state['values']['nid']);
+            _shanti_images_remove_iiif_image($si->getIIIFName());
+        }
+    }
+}
+*/
+
+function shanti_images_get_license_title($license_url) {
+    if (!empty($license_url) && strstr($license_url, 'http')) {
+      $ltitle = FALSE;
+      $lictext = shanti_file_get_contents($license_url);
+      if (!empty($lictext)) {
+          if (preg_match('/<title>([^<]+)<\/title>/', $lictext, $mtchs)) {
+            $ltitle = $mtchs[1];
+          } else {
+              $pts = explode("\n", $lictext);
+              foreach ($pts as $n => $pt) {
+                  if (!empty($pt)) {
+                      $ltitle = $pt;
+                      break;
+                  }
+              }
+          }
+      }
+      return str_replace('&amp;', '&', $ltitle);
+    }
+    return FALSE;
+}
+
+ /**
+  * Node Functions
+  */
+
+  /**
+   * Validation for a Shanti Image node
+   *  Change message for missing agent
+   */
+  function shanti_images_node_validate($node, $form, &$form_state) {
+      $err = form_get_errors();
+      $ernm = 'field_image_agents][und][form][title';
+      if (!empty($err) && isset($err[$ernm])) {
+          unset($err[$ernm]);
+          form_clear_error();
+          $ermsg= t('There must be at least one creator defined for each image');
+          form_set_error($ernm, $ermsg);
+          foreach($err as $ernm => $ermsg) {
+              form_set_error($ernm, $ermsg);
+          }
+      }
+      $ernm = 'field_image_descriptions][und][form][title';
+      if (!empty($err) && isset($err[$ernm])) {
+          form_clear_error();
+          $newmsg = t('All image descriptions must have at least a caption.');
+          form_set_error($ernm, $newmsg);
+          foreach($err as $ernm => $ermsg) {
+              form_set_error($ernm, $ermsg);
+          }
+          // Open the appropriate accordion
+          drupal_add_js('jQuery(document).ready(function() { jQuery(\'#accordionedit-group_images h6 a\').click() });', 'inline');
+      }
+  }
+
+ /**
+  * Implements hook_preprocess_node
+  *
+  *     Adds the Drupal setting settings.shanti_images.addimages which if not empty triggers the uploading of
+  *     images to the IIIF server in shanti_images.js behavior Drupal.behaviors.shanti_images_add_images
+  */
+ function shanti_images_preprocess_node(&$vars) {
+     if ($vars['type'] == "shanti_image") {
+
+         //dpm($vars, 'vars in pp node');
+         // Add view mode to classes
+
+         $vars['classes_array'][] = $vars['view_mode'];
+
+          // Get IIIF urls and add to vars
+         $node = $vars['node'];
+         $ew = entity_metadata_wrapper('node', $node);
+         $rotation = (360 - $ew->field_image_rotation->value()) % 360;
+         //$fids = _shanti_images_get_node_files($node, TRUE);
+         $nimgs = array(_shanti_images_get_node_image($node->nid));
+         $urls = array();
+         $genurls = array();
+         $ratios = array();
+         // Add image info to each array
+         foreach ($nimgs as $nimg) {
+             $urls[] = $nimg->getInfoURL();
+             $genurls[] = $nimg->getURL('__W__', '__H__', $rotation);
+             $ratios[] = $nimg->getRatio();
+         }
+
+         // Need placeholders in each array even if there is no image associated with them
+         if (count($nimgs) == 0) {
+           $urls[] = '';
+           $genurls[] = '';
+           $ratios[] = '';
+         }
+
+         $vars['shanti_images_urls'] = implode('|$|', $urls);
+         $vars['shanti_images_rotation'] = $rotation;
+         // Gen urls are for lightbox popup
+         $vars['shanti_images_ratios'] = $ratios;
+         $vars['shanti_images_genurls'] = $genurls;
+         // Add the info to the drupal JS settings array
+         $settings = array('shanti_images' => array(
+                'genurls' => $genurls,
+                'infourls' => $urls,
+                'imgratios' => $ratios,
+                'rotation' => $rotation,
+          ));
+
+         // If there are new or updated images, then add these to the settings (see _shanti_images_process_image_files
+         // which is called from both hook_node_insert and _update so they can be pushed to the IIIF server
+         // through AJAX call See shanti_images.js Drupal.behaviors.shanti_images_add_images
+         $images_to_add = (!empty($_SESSION['image_files_to_add'])) ? $_SESSION['image_files_to_add'] : FALSE;
+         if ($images_to_add) {
+             $settings['shanti_images']['addimages'] = $images_to_add;
+             $_SESSION['image_files_to_add'] = FALSE;
+         }
+          drupal_add_js($settings, 'setting');
+
+         // Agent name
+         if (isset($vars['field_image_agents'][0]['entity'])) {
+             $vars['creator'] = $vars['field_image_agents'][0]['entity']->title;
+         } else {
+             $vars['creator'] = t('Unknown');
+         }
+
+         // Add pixel dims of first image to vars
+         //dpm($vars, 'vars in pp node');
+         /*
+         $img = FALSE;
+         if (isset($vars['field_image']['und'][0])) {
+             $img = $vars['field_image']['und'][0];
+         } else if (isset($vars['field_image'][0])) {
+             $img = $vars['field_image'][0];
+         }
+         /*
+          *  TODO: Remake Pixel Field that is automatically populated on normal image node creation but can be overridden,
+          *             e.g. for MMS import
+          *
+         if ($img) {
+            $vars['pixels'] = $img['width'] . 'x' . $img['height'];
+         }
+         */
+         $vars['pixels'] = $nimgs[0]->getDimensions(TRUE);
+     }
+ }
+
+ /**
+  * Implements hook_node_view
+  */
+ function shanti_images_node_view($node, $view_mode, $langcode) {
+
+    switch ($node->type) {
+        case 'shanti_image':
+            _shanti_images_image_view($node, $view_mode, $langcode);
+            break;
+
+        case 'image_descriptions':
+            _shanti_images_desc_view($node, $view_mode, $langcode);
+            break;
+    }
+ }
+
+/**
+ * Whenever a shanti_image node is loaded add i3ffiles array
+ */
+function shanti_images_node_load($nodes, $types) {
+    if (in_array('shanti_image', $types)) {
+        foreach($nodes as &$node) {
+            if ($node->type == 'shanti_image') {
+                $qry = 'SELECT i3fid FROM `shanti_images` WHERE nid=' . $node->nid . ';';
+                $res = db_query($qry);
+                $res = $res->fetchCol();
+                if (!empty($res)) {
+                    $node->i3ffiles = $res[0];
+                }
+            }
+        }
+    }
+}
+
+ /**
+  * Function to deliver an embeddable div without Drupal page wrappers for any node
+  *
+  * @param $nid
+  *
+  * @param $view_mode
+  */
+function shanti_images_node_embed($nid, $view_mode='full') {
+    $node = node_load($nid);
+    $build = node_view($node, $view_mode);
+
+    if ($node->type == 'image_descriptions') {
+        // For image descriptions return a modal dialog box content. See shanti_images.js for the behavior attached to '.desc.morelink'
+        $author =  (!empty($build['field_image_agents'][0]['#markup'])) ? $build['field_image_agents'][0]['#markup'] : FALSE;
+        $out = '<div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"></h4>';
+        if ($author) {
+            $out .= '<h5>' . t('By') . '&nbsp;' . $author . '</h5>';
+        }
+        $out .= '</div>
+              <div class="modal-body">'
+                . str_replace('<h2', '<h2 style="display: none;"', $build['field_description'][0]['#markup']) .
+              '</div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+            </div>';
+        print $out;
+
+    } else if ($node->type == 'shanti_image') {
+        print render($build);
+    }
+}
+
+/**
+ * Function to deliver the data about a node in JSON format
+ *
+ * @param $nid
+ */
+
+ function shanti_images_node_json($nid) {
+    // Load noad or quit
+    $node = node_load($nid);
+    if ($node) {
+        // Iterate through entity reference fields and load those nodes into the object
+        $entity_fields = array('field_image_agents', 'field_image_descriptions', 'field_external_classification');
+        foreach ($entity_fields as $n => $efn) {
+            $field = &$node->{$efn}; // Get the field in the node and iterate through its items
+            foreach ($field['und'] as $n => $auth) {
+                $auth = node_load($auth['target_id']); // Load entity references
+                $field['und'][$n] = $auth;                     // Add full entity to node record
+            }
+        }
+        drupal_json_output($node); // Convert to JSON and output
+    }
+}
+
+/**
+ * Function to deliver a thumbnail for a Shanti image
+ * API call from hook_menu
+ * Returns default 200 x 200 thumbnail
+ *
+ * @param $nid
+ */
+function shanti_images_node_thumb($nid) {
+    $dbrec = _shanti_images_get_record($nid, 'nid');
+    $img_url = _shanti_images_build_IIIFURL($dbrec->i3fid, 200, 200);
+    drupal_goto($img_url);
+}
+
+/**
+ * Function to return the IIIF file name for a given MMS ID
+ * API call from hook_menu
+ */
+function shanti_images_get_mms_filename($mmsid) {
+    header('Content-Type: text/plain');
+    $out = 'FALSE';
+    if (is_numeric($mmsid)) { $mmsid = 'mms-' . $mmsid; }
+    $qry = "select entity_id from field_data_field_other_ids  where field_other_ids_value = '$mmsid';";
+    $res = db_query($qry);
+    $res = $res->fetchCol();
+    if (!empty($res)) {
+        $node = node_load($res[0]);
+        if (!empty($node->i3ffiles[0])) {
+            $out = $node->i3ffiles[0];
+        }
+    }
+    print $out;
+}
+
+/**
+ * Function to pipe an image through the site so it is the same URL
+ *
+ * @param $imgnm
+ * @param $width
+ */
+function shanti_images_image_download($imgnm, $width) {
+    $imgurl = _shanti_images_build_IIIFURL($imgnm, $width);
+    $fp = fopen($imgurl, 'rb');
+    if ($fp)  {
+            header('Content-Type:image/jpeg');
+            fpassthru($fp);
+            exit;
+    }
+}
+
+ /**
+  * Implements hook_node_insert
+  */
+ function shanti_images_node_insert($node) {
+    //module_load_include('inc', 'shanti_images', 'includes/shanti_images');
+    if ($node->type == 'shanti_image') {
+       $files_to_add = _shanti_images_process_image_files($node);
+       $_SESSION['image_files_to_add'] = $files_to_add;
+    } elseif ($node->type == 'image_agent') {
+        _shanti_image_process_dates($node);
+    }
+ }
+
+ /**
+  * Implements hook_node_update
+  */
+ function shanti_images_node_update($node) {
+     //module_load_include('inc', 'shanti_images', 'includes/shanti_images');
+     if ($node->type == 'shanti_image') {
+        $files_to_add = _shanti_images_process_image_files($node);
+        $_SESSION['image_files_to_add'] = $files_to_add;
+     } elseif ($node->type == 'image_agent') {
+         _shanti_image_process_dates($node);
+     }
+ }
+
+/**
+ *  Implements hook_node_delete
+ *     Uses the Shanti Image class object to remove record from Shanti Images table
+ *     IIIF image is deleted in shanti_images_delete_confirm_submit()
+ *
+ * @param $node
+ */
+ function shanti_images_node_delete($node) {
+    if ($node->type == 'shanti_image') {
+        $siobj = _shanti_images_get_node_image($node);
+        if ($siobj) {
+            _shanti_images_remove_iiif_image($siobj->getIIIFName());
+            _shanti_images_delete_record($siobj->getID());
+        }
+    }
+ }
+
+/**
+ * Implements hook_file_insert to replace periods in file names with dashes
+ */
+function shanti_images_file_insert($file) {
+    $uripts = explode('.', $file->uri);
+    $ext = array_pop($uripts);
+    $dest = implode('-', $uripts) . '.' . $ext;
+    $file = file_move($file, $dest);
+    file_save($file);
+}
+
+function shanti_images_upload_iiif_callback($nid, $fid, $sid) {
+  $out = shanti_images_upload_iiif($nid, $fid, $sid);
+  drupal_json_output($out);
+}
+
+/**
+ * Function to upload image to IIIF server
+ */
+function shanti_images_upload_iiif($nid, $fid, $sid) {
+    if (variable_get('shanti_images_debug', FALSE)) {
+        watchdog('shanti_images upload DEBUG', "nid: $nid, fid: $fid, sid: $sid");
+    }
+    $siobj = new ShantiImage($sid, $nid);
+    $file = file_load($fid);
+    $siobj->fid = $fid;
+    $siobj->filename = $file->filename;
+    $res = _shanti_images_do_upload_to_iiif($file, $siobj->getIIIFName());
+    if(!$res) {
+      return;
+    }
+    $url = $siobj->getURL(800);
+    $out = array('src' => $url);
+    if (variable_get('shanti_images_debug', FALSE)) {
+        watchdog("shanti_images upload", "New Url: $url");
+    }
+    $res = _shanti_images_update_table_from_image($siobj);
+    if (!$res) {
+        watchdog('shanti_images upload', "Could not update database table from image object: " . json_encode($siobj));
+        return;
+    }
+    return $out;
+}
+
+// Inline entity forms
+function shanti_images_inline_entity_form_entity_form_alter(&$entity_form, &$form_state) {
+    if ($entity_form['#bundle'] == 'image_agent') {
+        //dpm($entity_form, 'agent entity form');
+        $entity_form['#title'] = t('Add new agent');
+    }
+}
+
+/**** Theming *******/
+
+/**
+ * Implements hook_inline_entiy_form_fields_alter: Adding fields to inline entity form tables
+ */
+ function shanti_images_inline_entity_form_table_fields_alter(&$fields, $context) {
+    // IEF is managing products on a node form.
+    // For Image Descriptions
+    if ($context['field_name'] == 'field_image_descriptions') {
+        $fields['field_summary'] = array(
+            'type' => 'property',
+            'label' => t('Summary'),
+            'weight' => 5,
+        );
+        $fields['field_language'] = array(
+            'type' => 'property',
+            'label' => t('Language'),
+            'weight' => 10,
+        );
+        $fields['field_author'] = array(
+            'type' => 'property',
+            'label' => t('Author'),
+            'weight' => 15,
+        );
+    }
+    if ($context['field_name'] == 'field_image_agents') {
+        unset($fields['status']);
+        $fields['field_agent_role'] = array(
+            'type' => 'property',
+            'label' => t('Role'),
+            'weight' => 5,
+        );
+        $fields['field_agent_dates'] = array(
+            'type' => 'field',
+            'label' => t('Dates'),
+            'formatter' => 'date',
+            'settings' => array(
+                'format_type' => 'custom',
+                'custom_date_format' => 'M j, Y',
+            ),
+            'weight' => 10,
+        );
+        $fields['field_agent_place'] = array(
+            'type' => 'property',
+            'label' => t('Place'),
+            'weight' => 15,
+        );
+    }
+/*
+     if ($context['field_name'] == 'field_external_classification') {
+        $fields['field_external_class_scheme'] = array(
+            'type' => 'property',
+            'label' => t('Scheme'),
+            'weight' => 5,
+        );
+        $fields['field_external_class_id'] = array(
+            'type' => 'property',
+            'label' => t('ID'),
+            'weight' => 10,
+        );
+    }*/
+}
+
+/**
+ * Implementing hook_fileurl_for_grid from shanti_grid_view module to deal with old Shared Shelf file images
+ */
+function shanti_images_fileurl_for_grid($fid, $size) {
+    global $base_root, $base_path;
+    $size = str_replace(',', '', $size);
+    $size = is_numeric($size) ? intval($size) : 250;
+    $sizestr = ($size > 499) ?  'media_lightbox_large' : 'media_thumbnail';
+    $url = $base_root . $base_path . 'sites/images/files/styles/' . $sizestr . '/public/media-sharedshelf/a/__SSID__.jpg';
+    $file = file_load($fid);
+    $ssid = $file->field_sharedshelf_ssid['und'][0]['value'];
+    $url = str_replace('__SSID__', $ssid, $url);
+    return $url;
+}
+
+/**
+ * Implements hook_entity_view for file display
+ */
+function shanti_images_entity_view($entity, $type, $view_mode, $langcode) {
+    if ($type == 'file' && $view_mode == 'grid_details') {
+        // Shorten length of ss fields showing in drop down
+         $ssfields = $entity->ssfields;
+         $pts = explode('<div class="field field-name-images-included',$ssfields);
+         $entity->ssfields = $pts[0];
+    }
+}
+
+/**
+ * Lets modules alter the search results returned from a Solr search.
+ *
+ * @param array $results
+ *   The results array that will be returned for the search.
+ * @param SearchApiQueryInterface $query
+ *   The SearchApiQueryInterface object representing the executed search query.
+ * @param object $response
+ *   The Solr response object.
+ */
+function shanti_images_search_api_solr_search_results_alter(array &$results, SearchApiQueryInterface $query, $response) {
+   // dpm($results, 'search results');
+}
+
+/**
+ * Implements hook_kmaps_fields_solr_doc_alter to change the doc sent to the solr KM asset index.
+ *   Called from _shanti_kmaps_fields_get_solr_doc in shanti_kmaps_fields.module line 483
+ *   Goes through entity references assigned in the Solr index field mapping on the Shanti Image content type page
+ *   Turns NIDs into text strings for agents and descriptions
+ **/
+function shanti_images_kmaps_fields_solr_doc_alter(&$solrdoc) {
+   foreach ($solrdoc as $m => &$sdoc) {
+       // Do Agents
+       // Assign the Agent node references to the creator in the set up page /admin/structure/types/manage/shanti_image
+       $mainagent = FALSE;
+       if (!empty($sdoc['creator'])) {
+           foreach ($sdoc['creator'] as $n => $nid) {
+               $node = node_load($nid);
+               if (!$mainagent) {
+                   $mainagent = $node;
+               }
+               $sdoc['creator'][$n] = $node->title;
+           }
+       }
+
+       // Do Caption and Summary
+       // Assign the Description node references to the caption and summary in the set up page /admin/structure/types/manage/shanti_image
+       $caption = array();
+       $summary = array();
+       $maindesc = FALSE;
+       if (!empty($sdoc['caption'])) {
+           foreach($sdoc['caption'] as $o => $nid) {
+               $node = node_load($nid);
+               if (!$maindesc) { $maindesc = $node; }
+               if ($node) {
+                   // Concatenate caption and summary fields from multiple descriptions
+                   // As of Jan 2017, caption and summary are single value fields.
+                   $caption[] = $node->title;
+                   $summary[] = strip_tags($node->field_description['und'][0]['safe_value']);
+               }
+           }
+       }
+       $sdoc['caption'] = implode(' || ', $caption);
+       $sdoc['summary'] = implode(' || ', $summary);
+
+       // Do Dates, use date with first agents
+       // TODO: Do we need to make sure agent is explicitly photographer?
+       if (!empty($mainagent->field_agent_dates)) {
+           // If date exists in first agent, convert PHP date string to SOLR acceptible date string
+           $ds = $mainagent->field_agent_dates['und'][0]['value'];
+           $sdoc['date_start'] = date('Y-m-d\TH\:i\:s\Z', strtotime($ds));
+       } else {
+           unset($sdoc['date_start']);
+       }
+
+       // Deal with Language
+       if (!empty($maindesc->field_language)) {
+            $sdoc['language'] = $maindesc->field_language['und'][0]['header'];
+       } else {
+            unset($sdoc['language']);
+       }
+
+       // Deal with Thumb url (need to return the iiif url so mandala kmaps sites can deal with it)
+       $siimg = _shanti_images_get_node_image($sdoc['id']);
+       if (is_object($siimg)) {
+           $img_url = $siimg->getURL(200, 200);
+           $thmbheight = floor(200 * $siimg->getRatio());
+           $sdoc['url_thumb'] = $img_url;
+           $sdoc['url_thumb_width'] = "200";
+           $sdoc['url_thumb_height'] = "{$thmbheight}";
+           $sdoc['url_thumb_size'] = "30000";
+       } elseif (variable_get('shanti_images_debug', FALSE)) {
+           watchdog('shanti_images', "Cannot get shanti image record for node {$sdoc['id']}");
+       }
+   }
+}
+
+
+/**
+ * Alter path aliases so they do not include diacrtics, as this breaks urls in Safari and maybe elsewhere
+ * TODO: Should this be moved to a more global place so it applies to all apps?
+ */
+function shanti_images_pathauto_alias_alter(&$alias, array &$context) {
+    $table = array(
+        'Š'=>'S', 'š'=>'s', 'Đ'=>'Dj', 'đ'=>'dj', 'Ž'=>'Z', 'ž'=>'z', 'Č'=>'C', 'č'=>'c', 'Ć'=>'C', 'ć'=>'c',
+        'À'=>'A', 'Á'=>'A', 'Â'=>'A', 'Ã'=>'A', 'Ä'=>'A', 'Å'=>'A', 'Æ'=>'A', 'Ā' => 'A',
+        'Ç'=>'C',
+        'Ḍ' => 'D',
+        'È'=>'E', 'É'=>'E', 'Ê'=>'E', 'Ë'=>'E', 'Ē' =>'E',
+        'Ì'=>'I', 'Í'=>'I', 'Î'=>'I', 'Ï'=>'I', 'Ī' => 'I',
+        'Ḷ' => 'L',
+        'Ṃ' => 'M', 'Ṁ' => 'M',
+        'Ñ'=>'N',  'Ṇ' => 'N', 'Ṅ' => 'N',
+        'Ò'=>'O', 'Ó'=>'O', 'Ô'=>'O', 'Õ'=>'O', 'Ö'=>'O', 'Ø'=>'O', 'Ō' => 'O',
+        'Ṛ' => 'R',
+        'Ṣ' => 'S', 'Ś' => 'S',
+        'Ù'=>'U', 'Ú'=>'U', 'Û'=>'U', 'Ü'=>'U', 'Ū' => 'U',
+        'Ý'=>'Y', 'Þ'=>'B', 'ß'=>'Ss', 'Ź' => 'Z',
+        'à'=>'a', 'á'=>'a', 'â'=>'a', 'ã'=>'a', 'ä'=>'a', 'å'=>'a', 'æ'=>'a', 'ā' => 'a',
+        'ç'=>'c',
+        'ḍ' => 'd',
+        'è'=>'e', 'é'=>'e', 'ê'=>'e', 'ë'=>'e', 'ē' =>'e',
+        'ì'=>'i', 'í'=>'i', 'î'=>'i', 'ï'=>'i', 'ī' =>'i',
+        'ḷ' => 'l',
+        'ṃ' => 'm', 'ṁ' => 'm',
+        'ñ'=>'n', 'ṇ' =>'n', 'ṅ' => 'n',
+        'ð'=>'o', 'ò'=>'o', 'ó'=>'o', 'ô'=>'o', 'õ'=>'o', 'ö'=>'o', 'ø'=>'o', 'ō' =>'o',
+        'ṛ' => 'r',
+        'ṣ' => 's', 'ś' => 's',
+        'ù'=>'u', 'ú'=>'u', 'û'=>'u', 'ū' => 'u',
+        'ý'=>'y', 'ý'=>'y', 'þ'=>'b', 'ÿ'=>'y', 'Ŕ'=>'R', 'ŕ'=>'r', 'ź' => 'z'
+    );
+
+    $alias = strtr($alias, $table);
+}
+
+function shanti_images_js_map($type) {
+    global $base_url, $base_path;
+    if ($type == 'openseadragon') {
+        $url = "{$base_url}{$base_path}sites/all/themes/sarvaka_images/js/contrib/openseadragon.js.map";
+        $content = shanti_file_get_contents($url);
+        header('Content-Type: text/javascript; charset=utf-8');
+        print $content;
+    }
+}
+
+function shanti_images_mms_summary_page() {
+    global $base_path;
+    drupal_add_css($base_path . drupal_get_path('module', 'shanti_images') . '/css/shanti-image-mms-list.css', 'external');
+    $page = array(
+        '#prefix' => '<div id="mms-summary">',
+        '#suffix' => '</div>',
+    );
+    $page['seclinks'] = array(
+        '#markup' => '
+            <div class="header-proper">
+                <div class="tabs-secondary clearfix">
+                    <h2 class="element-invisible">Secondary tabs</h2>
+                    <ul class="tabs secondary">
+                        <li><a href="/admin/config/media/shanti_images">IIIF</a></li>
+                        <li><a href="/admin/config/media/shanti_images/settings">Other Settings</a></li>
+                        <li class="active"><a href="/admin/config/media/shanti_images/list" class="active">Shanti Image List<span class="element-invisible">(active tab)</span></a></li>
+                        <li><a href="/admin/config/media/shanti_images/import">Shanti Images MMS Import</a></li>
+                    </ul>
+                </div>
+            </div>',
+    );
+    $page['p1'] = array(
+        '#markup' => '<p>This the MMS Summary page. It lists ranges of MMS IDs that have already been imported to the ' .
+            'site. <a href="/admin/config/media/shanti_images/iiif-list-view">Back to IIIF List View.</a></p>',
+    );
+    // Get all Shanti Images with an associated mmsid
+    $q = db_query('select mmsid from {shanti_images} where mmsid > 0 order by mmsid');
+    $mmsids = $q->fetchCol();
+    $ignored = variable_get(MMS_DEL_VAR, array()); // Get the ones we've been told to ignore
+    $mmsids = array_merge($mmsids, $ignored);  // Combine them with already imported mmsids and sort
+    sort($mmsids);
+
+    // Set vars
+    $rngs = array();      //
+    $missing = array();
+
+    $lastid = array_shift($mmsids); // get the first item imported for the last id iterated
+    $rst = $lastid;                        // Range start variable. First range starts with first id = last
+    if ($lastid == 2) {
+        $missing[] = _shanti_images_make_mms_range_out(1);
+    } elseif ($lastid > 2) {
+        $missing[] = _shanti_images_make_mms_range_out(1, $lastid - 1);
+    }
+    $is_first_range = TRUE;
+
+    // Iterate through ID list of imported or ignored mmsids
+    foreach ($mmsids as $mid) {
+        // if the next mid in the list is one plus the current, make it the current
+        if ($mid == ($lastid + 1)) {
+            $lastid = $mid;
+        } else {  // otherwise there is a gap and record it
+
+            // If this is the first time continue because first set of ranges have already been calculated
+            if ($is_first_range) {
+                $is_first_range = FALSE;
+                continue;
+            }
+
+            // Put the range of imported mms ids into the rngs[] array
+            $rngs[] = _shanti_images_make_mms_range_out($rst, $lastid);
+
+            // Otherwise, calculate the missing MMS IDs between the last one $lastid and the new $mid
+            $mst = $lastid + 1;   // Start of missing range is the last imported one plus one
+            $mend = $mid - 1;     // End of the missing range is the new mid minus one
+            // If mst is less than mend it's an actual range and print out as such
+            if ($mst < $mend) {
+                $missing[] =  _shanti_images_make_mms_range_out($mst, $mend);
+            } else {  // Else print out a single item with the ability to remove it (in case it is a doc or video)
+                $remlink = '<a href="#" class="shanti-image-rem-mmsid" data-mmsid="' . $mst . '">x</a>';
+                $missing[] = _shanti_images_make_mms_range_out($mst) . " $remlink";
+            }
+            $rst = $mid;     // Set the new range start to this current mid
+            $lastid = $mid;  // set the last Mid variable to this current mid and iterate through
+        }
+    }
+    $rngs[] = _shanti_images_make_mms_range_out($rst, $lastid);
+    $missing[] =  _shanti_images_make_mms_range_out($lastid + 1, '70000');
+
+    // Create the page with the lists of mms ranges and missing mms ranges
+    $headers = array('List of MMS Ranges', 'Missing MMS Ranges');
+    if (empty($rngs)) {
+        $rngs[] = "No MMS images have been imported";
+        $missing[] = "All MMS images have yet to be imported";
+    }
+    $list1 = array(
+        '#theme' => 'item_list',
+        '#list_type' => 'ul',
+        '#title' => '',
+        '#items' => $rngs,
+        '#attributes' => array('class' => 'mms-range-list'),
+        '#wrapper_attributes' => array('class' => 'container'),
+        '#children' => array(),
+        '#printed' => FALSE,
+    );
+
+    $list2 = array(
+        '#theme' => 'item_list',
+        '#list_type' => 'ul',
+        '#title' => '',
+        '#items' => $missing,
+        '#attributes' => array('class' => 'mms-range-list missing'),
+        '#wrapper_attributes' => array('class' => 'container'),
+        '#children' => array(),
+        '#printed' => FALSE,
+    );
+
+    $rows = array(array(drupal_render($list1), drupal_render($list2)));
+    $page['table'] = array(
+        '#markup' => theme('table', array('header' => $headers, 'rows' => $rows)),
+    );
+    return $page;
+
+}
+
+function _shanti_images_make_mms_range_out($mst, $msend=FALSE) {
+    if ($mst == $msend) { $msend = FALSE; }
+    $mst = l($mst, 'http://mms.thlib.org/media_objects/' . $mst, array( 'attributes' => array('target' => '_blank')));
+    if ($msend) {
+        $msend = l($msend, 'http://mms.thlib.org/media_objects/' . $msend, array( 'attributes' => array('target' => '_blank')));
+    }
+    $out = $mst;
+    if ($msend) {
+        $out .= " - $msend";
+    }
+    return $out;
+}
+
+
+function shanti_images_remove_mmsid_from_list($mmsid) {
+    if (empty($mmsid)) { $mmsid = arg(4); }
+    $mmslist = variable_get(MMS_DEL_VAR, array());
+    if (is_numeric($mmsid)) {
+        if (!in_array($mmsid, $mmslist)) {
+            $mmslist[] = $mmsid;
+            sort($mmslist);
+            variable_set(MMS_DEL_VAR, $mmslist);
+            $addstatus = TRUE;
+            $msg = "Added $mmsid to mms ignore list";
+        } else {
+            $addstatus = FALSE;
+            $msg = "MMS ID $mmsid is already in the list";
+        }
+    } else {
+        $addstatus = FALSE;
+        $msg = "MMS ID was not a number: $mmsid";
+    }
+    $jout = array(
+        'success'=> $addstatus,
+        'msg' => $msg,
+    );
+    drupal_json_output($jout);
+}
+
+function shanti_images_get_valid_extensions($as_array=TRUE) {
+  $ext = variable_get('shanti_images_extensions', 'jpg jpeg jp2 png tif tiff');
+  if ($as_array) {
+    $ext = explode(' ', $ext);
+  }
+  return $ext;
+}

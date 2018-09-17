@@ -1,0 +1,62 @@
+<?php
+
+/**
+ * @file
+ * Exposes biblio fields to search_api for indexing.
+ */
+
+/**
+ * Implements hook_entity_property_info_alter().
+ */
+function biblio_search_api_entity_property_info_alter(&$info) {
+  $field_names_query = db_select('biblio_fields', 'n');
+  $field_names_query->fields('n', array('name'));
+
+  foreach ($field_names_query->execute()->fetchCol() as $field_name) {
+    if (in_array(
+            $field_name,
+            array(
+              'biblio_authors',
+              'biblio_secondary_authors',
+              'biblio_tertiary_authors',
+              'biblio_subsidiary_authors',
+              'biblio_corp_authors',
+            )
+          )
+        ) {
+      $callback_item_type = 'getter callback';
+      $callback_item_value = '_biblio_search_api_set_author_entity_value';
+      $field_data_type = 'list<text>';
+    }
+    else {
+      $callback_item_type = 'setter callback';
+      $callback_item_value = 'entity_property_verbatim_set';
+      $field_data_type = 'text';
+    }
+
+    $info['node']['properties'][$field_name] = array(
+      'type' => $field_data_type,
+      'label' => $field_name,
+      $callback_item_type => $callback_item_value,
+    );
+  }
+}
+
+/**
+ * Callback function to return an array of authors for indexing.
+ *
+ * @param object $item
+ *   Biblio module record node field containing author information
+ *
+ * @return array
+ *   An array, each element containing an author names to index.
+ */
+function _biblio_search_api_set_author_entity_value($item) {
+  $author_names = array();
+  if (isset($item->biblio_contributors) && is_array($item->biblio_contributors)) {
+    foreach ($item->biblio_contributors as $biblio_contributor) {
+      $author_names[] = $biblio_contributor['name'];
+    }
+  }
+  return ($author_names);
+}

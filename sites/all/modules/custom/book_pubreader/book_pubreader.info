@@ -1,0 +1,7 @@
+name = Book PubReader
+description = View Drupal Books with the NIH PubReader 
+package = Book
+core = 7.x
+configure = admin/config/user-interface/book_pubreader
+
+dependencies[] = book

@@ -1,0 +1,48 @@
+<?php
+
+/**
+ * Previous mb_shibboleth 
+ * 
+ * Was going to take over for user integration but moved to shanti_user module
+ * 
+* If Shibboleth first/last name attributes are present then add them to the user profile on login 
+* but only if both profile fields are empty
+ * 
+ * OLD CODE:
+ * Described in INFO file as: "This module looks for Shibboleth Attributes in the $_SERVER variable
+               when a user logs in and prompts user to create shibboleth groups that
+               do not yet exist in Mediase. In addition it adds shibboleth group members
+                  to their corresponding drupal groups. It also integrates with Realname 
+               to grab the user's realname and use it to populate the user profile."
+ 
+function mb_shibboleth_user_login(&$edit, &$account) {
+   global $user;
+   if (  (isset($_SERVER['givenName']) && isset($_SERVER['sn'])) 
+      && (empty($user->profile_firstname) && empty($user->profile_lastname)) ) 
+   {
+      $edit['profile_firstname'] = $_SERVER['givenName'];
+      $edit['profile_lastname'] =  $_SERVER['sn'];
+      profile_save_profile($edit, $user, 'Personal Information');
+   }
+}
+
+function mb_shibboleth_form_alter(&$form, &$form_state, $form_id) {
+   switch ($form_id) {
+   case 'user_login':
+      $form['drupal-login'] = array(
+         '#type' => 'fieldset', 
+         '#title' => t('Drupal Login'), 
+         '#weight' => -5, 
+         '#collapsible' => TRUE, 
+         '#collapsed' => TRUE, 
+         'name' => $form['name'], 
+         'pass' => $form['pass'], 
+         );
+      unset($form['name']);
+      unset($form['pass']);
+      break;
+   }
+}
+*/
+
+

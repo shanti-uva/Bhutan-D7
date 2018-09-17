@@ -1,0 +1,223 @@
+/**
+* ------------------------------
+* Shanti Filters Gallery Header
+* ------------------------------
+*/
+
+/*
+.shanti-filters {
+  height: 7.5em;
+}
+
+.shanti-filters .ajax-progress {
+  position: absolute;
+  top: 1.35rem;
+}
+
+.shanti-filters .control-box .ajax-progress {
+  display: none;
+}
+*/
+
+.shanti-view-dom-id .views-exposed-form .views-exposed-widget {
+  padding-right: 0;
+}
+
+.shanti-view-dom-id .view-related-audio-video,
+.shanti-view-dom-id .view-related-sources,
+.shanti-view-dom-id .view-related-texts,
+.shanti-view-dom-id .view-related-visuals {
+  clear: both;
+}
+
+.shanti-filters .control-box-cell-header {
+  margin: 0.8rem 0 0 0;
+  padding: 0;
+  width: 20%;
+}
+
+.shanti-filters .control-box-cell-header span {
+  float: left;
+  padding: 0;
+  margin: 0 0 0 1rem;
+  line-height: 2rem;
+}
+
+.shanti-filters .control-box-cell-header .label {
+  color: #555;
+  text-transform: uppercase;
+  font-size: 0.82em;
+  display: none !important;
+}
+
+.shanti-filters .count {
+  margin-bottom: 0.4rem;
+  text-transform: capitalize;
+  font-size: 0.93em;
+  white-space: nowrap;
+  overflow: visible;
+}
+
+.shanti-filters .control-box-cell-header .view-result-count-info {
+  margin: 0;
+  padding: 0;
+  float: left;
+}
+
+.shanti-filters .control-box-cell-filters {
+  margin: 0;
+  /*padding-left:3rem;*/
+}
+
+.shanti-filters .control-box-cell-filters .views-exposed-form .form-item {
+  margin-right: 1rem;
+}
+
+.shanti-filters
+  .control-box-cell-filters
+  .bootstrap-select.btn-group:not(.input-group-btn) {
+  /* margin:0; */
+  margin-bottom: 0;
+}
+
+.shanti-filters .control-box-cell-filters .view-filters-mb {
+  margin-right: 0;
+}
+
+.shanti-filters .control-box-cell-pager,
+.shanti-filters .control-box-cell-filters {
+  width: 100%;
+}
+
+.shanti-filters .control-box-cell-pager {
+  padding: 0;
+  margin: 0;
+}
+
+.shanti-filters table.pagerer,
+article .shanti-filters table.pagerer {
+  margin: 0.5rem 0 0;
+}
+
+.shanti-filters.bottom table.pagerer {
+  margin-top: 2rem 0 3rem;
+}
+
+.front .shanti-filters .control-box-cell-pager table.pagerer {
+  margin-top: -0.7rem;
+}
+
+.shanti-filters table.pagerer,
+.shanti-filters .control-box-cell-pager {
+  float: right;
+}
+
+.page-collections .shanti-filters table.pagerer {
+  margin-top: 0;
+}
+
+.page-collections .shanti-filters .control-box-cell-pager {
+  /* margin-top: -3.3rem;
+  width: 60% !important;*/
+  float: right;
+}
+
+/* new on June 2, 2016 mf8yk */
+.form-type-select.form-item-sort-bef-combine .btn {
+  width: 15rem;
+}
+
+.form-type-select.form-item-sort-bef-combine label {
+  display: none !important;
+}
+
+#views-exposed-form-browse-media-home-block .views-exposed-form {
+  min-width: 450px;
+  /*margin-right: -50px;*/
+}
+
+#views-exposed-form-browse-media-home-block .views-exposed-widget {
+  padding-top: 0.75rem;
+}
+
+#views-exposed-form-browse-media-home-block {
+  margin-right: -3rem;
+}
+
+.view-filters-mb {
+  margin-right: -3rem;
+}
+
+#views-exposed-form-browse-media-home-block .views-exposed-widget {
+  padding-right: 0rem !important;
+}
+
+#views-exposed-form-browse-media-home-block
+  .views-exposed-form
+  input#edit-title {
+  max-width: 130px;
+}
+
+@media screen and (min-width: 992px) {
+  body.html:not(.page-admin) .shanti-filters {
+    height: 3.25em;
+  }
+
+  .front .shanti-filters .control-box-cell-pager table.pagerer {
+    margin-top: 0.4rem;
+  }
+
+  .shanti-filters .control-box-cell-header {
+    padding-top: 0.25rem;
+  }
+
+  .shanti-filters .control-box-cell-pager {
+    margin-right: 0;
+    margin-top: 0.5rem;
+  }
+
+  .shanti-filters .control-box-cell-filters {
+    width: 47%;
+  }
+
+  .shanti-filters .control-box-cell-pager {
+    width: 33%;
+  }
+
+  .sidebar-second.not-front .shanti-filters .control-box-cell-pager {
+    width: 36%;
+  }
+  .sidebar-second.not-front .shanti-filters .control-box-cell-filters {
+    width: 40%;
+  }
+
+  .node-type-collection .shanti-filters .control-box-cell-pager,
+  .node-type-subcollection .shanti-filters .control-box-cell-pager {
+    width: 33%;
+  }
+  .node-type-collection .shanti-filters .control-box-cell-filters,
+  .node-type-subcollection .shanti-filters .control-box-cell-filters {
+    width: 45%;
+  }
+}
+
+@media (min-width: 1100px) {
+}
+
+@media (min-width: 1150px) {
+}
+
+@media screen and (min-width: 1200px) {
+}
+
+@media (min-width: 1250px) {
+  .shanti-filters .control-box-cell-pager {
+    width: 33%;
+  }
+}
+
+@media screen and (min-width: 1280px) {
+}
+
+@media (min-width: 1400px) {
+}

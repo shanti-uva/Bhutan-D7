@@ -1,0 +1,17 @@
+name = Shanti Image Grid View
+description = Creates a gallery view display on the model of Google Images for Shanti sites
+core = 7.x
+package = Images
+version = 7.x-1.0
+
+dependencies[] = ctools
+dependencies[] = views
+
+
+configure = admin/config/user-interface/shanti_grid_view
+
+scripts[] = js/shanti-grid-view.js
+
+files[] = includes/shanti_grid_view.views.inc
+files[] = includes/shanti_grid_view_plugin_style.inc
+files[] = templates/shanti_grid_view_gallery.tpl.php

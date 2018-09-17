@@ -1,0 +1,7 @@
+name = Shanti User Module 
+description = "Module for standardizing the user experience across Mandala"
+core = 7.x
+package = Shanti
+
+dependencies[] = shanti_collections
+configure = admin/config/people/shanti_user

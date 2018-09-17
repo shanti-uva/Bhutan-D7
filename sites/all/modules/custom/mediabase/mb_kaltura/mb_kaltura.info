@@ -1,0 +1,9 @@
+; $Id
+name = Mediabase PBCore Kaltura
+description = "Provides Kaltura integration for PBCore Metadata for Mediabase"
+core = 7.x
+dependencies[] = kaltura
+package = SHANTI Mediabase
+version = "7.x-1.0-alpha1"
+
+files[] = plugins/views/mb_kaltura_handler_area.inc

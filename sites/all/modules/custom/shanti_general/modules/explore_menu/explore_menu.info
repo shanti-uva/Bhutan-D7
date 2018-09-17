@@ -1,0 +1,11 @@
+name = Shanti Sarvaka Explore Menu 
+description = "Provides a block to place in the top bar that creates the explore dropdown menu for the Shanti Sarvaka theme"
+core = 7.x
+package = Shanti
+
+config = admin/structure/block/manage/explore_menu/explore_menu_block/configure
+
+files[] = explore_menu.module
+files[] = explore_menu.install
+
+; scripts[] = js/explore_menu.js

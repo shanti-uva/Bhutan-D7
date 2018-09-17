@@ -1,0 +1,39 @@
+<?php
+/**
+ * @file
+ * Code for the Biblio Custom Fields feature.
+ */
+
+include_once 'biblio_long_fields.features.inc';
+
+/**
+ * Implements hook_node_presave().
+ */
+function biblio_long_fields_node_presave($node) {
+  //dpm($node, "node@hook_node_presave");    
+  if ($node->type == 'biblio') {    
+    $node->title = substr($node->title, 0, 255);
+    $node->biblio_lang = (isset($node->biblio_lang)) ? substr($node->biblio_lang, 0, 24) : '';
+  }
+}
+
+/**
+ * Implements hook_node_load().
+ */
+function biblio_long_fields_node_load($nodes) {    
+  foreach ($nodes as $node) {    
+    if ($node->type == 'biblio' && $node->field_biblio_long_title) {    
+      $node->title = $node->field_biblio_long_title[LANGUAGE_NONE][0]['value'];
+    }
+  }
+}
+
+/**
+ * Implements hook_node_prepare().
+ */
+function biblio_long_fields_node_prepare($node) {  
+  if ($node->type == 'biblio' && isset($node->field_biblio_title)) {
+    $node->title = substr($node->title, 0, 255);
+    $node->biblio_lang = substr($node->biblio_lang, 0, 24);
+  }
+}

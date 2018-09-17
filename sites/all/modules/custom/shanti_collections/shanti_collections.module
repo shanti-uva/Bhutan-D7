@@ -1,0 +1,247 @@
+<?php
+/**
+ * @file
+ * Code for the SHANTI Collections feature.
+ */
+
+include_once 'shanti_collections.features.inc';
+
+/**
+ * Custom Code added by ndg8f (Nov. 12, 2016)
+ * Add block with "Add Collection" button.
+ */
+
+function shanti_collections_block_info() {
+    $blocks=array();
+    $blocks['add_shanti_collection'] = array(
+        'info' => 'Create a Collection Block',
+        'visibility' => BLOCK_VISIBILITY_LISTED,
+    );
+   return $blocks;
+}
+
+/**
+ * Implements hook_block_list_alter to remove block for non-authenticated users
+ */
+function shanti_collections_block_list_alter(&$blocks) {
+    // see http://drupal.stackexchange.com/questions/69861/how-do-i-programmatically-assign-the-access-to-a-block
+    if(!user_is_logged_in()) {
+        foreach($blocks as $bid => $blk) {
+            if ($blk->delta == "add_shanti_collection") {
+                unset($blocks[$bid]);
+                break;
+            }
+        }
+    }
+}
+
+/**
+ * Implements hook_block_view
+ */
+function shanti_collections_block_view($delta) {
+    switch($delta) {
+        case 'add_shanti_collection':
+            return shanti_collections_add_collection_block();
+            break;
+    }
+}
+
+/**
+ * Custom function to display the add collection block
+ */
+function shanti_collections_add_collection_block() {
+    $block['subject'] = t('Create A Collection');
+    $block['content'] = '<div><p>' . t('Create a new collection of resources grouped by project or theme:') . '</p>
+            <a href="' . url('node/add/collection') . '">
+                <button class="btn-block btn btn-primary btn-icon" value="Add New Collection">
+                    <span class="icon shanticon-grid"></span>
+                    <span>' . t('Add New Collection') . '</span></button>
+        </div>';
+    return $block;
+}
+
+/**
+ * Get a node's collection
+ */
+function shanti_collections_get_collection($node) {
+    if (is_numeric($node)) {$node = node_load($node); }
+    $ew = entity_metadata_wrapper('node', $node);
+    $coll = $ew->field_og_collection_ref->value();
+    return $coll;
+}
+
+/**
+ * Returns an array of Collection/Subcollection titles that a user can "update" or edit.
+ * Returns either a single array of collections and subcollections or one broken into distinct subarrays for use in form options.
+ * Taken from mb_structure.module ll. 1172
+ * param $add_optgroup, whether to split the array into two parts: collection and subcollection or not.
+ *
+ * TODO: Implement the $type parameter so it will also return groups a person is 'member' of or can 'view'
+ * TODO: Use mysql queries to determine user groups since neither node_access nor og_get_groups_by_user is comprehensive enough
+ */
+function shanti_collections_get_groups_for_user($type='update', $add_optgroup = TRUE)
+{
+    global $user;
+    $gids_with_labels = array();
+    $coll_key = t('Collections');
+    $subcoll_key = t('Subcollections');
+    // old: $gps = og_get_groups_by_user($user, 'node'); // only shows group user is explicitly a member of
+    // but subcollections inhertit user permisions so a person can belong to a collection and be able to edit subcollections.
+    // So need to filter by node_access see MANU-3976
+    $res = db_query("SELECT nid FROM {node} WHERE type in ('collection', 'subcollection')")->fetchAll();
+    $nids = array();
+    foreach($res as $r) { $nids[] = $r->nid; }
+    $allcolls = node_load_multiple($nids);
+    // Get list of user groups to double check for access
+    $ugroups = og_get_groups_by_user();
+    if (isset($ugroups['node'])) { $ugroups = array_keys($ugroups['node']); } else { $ugroups = array(); }
+
+    if (is_null($ugroups)) { $ugroups = array(); }
+    $colls = array();
+    $subcolls = array();
+    
+    foreach ($allcolls as $gp) {
+        // Check if user has ability to do the $type action (defaults to "update")
+        if (node_access($type, $gp) || in_array($gp->nid, $ugroups)) {
+            if ($gp->type == "collection") {
+                $colls[$gp->nid] = $gp->title;
+            } else if ($gp->type == "subcollection") {
+                $subcolls[$gp->nid] = $gp->title;
+            }
+        } 
+    }
+    
+    if ($add_optgroup) {
+        asort($colls);
+        asort($subcolls);
+        $gids_with_labels[$coll_key] = $colls;
+        $gids_with_labels[$subcoll_key] = $subcolls;
+    } else {
+        $gids_with_labels = $colls + $subcolls;
+        asort($gids_with_labels);
+    }
+    return $gids_with_labels;
+}
+
+
+/**
+ * Get subcollections for a collection.
+ * Moved from mb_structure's get_subcollections_in_collection() function,
+ * As it naturally belongs here
+ */
+function shanti_collections_get_subcollections($coll = FALSE) {
+  $nids = array();
+  // convert nid to node
+  if (is_numeric($coll)) {
+    $coll = node_load($coll);
+  }
+  // If it's a collection, do query for nodes that have it's nid for og collection ref
+  if ($coll->type == "collection") {
+    $result = db_select('og_membership', 'ogm')
+      ->fields('ogm', array('etid'))
+      ->condition('entity_type', 'node')
+      ->condition('field_name', 'field_og_parent_collection_ref')
+      ->condition('gid', $coll->nid)
+      ->execute();
+    $nids = $result->fetchCol();
+  }
+  return $nids;
+}
+
+/**
+ * Get a subcollection's parent node
+ */
+function shanti_collections_get_parent_collection($subcoll) {
+    if (is_numeric($subcoll)) { $subcoll = node_load($subcoll); }
+    if (!empty($subcoll->field_og_parent_collection_ref)) {
+        $pid = $subcoll->field_og_parent_collection_ref['und'][0]['target_id'];
+        $pnode = node_load($pid);
+        if ($pnode) {
+            return $pnode;
+        }
+    }
+    return FALSE;
+}
+
+/**
+ * Return the count of number of items in a collection
+ */
+function shanti_collections_get_items_in_collection($coll = FALSE, $return = "count")
+{
+  $nids = array();
+  if (is_numeric($coll)) {
+    $coll = node_load($coll);
+  } // Load collection node if id given
+  if ($coll) {
+    // Get all collection and subcollection nids invovled
+    $nids[] = $coll->nid;
+    $nids = array_merge($nids, shanti_collections_get_subcollections($coll));
+    /**
+     * Sample Query:
+     *      select count(etid) from og_membership where entity_type='node' and field_name='field_og_collection_ref' and gid in (3,1721,1725,1769,2228,2258,3498,3939,4836,4835,1760,1748,1841);
+     *
+     */
+    $query = db_select('og_membership', 'ogm');
+    $query->join('node', 'n', 'n.nid = ogm.etid');
+    $result = $query->fields('ogm', array('etid'))
+      ->condition('n.status', 1)
+      ->condition('ogm.entity_type', 'node')
+      ->condition('ogm.field_name', 'field_og_collection_ref')
+      ->condition('ogm.gid', $nids, 'IN')
+      ->execute();
+    $nids = $result->fetchCol();
+
+    if ($return == "nids") {
+      return $nids;
+    }
+  }
+  return count($nids);
+}
+
+/**
+ * Implements hook_form_alter for group nodes to add an "Add Members" link to the node edit form
+ */
+function shanti_collections_form_alter(&$form, &$form_state, $form_id) {
+    if (strstr($form_id, '_node_form')) {
+        // Only look at node forms
+        if (og_is_group_type('node', $form['#bundle'])) {
+            // If it is an existing group node edit form, add link to add users directly to group
+            if (!empty($form['nid']["#value"])) {
+                $url = "/group/node/{$form['nid']["#value"]}/admin/people/add-user";
+                $form['add_people_link'] = array(
+                    '#markup' => '<div class="group-edit-member-nav add"><a href="' . $url .
+                        '">' . t('Add Members') . '</a></div>',
+                    '#weight' => -49,
+                );
+            }
+        }
+    } else if ($form_id == 'og_ui_add_users') {
+        // Add back to group link from add user page
+        $url = '/' . drupal_get_path_alias('node/' . $form['gid']["#value"]);
+        $form['og_user']['name']['#prefix'] =  '<div class="group-edit-member-nav back"><a href="' . $url . '">' .
+                                            t('Return to Collection Page') . '</a></div>';
+    }
+}
+
+/**
+ * Implements hook_admin_paths_alter().
+ */
+function shanti_collections_admin_paths_alter(&$paths)
+{
+    // Make the add members form a sarvaka styled page
+    $paths['group/*/*/admin/*'] = FALSE;
+}
+/**
+ * Implements field_widget_form_alter
+ *      If options are broken down into "Collections" and "Subcollections" than it sorts both subarrays
+ */
+function shanti_collections_field_widget_form_alter(&$element, &$form_state, $context) {
+    if (isset($element['#field_name']) && $element['#field_name'] == 'field_og_collection_ref') {
+        if (!empty($element['#options']) && is_array($element['#options']["Collection"])) {
+            asort($element['#options']["Collection"]);
+        }
+        if (!empty($element['#options']) && is_array($element['#options']["Subcollection"])) {
+            asort($element['#options']["Subcollection"]);
+        }
+    }
+}

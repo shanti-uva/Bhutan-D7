@@ -1,0 +1,34 @@
+Index: sites/all/modules/contrib/biblio/modules/RIS/biblio_ris.module
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- sites/all/modules/contrib/biblio/modules/RIS/biblio_ris.module	(revision 52c6dc8cbceb2ac9caacf543e9ee475fa6cc722b)
++++ sites/all/modules/contrib/biblio/modules/RIS/biblio_ris.module	(date 1523456761000)
+@@ -353,14 +353,18 @@
+       }
+       break;
+     default :
+-      if ($field = _biblio_ris_field_map($tag)) {
+-        $node->$field .= $data;
+-      }
+-      else {
+-        if (!in_array($tag, $unmapped)) {
+-          $unmapped[] = $tag;
+-        }
+-      }
++        if (!empty($data)) {
++            if ($field = _biblio_ris_field_map($tag)) {
++                if (isset($node->{$field})) {
++                    $node->{$field} .= $data;
++                } else {
++                    $node->{$field} = $data;
++                }
++
++            } else if (!in_array($tag, $unmapped)) {
++                $unmapped[] = $tag;
++            }
++        }
+   }
+ }
+ 

@@ -1,0 +1,68 @@
+/* May want to change this name */
+/* shanti_texts_page_all_texts */
+
+.views-exposed-form #edit-title-wrapper label {
+  font-size: 14px;
+  font-family: 'museo-sans-700',Helvetica,Arial,sans-serif;
+  text-transform: uppercase;
+  vertical-align: middle;
+  padding: 5px;
+}
+
+.views-row {
+  float: left;
+  width: 100%;
+  background: white;
+  margin-bottom: 20px;
+  padding-right: 20px;
+}
+
+.views-field-title h3 i {
+  margin-right: 10px;
+}
+
+.views-field-field-general-featured-image img {
+  float: left;
+  margin-right: 25px;
+}
+
+.book-view-card-title {
+}
+
+.views-field-field-dc-creator-author-1 {
+  font-size: 14pt;
+  font-style: italic;
+  color: gray;
+}
+
+.views-field-field-dc-description {
+  font-size: 14pt;
+}
+
+ul#view-all-text-switcher {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  text-align: center;
+}
+
+ul#view-all-text-switcher li {
+  display: inline;
+}
+
+/* Not working ... */ 
+.views-exposed-widget {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  text-align: center;
+}
+
+label, .views-widget, .form-item, input {
+  display: inline;
+}
+
+#shanti-texts-mega-search-results li {
+  font-family: "museo-sans-500",Helvetica,Arial,sans-serif;
+} 
+

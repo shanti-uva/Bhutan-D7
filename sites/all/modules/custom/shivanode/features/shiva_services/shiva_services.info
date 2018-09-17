@@ -1,0 +1,13 @@
+name = Visuals Services
+description = Set up the services api for Shanti Visuals
+core = 7.x
+package = Visuals
+version = 7.x-1.0
+
+dependencies[] = ctools
+dependencies[] = services
+dependencies[] = shivanode
+features[ctools][] = services:services:3
+features[features_api][] = api:2
+features[services_endpoint][] = get_shivanode
+project path = sites/all/modules/shivanode/features

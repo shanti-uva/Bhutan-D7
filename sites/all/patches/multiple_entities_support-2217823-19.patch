@@ -1,0 +1,160 @@
+diff --git a/apachesolr_realtime.install b/apachesolr_realtime.install
+new file mode 100644
+index 0000000..78fbc11
+--- /dev/null
++++ b/apachesolr_realtime.install
+@@ -0,0 +1,12 @@
++<?php
++/**
++ * @file
++ * Install file for apachesolr_realtime
++ */
++
++/**
++ * Implements hook_uninstall().
++ */
++function apachesolr_realtime_uninstall() {
++  variable_del('apachesolr_realtime_entity_types');
++}
+\ No newline at end of file
+diff --git a/apachesolr_realtime.module b/apachesolr_realtime.module
+index ad8ceb4..fa3056e 100644
+--- a/apachesolr_realtime.module
++++ b/apachesolr_realtime.module
+@@ -8,7 +8,7 @@
+  * Implements hook_entity_insert().
+  */
+ function apachesolr_realtime_entity_insert($entity, $type) {
+-  if ($type == 'node') {
++  if (apachesolr_realtime_entity_type($type)) {
+     apachesolr_realtime_index_now($entity, $type);
+   }
+ }
+@@ -17,15 +17,17 @@ function apachesolr_realtime_entity_insert($entity, $type) {
+  * Implements hook_entity_update().
+  */
+ function apachesolr_realtime_entity_update($entity, $type) {
+-  if ($type == 'node' && $entity->status == TRUE) {
+-    // Clear the static loading cache.
+-    entity_get_controller('node')->resetCache(array($entity->nid));
+-
+-    apachesolr_realtime_index_now($entity, $type);
+-  }
+-  else if ($type == 'node' && $entity->status == FALSE) {
+-    // Remove the unpublished node from the index.
+-    apachesolr_realtime_entity_delete($entity, $type);
++  if (apachesolr_realtime_entity_type($type)) {
++    if ($type == 'node' && $entity->status == FALSE) {
++      // Remove the unpublished node from the index.
++      apachesolr_realtime_entity_delete($entity, $type);
++    }
++    else {
++      // Clear the static loading cache.
++      $entity_id = entity_id($type, $entity);
++      entity_get_controller($type)->resetCache(array($entity_id));
++      apachesolr_realtime_index_now($entity, $type);
++    }
+   }
+ }
+ 
+@@ -81,7 +83,7 @@ function apachesolr_realtime_index_now($entity, $type) {
+ 
+   // Prepare entity as document and send to solr.
+   // Obtain the Solr environments.
+-  $env_ids = _apachesolr_realtime_get_env_ids($entity->type);
++  $env_ids = _apachesolr_realtime_get_env_ids($type);
+ 
+   foreach ($env_ids as $env_id) {
+     $doc = apachesolr_index_entity_to_documents($item, $env_id);
+@@ -238,3 +240,91 @@ function _apachesolr_realtime_get_env_ids($entity_type) {
+ 
+   return $env_ids;
+ }
++
++/**
++ * Indicates whether an entity type should have real time updates.
++ * @param $entity_type
++ * @return bool
++ */
++function apachesolr_realtime_entity_type($entity_type) {
++  $entity_types = variable_get('apachesolr_realtime_entity_types', array());
++  return in_array($entity_type, $entity_types);
++}
++
++/**
++ * Implements hook_page_alter().
++ */
++function apachesolr_realtime_page_alter(&$page) {
++  // If this is the main apachesolr config page, add our entity type selection form after the existing one.
++  if (drupal_match_path(current_path(), 'admin/config/search/apachesolr')) {
++    $main =& $page['content']['system_main'];
++    // Get the environment ID out of the existing config form:
++    $env_id = $main['index_config_form']['config']['env_id']['#value'];
++
++    $main['apachesolr_realtime_entity_type_form'] = drupal_get_form('apachesolr_realtime_entity_type_form', $env_id);
++  }
++}
++
++/**
++ * Form builder for the entity type configuration form.
++ *
++ * @param array $form
++ * @param array $form_state
++ * @param string $env_id
++ *   The machine name of the environment.
++ *
++ * @return array $form
++ */
++function apachesolr_realtime_entity_type_form($form, $form_state, $env_id) {
++
++  $form['realtime'] = array(
++    '#type' => 'fieldset',
++    '#title' => t('Real time indexing'),
++    '#collapsible' => TRUE,
++  );
++
++  // For future extensibility, when we have multiple cores.
++  $form['realtime']['env_id'] = array(
++    '#type' => 'value',
++    '#value' => $env_id,
++  );
++
++  $options = array();
++
++  foreach (entity_get_info() as $entity_type => $entity_info) {
++    if (!empty($entity_info['apachesolr']['indexable'])) {
++      $options[$entity_type] = $entity_info['label'];
++    }
++  }
++
++  $form['realtime']['entity_types'] = array(
++    '#type' => 'checkboxes',
++    '#title' => t('Entity types that should be indexed in real time.'),
++    '#options' => $options,
++    '#default_value' => variable_get('apachesolr_realtime_entity_types', array()),
++  );
++
++  $form['realtime']['submit'] = array('#type' => 'submit', '#value' => t('Save'));
++
++  return $form;
++}
++
++/**
++ * Submit handler for apachesolr_realtime_entity_type_form
++ *
++ * @param array $form
++ * @param array $form_state
++ */
++function apachesolr_realtime_entity_type_form_submit($form, $form_state) {
++
++  // Filter the values from the form so only the types we want to index go into the config array.
++  $apachesolr_realtime_entity_types = array();
++
++  foreach ($form_state['values']['entity_types'] as $type) {
++    if ($type) {
++      $apachesolr_realtime_entity_types[] = $type;
++    }
++  }
++
++  variable_set('apachesolr_realtime_entity_types', $apachesolr_realtime_entity_types);
++}

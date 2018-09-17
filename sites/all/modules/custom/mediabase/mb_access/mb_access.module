@@ -1,0 +1,215 @@
+<?php
+
+/**
+* @file
+* Enable access control for UVa community and collection administrators.
+*/
+
+/**
+* The group_audience field.
+*/
+define('OG_GROUP_AUDIENCE_FIELD', 'field_og_collection_ref');
+
+/**
+* The access realm of a UVa community member.
+*/
+define('OG_ACCESS_UVA_MEMBER_REALM', 'group_access_uva_member');
+
+/**
+* The access realm of a UVa community member.
+*/
+define('MB_COLLECTION_ADMIN_REALM', 'mb_collection_admin');
+
+/**
+* Define group access UVA regardless of its group definition.
+*/
+define('OG_ACCESS_UVA', 2);
+
+/**
+* Define group public access.
+*/
+define('OG_ACCESS_PUBLIC', 0);
+
+/**
+* Define group content access UVA regardless of its group definition.
+*/
+define('OG_CONTENT_ACCESS_UVA', 3);
+
+/**
+* Implements hook_node_grants().
+*/
+function mb_access_node_grants($account, $op) {
+   $grants = array();
+   global $user;
+   
+   if ($op == 'view' && in_array('authenticated user', $user->roles)) {
+      // ADD A GRANT FOR UVA COMMUNITY
+      $grants[OG_ACCESS_UVA_MEMBER_REALM][] = DRUPAL_AUTHENTICATED_RID;
+   }
+
+   if (in_array($op, array('view', 'update', 'delete')) && in_array('authenticated user', $user->roles)) {
+      // ADD GRANTS FOR COLLECTION ADMINS
+      // fetch all of the collections
+      $query = new EntityFieldQuery();
+      $collections = $query
+      ->entityCondition('entity_type', 'node')
+      ->propertyCondition('type', array('collection', 'subcollection'), 'IN') //TODO: Test that this includes subcollections
+      ->execute();
+      
+      foreach ($collections['node'] as $node) {
+         if (og_user_access('node', $node->nid, 'administer group') ) {
+               $grants[MB_COLLECTION_ADMIN_REALM][] = $node->nid;
+         }  
+      }
+   }
+   // dd($grants['mb_collection_admin'][0], "mb_collection_admin  grants for $account->uid");
+   return $grants;
+}
+
+
+/**
+* Implements hook_node_access_records().
+*/
+function mb_access_node_access_records($node) {
+   $uva_grants = add_node_access_records($node);
+   /*$subgroup_grants = add_mb_collection_admin_node_access_records($node);
+   $grants = array_merge($uva_grants, $subgroup_grants);
+   if ( !empty($node->{OG_GROUP_AUDIENCE_FIELD}[LANGUAGE_NONE][0]['target_id'] ) ) { //
+         add_mb_collection_admin_node_access_records_for_audio_video( $node );
+   }*/
+   //dd($grants, "node access records");
+   return $uva_grants;
+}
+
+/**
+* Add OG_ACCESS_UVA_MEMBER_REALM records to node_access table
+* @todo Add a flag to a team that prompts group admin to re-save group content permissions when paradigm changes.
+**/
+function add_node_access_records($node) {
+   $grants = array();                    
+   $add_public_grant = FALSE;
+   $add_uva_grant = FALSE;
+   // GROUP
+   if ( isset($node->{OG_ACCESS_FIELD}) )  {
+       if (!isset($node->{OG_ACCESS_FIELD}[LANGUAGE_NONE])) {
+           $langs = array_keys($node->{OG_ACCESS_FIELD});
+           watchdog('mb_access', "No lang 'und' for node {$node->nid}. Langs are: " . implode(',', $langs) . '. Cannot add access record.');
+           return;
+       }
+      switch ($node->{OG_ACCESS_FIELD}[LANGUAGE_NONE][0]['value']) {
+	      case OG_ACCESS_UVA:
+	         $add_uva_grant = TRUE;
+	         break;
+	      case OG_ACCESS_PUBLIC:
+	         $add_public_grant = TRUE;
+	         break;
+      }
+   }
+   // GROUP CONTENT
+   elseif (isset($node->{OG_CONTENT_ACCESS_FIELD}[LANGUAGE_NONE][0]['value'])) { 
+      $content_access = $node->{OG_CONTENT_ACCESS_FIELD}[LANGUAGE_NONE][0]['value'];
+      // If group content is set to use group defaults, then go to the group to get the visibility
+      if ($content_access == OG_CONTENT_ACCESS_DEFAULT) {
+         $gid = $node->{OG_GROUP_AUDIENCE_FIELD}[LANGUAGE_NONE][0]['target_id'];
+         $node = node_load($gid);
+         // increment group_access value by 1 to get the relevant value for group_content_access
+         $content_access = $node->{OG_ACCESS_FIELD}[LANGUAGE_NONE][0]['value'] + 1;
+      }
+      switch ($content_access) {
+      case OG_CONTENT_ACCESS_PUBLIC:
+         $add_public_grant = TRUE;
+         break; // Do nothing.
+      case OG_CONTENT_ACCESS_PRIVATE:
+         break; // Do nothing.
+      case OG_CONTENT_ACCESS_UVA:
+         $add_uva_grant = TRUE;
+         break;
+      }
+   }
+   
+   if ($add_public_grant) {
+      $grants[] = array (
+            'realm' => 'all',
+            'gid' => 0,
+            'grant_view' => $node->status, // don't allow access to unpublished nodes
+            'grant_update' => 0,
+            'grant_delete' => 0,
+            'priority' => 0,
+            );
+   }
+   if ($add_uva_grant) {
+      $grants[] = array (
+         'realm' => OG_ACCESS_UVA_MEMBER_REALM,
+         'gid' => DRUPAL_AUTHENTICATED_RID,
+         'grant_view' => 1,
+         'grant_update' => 0,
+         'grant_delete' => 0,
+         'priority' => 0,
+         );
+   }
+   return $grants;
+}
+
+/**
+* Here we're adding grants for propagating permissions from a collection down into team objects
+* @todo fix the hardcoded 'team' node type hack
+ * 
+ * TAKEN OUT TO Work with new Collection feature in OG 2.x (2015-05-06)
+**/
+function add_mb_collection_admin_node_access_records($node) {
+   $grants = array();                    
+   $field_language = field_language('node', $node, OG_GROUP_AUDIENCE_FIELD);
+   $collection_gid = NULL;
+   // COLLECTION GRANTS
+   if ( $node->type == 'team' && isset($node->{OG_GROUP_AUDIENCE_FIELD}[$field_language][0])) { // team has a collection
+      $collection_gid = $node->{OG_GROUP_AUDIENCE_FIELD}[$field_language][0]['target_id'];
+   }
+   // AUDIO VIDEO GRANTS
+   elseif ( in_array($node->type, array('video', 'audio')) && isset($node->{OG_GROUP_AUDIENCE_FIELD}[$field_language]) ) {  // media item belongs to a team or collection
+      $gid = $node->{OG_GROUP_AUDIENCE_FIELD}[$field_language][0]['target_id'];      
+      $group = node_load($gid);
+      if ( isset($node->{OG_GROUP_AUDIENCE_FIELD}[$field_language]) ) { // team has a collection
+         $collection_gid = $node->{OG_GROUP_AUDIENCE_FIELD}[$field_language][0]['target_id'];
+      }
+   }
+   if ( is_numeric($collection_gid) ) {
+      $grants[] = array (
+         'realm' => MB_COLLECTION_ADMIN_REALM,
+         'gid' => $collection_gid, // gid here is group id not grant id
+         'grant_view' => 1,
+         'grant_update' => 1,
+         'grant_delete' => 1,
+         'priority' => 0,
+         );
+   }
+   return $grants;
+}
+
+/**
+ * TAKEN OUT TO Work with new Collection feature in OG 2.x (2015-05-06)
+ */
+function add_mb_collection_admin_node_access_records_for_audio_video( $node ) {
+   $gid = $node->{OG_GROUP_AUDIENCE_FIELD}[LANGUAGE_NONE][0]['target_id'];
+   // Select group members that don't yet have the proper grant records
+   $sql = "SELECT DISTINCT nid FROM {node}, {field_data_group_audience} 
+   WHERE nid = entity_id
+   AND group_audience_gid = :gid
+   AND nid NOT IN
+   ( SELECT nid FROM {node_access} WHERE nid = :nid AND realm = :realm)";
+   $res = db_query($sql, array(':nid' => $node->nid, ':gid' => $gid, ':realm' => MB_COLLECTION_ADMIN_REALM ) );
+   
+   // Save the group members to add the grant records
+   $nids = $res->fetchCol();
+   if ( sizeof($nids) > 100 ) { // too many collection members to update without timing out
+      node_access_needs_rebuild(TRUE);
+   }
+   else {
+      foreach ( $nids as $nid) {
+         $node = node_load($nid);
+         node_access_acquire_grants($node, $delete=TRUE);
+      }
+   }
+}
+
+
+

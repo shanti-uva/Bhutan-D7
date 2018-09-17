@@ -1,0 +1,177 @@
+<?php
+/**
+ * @file
+ * Creates bulk actions for use managing Mediabase collections
+ *
+ * The first such action was to filter subcollection values out of the subject field (field_characteristic)
+ * and into their own subcollection field. So, they could each be faceted separately.
+ * 
+ * Other actions can be added as needed.
+ */
+ 
+function mb_bulk_actions_action_info() {
+  $info = array(
+    
+    // Update Old Collection Nodes
+    'mb_bulk_actions_update_old_collections' =>  array(
+          'aggregate' => FALSE,
+          'type' => 'node',
+          'label' => t('Update old collection nodes'),
+          'behavior' => array('changes_property'),
+          'configurable' => FALSE,
+          'vbo_configurable' => FALSE,
+          'triggers' => array('any'),
+        ),
+    
+	// Change Collection for Multiple nodes
+	'mb_bulk_actions_change_collection' =>  array(
+          'aggregate' => FALSE,
+          'type' => 'node',
+          'label' => t('Change collection'),
+          'behavior' => array('changes_property'),
+          'configurable' => TRUE,
+          'vbo_configurable' => TRUE,
+          'triggers' => array('any'),
+        ),
+      );
+
+	return $info;
+}
+
+/**** Update Old Collection Nodes ****/
+
+function mb_bulk_actions_update_old_collections(&$node, $context) {
+    module_load_include('inc', 'mb_bulk_actions', 'mb_bulk_actions');
+    
+    /*
+     * Action to update old collection nodes to match new Shanti Collection content type
+     */
+    if ($node->type == 'collection') {
+         // Update the collection image
+         mb_bulk_update_image($node);  // in mb_bulk_actions.inc
+         
+         // Add default value for new field user inheritance
+         if (empty($node->og_user_inheritance)) {
+             $node->og_user_inheritance = array('und'=>array(array('value'=>1)));
+         }
+         
+         // Add default value for new field user permission inheritance
+         if (empty($node->og_user_permission_inheritance)) {
+             $node->og_user_permission_inheritance = array('und'=>array(array('value'=>0)));
+         }
+
+         // save the node
+         node_save($node);
+         
+    }
+         
+    // Update Teams
+    if ($node->type == 'team') {
+        // Change type to subcollection
+        $node->type = "subcollection";
+
+        // Update image
+        mb_bulk_update_image($node);
+       
+        // Save the node
+        node_save($node);
+        
+        // Move value of parent ref to new field
+         $res = db_update('og_membership')
+                    ->fields(array(
+                            'field_name' => 'field_og_parent_collection_ref'
+                         ))
+                    ->condition('etid', $node->nid, '=')
+                    ->execute();
+         
+        if ($res <> 1) { 
+             drupal_set_message($res . ' records changed in db for ' . $node->title . ' ('. $node->nid . ')');
+        }
+    }
+    
+    // update path alias with pathauto
+    if (module_exists('pathauto')) {
+        pathauto_node_update_alias($node, 'update');
+    }
+    
+}
+
+/**** Change Collection for Multiple Nodes ****/
+
+// Form Functions to get new Collection Node ID
+function mb_bulk_actions_change_collection_bulk_operations_form($options) {
+  $form = array();
+  $form['cid'] = array(
+    '#type' => 'textfield', 
+    '#title' => t('Enter the Node ID for the new collection'),
+    '#required' => TRUE,
+    '#default_value' => !empty($options['cid']) ? $options['cid'] : '',
+  );
+  $form['isnid'] = array(
+    '#type' => 'checkbox', 
+    '#title' => t('Is the Group ID a Node ID?'),
+    '#required' => TRUE,
+    '#default_value' => !empty($options['isnid']) ? $options['isnid'] : TRUE,
+  );
+  return $form;
+}
+
+function mb_bulk_actions_change_collection_form($settings, &$form_state) {
+  $form = array();
+  $form['cid'] = array(
+    '#type' => 'textfield', 
+    '#title' => t('Enter the Node ID for the new collection'),
+    '#required' => TRUE,
+    '#default_value' => isset($settings['settings']['cid']) ? $settings['settings']['cid'] : '',
+  );
+  $form['isnid'] = array(
+    '#type' => 'checkbox', 
+    '#title' => t('Is the Group ID a Node ID?'),
+    '#required' => TRUE,
+    '#default_value' => isset($settings['settings']['isnid']) ? $settings['settings']['isnid'] : TRUE,
+  );
+  return $form;
+}
+
+// TODO: Add a validation function to make sure collection id is valid?
+
+function mb_bulk_actions_change_collection_submit($form, $form_state) {
+  $return = array();
+  $return['cid'] = $form_state['values']['cid'];
+	$return['isnid'] = $form_state['values']['isnid'];
+  return $return;
+}
+
+function mb_bulk_actions_change_collection(&$node, $context) {
+	$gid = $context['cid'];
+	$isnid = $context['isnid'];
+	try {
+	    /** unnecessary in og 2.x gid IS nid  
+		if($isnid) {
+			$gobj = og_get_group('node', $gid);
+			$gid = $gobj->gid;
+		}*/
+		$flang = field_language('node', $node, 'group_audience');
+		$gpstosave = array();
+		foreach($node->group_audience[$flang] as $n => $farray) {
+		  $gnode = node_load($farray['gid']); // og_get_group('group', $farray['gid']);
+			if($gnode) {
+			    if($gnode->type != 'collection') { $gpstosave[] = $farray; }
+			} else {
+				watchdog('mb bulk actions change coll', "GID " . $farray['gid'] . ": etid not set!");
+			}
+		}
+		$newgid = array(
+			'gid' => $gid,
+			'state' => 1,
+			'created' => time(),
+		);
+		$gpstosave[] = $newgid;
+		$node->group_audience[$flang] = $gpstosave;
+		node_save($node);
+	} catch (Exception $e) {
+		watchdog('mb_bulk_action', "Problem changing collection on node {$node->nid}: {$e->getMessage()}");
+	}
+}
+
+/**** End of Change Collection ****/

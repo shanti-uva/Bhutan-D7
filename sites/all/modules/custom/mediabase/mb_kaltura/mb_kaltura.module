@@ -1,0 +1,555 @@
+<?php
+// $Id:$
+/**
+ * @file
+ * This module is an interface between Kaltura Entries and PBCore Fields.
+ *
+ * It autopopulates some pbcore fields
+ * It saves pbcore metadata to Kaltura
+ * It creates Mediabase node types (video,audio, image) when importing entries from Kaltura
+ *
+ * THE PBCORE FIELDS
+ * PbCoreIdentifier
+ * PbCoreTitle
+ * PBCoreSubject
+ * PBCoreDescription
+ * PBCoreGenre
+ * PBCoreRelation
+ * PBCoreCoverage
+ * PBCoreCreator
+ * PBCoreInstantiations
+ *    -PBCoreDateAvailable
+ *    -PBCoreFormatID
+ *    -PBCoreAnnotation
+ * PBCoreExtension
+ */
+
+define("METADATA_PROFILE_ID", 2631);
+define("METADATA_OBJECT_TYPE", 1);
+define("MB_MAIN_PLAYER_ID", 24762821);
+
+function mb_kaltura_init()
+{
+  drupal_add_js(drupal_get_path('module', 'mb_kaltura') . '/js/mb-kaltura.js');
+}
+
+/**
+ * Implements hook_views_api().
+ */
+function mb_kaltura_views_api() {
+  return array(
+    'api' => 3,
+  );
+}
+
+function mb_kaltura_menu()
+{
+  $items = array();
+  $items['xml/pbcore/%'] = array(
+    'title' => 'PBCore XML',
+    'description' => 'Modify items in PBCore elements are enabled.',
+    'page callback' => 'xml_pbcore',
+    'page arguments' => array(2),
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+    'file' => 'mb_kaltura.inc',
+  );
+  $items['mb_kaltura/autocomplete/collection'] = array(
+    'title' => 'Ahah callback',
+    'access arguments' => array('access content'),
+    'page callback' => 'mb_kaltura_autocomplete_collection',
+    'type' => MENU_CALLBACK,
+    'file' => 'mb_kaltura.inc',
+  );
+  $items['mb_kaltura/autocomplete/user'] = array(
+    'title' => 'Ahah callback',
+    'access arguments' => array('access content'),
+    'page callback' => 'mb_kaltura_autocomplete_user',
+    'type' => MENU_CALLBACK,
+    'file' => 'mb_kaltura.inc',
+  );
+  $items['mb_kaltura/upload-keepalive'] = array(
+    'title' => 'A Keep-alive callback to be called by js during long uploads',
+    'page callback' => 'mb_upload_keepalive',
+    'access arguments' => array('access content'),
+    'file' => 'mb_kaltura.inc',
+    'type' => MENU_CALLBACK
+  );
+  $items['mb_kaltura/subtitles/add'] = array(
+    'title' => 'Add Kaltura subtitle track',
+    'page callback' => 'mb_kaltura_ajax_add_subtitles',
+    'access arguments' => array('access content'),
+    'file' => 'mb_kaltura.inc',
+    'type' => MENU_CALLBACK
+  );
+  $items['mb_kaltura/subtitles/delete'] = array(
+    'title' => 'Delete Kaltura subtitle track',
+    'page callback' => 'mb_kaltura_ajax_delete_subtitles',
+    'access arguments' => array('access content'),
+    'file' => 'mb_kaltura.inc',
+    'type' => MENU_CALLBACK
+  );
+  return $items;
+}
+
+function mb_kaltura_menu_alter(&$items)
+{
+  //This alter overrides the menu item of same path defined in kaltura.module.
+  //Their import mechanism is broken so we re-do it here since we need extra behaviour anyway.
+  $items['admin/config/media/kaltura/import']['title'] = 'Import Kaltura Items';
+  $items['admin/config/media/kaltura/import']['page callback'] = 'drupal_get_form';
+  $items['admin/config/media/kaltura/import']['page arguments'] = array('mb_kaltura_import_form');
+  $items['admin/config/media/kaltura/import']['access arguments'] = array('administer mediabase');
+  $items['admin/config/media/kaltura/import']['file'] = 'mb_kaltura.inc';
+  $items['admin/config/media/kaltura/import']['module'] = 'mb_kaltura';
+
+  // This is a copy of  admin/settings/kaltura/entries/import  to go in the content menu
+  $items['admin/content/mediabase/import'] = $items['admin/config/media/kaltura/import'];
+  $items['admin/content/mediabase/import']['type'] = MENU_LOCAL_TASK;
+}
+
+
+function mb_kaltura_node_presave($node)
+{
+  $kaltura_node_types = array('video', 'audio');
+  $ntype = $node->type;
+  if ($ntype == 'audio') {
+    _mb_kaltura_add_audio_thumb($node);
+  }
+}
+
+/**
+ * Imports thumbnail image into Kaltura. Called from hook_node_presave to test if thumbnail has been changed.
+ */
+function _mb_kaltura_add_audio_thumb($node)
+{
+  $kaltura_helpers = new KalturaHelpers();
+  $kclient = $kaltura_helpers->getKalturaClient($isAdmin = TRUE);
+  $lang = field_language('node', $node, 'field_thumbnail_image');
+  $keid = $node->field_audio[$lang][0]['entryid'];
+  try {
+    // Check if thumbfield value
+    if (!empty($node->field_thumbnail_image[$lang][0]['fid'])) {
+      $nfid = $node->field_thumbnail_image[$lang][0]['fid'];
+      $file = file_load($nfid);
+      $url = file_create_url($file->uri);
+      $kclient->baseEntry->updateThumbnailFromUrl($keid, $url); // Send URL to Kaltura
+    } else {
+      // No thumbnail uploaded use default image
+      $url = file_create_url('public://avimages/generic-audio-thumb.jpg');
+      $kclient->baseEntry->updateThumbnailFromUrl($keid, $url);  // Send URL to Kaltura
+    }
+  } catch (Exception $e) {
+      watchdog('mb_kaltura', "Unable to set thumbnail on {$node->nid} (KID: {$keid}): " . $e->getMessage());
+  }
+}
+
+function mb_kaltura_form_alter(&$form, &$form_state, $form_id)
+{
+  drupal_add_js(drupal_get_path('module', 'mb_kaltura') . '/js/keepalive.js');
+
+  switch ($form_id) {
+    case 'node_delete_confirm':
+      $node = node_load($form['nid']['#value']);
+      if (in_array($node->type, array('video', 'audio'))) {
+        $newform = array();
+        $newform['delete_from_kaltura'] = array(
+          '#type' => 'checkbox',
+          '#title' => t('Delete Kaltura version also.'),
+        );
+        // add the option before the buttons
+        $pos = array_search('nid', array_keys($form));
+        $form = array_merge(array_slice($form, 0, $pos), $newform, array_slice($form, $pos));
+        array_unshift($form['#submit'], 'check_delete_from_kaltura');
+      }
+      break;
+
+    case 'video_node_form':
+      $form['field_video']['und'][0]['settings']['#type'] = 'hidden'; // Hide the custom settings for each display format
+      //dpm($form, 'video form');
+      break;
+
+    case 'audio_node_form':
+      $field_name = "field_" . $form['type']['#value'];
+      if (isset($form[$field_name][LANGUAGE_NONE])) {
+        unset($form[$field_name][LANGUAGE_NONE][0]['meta_edit']); // Remove the Edit Metadata link completely
+        if (!empty($form[$field_name][LANGUAGE_NONE][0]['entryid']['#default_value'])) {
+          // hide the add media button if media exists already.
+          // see the js file for logic that un-hides it if media is removed.
+          $button = &$form[$field_name][LANGUAGE_NONE][0]['button'];
+          $button['#markup'] = str_replace("a href", "a class='hidden' href", $button['#markup']);
+        }
+      }
+      break;
+  }
+}
+
+/**
+ *  check recent media nodes
+ *  compare how many instantiations we are expecting (per type)
+ *  check for timeouts somehow
+ *  probably we can fetch the flavor profile for expected flavor sets
+ */
+function mb_kaltura_cron()
+{
+}
+
+function mb_kaltura_field_formatter_info()
+{
+  return array(
+    'field_kaltura_player_html5_video' => array(
+      'label' => t('Raw Video Tag for Html5 Video'),
+      'field types' => array('field_kaltura_entryid'),
+      'setting' => array(),
+    ),
+    'field_kaltura_player_html5_audio' => array(
+      'label' => t('Raw Audio Tag for Html5 Audio'),
+      'field types' => array('field_kaltura_entryid'),
+      'setting' => array(),
+    ),
+  );
+}
+
+/**
+ * Get Kaltura ID from AV node (2017-03-30)
+ * Given either an audio or video node, returns its kaltura entry id
+ */
+function mb_kaltura_get_entryid($node) {
+    if (is_numeric($node)) { $node = node_load($node); }
+    if (in_array($node->type, array('audio', 'video'))) {
+        $lang = $node->language;
+        $fieldnm = "field_" . $node->type;
+        $field = $node->{$fieldnm};
+        $kid = $field[$lang][0]['entryid'];
+        return $kid;
+    }
+    return FALSE;
+}
+
+/**
+ * Makes the get media from entry id function accessible sitewide without needing the include file
+ *    ndg8f, @014-06-18
+ */
+function mb_kaltura_get_media_info($kid = NULL)
+{
+  if ($kid) {
+    module_load_include('inc', 'mb_kaltura', 'mb_kaltura');
+    return _get_media_from_entry_id($kid);
+  }
+  return FALSE;
+}
+
+function mb_kaltura_theme()
+{
+  return array(
+    'mb_kaltura_entry_table' => array(
+      'render element' => 'element',
+    ),
+    'mb_kaltura_entry_table_pager' => array(
+      'render element' => 'element',
+    ),
+  );
+}
+
+function theme_mb_kaltura_entry_table($vars)
+{
+//    dpm($vars, 'vars in thme');
+  $element = $vars['element'];
+  $header = array(t('Thumbnail'), t('Entry Id'), t('Title'), t('Type'), t('Date Created'));
+  array_unshift($header, array('class' => array('select-all'))); // Add select all checkbox and enabling javascript
+  array_unshift($header, '#');
+  drupal_add_js('misc/tableselect.js');
+  $rows = array();
+  $n = $element['#start_number'];
+  foreach (element_children($element) as $key) {
+    $rows[] = array(
+      array('data' => "{$n}."),
+      array('data' => render($element[$key]['c_check'])),
+      array('data' => render($element[$key]['c_thumb'])),
+      array('data' => render($element[$key]['c_eid'])),
+      array('data' => render($element[$key]['c_title'])),
+      array('data' => render($element[$key]['c_type'])),
+      array('data' => render($element[$key]['c_created'])),
+    );
+    $n++;
+  }
+  $page = theme('table', array('header' => $header, 'rows' => $rows));
+  return $page;
+}
+
+function theme_mb_kaltura_entry_table_pager($vars)
+{
+  //dpm($vars, 'vars in pager thme');
+  $element = $vars['element'];
+  $pn = $element['#current_page'];
+  $np = $pn + 1;
+  $pp = $pn - 1;
+  $total = $element['#total_items'];
+  $rws = $element['#items_per_page'];
+  $pgtotal = floor($total / $rws);
+  $path = current_path();
+  $firsturl = url($path, array('query' => array('rn' => $rws, 'pg' => 1)));
+  $prevurl = url($path, array('query' => array('rn' => $rws, 'pg' => $pp)));
+  $nexturl = url($path, array('query' => array('rn' => $rws, 'pg' => $np)));
+  $lasturl = url($path, array('query' => array('rn' => $rws, 'pg' => $pgtotal)));
+  $output = '<div class="mb-kaltura-entry-pager">';
+  $output .= '<div class="firstdiv"><a href="' . $firsturl . '" title="first page">|<</a> </div>';
+  $output .= '<div class="prevdiv"><a href="' . $prevurl . '" title="previous page"><</a> </div>';
+  $output .= '<div class="pagediv">Page <input type="text" class="pagenum form-text" size="5" value="' . $pn . '" /> of ' . $pgtotal . '</div>';
+  $output .= '<div class="nextdiv"><a href="' . $nexturl . '" title="next page">></a></div>';
+  $output .= '<div class="lastdiv"><a href="' . $lasturl . '" title="last page">>|</a></div></div>';
+  return $output;
+}
+
+/**
+ * Function to retrieve thumbnail URL from Kaltura
+ *   entry_id : kaltura entry id
+ *   width & height : are numeric
+ **/
+function mb_kaltura_get_thumbnail_url($entry_id, $width = 190, $height = 220, $resave = FALSE, $ctype = "video")
+{ // was $height 105 but defaults to lowest parameter.
+  $kalturaHelpers = new KalturaHelpers();
+  // create generic thumb url
+  $mbpath = drupal_get_path('module', 'mediabase');
+  $genericthumb = url($mbpath, array('absolute' => true)) . '/images/generic-video-thumb.jpg';
+  // if no entry_id is given, it's a node record without an attached kaltura a/v so return generic thumb
+  if ($entry_id == '' || strlen($entry_id) == 0) {
+    return $genericthumb;
+  }
+  // Otherwise get Katlura thumb and adjust type in URL
+  $thumburl = $kalturaHelpers->getThumbnailUrl(NULL, $entry_id, $width, $height);
+  $thumburl = str_replace('type/2', 'type/1', $thumburl);
+  $thumburl = str_replace('/bgcolor/000000', '', $thumburl);
+
+  // Make sure kaltura_thumb directory is in file structure or use default (Public)
+  $subfolder = substr($entry_id, 0, 3); // user first 3 chars of entry id for subfolder name
+  $directory = file_build_uri('kaltura_thumbs') . "/{$subfolder}";
+  if (!file_prepare_directory($directory, FILE_CREATE_DIRECTORY)) {
+    $directory = "public://";
+  }
+
+  // Create thumb filename based on entry_id
+  $destination = "{$directory}/{$entry_id}-thumb.png";
+
+  // If thumbnail already there, return it's url
+  if (file_exists($destination) && $resave === FALSE) {
+    return file_create_url($destination);
+  } else {
+    $headers = get_headers($thumburl); // Make sure Kaltura thumb is there to avoid warning
+    if (strpos($headers[0], '200')) {
+      // Otherwise, get the kaltura thumbnail and save locally
+      $file = system_retrieve_file($thumburl, $destination, FALSE, FILE_EXISTS_REPLACE);
+      if ($file !== false) {
+        // Return the local url for the thumb image
+        $thumburl = file_create_url($file);
+      } else {
+        // Or else there was a problem.
+        watchdog("mb_kaltura", "Could not save thumb image file for entry id: " . $entry_id);
+        $thumburl = $genericthumb;
+      }
+    } else {
+      // Can't get Kaltura thumb
+      $thumburl = $genericthumb;
+    }
+    if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == "on") {
+      $thumburl = str_replace('http:', 'https:', $thumburl);
+    }
+    return $thumburl;
+  }
+}
+
+function mb_kaltura_has_kaltura_thumb($entry_id, $width = 190, $height = 220) {
+    $kalturaHelpers = new KalturaHelpers();
+    $thumburl = $kalturaHelpers->getThumbnailUrl(NULL, $entry_id, $width, $height);
+    return mb_services_url_exists($thumburl);
+}
+
+/*
+===============
+SUBMIT HANDLERS
+===============
+*/
+function check_delete_from_kaltura(&$form, &$form_state)
+{
+  if ($form_state['values']['delete_from_kaltura'] == 1) {
+    module_load_include('inc', 'mb_kaltura', 'mb_kaltura');
+    $kalturaHelpers = new KalturaHelpers();
+    $nid = $form_state['values']['nid'];
+    $node = node_load($nid);
+    $client = $kalturaHelpers->getKalturaClient($isAdmin = TRUE);
+    $objectId = _get_entry_id_from_node($node);
+    $objectId = str_replace(",", "", $objectId);
+    $msg = '';
+    try {
+      $client->media->delete($objectId);
+      $msg = t("Deleted entry_id, @entryid from Kaltura server", array('@entryid' => $objectId));
+    } catch (Exception $e) {
+      $msg = t("Unable to delete entry @entryid, as it was not found on the Kaltura server", array('@entryid' => $objectId));
+    }
+    drupal_set_message($msg);
+  }
+}
+
+
+/*
+ * TRANSCRIPTS AND SUBTITLES
+ */
+function mb_kaltura_transcripts_apachesolr_add_transcript($nid, $trid)
+{
+  if ($tiers = transcripts_apachesolr_already_indexed_tiers('transcripts_node', 'node', $nid)) {
+    $env = mediabase_site_environment();
+    mb_kaltura_add_caption_assets($env == 'prod' ? '' : $env.'/', node_load($nid), $tiers, $trid);
+  }
+}
+
+function mb_kaltura_transcripts_apachesolr_delete_transcript($nid, $trids)
+{
+  if ($result = mb_kaltura_get_caption_assets(node_load($nid))) {
+    if ($result->totalCount > 0) {
+      $env = mediabase_site_environment();
+      if ($env == 'prod') {
+        foreach ($result->objects as $captionAsset) {
+          if (strpos($captionAsset->label, '/') === FALSE) {
+            mb_kaltura_delete_caption_asset($captionAsset->id);
+          }
+        }
+      }
+      else {
+        $prefix = $env.'/';
+        foreach ($result->objects as $captionAsset) {
+          if (strpos($captionAsset->label, $prefix) === 0) {
+            mb_kaltura_delete_caption_asset($captionAsset->id);
+          }
+        }
+      }
+    }
+  }
+}
+
+function mb_kaltura_transcripts_ui_js_alter(&$scripts)
+{
+  $scripts['ui'] = drupal_get_path('module', 'mb_kaltura') . '/js/transcripts_ui.js';
+}
+
+function mb_kaltura_get_caption_assets($node)
+{
+  $field_name = $node->type == 'video' ? 'field_video' : 'field_audio';
+  if ($video = field_get_items('node', $node, $field_name)) {
+    try {
+      $helpers = new KalturaHelpers();
+      $client = $helpers->getKalturaClient($isAdmin = TRUE);
+      $captionPlugin = KalturaCaptionClientPlugin::get($client);
+      $filter = new KalturaAssetFilter();
+      $filter->entryIdEqual = $video[0]['entryid'];
+      $pager = null;
+      return $captionPlugin->captionAsset->listAction($filter, $pager);
+    } catch (Exception $ex) {
+      watchdog('mb_structure', 'Error trying to retrieve Kaltura subtitles for node id ' . $node->nid);
+    }
+  }
+  return FALSE;
+}
+
+function mb_kaltura_message($message, $success)
+{
+  drupal_set_message($message, $success ? 'status' : 'error');
+  return array(
+    'status' => $success ? 'success' : 'error',
+    'message' => theme('status_messages'),
+  );
+}
+
+function mb_kaltura_get_language_for_label($label)
+{
+  $refl = new ReflectionClass('KalturaLanguage');
+  foreach ($refl->getConstants() as $code => $language) {
+    if ($label == $language) return $label;
+  }
+  return "Volapuk";
+}
+
+function mb_kaltura_add_caption_assets($prefix, $node, $tiers, $trid)
+{
+  $all_tiers = transcripts_ui_tiers();
+  $tier_ids = explode(" ", $tiers);
+  $field_name = $node->type == 'video' ? 'field_video' : 'field_audio';
+  $video = field_get_items('node', $node, $field_name);
+  $entry_id = $video[0]['entryid'];
+  try {
+    $solr = transcripts_apachesolr_get_solr();
+    $url = $solr->getUrl(); // includes final slash
+    $helpers = new KalturaHelpers();
+    $client = $helpers->getKalturaClient($isAdmin = TRUE);
+    $captionPlugin = KalturaCaptionClientPlugin::get($client);
+    $messages = array();
+    $caption_ids = array();
+    foreach ($tier_ids as $tier_id) {
+      $captionAsset = new KalturaCaptionAsset();
+      $tier_name = $all_tiers[$tier_id];
+      $captionAsset->label = $prefix.$tier_name;
+      $captionAsset->language = mb_kaltura_get_language_for_label($tier_name);
+      $captions = $captionPlugin->captionAsset->add($entry_id, $captionAsset);
+      $caption_id = $captions->id;
+      $contentResource = new KalturaUrlResource();
+      $contentResource->url = $url . "select?fl=fts_start,fts_end," . $tier_id . "&q=is_trid:" . $trid . "&rows=999&sort=fts_start%20ASC&start=0&wt=xslt&tr=srt.xsl";
+      $captionPlugin->captionAsset->setContent($caption_id, $contentResource);
+      $messages[] = 'Your request to add ' . $prefix.$tier_name . ' subtitles is being processed.';
+      $caption_ids[] = $caption_id;
+    }
+    $messages[] = 'It may take some time for the media to be updated.';
+    return array_merge(
+      mb_kaltura_message(implode(" ", $messages), TRUE),
+      array(
+        'data' => array(
+          'caption_ids' => $caption_ids,
+        ),
+      )
+    );
+  } catch (Exception $ex) {
+    watchdog('mb_kaltura', 'Error trying to add Kaltura subtitles for node ' . $node->nid);
+    return mb_kaltura_message('An error connecting to the media server prevented subtitles from being added to this media.', FALSE);
+  }
+}
+
+function mb_kaltura_delete_caption_asset($caption_id)
+{
+  try {
+    $helpers = new KalturaHelpers();
+    $client = $helpers->getKalturaClient($isAdmin = TRUE);
+    $captionPlugin = KalturaCaptionClientPlugin::get($client);
+    $captionPlugin->captionAsset->delete($caption_id);
+    return mb_kaltura_message('Your request to remove subtitles is being processed. It may take some time for the media to be updated.', TRUE);
+  } catch (Exception $ex) {
+    return mb_kaltura_message('An error connecting to the media server prevented these subtitles from being removed from the media', FALSE);
+  }
+}
+
+/**
+ * Return total minutes for a list of a views results. Used in php block in views.
+ */
+function mb_kaltura_get_total_minutes($results) {
+
+    $kids = array();
+    foreach ($results as $res) {
+        $type = $res->node_type;
+        $fn = "field_field_{$type}";
+        if (isset($res->{$fn}[0]['raw']['entryid'])) {
+            $kids[] = $res->{$fn}[0]['raw']['entryid'];
+        }
+    }
+    $tsec = 0;
+    $kidchunk = array_chunk($kids, 100);
+    foreach($kidchunk as $n => $kidc) {
+        $q = "select sum(kaltura_duration) from {node_kaltura} where kaltura_entryid IN (:kids);";
+        $dbq = db_query($q, array(':kids'=>$kidc))->fetchAll();
+        $tsec += ($dbq[0]->{"sum(kaltura_duration)"} * 1);
+    }
+    if (!$tsec || !is_numeric($tsec) || $tsec < 1) {
+        return "0 seconds";
+    } else {
+        $hours = floor($tsec / 3600);
+        $minutes = floor(($tsec / 60) % 60);
+        $seconds = $tsec % 60;
+        return "$hours hrs $minutes mins $seconds secs = $tsec seconds ";
+    }
+}

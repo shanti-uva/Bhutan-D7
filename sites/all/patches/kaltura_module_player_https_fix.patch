@@ -1,0 +1,15 @@
+diff --git a/docroot/sites/all/modules/contrib/kaltura/plugins/field_kaltura/field_kaltura.module b/docroot/sites/all/modules/contrib/kaltura/plugins/field_kaltura/field_kaltura.module
+index 10e1054..597e604 100755
+--- a/docroot/sites/all/modules/contrib/kaltura/plugins/field_kaltura/field_kaltura.module
++++ b/docroot/sites/all/modules/contrib/kaltura/plugins/field_kaltura/field_kaltura.module
+@@ -1053,7 +1053,9 @@ function field_kaltura_build_embed($item, $type, $settings, $path, $uid, $thumb_
+     $uiconf = !empty($settings['custom_player']) ? $settings['custom_player'] : $settings['entry_widget'];
+     $partner_id = variable_get('kaltura_partner_id', 0);
+     $kaltura_server = variable_get('kaltura_server_url', KALTURASETTINGS_SERVER_URL);
+-
++     if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') {
++         $kaltura_server = str_replace('http://', 'https://', $kaltura_server);
++     }
+     $html_id = drupal_html_id('js-kaltura-media-' . $item);
+ 
+     $js_settings['embedKWidget'][$html_id] = array(

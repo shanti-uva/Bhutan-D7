@@ -1,0 +1,37 @@
+/* CKEditor Footnotes */
+
+#shanti-texts-body sup[data-footnote-id] a {
+  font-size: 10px;
+  background-color: #EEE;
+  padding-left: .5em;
+  padding-right: .5em;
+}
+
+#shanti-texts-body section.footnotes {
+	border-top: 1px solid gray;
+	padding: 10px 0;
+	margin: 30px 0;
+	clear:both;
+}
+
+#shanti-texts-body section.footnotes header {
+	display:none;
+}
+
+#shanti-texts-body section.footnotes ol {
+	list-style-type: none;
+	margin-left: 0;
+	padding-left: 0;
+}
+
+#shanti-texts-body li[data-footnote-id] > a {
+  background-color: #EEE;
+  padding-left: .5em;
+  padding-right: .5em;	
+  font-size: 80%;
+}
+
+#shanti-texts-body section.footnotes cite {
+	font-size: 90%;
+	font-style: normal;
+}

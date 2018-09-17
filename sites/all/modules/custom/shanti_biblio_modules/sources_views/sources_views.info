@@ -1,0 +1,8 @@
+name = Sources custom views module
+description = Custom views module for Sources site.
+package = SHANTI
+core = 7.x
+
+files[] = sources_search_access_filter.inc
+files[] = biblio.inc
+stylesheets[all][] = sources_views.css

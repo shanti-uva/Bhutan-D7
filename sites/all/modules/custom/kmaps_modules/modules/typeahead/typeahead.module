@@ -1,0 +1,20 @@
+<?php
+/**
+ * Implementation of @link (hook_libraries_info(), http://drupalcontrib.org/api/drupal/contributions%21libraries%21libraries.api.php/function/hook_libraries_info/7)
+ * @return array() of library definitions
+ */
+function typeahead_libraries_info()
+{
+    $libraries['typeahead'] = array(
+        'name' => 'typeahead.js',
+        'download url' => 'https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js',
+        'version' => '0.11.1',
+        'files' => array(
+            'js' => array(
+                'typeahead.bundle.min.js',
+            ),
+        ),
+    );
+
+    return $libraries;
+}

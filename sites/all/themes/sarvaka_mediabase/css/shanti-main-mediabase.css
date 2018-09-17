@@ -1,0 +1,1601 @@
+/**
+* Mandala Audio-Video - Development
+*
+* version 1.x - shanti-main-mediabase.css
+* -------------------------------------------------------
+* University of Virginia / SHANTI MANDALA / AUDIO-VIDEO
+* -------------------------------------------------------
+*
+*/
+
+/* BEGIN sub-theme colors */
+.titlearea,
+.carousel-control,
+.breadcrumb .icon,
+.nav-tabs.nav-justified>li.active>a,
+.nav-tabs.nav-justified>li.active>a:focus,
+.nav-tabs.nav-justified>li.active>a:hover,
+.ui-resizable-handle.ui-resizable-nw.active,
+.ui-resizable-handle.ui-resizable-nw:active{
+  background-color: #31acb6 !important;
+}
+
+.bootstrap-select.btn-group.show-tick .dropdown-menu>li.selected>a .glyphicon-ok,
+.bootstrap-select.btn-group.show-tick .dropdown-menu>li.selected>a:hover .glyphicon-ok,
+.bootstrap-select.btn-group.show-tick .dropdown-menu>li.selected>a:active .glyphicon-ok,
+.view-section .nav-tabs>li.active>a, 
+.view-section .nav-tabs>li.active>a:hover, 
+.view-section .nav-tabs>li.active>a:active,
+.view-section .fancytree-container .glyphicon,
+.view-section .fancytree-container .fancytree-node:hover > .glyphicon,
+.view-section .fancytree-container .fancytree-node:active > .glyphicon,
+.view-section .fancytree-node.fancytree-active > .glyphicon,
+.view-section .fancytree-node.fancytree-selected > .glyphicon{
+  color: #31acb6 !important;
+}
+
+.nav-tabs.nav-justified>li.active {
+  border-top-color: #31acb6 !important;
+}
+
+.carousel-indicators li:hover, .carousel-indicators li.active,
+.kmaps-tt-suggestion:hover:not(.kmaps-tt-selected)::before,
+.kmaps-tt-suggestion.kmaps-tt-cursor::before,
+.bootstrap-select.btn-group .dropdown-menu li:hover>a::before,
+.bootstrap-select.btn-group .dropdown-menu li.selected>a::before,
+.bootstrap-select.btn-group .dropdown-menu li.disabled>a::before{
+  border-color: #31acb6;
+  background-color: #31acb6 !important;
+}
+
+.mb-av-form .bootstrap-select.btn-group .dropdown-menu li.selected>a,
+.mb-av-form .bootstrap-select.btn-group .dropdown-menu li.disabled>a,
+.mb-av-form .bootstrap-select.btn-group .dropdown-menu li.selected>a>span.text{
+  /*background-color: #cbdfdf;*/
+}
+
+.ui-resizable-handle.ui-resizable-w,
+.ui-resizable-handle.ui-resizable-w:hover { border-color: #31acb6 transparent transparent transparent; }
+.ui-resizable-handle.ui-resizable-w:active { border-color: transparent; /* reset */ }
+
+@media screen and (min-width: 500px) {
+  .navbar-header .site-slogan{ color:#298e97 !important; } /* Darker shade for banner site-slogan text */
+  .navbar-brand:hover .site-slogan{ color: #555 !important; } 
+  .navbar-header:active .site-slogan{ color:#298e97 !important; } 
+}
+
+@media screen and (min-width: 768px) {
+  .nav-tabs.nav-justified>li.active::before{
+    color: #31acb6 !important;
+  }
+}
+
+::-moz-selection { background: #FF963F !important; }
+::selection { background: #FF963F !important; }
+
+/*** END - colors ***/
+
+/*
+.front #block-system-main.block.block-system{
+  float:left;
+}
+*/
+
+
+/**
+* Page Layouts
+*/
+.node-type-audio #block-system-main,
+.node-type-video #block-system-main{
+  margin-top: 0;
+}
+
+.logged-in.node-type-audio #block-system-main,
+.logged-in.node-type-video #block-system-main{
+  margin-top:-0.75em;
+}
+
+.node-type-audio article.main-col,
+.node-type-video article.main-col{
+  max-width: 1050px !important;
+}
+
+.node-type-audio.has-transcript .main-col,
+.node-type-video.has-transcript .main-col {
+  max-width: 1900px !important;
+}
+
+.front .sidebar-second.sidebar-offcanvas .dropdown-menu.open{
+  padding-top:0;
+}
+
+
+/*
+article.main-col{
+  max-width: 100% !important;
+  padding-top: .5rem;
+}
+*/
+
+
+
+
+
+/* Home media list block */
+
+/* Filters on top of block */
+#views-exposed-form-browse-media-home-block .views-exposed-form {
+    min-width: 450px;
+    /*margin-right: -50px;*/
+}
+
+    #views-exposed-form-browse-media-home-block .views-exposed-widget{
+      padding-top:0.75rem;
+    }
+
+    #views-exposed-form-browse-media-home-block {
+        margin-right: -3rem;
+    }
+
+    .view-filters-mb {
+        margin-right: -3rem;
+    }
+
+    #views-exposed-form-browse-media-home-block  .views-exposed-widget {
+        padding-right: 0rem !important;
+    }
+
+    #views-exposed-form-browse-media-home-block .views-exposed-form input#edit-title {
+        max-width: 130px;
+    }
+
+
+
+#block-views-browse-media-home-block .contextual-links-wrapper{
+  position: absolute;
+  top: -5px;
+}
+
+
+/* Kmaps List page views*/
+/** Are these used anymore? (ndg, 2016-12-08)  */
+.page-list .shanti-view-dom-id > h2 {
+  font-size: 1.75em;
+  margin: 12px 0px 0px;
+}
+
+    .page-list .shanti-view-dom-id .view-media-by-kmap {
+      margin-top: 16px;
+    }
+
+    .page-list .shanti-view-dom-id .lineage {
+      margin-top: 12px;
+      margin-left: -6px;
+    }
+
+    .page-list .shanti-view-dom-id .lineage .label {
+      font-size: 1.25rem;
+      color: #444;
+      font-weight: bold;
+    }
+
+    .page-list .shanti-view-dom-id .lineage .links:text-only {
+      font-size: 1.25rem;
+      color: #444;
+    }
+
+    .page-list .shanti-view-dom-id .lineage .links a {
+      font-size: 1.25rem;
+      font-weight: normal;
+    }
+/* This is too general */
+.views-exposed-form .views-widget-filter-title label {
+  display: none;
+}
+
+
+/*-- Pager fixes (for solr results) --*/
+.pager-first .icon,
+.pager-previous .icon,
+.pager-next .icon,
+.pager-last .icon {
+  border: none;
+}
+
+.page-contact form#contact-site-form.contact-form{
+  max-width: 90rem;
+  margin-left: 11%;
+}
+
+
+
+/**
+* ------------------------------
+* Shanti Filters Gallery Header
+* ------------------------------
+*/
+
+/*
+.shanti-filters {
+  height: 7.5em;
+}
+
+.shanti-filters .ajax-progress {
+  position: absolute;
+  top: 1.35rem;
+}
+
+.shanti-filters .control-box .ajax-progress {
+  display: none;
+}
+*/
+
+.shanti-filters .control-box-cell-header {
+  margin: 0.8rem 0 0 0;
+  padding: 0;
+  width: 21%;
+}
+
+.shanti-filters .control-box-cell-header span{
+  float: left;
+  padding:0;
+  margin:0 0 0 1rem;
+  line-height:2rem;
+}
+
+.shanti-filters .control-box-cell-header .label {
+  color: #555;
+  text-transform: uppercase;
+  font-size:0.82em;
+  display:none !important;
+}
+
+.shanti-filters .count {
+  margin-bottom: .4rem;
+  text-transform: capitalize;
+  font-size: 0.93em;
+  white-space: nowrap;
+  overflow:visible;
+}
+
+.shanti-filters .control-box-cell-header .view-result-count-info {
+	margin: 0;
+	padding: 0;
+	float: left;
+}
+
+.shanti-filters .control-box-cell-filters {
+  margin: 0;
+  /*padding-left:3rem;*/
+}
+
+.shanti-filters .control-box-cell-filters .views-exposed-form .form-item {
+  margin-right: 1rem;
+}
+
+.shanti-filters .control-box-cell-filters .bootstrap-select.btn-group:not(.input-group-btn){
+  /* margin:0; */
+}
+
+.shanti-filters .form-item.form-type-select.form-item-sort-by label,
+.shanti-filters .form-item.form-type-select.form-item-sort-order label {
+    display: none;
+}
+
+.shanti-filters .control-box-cell-filters .view-filters-mb {
+  margin-right:0;
+}
+
+.shanti-filters .control-box-cell-pager,
+.shanti-filters .control-box-cell-filters{
+  width:100%;
+}
+
+.shanti-filters .control-box-cell-pager {
+  padding: 0;
+  margin: 0;
+}
+
+.shanti-filters table.pagerer {
+  margin: 0.5rem 0 0;
+}
+
+.shanti-filters.bottom table.pagerer {
+  margin-top:2rem 0 3rem;
+}
+
+.front .shanti-filters .control-box-cell-pager table.pagerer {
+  margin-top: -0.7rem;
+}
+
+.shanti-filters table.pagerer,
+.shanti-filters .control-box-cell-pager {
+  float:right;
+}
+
+.page-collections .shanti-filters table.pagerer{
+  margin-top: 0;
+}
+
+.page-collections .shanti-filters .control-box-cell-pager{
+ /* margin-top: -3.3rem;
+  width: 60% !important;*/
+  float:right;
+}
+
+
+
+/* new on June 2, 2016 mf8yk */
+.form-type-select.form-item-sort-bef-combine .btn {
+  width: 15rem;
+}
+
+.form-type-select.form-item-sort-bef-combine label {
+  display: none !important;
+}
+
+
+
+
+
+
+.navbar nav.navtop .block h2 {
+  display: none;
+}
+
+.field-multiple-table .bootstrap-select.field_pbcore_title-delta-order .selectpicker {
+  width: 70px;
+  margin-left: 20px;
+}
+
+
+
+
+#node_video_form_group_details > .panel-body > div,
+#node_audio_form_group_details > .panel-body > div{
+  margin:0;
+  background: #f9f9f9;
+  padding: 0 1.2rem;
+}
+
+#node_video_form_group_details > .panel-body .field-name-group-audience,
+#node_audio_form_group_details > .panel-body .field-name-group-audience{
+  padding-top: 1.5rem;
+}
+
+
+#locale-translation-filter-form .form-item-translation {
+  width: 22em;
+}
+
+#locale-translation-filter-form .form-actions {
+  margin-left: 0;
+  padding: 1.25em 0 0 1em;
+ /* padding typo override */
+}
+
+
+
+
+#edit-field-pbcore-instantiation-und-0-field-date-created{
+  float: left;
+  width: 50%;
+}
+
+.panel-body fieldset.form-wrapper legend{
+  margin-left: 0;
+}
+
+
+
+
+/*--- show-hide toggle button ---*/
+a.show-annot, a.hide-annot {
+  font-size: 1em;
+  text-transform: uppercase;
+  font-family: sans-serif;
+  font-weight: bold;
+  margin-left: -0.5em;
+}
+
+a.show-annot::before,
+a.hide-annot::before {
+  color: #5a65d1;
+  font-size: 0.62em;
+  line-height: .75em;
+  font-weight: normal;
+  padding-right: 0.62em;
+  font-family: 'Glyphicons Halflings';
+  content: '\002b';
+ /*-- plus icon */
+  position: relative;
+  top: -1px;
+}
+
+
+
+/**
+* -------------------
+* All Collections
+* -------------------
+*/
+.page-collections .view-collections{
+  margin-bottom:10rem;
+}
+
+/**All collections page when second sidebar is present **/
+.one-sidebar.sidebar-second.page-collections-all .view-browse-media {
+    clear: both;
+}
+
+.one-sidebar.sidebar-second.page-collections-all .view-browse-media .shanti-gallery {
+    margin-top: 35px;
+}
+
+.page-collections .shanti-thumbnail-image a .overlay::before,
+.page-mycontent-collections .shanti-thumbnail-image a .overlay::before{
+  /* shanticon-grid icon for collections
+  content: "\e61b";  */
+}
+
+.view-collections .shanti-field-body{
+  border-top: 1px solid #ddd;
+  margin-top: 0.5rem;
+  padding-top: 0.4rem;
+  line-height: 1.25em;
+}
+
+.view-collections .shanti-thumbnail .body-wrap{
+  height: 14rem;
+  padding-top: 0;
+}
+
+.shanti-collections .content-section {
+  padding-top: 0;
+}
+
+#edit-title-wrapper label {
+  font-size: 1.25em;
+  text-transform: capitalize;
+  margin: -4px 8px 0 0;
+}
+
+.view-id-collections .shanti-thumbnail-field.shanti-field-title {
+    margin-top: 6px;
+    font-weight: bold;
+}
+
+/**
+* --------------------------
+* My Collections
+* --------------------------
+*/
+.page-mycontent-collections .view-my-memberships {
+    margin-top: 1rem;
+}
+
+.page-mycontent-collections .shanti-filters .control-box-cell-header {
+    min-width: 460px;
+}
+
+/**
+* --------------------------
+* Individual Collections
+* --------------------------
+*/
+
+.node-collection .field-subcollection label {
+  margin: 0;
+}
+
+.node-type-team h2:first-of-type{
+  margin-top: 1rem;
+  margin-bottom: 0.8rem;
+}
+
+/**
+* --------------------------
+* Individual A/V pages
+* --------------------------
+*/
+
+.av-main-wrapper{
+  padding-top:1.25rem;
+  min-height:550px;
+}
+
+.node-type-audio .av-main-wrapper
+.node-type-video .av-main-wrapper{
+    padding-top:0;
+  }
+
+/* KMaps terms with popover tooltips */
+.field-type-shanti-kmaps-fields-default .field-items-span{
+  font-style:italic;
+  display: inline;
+  font-size:0.93em;
+}
+
+/**
+* Related Audio-Video Tab
+*/
+.av-related-wrapper.col-xs-12{
+  padding-top:2rem;
+  margin-bottom: .8rem;
+  font-family: 'Helvetica Neue', helvetica, sans-serif !important;
+  letter-spacing: 0.04rem;
+  background:#eee;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.av-related-wrapper #related .related-av-nodes {
+  padding: 12px;
+ }
+
+.av-related-wrapper #related .panel-group .panel{
+   box-shadow: none;
+ }
+
+.av-related-wrapper #related .panel-heading{
+   display:none;
+ }
+
+.av-related-wrapper #related .tab-content{
+   border:none;
+}
+
+/**
+*  BEGIN target metadata */
+
+/* Metadata on a/v record */
+#field_collection_item_field_workflow_full_group_workflow .subgroup {
+  float: left;
+  width: 33%;
+}
+
+#field_collection_item_field_workflow_full_group_workflow .subgroup p {
+  display: inline-block;
+}
+
+
+/* add space after collection name */
+#av-details .field-name-av-collection {
+  margin-bottom: 0.8rem;
+  font-size: 1.12em;
+}
+
+#av-details .field-type-taxonomy-term-reference {
+  margin: 9px 0px 3px;
+}
+
+#av-details .field-type-taxonomy-term-reference ul {
+  margin: 3px 0px 0px 0px;
+}
+
+
+#av-details .field-label-inline{
+  line-height: 2em;
+}
+
+#av-details .field-name-field-recording-location-new{
+  line-height: 1em;
+}
+
+#av-details .group-availability-access .field-name-field-tags{
+  line-height:2.5em;
+}
+
+#av-details .field-items-span,
+#av-details .field-label-inline,
+#av-details .field-label-inline .field-label,
+#av-details .field-label-inline .field-items{
+  display:inline;
+  color: #444;
+}
+
+#av-details .field-name-field-format-id-source.field-label-inline {
+  padding-left: 4px;
+}
+
+
+#av-details .field-name-field-pbcore-instantiation .field-label,
+#av-details .field-name-field-identifier-source > .field-items{
+  margin-bottom: .4rem;
+  text-transform: uppercase;
+}
+
+.panel-body .field-type-field-collection .field-item a:hover{
+  border-bottom:transparent;
+}
+
+.panel-body .field-type-field-collection .field-item a::before{
+  content: '';
+  width: .8rem;
+  height: .8rem;
+  background-color: #5a65d1;
+  border: 0.15rem solid transparent;
+  display: inline-block;
+  border-radius: 50%;
+  background-clip: padding-box;
+  margin-right: 0.8rem;
+  position: relative;
+  top: -0.1rem;
+  filter: alpha(opacity=80);
+  opacity:.8;
+  margin-left:1rem;
+}
+.panel-body .field-type-field-collection .field-item a:hover::before{
+  background: #5a65d1;
+  border-color: #5a65d1;
+}
+.panel-body .field-type-field-collection .field-item a:active::before{
+  background-color:transparent;
+}
+
+.panel-body .field-name-field-pbcore-relation .field-items .even:first-child{
+  margin-top:.5rem;
+}
+
+#av-details .field-name-field-pbcore-identifier,
+#av-details .field-name-field-pbcore-instantiation{
+  margin-top: .8rem;
+  color: #444;
+}
+
+#av-details .field-name-field-recording-location {
+  margin: 0 !important;
+}
+
+#av-details .field-label,
+#av-details .field-label-span{
+  color: #444;
+  margin: 0;
+  font-size: 13px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+#av-details .mb-identifier label{
+  color: #333;
+  margin: 0;
+  font-size: 14px;
+  text-transform: capitalize;
+}
+
+#av-details .mb-identifier.field-label-span,
+#av-details .field-type-shanti-kmaps-fields-default{
+  margin-bottom: 5px;
+}
+
+#av-details .mb-identifier.field-label-span{
+  margin-bottom: 1rem;
+}
+
+#av-details .field-name-field-pbcore-format-id > .field-items > .field-item {
+  display: block;
+}
+
+#av-details .field-name-field-format-id > .field-label {
+  display: none;
+}
+
+#av-details .field-name-field-format-id-source .field-item::before {
+  content: '(';
+}
+
+#av-details .field-name-field-format-id-source .field-item::after {
+  content: ')';
+  clear: both;
+}
+
+/* hiding double display of Publisher label */
+#av-details .field-name-field-pbcore-publisher > .field-label {
+  display: none;
+}
+
+#av-details .group-availability-access .field-label,
+#av-details .group-availability-access .field-label-span{
+  float:left;
+  text-transform: uppercase;
+}
+
+#av-details .field-type-datetime{
+  float:none !important;
+}
+
+#av-details .group-technical .field-name-field-format-id-source{
+  float:left;
+  position:relative;
+  left:-8.9rem;
+}
+
+
+#av-details .popover-link{
+  position: relative;
+  top: 0.25rem;
+}
+
+#av-details .popover-link-tip{
+  /*position: relative;
+  bottom: 1.12rem;*/
+}
+
+#av-details .popover-link .icon{
+  position: relative;
+  bottom: 0.2rem;
+}
+
+
+
+
+
+/**
+* KALTURA Player
+*/
+.kaltura-embed{
+   min-height:400px;
+}
+
+.kaltura-embed > div > div{
+  min-height:400px;
+  max-height:515px;
+  border-width:0;
+}
+
+.audio-video .kaltura-embed,
+.audio-video .kaltura-embed > div > div{
+  min-height: 100%;
+}
+
+.kaltura-thumb-wrap {
+  clear: none;
+  display: inline-block;
+}
+
+.views-table .kaltura-thumb img {
+  height: 50px;
+}
+
+.kaltura_status_ok {
+  background-image: none !important;
+  border: none !important;
+}
+
+object.KalturaDynamicPlayer {
+  width: 100% !important;
+}
+
+fieldset.form-wrapper .f-set{
+  border:none; /* video node edit page */
+}
+
+fieldset.form-wrapper .f-set > table{
+  margin-left:2rem;  /* in node-video admin edit page */
+}
+
+
+/**
+* VIDEO / Audio : Metadata
+*
+* Container '.avdesc' within '.video-row' contains two columns
+* - left column: date, author, rating, social
+* - right column: video description
+*
+*/
+
+.video-row {
+  margin-top: 0.1rem;
+}
+
+.avdesc {
+  margin: 0;
+  padding-bottom:1.5rem;
+  max-width: 800px;
+}
+/* BEGIN right desc col */
+.video-overview {
+  padding-bottom: 2rem;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.video-overview  .show-more {
+  position: relative;
+  top: -0.7rem;
+  border: 1px double #ccc;
+  border-width: 3px 0;
+  padding: .3rem 0 .2rem;
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.video-overview .show-more a{
+  font-size:0.88em;
+  display: block;
+}
+
+.video-overview .icon.shanticon-create::before{
+  content: "\e634";
+  font-size: 1.25em;
+  position: relative;
+  top: .3rem;
+  margin-right: .3rem;
+}
+
+
+
+
+
+
+/*.video-overview .desc-readmore {
+  margin: -10px 0 20px;
+} */
+
+.video-overview > h5 {
+  text-transform: uppercase;
+    }
+/* BEGIN left metadata column */
+.avinfo {
+  padding-left: 0px !important;
+  padding-top:1rem;
+}
+
+/*
+.node-type-audio .avinfo{
+  width: 33.33333333% !important;
+}
+
+.node-type-audio .video-overview{
+  padding-right: 0 !important;
+  width: 75% !important;
+}
+*/
+
+.node-type-audio.has-transcript .avinfo,
+.node-type-audio.has-transcript .video-overview{
+  width: 100% !important;
+}
+
+
+.avinfo .trans-btn {
+  padding-bottom: 5px;
+}
+
+.avinfo .btn.btn-primary.btn-icon {
+  margin: 0 0 5px;
+}
+
+.avinfo > h5:first-child {
+  margin: 0;
+}
+
+.avinfo > h5 {
+  margin-bottom: 0.3rem;
+}
+
+.avinfo .avauthor{
+  overflow:hidden;
+  white-space: nowrap;
+  text-overflow:ellipsis;
+  margin-right:0.5rem;
+  font-size:90%;
+}
+
+.avinfo .avauthor .icon.shanticon-agents::before{
+  margin-right:0.5rem;
+}
+
+.avdate .icon,
+.avduration .icon,
+.avuploader .icon {
+  margin-right: 0.25em;
+}
+
+.shanti-gallery .shanti-field-place a {
+    display: inline;
+    font-size: 1.02em;
+}
+/* BEGIN avrating */
+.fivestar-static-item .form-item{
+  margin-top:-1rem;
+}
+
+.fivestar-widget .star{
+  width: 17px;
+  height: 17px;
+}
+.fivestar-average-stars .star,
+.fivestar-average-stars .star a,
+.fivestar-average-stars .star span {
+  font-family: 'FontAwesome';
+  color: #ccc;
+  text-indent: 0;
+  display: inline-block;
+  font-size: 1em;
+  letter-spacing: 0.75em;
+  background-image: none !important;
+  border-bottom: none;
+}
+
+.fivestar-average-stars .star a:hover,
+.fivestar-average-stars .star a:active {
+  color: #5a65d1;
+  border-bottom: none;
+}
+
+.fivestar-average-stars .star a::before,
+.fivestar-average-stars .star span::before {
+  content: '\f005';
+  background-image: none !important;
+}
+
+.fivestar-average-stars .star.on a,
+.fivestar-average-stars .star span.on {
+  color: #555;
+  background-image: none !important;
+}
+
+.fivestar-static-form-item .description {
+  padding-left: 0;
+}
+
+.fivestar-basic div.fivestar-widget .cancel,
+.fivestar-basic div.fivestar-widget .cancel a {
+  color: #777;
+  font-size: 0.88em;
+  width: 1.1rem;
+  height: 1.5rem;
+  margin-right: 0.5rem;
+  letter-spacing: normal;
+  font-family: 'shanticon';
+  text-indent: 0;
+  background-image: none;
+  border: none;
+}
+
+.fivestar-basic div.fivestar-widget .cancel a:hover,
+.fivestar-basic div.fivestar-widget .cancel a:active {
+  color: red;
+}
+
+.fivestar-basic div.fivestar-widget .cancel a::before {
+  content: '\e60f';
+}
+/* BEGIN avshare */
+.avshare div h5 span {
+  color: #5a65d1;
+  font-size: 0.9em;
+  font-weight: normal;
+}
+
+.avshare ul {
+  list-style-type: none;
+  padding-left: 0;
+  margin-top: 5px;
+}
+
+.avshare ul li {
+}
+
+.avshare ul li a {
+  color: #555;
+  font-weight: bold;
+  border-bottom: none;
+}
+
+.avshare ul li a:hover {
+  border-bottom: none;
+}
+
+.avshare ul li a .icon {
+  color: #5a65d1;
+  font-size: 1.5em;
+  margin-right: 3px;
+  position: relative;
+  top: 3px;
+}
+
+
+
+
+.node-video > h2 {
+  line-height: 1.75em;
+  font-size: 1.18em;
+  position: relative;
+  top: 0.3rem;
+}
+
+
+ul.inline li a,
+.compact-link a,
+ul.links.inline li a{
+  color: #5a65d1;
+  text-transform: capitalize;
+  font-family: 'Helvetica Neue',helvetica,arial,sans-serif;
+  font-weight: bold;
+}
+/* links at bottom of media nodes (add comments, add to favs) */
+ul.links.inline {
+  margin: 0 0 2rem 2rem;
+  float:left;
+}
+
+.node-video ul.links.inline a {
+  font-size: 0.93em;
+}
+
+
+
+
+.field-name-field-tags .field-item a {
+  float: left;
+  padding: 0.06em 0.5em;
+}
+
+.field-item-span {
+  display: inline;
+}
+
+
+
+.avplace .field,
+.avplace .field .field-items,
+.avplace .field .field-item {
+  display: inline;
+}
+
+.avsubjects,
+.avplace {
+  margin-top: 10px;
+}
+
+.avplace,
+.avcollection{
+  font-size: 1em;
+}
+
+.field-items-span ul {
+  display: inline;
+  margin: 0;
+  padding: 0;
+}
+
+.field-name-field-pbcore-description > .field-items > .field-item {
+  margin-bottom: 12px;
+}
+
+.field-name-field-pbcore-title.field-type-field-collection {
+  /*padding: 5px;
+  border-top: 1px solid #fff;
+  border-bottom: 1px solid #ddd;*/
+  margin-bottom: 1rem;
+}
+
+.form-type-select.form-item-spaces-features-transcripts-settings {
+  width: 7em;
+}
+
+
+
+
+/**
+* New node place markup in video overview
+*/
+
+/* Tibetan in av descriptions*/
+.avpbcoredesc div.bo p {
+  font-size: 1.75rem;
+}
+
+/** Tibetan text areas in node form **/
+.node-form .bo textarea {
+  font-size: 1.75rem;
+}
+
+.pb-desc-label {
+  padding: 0px;
+  margin: 0px;
+  font-size: 1rem;
+}
+
+.field-collection-item-field-pbcore-description .pb-desc-label.langname {
+    font-size: 1.25rem;
+}
+
+.page-node-add .node-form .media-field-description {
+    margin-left: 1.5rem;
+    font-size: 1.25rem;
+    font-style: normal;
+    line-height: 1.88em;
+    border: .15rem solid #ddd;
+    padding: 1.25rem 2rem 1.5rem;
+    background: #fff;
+    border-radius: .75rem;
+}
+
+
+h3.node-desc {
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 1em;
+}
+
+h4.node-desc-type {
+  text-transform: uppercase;
+  font-size: 0.8em;
+}
+
+.avnode-details-buttons {
+  float: right;
+  position: relative;
+  top: -1rem;
+  right: 2rem;
+ /* hide buttons - temp */
+  display: none !important;
+}
+
+.avnode-details-buttons .btn.btn-sm {
+  width: 14em;
+  text-align: center;
+  font-size: 0.62em;
+  font-family: 'museo-sans-700',helvetica,arial,sans-serif;
+  font-weight: bold;
+}
+
+/* play button on video player */
+.largePlayBtn {
+  margin: -2.5rem 0 0 -3rem;
+  padding: 1rem 2rem;
+  border: 1px solid #555;
+  background-color: #000;
+}
+
+.largePlayBtn:hover {
+  background-color: #000;
+}
+
+.largePlayBtn::before {
+  content: '\e647';
+  font-size: 1rem;
+  font-family: 'shanticon';
+}
+
+.largePlayBtn::after {  }
+/**
+*** END video view */
+
+/*** Miscellaneous Workflow ***/
+.page-workflow-all td.views-field.views-field-field-transcript,
+.page-mycontent-workflow td.views-field.views-field-field-transcript {
+    text-transform: none; 
+}
+
+
+
+/*-------------------------*/
+/***** BEGIN min-width *****/
+/*-------------------------*/
+@media screen and (min-width:500px) {
+
+  .shanti-filters{
+    height: 5.2em;
+  }
+
+  .shanti-filters .control-box-cell-pager{
+    width:60%;
+    margin-top: -3.6rem;
+  }
+
+  /*.logged-in.front .shanti-filters .control-box-cell-pager {
+    margin-top: -8rem;
+  }*/
+  /*
+  .page-collections .shanti-filters .control-box-cell-pager{
+    width: 60% !important;
+  }*/
+  .page-collections .shanti-filters .control-box-cell-filters,
+  .page-collections .shanti-filters .control-box-cell-header{
+    width: 100% !important;
+  }
+
+  .page-collections .shanti-filters .control-box-cell-filters .views-exposed-widget{
+    /*padding-top:0.7rem;*/
+    margin-top: 0 !important;
+  }
+
+  .page-collections .shanti-filters .control-box-cell-pager{
+    /*margin-top: -4rem;*/
+  }
+}
+
+@media screen and (min-width:600px) {
+
+}
+
+@media screen and (min-width: 768px) {
+
+  .shanti-filters .control-box-cell-header p {
+  	display: inline-block;
+  	font-size: 90%;
+  	min-width: 460px;
+  }
+
+  /**
+  * Media Page layout
+  */
+  .av-main-wrapper{
+    margin-right:0;
+    margin-left:0;
+    position: relative;
+  }
+
+  .av-related-wrapper.col-xs-12{
+    padding-left:15px;
+    padding-right:15px;
+  }
+  /* .av-main-transcript-section{
+    padding-left: 1rem;
+    position: absolute;
+    right: 0rem;
+    bottom: 0;
+    top: 0;
+  }*/
+
+  .av-main-video-section {
+    padding-right: 0 !important;
+    width:70% !important;
+  }
+
+  .has-transcript .av-main-video-section {
+    /*min-height:750px;*/
+  }
+
+  .node-type-audio.has-transcript .av-main-video-section,
+  .node-type-video.has-transcript .av-main-video-section {
+    width:50% !important;
+  }
+
+  .node-type-audio .av-main-video-section {
+   /*width: 100% !important;*/
+  }
+
+  .node-type-audio.has-transcript .av-main-video-section {
+    /*width: 41.66666667% !important;*/
+    /*min-height:600px;*/
+  }
+
+  .node-type-audio .avinfo{
+    /*width: 25% !important;*/
+  }
+
+  .node-type-audio .video-overview{
+   /* padding-right: 0 !important;
+    width: 66.66666667% !important;*/
+  }
+
+  .node-type-audio.has-transcript .video-overview{
+    /*width: 100% !important;*/
+  }
+
+}
+
+@media screen and (min-width: 992px) {
+
+  .shanti-filters{
+    height: 3.25em;
+  }
+
+  .front .shanti-filters  .control-box-cell-pager table.pagerer {
+    margin-top: 0.4rem;
+  }
+
+  .shanti-filters .control-box-cell-header {
+    padding-top: 0.25rem;
+  }
+
+  .shanti-filters .control-box-cell-pager {
+    margin-right: 0;
+    margin-top: 0.5rem;
+  }
+
+  .shanti-filters .control-box-cell-pager,
+  .shanti-filters .control-box-cell-filters{
+    width:  33.333%;
+  }
+
+  .sidebar-second.not-front .shanti-filters .control-box-cell-pager{
+    width:  36%;
+  }
+    .sidebar-second.not-front .shanti-filters .control-box-cell-filters{
+      width:  40%;
+    }
+
+  .node-type-collection .shanti-filters .control-box-cell-pager,
+  .node-type-subcollection .shanti-filters .control-box-cell-pager {
+        width: 33%;
+   }
+        .node-type-collection .shanti-filters .control-box-cell-filters,
+        .node-type-subcollection .shanti-filters .control-box-cell-filters {
+            width: 45%;
+       }
+}
+
+@media (min-width:1100px) {}
+
+@media (min-width:1150px) {}
+
+@media screen and (min-width: 1170px) {
+
+    body:not(.page-user) section.sidebar-second{
+      max-width: 25%;
+      float: right;
+    }
+}
+
+@media (min-width:1250px) {
+
+  .shanti-filters .control-box-cell-pager{
+    width:33%;
+  }
+}
+
+@media screen and (min-width: 1450px) {
+
+    body:not(.page-user) .content-section.col-md-9{
+      width:79%;
+    }
+
+    body:not(.page-user) section.sidebar-second{
+      max-width: 20%;
+    }
+}
+
+@media (min-width:1750px) {
+    body:not(.page-user) .content-section.col-md-9{
+      width:84%;
+    }
+
+    body:not(.page-user) section.sidebar-second{
+      max-width: 16%;
+    }
+}
+
+
+
+
+
+/**
+* --------------------
+* BEGIN - MAX-Width
+* --------------------
+*/
+@media screen and (max-width: 768px) {
+
+  .shanti-filters .control-box-cell-pager{
+    margin-top: -6.7rem;
+  }
+  .sidebar-second.not-front .shanti-filters .control-box-cell-pager{
+    margin-top: -7.7rem;
+  }
+
+
+  .page-collections-all.sidebar-second.not-front .shanti-filters .control-box-cell-pager{
+    margin-top: -1rem;
+  }
+  .page-collections-all .shanti-filters table.pagerer{
+    float:left;
+  }
+}
+
+@media screen and (max-width: 991px) {
+
+  .sidebar-second.not-front .shanti-filters .control-box-cell-pager{
+    margin-top: -4.6rem;
+  }
+
+}
+
+/** User Edit Form **/
+/** don't display password fields because we use netbadge and simpleSaml **/
+.page-user-edit .form-item-current-pass, .page-user-edit .form-item-pass {
+    display: none;
+}
+
+/**
+* --------------
+* BEGIN Carousel
+* --------------
+*/
+/* Fonts above carousel */
+.front .field-type-text-with-summary h4 {
+  display: none;
+}
+
+.front .field-type-text-with-summary h4 + p {
+  padding: 1.7rem 2rem 0;
+  line-height:1.56em;
+}
+
+.page-user .user-picture img{
+  height:150px !important;
+}
+
+
+
+
+
+
+
+
+.page-search article.main-col {
+  max-width: 100% !important;
+}
+
+
+@media screen and (min-width: 1170px) {
+
+    .collection-page .collections-content.col-md-9 {
+      width:75%;
+    }
+
+    .collection-page section.sidebar-second{
+      max-width: 20%;
+      float:right;
+    }
+} 
+
+@media screen and (min-width: 1450px) {
+
+    .collection-page .collections-content.col-md-9 {
+      width:77%;
+    }
+}
+
+@media screen and (min-width: 1600px) {
+
+    .collection-page .collections-content.col-md-9 {
+      width:79%;
+    }
+}
+
+@media (min-width:1750px) {
+
+    .collection-page .collections-content.col-md-9 {
+      width:80%;
+    }
+
+    .collection-page section.sidebar-second{
+      max-width: 15%;
+    }
+}
+
+@media (min-width:1900px) {
+
+    .collection-page .collections-content.col-md-9 {
+      width:83%;
+    }
+}
+
+@media (min-width:2100px) {
+
+    .collection-page .collections-content.col-md-9 {
+      width:84%;
+    }
+}
+
+@media (min-width:2200px) {
+
+    .collection-page .collections-content.col-md-9 {
+      width:85%;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*** BEGIN iframe 
+.in-frame div.site-banner,
+.in-frame div.banner .page-title .icon,
+.in-frame div.banner .breadwrap,
+.in-frame div.banner .banner-tabs,
+.in-frame #search-flyout,
+.in-frame footer.footer,
+.in-frame #admin-footer,
+.in-frame #admin-menu{
+  display: none !important;
+  height: 0 !important;
+  width: 0 !important;
+}
+
+body.in-frame.html {
+  margin-top: 0 !important;
+  background: #e0e0e0 !important;
+}
+
+.in-frame div.titlearea,
+.in-frame div.titlearea.has-tabs,
+.in-frame div.titlearea > div{
+  color: #444 !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+
+}
+
+.in-frame .titlearea { height: 2.75rem; }
+.in-frame .titlearea.has-tabs { margin-bottom:0; }
+
+.in-frame .titlearea .page-title-text {
+  text-shadow: none !important;
+  color: #444 !important;
+  padding-left: 12px !important;
+  box-shadow: none !important;
+  border: none !important;
+  line-height: 1.8em !important;
+}
+
+.in-frame .titlearea .page-title {
+  padding-top: 0px;
+  margin: 0 0 0 1rem;
+}
+
+.in-frame .tab-content.container-fluid,
+.in-frame .main-wrapper.container-fluid,
+.in-frame .node-type-audio .tab-pane.main-col > div{
+  max-width: 100% !important;
+  padding-right:0;
+  padding-left:0;
+}
+*/
+
+/** Hide JIRA feedback button 
+.in-frame .atlwdg-trigger.atlwdg-SUBTLE { display: none; }
+**/
+
+/*--- BEGIN iframe parent target subtheme colors 
+.in-frame .nav-tabs.nav-justified>li.active a{
+  background: #444 !important;
+}
+.in-frame .nav-tabs.nav-justified>li.active a:hover,
+.in-frame .nav-tabs.nav-justified>li.active a:active{
+  background: #444 !important;
+}
+.in-frame .nav-tabs.nav-justified>li.active{
+  border-color: #444 !important;
+}
+.in-frame .nav-tabs.nav-justified>li.active::before{
+  color: transparent !important;
+}
+.in-frame .bootstrap-select.btn-group.show-tick .dropdown-menu>li.selected>a .check-mark,
+.in-frame .bootstrap-select.btn-group.show-tick .dropdown-menu>li.selected>a:hover .check-mark,
+.in-frame .bootstrap-select.btn-group.show-tick .dropdown-menu>li.selected>a:active .check-mark,
+.in-frame .bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a:hover .icon-ok.check-mark::before,
+.in-frame .bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a:active .icon-ok.check-mark::before,
+.in-frame .btn-group-transcript .bootstrap-select.btn-group .dropdown-menu li>a.opt .glyphicon.glyphicon-download-alt{
+  color: #555 !important;
+}
+
+@media screen and (min-width: 768px) {
+
+    .in-frame .nav-tabs.nav-justified>li.active::before{ color: #444 !important; }
+}
+-----*/
+
+
+
+
+
+

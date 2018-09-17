@@ -1,0 +1,40 @@
+{
+	"id":"default",
+	"langs": {
+		"eng": [
+			{
+				"title": "Perspective",
+				"machine_name": "perspective",
+				"type": "radio",
+				"options": [
+					"gen:General",
+					"tib:Tibetan"
+				]
+			},
+			{
+				"title": "Subject Language",
+				"machine_name": "subject_language",
+				"type": "radio",
+				"options": [
+					"eng:English",
+					"chisimp:Chinese Characters (simplified)",
+					"chitrad:Chinese Characters (traditional)",
+					"devanagari:Devangiri Script",
+					"romanpop:Popular Standard (romanization)",
+					"romanschol:Scholarly Standard (romanization)",
+					"tibscript:Tibetan Script (simplified)",
+					"tibroman:Tibetan Script (romanization)"
+				]
+			},
+			{
+				"title": "Show Subject Details",
+				"machine_name": "subject_detail",
+				"type": "radio",
+				"options": [
+					"1:Yes",
+					"0:No"
+				]
+			}
+		]
+	}
+}

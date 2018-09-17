@@ -1,0 +1,330 @@
+<?php
+
+define('SHANTI_TEXTS_PATH', drupal_get_path('module','shanti_texts'));
+
+function shanti_texts_help($path, $arg)
+{
+    if ($path == "admin/help#shanti_texts") {
+        return '<p>'.t('SHANTI Texts help is not currently available.').'</p>';
+    }
+}
+
+function shanti_texts_enable()
+{
+    drupal_set_message($message = t('SHANTI Texts activated.'), $type = 'status');
+    drupal_theme_rebuild();
+}
+
+function shanti_texts_menu()
+{
+    return array(
+        'shanti_texts' => array(
+            'page callback' => 'shanti_texts_default',
+            'type' => MENU_CALLBACK,
+            'access arguments' => array('access content'),
+        ),
+        'shanti_texts/voyant/%' => array(
+            'page callback' => 'shanti_texts_voyant',
+            'page arguments' => array(2),
+            'type' => MENU_CALLBACK,
+            'access arguments' => array('access content'),
+        ),
+        'shanti_texts/node_ajax/%' => array(
+            'page callback' => 'shanti_texts_node_ajax',
+            'page arguments' => array(2),
+            'type' => MENU_CALLBACK,
+            'access callback' => 'user_access',
+            'access arguments' => array('access content'),
+        ),
+        'shanti_texts/node_ajax_text/%' => array(
+            'page callback' => 'shanti_texts_node_ajax_text',
+            'page arguments' => array(2),
+            'type' => MENU_CALLBACK,
+            'access callback' => 'user_access',
+            'access arguments' => array('access content'),
+        ),
+
+        'shanti_texts/node_embed/%' => array(
+            'page callback' => 'shanti_texts_node_embed',
+            'page arguments' => array(2),
+            'type' => MENU_CALLBACK,
+            'access callback' => 'user_access',
+            'access arguments' => array('access content'),
+        ),
+
+        'shanti_texts/node_json/%' => array(
+            'page callback' => 'shanti_texts_node_json',
+            'page arguments' => array(2),
+            'type' => MENU_CALLBACK,
+            'access arguments' => array('access content'),
+        ),
+        'admin/content/book/shanti_texts' => array(
+            'title' => 'SHANTI Texts',
+            'page callback' => 'shanti_texts_admin_page',
+            'type' => MENU_LOCAL_TASK,
+            'weight' => 10,
+            'access arguments' => array('administer shanti texts'),
+        ),
+    );
+}
+
+function shanti_texts_permission()
+{
+    return array(
+        'administer shanti texts' => array(
+            'title' => t('Administer SHANTI Texts'),
+            'description' => t('Perform administration tasks for SHANTI Texts.'),
+        ),
+    );
+}
+
+/**
+* Menu Callbacks
+*/
+
+function shanti_texts_default()
+{
+    drupal_goto("<front>"); // Redirect to front page
+}
+
+function shanti_texts_voyant($nid)
+{
+    global $base_url;
+    $url = "https://voyant-tools.org";
+    $q = array(
+        'input'  => "$base_url/shanti_texts/node_ajax_text/$nid",
+    );
+    $url = url($url, array('external' => TRUE,  'query' => $q));
+    drupal_goto($url);
+}
+
+function shanti_texts_node_ajax($nid)
+{
+    drupal_goto("shanti_texts/node_embed/$nid");
+}
+
+function shanti_texts_node_ajax_text($nid)
+{
+    $node = node_load($nid);
+    $html = views_embed_view('single_text_body','panel_pane_default',$node->book['bid']);
+    // Strip tags for plain text as this is used by Voyant (MANU-4152)
+    $html = preg_replace('/\s{2,}/', ' ', trim($html));
+    $html = preg_replace("/\n{2,}/", "\n", $html);
+    header('Content-Type:text/html; charset=utf-8');
+    print strip_tags($html);
+}
+
+function shanti_texts_node_embed($nid)
+{
+    $node = node_load($nid);
+    $build = node_view($node,'embed'); // This view mode is declared in Display Suite -- should it just be declared here?
+    $url = parse_url(variable_get('shanti_kmaps_admin_server_subjects_explorer'));
+    drupal_add_http_header('X-Frame-Options', 'ALWAYS-ALLOW ' . $url['host']);
+    return $build;
+}
+
+function shanti_texts_node_json($nid)
+{
+    $node = node_load($nid);
+    print ajax_render($node);
+}
+
+function shanti_texts_admin_page()
+{
+    $build = array(
+	    '#type' => 'container',
+	    '#prefix' => ('<h2>SHANTI Texts Admin Page</h2>'),
+    );
+    return $build;
+}
+
+/**
+ * Blocks
+ */
+
+function shanti_texts_block_info()
+{
+	$blocks['flyout_search'] = array(
+		'info' => t('Flyout Search Tabs'),
+		'cache' => DRUPAL_CACHE_PER_ROLE,
+	);
+	return $blocks;
+}
+
+function shanti_texts_block_view($block_key)
+{
+    $block = array();
+    if ($block_key == 'flyout_search')
+	{
+        $block['subject'] = t('Flyout Search Tabs');
+        $block['content'] = t('Replace this content with a template.');
+    }
+    return $block;
+}
+
+/**
+ * Alterations
+ */
+
+function shanti_texts_menu_alter(&$items)
+{
+    $items['node/%node/reorder']['title'] = 'Sort Text Sections';
+    unset($items['node/%node/edit']['title']);
+    $items['node/%node/edit']['title callback'] = 'shanti_texts_edit_tab_title';
+    $items['node/%node/edit']['title arguments'] = array(1);
+}
+
+function shanti_texts_edit_tab_title($node)
+{
+    if ($node->type == 'book')
+    {
+        if ($node->book['nid'] == $node->book['bid'])
+        {
+            return t('Edit Top Section');
+        }
+        else
+        {
+            return t('Edit Child Section');
+        }
+    }
+    return t('Edit');
+}
+
+function shanti_texts_form_alter(&$form, &$form_state, $form_id) {
+    if ($form_id == 'book_admin_edit')
+    {
+        $form['save']['#value'] = 'Save text sections';
+    }
+    elseif ($form_id == 'book_node_form')
+    {
+        $form['actions']['submit']['#value']  = 'Save text section';
+        // Hide things if this is the form for a book child page
+        $nid = $form['nid']['#value'];
+        $bid = $form['#node']->book['bid'];
+        if ($nid != $bid) {
+            hide($form['field_og_collection_ref']);
+            hide($form['field_general_featured_image']);
+            field_group_hide_field_groups($form, array('group_collection','group_book_metadata','group_book_admin'));
+        }
+    }
+
+    $search_flyout_forms = array(
+      'views-exposed-form-text-search-block-3',
+      'views-exposed-form-full-text-local-2-block',
+    );
+    if($form_id == 'views_exposed_form' && in_array($form['#id'], $search_flyout_forms)) {
+      $form_state['view']->display_handler->handlers['empty']['area']->options['format'] = 'full_html';
+
+      $input = $form_state['input'];
+      $term = NULL;
+      $no_results_message = "<p>" . t("There are no results for '%s'. Check your spelling or try a different term.") . "</p>";
+      if (array_key_exists('title', $input)) {
+        $term = $input['title'];
+      } else if (array_key_exists('search_api_views_fulltext', $input)) {
+        $term = $input['search_api_views_fulltext'];
+      }
+      if($term && count($form_state->view->result) == 0) {
+        $form_state['view']->display_handler->handlers['empty']['area']->options['content'] = sprintf(
+          $no_results_message,
+          check_plain($term)
+        );
+      }
+    }
+}
+
+function shanti_texts_node_insert($node)
+{
+    if ($node->type == 'book')
+    {
+        _shanti_texts_book_update_or_insert($node,'insert');
+    }
+}
+
+function shanti_texts_node_update($node)
+{
+    if ($node->type == 'book')
+    {
+        _shanti_texts_book_update_or_insert($node,'update');
+    }
+}
+
+function _shanti_texts_book_update_or_insert($node,$op)
+{
+    if (empty($node->nid))
+    {
+        // Should not happen at this point (apparently)
+    }
+
+    // Case: Child; set collection to parent's
+    elseif ($node->nid != $node->book['bid'])
+    {
+        $book = node_load($node->book['bid']);
+        $lang = $node->language;
+        if (isset($book->field_og_collection_ref))
+        {
+          // Depends on collection field
+          $node->field_og_collection_ref[$lang][0]['target_id'] = $book->field_og_collection_ref[$lang][0]['target_id'];
+          field_attach_update('node', $node);
+        }
+    }
+    // Case: Parent; set childrens' collections to parent's
+    elseif ($node->nid == $node->book['bid'])
+    {
+        if ($op == 'update')
+        {
+            $sql = "SELECT nid FROM {book} WHERE bid = :bid AND nid != bid";
+            $rs = db_query($sql,array(':bid' => $node->nid));
+            while ($r = $rs->fetchObject())
+            {
+                $this_node = node_load($r->nid);
+                $lang = $this_node->language;
+                if (isset($node->field_og_collection_ref))
+                {
+                    // Depends on collection field
+                    $this_node->field_og_collection_ref[$lang][0]['target_id'] = $node->field_og_collection_ref[$lang][0]['target_id'];
+                    field_attach_update('node', $this_node);
+                }
+            }
+        }
+    }
+    else
+    {
+        // Do nothing
+    }
+}
+
+function shanti_texts_node_delete($node)
+{
+	if ($node->type == 'book')
+	{
+		# If node has children
+	}
+
+
+}
+
+function shanti_texts_get_lang_code($nid)
+{
+    $textlang = '';
+    $node = node_load($nid);
+    $lang = 'und';
+    if (isset($node->language)) $lang = $node->language;
+    if (isset($node->book)) $bid = $node->book['bid'];
+    if (isset($node->field_dc_lang_code[$lang][0]['value'])) {
+        $textlang = $node->field_dc_lang_code[$lang][0]['value'];
+    }
+    elseif (!$textlang && $bid && $nid != $bid) {
+        $book = node_load($node->book['bid']);
+        $blang = $book->language;
+        if (isset($book->field_dc_lang_code[$blang][0]['value'])) {
+            $textlang = $book->field_dc_lang_code[$blang][0]['value'];
+        }
+        else {
+            $textlang = 'en';
+        }
+    }
+    else {
+        $textlang = 'en';
+    }
+    return $textlang;
+}

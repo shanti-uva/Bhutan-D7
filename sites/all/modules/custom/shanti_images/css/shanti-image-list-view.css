@@ -1,0 +1,54 @@
+
+.view-header .header-proper {
+    float: left;
+    width: 100%;
+}
+
+.view-header .header-proper .tabs-secondary {
+    margin-top: -4px;
+    margin-bottom: 4px;
+}
+
+.view-header .header-proper .result-sum {
+    margin-top: 6px;
+}
+
+.view-header table.pagerer {
+    float: right;
+    max-width: 50%;
+    margin-top: -25px;
+}
+
+#shanti-image-filters {
+    margin: 0 0 12px 0;
+    padding: 0;
+    clear: both;
+}
+
+#shanti-image-filters legend {
+    margin-left: 20px;
+    padding: 0 6px 0 6px;
+    cursor: pointer;
+}
+
+#shanti-image-filters.collapsed legend:before
+{
+    content: "\25B6";
+    color: green;
+    padding-right: 3px;
+    font-size: 80%;
+    cursor: pointer;
+}
+
+#shanti-image-filters.expanded legend:before
+{
+    content: "\25BC";
+    color: green;
+    padding-right: 3px;
+    font-size: 80%;
+    cursor: pointer;
+}
+
+#shanti-image-filters .view-filters {
+    padding: 8px;
+}

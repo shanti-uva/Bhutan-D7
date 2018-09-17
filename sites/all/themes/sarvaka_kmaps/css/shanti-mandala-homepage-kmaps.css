@@ -1,0 +1,1046 @@
+/**
+* Mandala KMAPS Places-Subjects - Development
+*
+* version 1.x - shanti-mandala-homepage-kmaps.css
+* -------------------------------------------------
+* University of Virginia / SHANTI MANDALA / KMAPS
+* -------------------------------------------------
+*
+*/
+
+.panel-title{
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: 18px;
+    color: inherit;
+    color: #eee;
+    font-family: 'museo-sans-500',sans-serif;
+    font-style: italic;
+    margin-left: 12px;
+}
+
+/* homepage bottom panel To Get Started text */
+.homepage-intro-text .panel-body li{
+    margin-bottom: 0.75rem;
+    font-size: 1.64rem;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-style: italic;
+    color: #222;
+}
+
+.front .content-section > .messages{
+    margin-left: 2rem !important;
+}
+
+.front .page-title .icon::before{
+    content: '\e634';
+    opacity: 0.85;
+    margin-right:.4rem;
+position: relative;
+left: -0.1rem;
+}
+
+/* Mandala homepage */
+.front .navbar-header .site-slogan{
+    display:none;
+}
+
+/* Mandala Homepage */
+.front .navbar-header .mandala em{
+    display:inline-block;
+    font-style:normal;
+    letter-spacing: .1rem;
+}
+
+.front.kmaps article.main-col{
+    max-width: 1050px !important;
+}
+
+.front .homepage-main-content{
+    padding: 0 1.5rem 7rem;
+}
+
+/* carousel navbar */
+.front .btn-group-justified{
+    margin-top: 2rem;
+    box-shadow: 0 2px 5px 0 #ddd;
+    display:none;
+}
+
+.front .btn-group-justified>.btn-group{
+    border-top: 2px solid #4d59ca;
+}
+
+.front .btn-group .btn-group+.btn-group:nth-of-type(2){
+    border-top: 2px solid #31acb6;
+}
+
+.front .btn-group .btn-group+.btn-group:nth-of-type(3){
+    border-top: 2px solid #8c48a1;
+}
+
+.front .btn-group .btn-group+.btn-group:nth-of-type(4){
+    border-top: 2px solid #3d9218;
+}
+
+.front .btn-group .btn-group+.btn-group:nth-of-type(5){
+    border-top: 2px solid #645f9d;
+}
+
+
+.front .btn-group-justified .btn-group .btn.btn-default{
+    color:#fff;
+    opacity:0.8;
+}
+
+.front .btn-group-justified .btn-group:nth-of-type(1) .btn.btn-default{
+    background-color: #4d59ca;
+}
+
+.front .btn-group-justified .btn-group:nth-of-type(2) .btn.btn-default{
+    background-color: #31acb6;
+}
+
+.front .btn-group-justified .btn-group:nth-of-type(3) .btn.btn-default{
+    background-color: #8c48a1;
+}
+
+.front .btn-group-justified .btn-group:nth-of-type(4) .btn.btn-default{
+    background-color: #3d9218;
+}
+
+.front .btn-group-justified .btn-group:nth-of-type(5) .btn.btn-default{
+    background-color: #645f9d;
+}
+
+.front .btn-group-justified .btn-group.open > .dropdown-toggle.btn-default,
+.front .btn-group-justified .btn-group .btn.btn-default:hover,
+.front .btn-group-justified .btn-group .btn.btn-default:active{
+    /*color:#444;
+    background-color: #fff !important;*/
+}
+
+.front .main-col .dropdown-menu>li>a{
+    font-family: 'museo-sans-500',helvetica,sans-serif;
+}
+
+.front .main-col .dropdown-menu>li>a:hover{
+    border-color:transparent;
+    background-color: #f7f7f7;
+}
+
+.front .main-col{
+    padding-right:0;
+    padding-left:0;
+}
+
+.homepage-main-content a{
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 81%;
+}
+
+.homepage-intro-text{
+    padding-top:2rem;
+}
+
+.homepage-main-content h1{
+    margin-bottom: 1rem;
+    margin-left: .2rem;
+    font-size: 1.62em;
+    font-family: 'museo-sans-500', arial, sans-serif;
+    color: #444;
+    letter-spacing: -0.01rem;
+        
+        display:none; /* hiding this for now */
+}
+
+.homepage-main-content .bullet{
+    margin-left: 2.5rem;
+    font-size: 1.12em;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    letter-spacing: 0.00055rem;
+    max-width: 60em;
+    color:#111;
+}
+
+.homepage-main-content .bullet::before{
+    content: '';
+    width: 1rem;
+    height: 1rem;
+    /* border-radius: 50%; */
+    border: 5px double #aaa;
+    position: relative;
+    top: 0rem;
+    display: inline-block;
+    margin-left: -2rem;
+    margin-right: 1.2rem;
+    transform: rotate(45deg);
+}
+
+.homepage-main-content .panel-default>.panel-heading{
+    padding: 10px 15px 7px !important;
+    background-color: #4d59ca !important;
+    opacity: .9;
+}
+
+
+
+/* MOVED HERE FROM KMAPS-EXPLORER march 21 */
+
+.front .view-section .nav-tabs>li.active>a,
+.front .navbar-brand:hover .site-slogan,
+.front .view-section .fancytree-container .glyphicon,
+.front .view-section .fancytree-container .fancytree-node:hover > .glyphicon,
+.front .view-section .fancytree-container .fancytree-node:active > .glyphicon,
+.front .view-section .fancytree-node.fancytree-active > .glyphicon,
+.front .view-section .fancytree-node.fancytree-selected > .glyphicon,
+.front .carousel-feature-slides li.active div a::before,
+.front .bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a .check-mark,
+.front .bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a:active .check-mark{
+  color: #4d59ca !important;
+}
+
+.carousel-control,
+.front .carousel-indicators li.active{
+  background-color: #4d59ca !important;
+}
+
+.front .view-section .nav-tabs>li.active>a,
+.front .nav-tabs.nav-justified>li.active{
+  border-top-color: #4d59ca !important;
+}
+
+
+.homepage-intro-text .panel.panel-default{
+    margin-top: 2rem;
+}
+
+
+/* ---------------------- */
+/* ----- BEGIN Cards----- */
+/* ---------------------- */
+
+/* The card structure is a .center card and cards spread out radially by degrees - .deg45, .deg135, .deg225, .deg315, etc
+** The distance from center is controlled by transform rule's "translate"() value.
+** Each card has fron and back sides, the center card has a backside with top-section and bottom section.
+*/
+
+
+.homepage-main-content .wrap {
+    position: relative;
+    display:block;
+    width: 350px;
+    height: 350px;
+    float: right;
+    margin: 0 2rem 2rem 0;
+}
+.wrap.mobile{ display:none;}
+
+.wrap .flip {
+    display: block;
+    overflow: hidden;
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 7em;
+    height: 7em;
+    margin: -2.5em;
+    /* 2em = 4em/2 */
+    /* half the width */
+    border-radius: 1rem;
+    box-shadow: 0 0 1rem 0 #999;
+    border: .1rem double #fff;
+}
+
+.flip {
+    -webkit-perspective: 800;
+    width: 400px;
+    height: 200px;
+    position: relative;
+    margin: 50px auto;
+}
+
+.flip:hover .card {
+    -webkit-transform: rotatex(-180deg);
+    -moz-transform: rotatex(-180deg);
+    -ms-transform: rotatex(-180deg);
+    -o-transform: rotatex(-180deg);
+    transform: rotatex(-180deg);
+}
+
+.wrap .flip.deg225{
+    margin-top: -1.5em;
+}
+
+.wrap .flip.deg315{
+    margin-top: -1.5em;
+}
+
+.wrap .flip.deg135{
+    margin-top: -3.2em;
+}
+
+.wrap .flip.deg45{
+    margin-top: -3.4em;
+}
+
+.flip .card {
+    width: 100%;
+    height: 100%;
+    -webkit-transform-style: preserve-3d;
+    -webkit-transition: 0.4s;
+    -moz-transform-style: preserve-3d;
+    -moz-transition: 0.4s;
+    -ms-transform-style: preserve-3d;
+    -ms-transition: 0.4s;
+    -o-transform-style: preserve-3d;
+    -o-transition: 0.4s;
+    transform-style: preserve-3d;
+    transition: 0.4s;
+}
+
+.flip .card .face {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    z-index: 2;
+    font-family: 'museo-sans-500', helvetican, sans-serif;
+    font-size: 1.5em;
+    text-align: center;
+    line-height: 5em;
+    padding: 0;
+    margin: 0;
+}
+
+.flip .card .front {
+  paddingosition: absolute;
+    z-index: 1;
+    background: #222;
+    color: white;
+}
+
+.flip .card .back {
+    -webkit-transform: rotatex(-180deg);
+    -moz-transform: rotatex(-180deg);
+    -ms-transform: rotatex(-180deg);
+    -o-transform: rotatex(-180deg);
+    transform: rotatex(-180deg);
+    background: blue;
+    background: white;
+    color: black;
+}
+
+        /*
+            .deg0 { transform: translate(12em) rotate(45deg); }
+            .deg180 { transform: translate(-12em) rotate(-45deg);}
+        */
+
+.deg45 { transform: rotate(48deg) translate(12em) rotate(-3deg); }     /* 5:00 (position of clock hands) */
+.deg135 { transform: rotate(132deg) translate(12em) rotate(-177deg); } /* 7:00 */
+.deg225 { transform: rotate(228deg) translate(12em) rotate(-273deg); } /* 11:00 */
+.deg315 { transform: rotate(312deg) translate(12em) rotate(-267deg); } /* 2:00 */
+
+.deg0.flip,
+.deg180.flip {display:none; }
+
+
+
+/**
+*  BEGIN Card Colors
+*/
+
+.center .card .face {
+    background-color: #4d59ca; /* default */
+    /* A CSS Gradient forms the two-tone colors for Subjects-Places */
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#4ca6fb+0,4ca6fb+50,cc4c39+50,cc4c39+100 */
+    background: rgb(76,166,251); /* Old browsers */
+    background: -moz-linear-gradient(-45deg, rgb(76,166,251) 0%, rgb(76,166,251) 50%, rgb(204,76,57) 50%, rgb(204,76,57) 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(-45deg, rgb(76,166,251) 0%,rgb(76,166,251) 50%,rgb(204,76,57) 50%,rgb(204,76,57) 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(135deg, rgb(76,166,251) 0%,rgb(76,166,251) 50%,rgb(204,76,57) 50%,rgb(204,76,57) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4ca6fb', endColorstr='#cc4c39',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+}
+
+.deg45 .card .face {
+    background-color: #645f9d; /* Texts */
+}
+
+.deg135 .card .face {
+    background-color: #3d9218; /* Visuals */
+}
+
+.deg225 .card .face {
+    background-color: #8c48a1; /* Sources */
+}
+
+.deg315 .card .face {
+    background-color: #31acb6; /* Audio-Video */
+}
+
+        /*.deg0 .card .face {
+            background-color:  #4ca6fb - Places
+        }
+        .deg180 .card .face {
+            background-color: #cc4c39 - Subjects
+        }*/
+
+
+/**
+*  BEGIN Card Text
+*/
+.card .face .name{
+   position: absolute;
+   left: 1.25rem;
+   top: -0.15rem;
+    font-size: .88em;
+    letter-spacing: 0.02rem;
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+.deg315 .face .name{
+    position: absolute;
+    left: .1rem;
+    top: -0.5rem;
+    white-space: nowrap;
+    font-size: .82em;
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+}
+
+.deg45 .face .name{
+    position: absolute;
+    left: 1.8rem;
+    top: -0.2rem;
+    font-size: .88em;
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+}
+
+.deg45 .face.front .name{
+    position: absolute;
+    left: 1.8rem;
+    top: -0.2rem;
+}
+
+.deg135 .face.front .name{
+    position: absolute;
+    left: 1.55rem;
+    top: -0.2rem;
+    font-size: .88em;
+}
+
+.deg225 .face.front .name {
+    position: absolute;
+    left: 1.8rem;
+    top: 0.1rem;
+    letter-spacing: 0.1rem;
+}
+
+.flip.center .face .name{
+    transform: rotate(-45deg);
+    top: 3.4rem;
+    left: -1.4rem;
+    font-size: 1.18em;
+    white-space: nowrap;
+}
+
+
+
+
+/**
+*  BEGIN Cards Flip
+*/
+.flip.center{
+    width: 12.5em;
+    height: 12.5em;
+    margin: -5.25em;
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+.card a { color:#fff; }
+.card a:hover { color:#fff; border-color:#ccc; }
+
+.card p{
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+}
+
+.deg135 .card p,
+.deg180 .card p,
+.deg225 .card p {
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+
+/**
+*  BEGIN Lists, only backside has lists
+*/
+.card ul{
+    font-size: 0.62em;
+    text-align: left;
+    list-style: none;
+    white-space: nowrap;
+    position: relative;
+    top: .8rem;
+    left: -1rem;
+    padding-left: 0;
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+.card ul li{
+    line-height: 1.5em;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.deg45 .card ul,
+.deg315 .card ul {
+    position: relative;
+    left: 1.2rem;
+    top: 3rem;
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+}
+
+.deg225 .card ul{
+    position: absolute;
+    left: 0.1rem;
+    top: 3.1rem;
+}
+
+.deg135 .card ul{
+    position: absolute;
+    left: -0.6rem;
+    top: 3.3rem;
+}
+
+
+/**
+*  BEGIN Icons
+*/
+
+.flip .card .icon{
+    font-size: 1.88em;
+    opacity: .8;
+    display: inline-block;
+    position: relative;
+    top: .8rem;
+
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+.flip .card .shanticon-audio-video{
+    left: .2rem;
+    top: .3rem;
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+}
+
+.flip .card .shanticon-sources{
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+}
+
+.flip .card .shanticon-visuals{
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+.flip .card .shanticon-images{
+
+}
+
+.flip .card .shanticon-texts{
+    position: relative;
+    top: .6rem;
+    left: 0;
+}
+
+/*
+.flip .card .shanticon-subjects{
+    border: .7rem double #fff;
+    display: inline-block;
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+}
+.flip .card .shanticon-places{
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+}
+*/
+
+.deg45 .card .back .icon,
+.deg315 .card .back .icon{
+    font-size: 2.88rem;
+    height: 3rem;
+    width: 3rem;
+    position: absolute;
+    top: 2.7rem;
+    left: 3.5rem;
+}
+
+.deg315 .card .back .icon{
+    position: absolute;
+    top: 2.9rem;
+    left: 3.1rem;
+}
+
+.deg225 .card .back .icon{
+    position: relative;
+    top: -0.3rem;
+    left: 0.5rem;
+    font-size: 1.5em;
+}
+
+.deg45 .card .back .icon{
+    position: absolute;
+    top: 3.5rem;
+    left: 3.5rem;
+}
+
+.deg45 .card .front .icon{
+    position: relative;
+    top: 1.2rem;
+    left: 0.4rem;
+}
+
+
+/* Center card for Knowledge Maps */
+.flip.center .card .shanticon-magnify{
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+}
+
+.flip .card .icon::before{
+    color: #fff;
+    font-size: 80%;
+    position: relative;
+    top: -3rem;
+}
+
+.flip.center .card .icon::before{
+    position: relative;
+    top: 1.7rem;
+    right: 2.2rem;
+    font-size: 10rem;
+    opacity: 0.5;
+}
+
+.flip.center .card .shanticon-places{
+    position: absolute;
+    top: 3rem;
+    left: 1.8rem;
+    display: inline;
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+}
+
+.flip.center .card .shanticon-subjects{
+    position: absolute;
+    border:none;
+    top:10.75rem;
+    left:10.9rem;
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+}
+
+.flip.center .card .back-wrap-top .shanticon-places::before{
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 5rem;
+    opacity:0.5;
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+}
+
+.flip.center .card .back .shanticon-subjects::before{
+    position: relative;
+    top: 0.7rem;
+    right: 0;
+    font-size: 5rem;
+    opacity: 0.5;
+}
+
+.flip.center .back a .apptitle{
+    color:#fff;
+    opacity:1;
+}
+
+.flip.center .back a:hover .apptitle{
+    color:#eee;
+    opacity:1;
+}
+
+.flip.center .back-wrap-top:hover .shanticon-places::before,
+.flip.center .back-wrap-bottom:hover .shanticon-subjects::before{
+    opacity:1;
+}
+
+.flip.center .back-wrap-top:active .shanticon-places::before,
+.flip.center .back-wrap-bottom:active .shanticon-subjects::before{
+    opacity:.7;
+}
+
+.flip.center .back-wrap-top  .apptitle{
+    position: absolute;
+top: 5.6rem;
+left: 2.7rem;
+    display: inline;
+    color: #fff;
+    font-size: 2.25rem;
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+}
+
+.flip.center .back-wrap-bottom .apptitle{
+    position: absolute;
+top: 9.8rem;
+left: 6.2rem;
+    display: inline;
+    color: #fff;
+    font-size: 2.25rem;
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+}
+
+.flip.center .back > .shanticon-magnify{
+    opacity: 0.4;
+}
+
+.flip.deg45 .card .icon::before,
+.flip.deg135 .card .icon::before{
+    font-size: 70%;
+    position: relative;
+    top: -3.8rem;
+}
+
+.flip.deg135 .card .back .icon::before{
+    font-size: 75%;
+    position: relative;
+    left: -0.2rem;
+}
+
+.flip.deg135 .card .front .icon::before{
+    font-size: 90%;
+    position: relative;
+    top: -3rem;
+    left: -0.1rem;
+}
+
+.flip.deg45 .card .back .icon::before{
+    font-size:80%;
+}
+
+
+
+
+
+
+.homepage-main-content .card a{
+    text-transform:capitalize;
+    font-size:100%;
+    width: 50%;
+height: 50%;
+line-height: 1em;
+}
+
+
+
+
+
+/**
+ * MEDIA Breakpoint
+ */
+
+@media screen and (max-width: 768px) {
+
+    .front .btn-group-justified > .btn-group,
+    .front .btn-group-justified .btn-group+.btn-group{
+        width: 100% !important;
+        display: block;
+    }
+
+    .front .main-col .dropdown-menu{
+        min-width: 100%;
+        text-align: center;
+        padding-top:0;
+        position: relative;
+        top: 0px;
+        margin-left: -0.1rem;
+        border-radius: 0;
+    }
+
+    .front .main-col .dropdown-menu .divider{
+        display:none;
+    }
+
+    .front .main-col .dropdown-menu>li>a{
+        color: #fff;
+        white-space: nowrap;
+        background: #777;
+        text-transform: uppercase;
+        font-size: 90%;
+        background-image:none;
+        font-family: 'museo-sans-500',helvetica,sans-serif;
+        position: relative; top:0;
+        border-top: 1px solid #aaa;
+        border-bottom: 1px solid #888;
+        padding: 10px 20px 8px;
+        line-height: 2.25em;
+    }
+
+    .front .main-col .dropdown-menu>li>a:hover,
+    .front .main-col .dropdown-menu>li>a:focus{
+        background-color: #666;
+        background-image:none;
+        color:#fff;
+        border-color:transparent;
+    }
+
+    .front .main-col .dropdown-menu>li>a:active{
+        background-image:none;
+        background-color: #777;
+    }
+
+    .front .btn-group-justified{
+        box-shadow:none;
+    }
+
+    .front .btn-group-justified .btn-group{ border-top: none !important; }
+
+    .front .btn-group-justified .btn-group > .btn.btn-default{
+        font-size: 1.12em;
+        border-width: 1px 0 1px 0;
+        opacity:0.75;
+    }
+
+    .front .btn-group-justified .btn-group:nth-of-type(1) > .btn.btn-default{
+        border-left:none;
+        margin-left: -0.1rem;
+    }
+
+    /* toggle flip-cards location from top to bottom */
+    .front .homepage-main-content .wrap{ display:none;}
+    .front .homepage-main-content .wrap.mobile{
+        display:block;
+        margin:2rem auto 5rem;
+        float:none;
+        width:320px;
+        position: relative;
+        left:50%;
+        margin-left:-172px;
+    }
+
+    .front .homepage-main-content{
+        padding-right:1rem;
+        padding-left:1rem;
+    }
+
+    .front .btn-group-justified{
+        display:block;
+    }
+
+    .homepage-intro-text{
+        float:left;
+    }
+
+    .front .btn-group-justified .btn-group .btn.btn-default:hover,
+    .front .btn-group-justified .btn-group .btn.btn-default:active{
+        color: #fff;
+        opacity: 1;
+    }
+
+    .front .btn-group-justified .btn-group .btn.btn-default:active{
+        opacity: .8;
+    }
+}
+
+
+ @media screen and (max-width: 500px) {
+
+    .front .navbar-header .mandala em{
+        display:none;
+     }
+
+    .front .homepage-intro-text > h1{
+        font-size:1.75em;
+        letter-spacing: 0.01rem;
+    }
+}
+
+
+@media screen and (max-width: 400px) {
+
+    .deg45 { transform: rotate(48deg) translate(11em) rotate(-3deg); }
+    .deg135 { transform: rotate(132deg) translate(11em) rotate(-177deg); }
+    .deg225 { transform: rotate(228deg) translate(11em) rotate(-273deg); }
+    .deg315 { transform: rotate(312deg) translate(11em) rotate(-267deg); }
+
+    .front .homepage-intro-text > h1{
+        font-size:1.5em;
+    }
+}
+
+
+
+/**
+*  BEGIN - Safari only rules
+*/
+
+/* @supports (overflow:-webkit-marquee) and (justify-content:inherit) {  ----- Safari 9.? */
+@media not all and (min-resolution:.001dpcm) { @media {
+
+        .flip.center .card .shanticon-places{
+            position: absolute;
+            top: 3.7rem;
+            left: 2.1rem;
+            display: inline;
+            -webkit-transform: rotate(0deg);
+            -moz-transform: rotate(0deg);
+            -ms-transform: rotate(0deg);
+            -o-transform: rotate(0deg);
+            transform: rotate(0deg);
+        }
+
+        .deg225 .card ul{
+            position: absolute;
+            left: -0.4rem;
+            top: 3.1rem;
+        }
+
+        .deg135 .card ul{
+            position: absolute;
+            left: -1rem;
+            top: 3rem;
+        }
+
+        .deg45 .card ul,
+        .deg315 .card ul{
+            position: relative;
+            left: 0.9rem;
+            top: 2.9rem;
+        }
+
+        .flip.center .card .shanticon-subjects{
+            position: absolute;
+            left:10.75rem;
+        }
+} } /* double closing brace for this hack */
+
+/**
+*  BEGIN - Firefox only rules
+*/
+
+_:-moz-tree-row(hover),
+
+            .deg225 .card ul{
+                position: absolute;
+                left: -0.3rem;
+            }
+
+_:-moz-tree-row(hover),
+
+            .deg135 .card ul{
+                position: absolute;
+                left: -1rem;
+            }
+
+/**
+* TEMP
+*/
+.carousel-description,
+.carousel-description p {
+  line-height: 1.56em;
+  letter-spacing: 0.0107rem;
+  font-size: 1.12em;
+  color:#444;
+}
+
+.carousel-description p{
+    font-size: 1em;
+}
+/*end temp */
+
+/*
+@media screen and (min-width: 1920px) {
+
+  .front.kmaps article.main-col{
+    max-width: 1050px !important;
+  }
+}
+*/
+
+
+/**
+*
+* END - KMAPS/css/shanti-mandala-homepage-kmaps.css
+*
+*/
+

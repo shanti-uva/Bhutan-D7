@@ -1,0 +1,37 @@
+/* FOOTNOTES */
+
+.shanti-texts-section-content .note {
+    vertical-align: super;
+    font-size: smaller;
+}
+
+ul.footnotes {
+  padding-left: .5em!important;
+  padding-top: 1em;
+}
+
+li.footnote {
+  margin-left: .5em!important;
+}
+
+#reader .footnotes {
+  margin: 0px;
+}
+
+#reader .footnote {
+  font-size: 12pt;
+  padding-top: .25em;
+  padding-bottom: .25em;
+  padding-left: .25em;
+  border-radius: 5px;
+}
+
+#reader .see-footnote:target {
+  background-color: rgba(100,100,100,.1);
+  border: none;
+}
+
+#reader .footnotes .footnote:target {
+  background-color: #FFFCD3;
+  box-shadow: 2px 2px 5px gray;
+}

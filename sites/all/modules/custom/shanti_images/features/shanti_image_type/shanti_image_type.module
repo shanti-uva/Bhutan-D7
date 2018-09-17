@@ -1,0 +1,185 @@
+<?php
+/**
+ * @file
+ * Code for the Shanti Image Type feature.
+ * 
+ * Adds the view field formatters shanti_image_formatter and shanti_image_formatter_info
+ * 
+ * TODO: Add settings and code to allow cropping, B&W, and other IIIF changes
+ */
+
+include_once 'shanti_image_type.features.inc';
+
+function shanti_image_type_field_formatter_info() {
+    return array(
+        /* Shanti Image Formatter for IIIF images allows admin to determine size, rotation, etc for IIIF image */
+        'shanti_image_formatter' => array(
+            'label' => t('Shanti IIIF Image'),
+            'field types' => array('image'),
+            'settings' => array( //Array of the settings we'll create
+                'type' => 'jpg',
+                'width' => '600', //give a default value for when the form is first loaded
+                'height' => '',
+                'rotation' => '0',
+                'single_image' => '',
+            ),  
+        ),
+        /* Shanti Image Info Formatter returns json objects of IIIF image’s information */
+        'shanti_image_formatter_info' => array(
+            'label' => t('Shanti IIIF Image Info'),
+            'field types' => array('image'),
+            'settings' => array(),
+        ),
+        /* Shanti Image Notes Formatter for long text notes displays a toggle link with text value initially     hidden */
+        'shanti_image_notes_formatter' => array(
+            'label' => t('Shanti Image Note'),
+            'field types' => array('text_long'),
+            'settings' => array(),
+        ),
+    );
+}   
+
+function shanti_image_type_field_formatter_settings_summary($field, $instance, $view_mode) {
+    $display = $instance['display'][$view_mode];
+    $settings = $display['settings'];
+    $summary = array();
+    if ($display['type'] == 'shanti_image_formatter') {
+        $summary[] = '<b>Image Type:</b> ' . $settings['type'];
+        $summary[] = '<b>Width:</b> ' . $settings['width'] . 'px';
+        if (!empty($settings['height'])) {
+            $summary[] = '<b>Height:</b> ' . $settings['height'] . 'px';
+        }
+        $summary[] = '<b>Rotation:</b> ' . $settings['rotation'] . 'º';
+        if ($settings['single_image']) {
+            $summary[] = '<b>Display:</b> Single Image';
+        } else {
+            $summary[] = '<b>Display:</b> All Associated Images';
+        }
+    }
+    return implode('<br />', $summary);
+}
+
+function shanti_image_type_field_formatter_settings_form($field, $instance, $view_mode, $form, &$form_state) {
+    //This gets the view_mode where our settings are stored
+    $display = $instance['display'][$view_mode];
+    //This gets the actual settings
+    $settings = $display['settings'];
+    //Initialize the element variable
+    $element = array();
+    if ($display['type'] == 'shanti_image_formatter') {
+        $element['type'] = array(
+            '#type' => 'select',
+            '#title' => t('Image Type'),
+            '#description' => t('Type of image to display. Only JPG for now.'),
+            '#default_value' => $settings['type'], 
+            '#options' => drupal_map_assoc(array('jpg')), // Right now (2017-05-04) Library's IIIF server only serves JPGs
+        );
+        $element['width'] = array(
+            '#type' => 'textfield',
+            '#title' => t('Width'),
+            '#description' => t('Width of image'),
+            '#default_value' => $settings['width'], 
+            '#element_validate' => array('element_validate_integer_positive'),
+        );
+        $element['height'] = array(
+            '#type' => 'textfield',
+            '#title' => t('Height'),
+            '#description' => t('Height of image'),
+            '#default_value' => $settings['height'], 
+            '#element_validate' => array('element_validate_integer_positive'),
+        );
+        $element['rotation'] = array(
+            '#type' => 'select',
+            '#title' => t('Rotation'),
+            '#description' => t('Rotation of image'),
+            '#default_value' => $settings['rotation'], 
+            '#options' => drupal_map_assoc(array('0', '90', '180', '270')),
+        );
+        $element['single_image'] = array(
+            '#type' => 'checkbox',
+            '#title' => t('Display One Image'),
+            '#description' => t('Display only the first of a multi image nodes'),
+            '#default_value' => $settings['single_image'], 
+        );
+    }
+    return $element;
+}
+
+function element_validate_degrees($element, &$form_state) {
+    $value = $element['#value'];
+    if ($value == '' || !is_numeric($value) || abs(intval($value)) != $value || intval($value) > 359) {
+        form_error($element, t('%name must be a positive integer from 0 to 359', array('%name' => $element['#title'])));
+    }
+}
+
+function shanti_image_type_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+  global $base_path;
+  $settings = $display['settings'];
+  $element = array();
+  if ($display['type'] == 'shanti_image_formatter') {
+    // Check image rotation set in node info and rotate image accordingly
+    $ew = entity_metadata_wrapper('node', $entity);
+    $rotation = (360 - ($ew->field_image_rotation->value() * 1)) % 360;
+    $rotation = ($rotation + $settings['rotation']) % 360;
+    $width = $settings['width'];
+    $height = $settings['height'];
+    // If rotated 90 or 270, exchange height and width settings
+    if ($rotation == 90 || $rotation == 270) {
+        $width = $settings['height'];
+        $height = $settings['width'];
+    }
+    $dbrec = _shanti_images_get_record($entity->nid, 'nid');
+    $url = _shanti_images_build_IIIFURL($dbrec->i3fid, $width, $height, $rotation);
+    $element[0] = array('#markup' => '<img class="img-responsive" typeof="foaf:Image" src="' . $url . '" />');
+  }
+  
+  if ($display['type'] == 'shanti_image_formatter_info') {
+      $eid = $entity->nid;
+      $delta = 0;
+      $siobj = _shanti_images_get_node_image($eid);
+      $rotation = (!empty($entity->field_image_rotation['und'][0]['value'])) ?
+          (360 - $entity->field_image_rotation['und'][0]['value']) % 360 : 0;
+      if (!empty($siobj->height) && $siobj->height > 0) {
+          $ratio = $siobj->width / $siobj->height;
+          $nodepath = $base_path . drupal_get_path_alias('node/' . $eid);
+          if ($rotation == '90' || $rotation == '270') {
+              $ratio = 1 / $ratio;
+          }
+          $element[$delta] = array('#markup' => '{"filename":"' . $siobj->getIIIFName() . '","title":' . json_encode($entity->title) .
+              ',"aspectRatio":' . $ratio . ',"rotation":"' . $rotation . '","nid":"' . $eid . '","path":"' . $nodepath . '"}');
+      } else {
+          watchdog('shanti_image_type module', "No dimension info for IIIF image in nid: $eid");
+      }
+  }
+  
+  if ($display['type'] == 'shanti_image_notes_formatter') {
+      $trim_len = 100; // Text Length for note fields
+      foreach ($items as $delta => $item) {
+          $fnclass = str_replace('_', '-', $instance['field_name']);
+          $id = $fnclass . '-' . $delta;
+          $label = $instance['label'];
+          if (count($items) > 1) { $label .= ' ' . $delta; }
+          /*$mu = '<div class="shanti-note"><div class="field-label"><a role="button" data-toggle="collapse" data-target="#' . $id . '">' . $label . '</a></div>';
+          $mu .= '<div id="' . $id . '" class="' . $fnclass . ' collapse">' . $item['safe_value'] . '</div></div>';
+          $element[$delta] = array('#markup' => $mu); */
+          $trimmed = $item['safe_value'];
+          $is_trimmed = FALSE;
+          /*if (strlen($trimmed) > $trim_len) {
+              $ind = strrpos($trimmed, ' ', $trim_len - strlen($trimmed));
+              if ($ind < $trim_len) { $ind = $trim_len; }
+              $trimmed = substr($trimmed, 0, $ind);
+              $is_trimmed = TRUE;
+          }*/
+          $element[$delta] = array(
+            '#label' => $label,
+            '#full' => $item['safe_value'],
+            '#trimmed' => $trimmed,
+            '#is_trimmed' => $is_trimmed,
+          );
+          
+          $element['#label'] = array();
+      }
+  }
+  
+  return $element;
+}

@@ -1,0 +1,8 @@
+name = SHANTI KMaps Admin
+description = Defines variables that are used by other SHANTI KMaps modules
+core = 7.x
+package = SHANTI
+
+configure = admin/config/content/shanti_kmaps_admin
+
+files[] = shanti_kmaps_fields.module

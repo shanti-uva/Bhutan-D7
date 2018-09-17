@@ -1,0 +1,140 @@
+<?php 
+
+/**
+ * TODO: Right now only deals with English labels for preferences. Need to implement I18N
+ */
+ 
+/**
+ * Attach JS settings containing user prefs to every page
+ */
+function user_prefs_init() {
+  $prefs = array( 'fields' => user_prefs_get_definition(TRUE) ); // Load preference field names
+  $prefs_in_db = user_prefs_get(); // Get current user prefs from database
+  // if it exists in db, add stored values to prefs array
+  if($prefs_in_db) {
+    $prefs['preferences'] = json_decode($prefs_in_db->preferences, TRUE);
+  } else {
+    $prefs['preferences'] = array();
+  }
+  $prefs['isChanged'] = FALSE;
+  $prefs['menuOpen'] = FALSE;
+  drupal_add_js(array('shantiUserPrefs' => $prefs), 'setting');
+}
+
+/**
+ * Function to read in JSON data defining preferences
+ */
+function user_prefs_get_definition($getFields = FALSE) {
+  $path = drupal_get_path('module','user_prefs');
+  $json = file_get_contents($path . '/js/data/user_prefs_1.json');
+  // If get fields is true return just an array of field names:types
+  if($getFields) {
+    $fields = array();
+    $json = json_decode($json);
+    $groups = $json->langs->eng; // TODO: Deal with I18N
+    foreach($groups as $n => $group) {
+      $fields[] = $group->machine_name . ":" . $group->type;
+    }
+    return $fields;
+  }
+  // Otherwise return json object of preference definitions
+  return json_decode($json);
+}
+
+
+/**
+ * user_prefs_create_form: outputs markup for the user preference form to be inserted in the main menu
+ *    
+ */
+function user_prefs_form() {
+  $json = user_prefs_get_definition();
+  $groups = $json->langs->eng;
+  $output = '<li id="user-prefs">
+          <a href="#">Preferences</a>
+          <h2>Preferences</h2>
+          <ul>';
+  foreach($groups as $n1 => $group) {
+    // TODO: This is only doing radio buttons. Need to implement checkboxes and select menus.
+    $output .= '<li class="drop-hdr"><em>' . $group->title . '</em></li>';
+    foreach($group->options as $n2 => $option) {
+      $optn = implode('-', array($group->machine_name, $n2 + 1));
+      $optparts = explode(':', $option);
+      $checked = ($n2 == 0) ? "":"";
+      $output .= '<li class="form-group"><label class="radio-inline" for="option' . $optn . '">
+                <input type="radio" name="' . $group->machine_name . '" id="' . $optn . '" value="' . $optparts[0] . '" ' . $checked . '>' . 
+                  $optparts[1] . '</label></li>';
+    }
+  }
+  $subform = drupal_get_form('user_prefs_submit_form');
+  $output .= '<li id="prefs-save-btn" class="hidden">' . render($subform) . '</li>';
+  $output .= '</ul></li>';
+  return $output;
+}
+
+
+/**
+ * User prefs submit form is just a text area with a json object and a submit button. It is hidden and manipulated through JS
+ * This is done because preference form must be constructed thru nested <ul>s and visible form <div>s break the responsive menu
+ */
+function user_prefs_submit_form($form, &$form_state) {
+  $form['#attributes'] = array('id' => 'user-prefs-form');
+  $form['jsonval'] = array(
+      '#type' => 'textarea',
+      '#attributes' => array(
+        'id' => 'user-prefs-field',
+        'class' => array('hidden'), //
+      )
+    );
+  // Submit form via ajax to update database
+  $form['submit'] = array(
+      '#type' => 'submit',
+      '#value' => t('Save'),
+      '#ajax' => array(
+        'callback' => 'user_prefs_set',
+        'wrapper' => 'user-prefs-field',
+        'method' => 'replace',
+      ),
+    );
+  return $form;
+}
+
+/**
+ * Retrieve a users settings from DB
+ */
+function user_prefs_get($uid = FALSE) {
+  global $user;
+  if(!$uid) { $uid = $user->uid; }
+  $result = db_select('user_prefs', 'up')
+     ->condition('up.uid', $uid, '=')
+     ->fields('up')
+     ->execute();
+  $record = $result->fetchAll();  
+  if($record && count($record) > 0) { return $record[0]; }
+  return FALSE;
+}
+
+/**
+ * Save prefs called by submit form through AJAX
+ */
+function user_prefs_set($form, $form_state) {
+  global $user;
+  // if user has entry in DB
+  if (user_prefs_get()) {
+    // Update Entry in Database
+    db_update('user_prefs') // Table name no longer needs {}
+      ->fields(array(
+        'preferences' => $form_state['values']['jsonval'],
+        'changed' => REQUEST_TIME,
+      ))
+      ->condition('uid', $user->uid, '=')
+      ->execute();
+  // or if not there, then enter it
+  } else { 
+    db_insert('user_prefs')->fields(array(
+       'uid' => $user->uid,
+       'preferences' => $form_state['values']['jsonval'],
+       'created' => REQUEST_TIME,
+    ))->execute();
+  }
+  return $form['jsonval'];  // just to complete ajax circuit and clear jsonval
+}

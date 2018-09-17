@@ -1,0 +1,14 @@
+name = Shanti Images Bulk Image Import
+description = Module for importing metadata and images from Media Pro XML files
+core = 7.x
+package = Images
+version = 7.x-0.1
+dependencies[] = shanti_images
+dependencies[] = shanti_kmaps_fields
+dependencies[] = devel
+scripts[] = js/bulk-image-import.js
+
+files[] = box.inc
+files[] = bulk_image_import.views.inc
+; Views Handlers
+files[] = views/bulk_image_import_handler_xml_data.inc

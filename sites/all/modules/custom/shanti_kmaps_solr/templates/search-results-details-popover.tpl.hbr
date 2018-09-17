@@ -1,0 +1,24 @@
+
+
+
+<div>
+	<h5>{{{title.[0]}}}</h5>
+	
+	{{#if names_txt}}
+	<p class="results-node-description" data-label="Alternate Names">
+	  {{#each names_txt}}
+	    {{{this}}}{{#unless @last}}, {{/unless}}
+	  {{/each}}
+	</p>
+	{{/if}}
+
+	<p>{{{caption}}}</p>
+
+	{{#if collection_title}}
+	  <p class="results-popover-collections"><span>Collection:</span> {{{collection_title}}}</p>
+	{{/if}}
+
+	{{#if summary}}
+	<p class="results-node-description" data-label="Summary">{{{summary}}}</p>
+	{{/if}}
+</div>

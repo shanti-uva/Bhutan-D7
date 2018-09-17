@@ -1,0 +1,18 @@
+name = Solr Views Integration for Visuals
+description = This module exposes Solr API as fields in Views for Visuals related assets
+core = 7.x
+package = Shanti
+
+dependencies[] = views:views
+dependencies[] = views:views_ui
+dependencies[] = pagerer:pagerer
+dependencies[] = better_exposed_filters:better_exposed_filters
+dependencies[] = kmaps_views_solr:kmaps_views_solr
+
+files[] = handlers/visuals/kmaps_views_solr_visuals_handler_field.inc
+files[] = handlers/visuals/kmaps_views_solr_visuals_handler_filter_title.inc
+files[] = handlers/visuals/kmaps_views_solr_visuals_handler_filter_asset_subtype.inc
+files[] = handlers/visuals/kmaps_views_solr_visuals_handler_sort_title.inc
+files[] = handlers/visuals/kmaps_views_solr_visuals_handler_sort_created_date.inc
+files[] = handlers/visuals/kmaps_views_solr_visuals_handler_sort_creator.inc
+files[] = plugins/visuals/kmaps_views_solr_visuals_plugin_query.inc

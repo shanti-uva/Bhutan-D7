@@ -1,0 +1,26 @@
+{
+  "name": "kmapsSolr",
+  "title": "Shanti Kmaps Solr",
+  "description": "API to encapsulate SOLR kmaps terms and asset queries",
+  "version": "0.1.0",
+  "homepage": "",
+  "author": {
+    "name": "ys2n",
+    "email": "ys2n@virginia.edu"
+  },
+  "repository": {
+    "type": "git",
+    "url": "shanti@svn-17778.prod.hosting.acquia.com:shanti.git"
+  },
+  "bugs": "",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "/blob/master/LICENSE-MIT"
+    }
+  ],
+  "dependencies": {
+    "jquery": "*"
+  },
+  "keywords": []
+}

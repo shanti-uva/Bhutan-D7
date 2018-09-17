@@ -1,0 +1,47 @@
+<div class="shanti-kmaps-solr-facet-wrapper">
+
+  {{#each facets}}
+    {{#if (and (not (eq @key 'count')) (not (eq (len buckets) 0)))}}
+    <dl class="shanti-kmaps-solr-facet-block">
+
+      <dt class="shanti-kmaps-solr-facet-title" data-bucket-count="{{len buckets}}">
+        {{#if (gt (len buckets) (plus ../numShown 1)) }}
+          <span class="facet-title-toggle glyphicon glyphicon-plus-sign" type="button" aria-label="Toggle Search Results Filters List"></span>
+        {{else}}
+          <span class="facet-title-toggle glyphicon glyphicon-record"></span>
+        {{/if}}
+        {{title}}
+      </dt>
+        {{#if (gt (len buckets) (plus ../numShown 1)) }}
+          <dd class="shanti-kmaps-solr-facet-quicksearch"><input placeholder="quick search" class="facet-quicksearch form-control form-text" type="text" /><button type="reset" class="facet-quicksearch-reset">x</button><span class="icon"></span></button><span class="facet-quicksearch-count"><span class="facet-quicksearch-shown-count">{{len buckets}}</span>/{{len buckets}}</span></dd>
+        {{/if}}
+        {{#each buckets}}
+          <dd class="shanti-kmaps-solr-facet-list" data-facet-name="{{label}}">
+            <a
+              class="shanti-kmaps-solr-facet-item"
+              id="shantiKmapsSolrFacet-{{label}}"
+              data-facet-type="{{type}}"
+              data-facet-label="{{label}}"
+              data-facet-id="{{id}}"
+              data-kmid="{{id}}"
+              href="#">
+
+              {{#if selected}}
+                <span class="kmfaceted-item-delete fancytree-checkbox glyphicon glyphicon-check"></span>
+              {{else}}
+                <span class="fancytree-checkbox glyphicon glyphicon-unchecked"></span>
+              {{/if}}
+              {{label}}
+            </a>
+            ({{count}})
+          </dd>
+        {{/each}}
+
+    </dl>
+    {{/if}}
+  {{/each}}
+  {{#unless facets.count}}
+    No facet filters currently available.
+  {{/unless}}
+
+</div>

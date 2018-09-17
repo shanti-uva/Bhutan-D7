@@ -1,0 +1,21 @@
+<?php
+function shanti_kmaps_typeahead_libraries_info()
+{
+    $libraries['shanti_kmaps_typeahead'] = array(
+        'name' => 'SHANTI KMaps Typeahead',
+        'download url' => 'https://github.com/shanti-uva/shanti_kmaps_typeahead',
+        'version' => '0.11.1', //synced to typeahead.js version for easy matching
+        'dependencies' => array('typeahead'),
+        'files' => array(
+            'js' => array(
+                'js/jquery.kmaps-typeahead.js', // main kmaps typeahead code
+                'js/kmaps-util.js', // utility functions used by kmaps typeahead and kmaps tree
+            ),
+            'css' => array(
+                'css/kmaps-typeahead.css',
+            ),
+        ),
+    );
+
+    return $libraries;
+}

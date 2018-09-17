@@ -1,0 +1,9 @@
+name = SHANTI Texts
+description = Drupal Books modded for scholarly texts
+package = SHANTI
+core = 7.x
+
+dependencies[] = book
+dependencies[] = book_made_simple
+dependencies[] = shanti_kmaps_fields
+dependencies[] = shanti_texts_features

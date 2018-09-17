@@ -1,0 +1,24 @@
+diff --git a/file_entity.file.inc b/file_entity.file.inc
+index c9aab5c..ef505b4 100644
+--- a/file_entity.file.inc
++++ b/file_entity.file.inc
+@@ -95,7 +95,18 @@ function file_entity_file_update($file) {
+     $query->execute();
+   }
+ 
+-  if (module_exists('image') && file_entity_file_get_mimetype_type($file) == 'image' && $file->filesize) {
++  if (module_exists('image') && file_entity_file_get_mimetype_type($file) == 'image' && $file->filesize && isset($file->original)) {
++    if (!isset($file->metadata)) {
++      $file->metadata = array();
++    }
++
++    if (empty($file->original->metadata)) {
++      if (!is_object($file->original)) {
++        $file->original = new stdClass();
++      }
++      $file->original->metadata = array();
++    }
++
+     // If the file has changed dimensions or a new file has been uploaded,
+     // update any image field reference to this file and flush image style
+     // derivatives.

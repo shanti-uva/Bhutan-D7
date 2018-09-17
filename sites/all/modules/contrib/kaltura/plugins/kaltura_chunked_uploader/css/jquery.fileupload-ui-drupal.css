@@ -1,0 +1,16 @@
+[id^="uploadbox"] .hidden {
+  display: none;
+}
+
+[id^="uploadbox"] .progress {
+  margin: 10px auto;
+}
+
+[id^="uploadbox"] .progress .filled {
+  color: #fff;
+  text-indent: 10px;
+}
+
+[id^="uploadbox"] .progress .anchor {
+  text-align: center;
+}

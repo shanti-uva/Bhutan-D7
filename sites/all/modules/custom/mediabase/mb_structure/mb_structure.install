@@ -1,0 +1,160 @@
+<?php
+
+/**
+ *  Implements hook_update_n to add image style for carousels in carousel block
+ */
+function mb_structure_update_7000(&$sandbox) {
+  $style = image_style_save(array('name' => 'carousel_image', 'label' => 'Carousel Image'));
+  $effect = array(
+    'name' => 'image_scale_and_crop',
+    'data' => array(
+      'width' => 400,
+      'height' => 300,
+      'upscale' => TRUE,
+    ),
+    'isid' => $style['isid'],
+  );
+  image_effect_save($effect);  
+}
+
+/**
+ * Add default audio thumbnail to managed files. 
+ * Creates image with the uri: "public:\/\/avimages\/generic-audio-thumb.jpg"
+ */
+function mb_structure_update_7001(&$sandbox) {
+	global $base_url; 
+	$file = FALSE;
+	try {
+		$audio_thumb_image = $base_url . '/' . drupal_get_path('module', 'mediabase') . '/images/generic-audio-thumb.jpg';
+		$path = 'public://avimages';
+		file_prepare_directory($path, FILE_CREATE_DIRECTORY);
+		$path .= '/generic-audio-thumb.jpg';
+		$file = system_retrieve_file($audio_thumb_image, $path, TRUE, FILE_EXISTS_REPLACE);
+	} catch (Exception $e) {
+		throw new DrupalUpdateException($e->getMessage());
+	}
+	if ($file) {
+		drupal_set_message(t("A generic audio thumbnail image has been created for this site! (@path)", array('@path' => $path)));
+	} else {
+		throw new DrupalUpdateException('Unable to create the file for the audio thumbnail image');
+	}
+}
+
+/**
+ * Add new gallery thumbnail image style and readd carousel Image after migration
+ */
+ function mb_structure_update_7002(&$sandbox) {
+     $style = image_style_save(array('name' => 'carousel_image', 'label' => 'Carousel Image'));
+      $effect = array(
+        'name' => 'image_scale_and_crop',
+        'data' => array(
+          'width' => 400,
+          'height' => 300,
+          'upscale' => TRUE,
+        ),
+        'isid' => $style['isid'],
+      );
+      image_effect_save($effect);  
+      $style = image_style_save(array('name' => 'av_gallery_thumb', 'label' => 'AV Gallery Thumbnail (189 x 90)'));
+      $effect = array(
+        'name' => 'image_scale',
+        'data' => array(
+          'width' => 189,
+          'upscale' => TRUE,
+        ),
+        'isid' => $style['isid'],
+      );
+      image_effect_save($effect); 
+      $effect = array(
+        'name' => 'image_crop',
+        'data' => array(
+          'height' => 90,
+          'width' => 189,
+          'anchor' => 'left-center',
+        ),
+        'isid' => $style['isid'],
+      );
+      image_effect_save($effect);  
+}
+
+/**
+ *  Port data for field_extended cataloging into field_extended_cataloging_new because original field was corrupted
+ */
+function mb_structure_update_7003(&$sandbox) {
+    try {
+        // Do field_data_field_extended_cataloging
+        if (db_table_exists("field_data_field_extended_cataloging")) {
+            $q = db_query('select * from {field_data_field_extended_cataloging}');
+            $records  = $q->fetchAll();
+            foreach ($records as $r) {
+                $r1 = (array)$r;
+                $r1['field_extended_cataloging_new_value'] = $r1['field_extended_cataloging_value'];
+                unset($r1['field_extended_cataloging_value']);
+                $res = db_insert('field_data_field_extended_cataloging_new')->fields($r1)->execute();
+            }
+        } else {
+            drupal_set_message("Table, field_data_field_extended_cataloging, does not exist in mb_structure_update_7003", "warning");
+        }
+        
+        if (db_table_exists("field_revision_field_extended_cataloging")) {
+            // Do field_revision_field_extended_cataloging
+            $q = db_query('select * from {field_revision_field_extended_cataloging}');
+            $records  = $q->fetchAll();
+            foreach ($records as $r) {
+                $r1 = (array)$r;
+                $r1['field_extended_cataloging_new_value'] = $r1['field_extended_cataloging_value'];
+                unset($r1['field_extended_cataloging_value']);
+                $res = db_insert('field_revision_field_extended_cataloging_new')->fields($r1)->execute();
+            }
+        } else {
+            drupal_set_message("Table, field_revision_field_extended_cataloging, does not exist in mb_structure_update_7003", "warning");
+        }
+    } catch (PDOException $pdoe) {
+        drupal_set_message("You need to revert the Mediabase Audio-Video feature to create the new field before running this mb_structure update 7003.", 'error');
+        throw $pdoe;
+    }
+    drupal_set_message("If mb_structure update 7003 was successful, then please drop the tables--field_data_field_extended_cataloging and field_revision_field_extended_cataloging--from the database");
+}
+
+
+/**
+ *  Port data for field_data_field_translation_lang_1 and 2 to field_translation_input_lang_1 and 2 because original field was corrupted
+ */
+function mb_structure_update_7004(&$sandbox) {
+    try {
+        foreach(array(1, 2) as $n) {
+            if (db_table_exists("field_data_field_translation_lang_{$n}")) {
+                // Do field_data_field_extended_cataloging $n
+                $q = db_query("select * from {field_data_field_translation_lang_$n}");
+                $records  = $q->fetchAll();
+                foreach ($records as $r) {
+                    $r1 = (array)$r;
+                    $r1["field_translation_input_lang_{$n}_value"] = $r1["field_translation_lang_{$n}_value"];
+                    unset($r1["field_translation_lang_{$n}_value"]);
+                    $res = db_insert("field_data_field_translation_input_lang_{$n}")->fields($r1)->execute();
+                }
+             } else {
+                drupal_set_message("Table, field_data_field_translation_lang_{$n}, doesn't exist in mb_structure_update_7004", "warning");
+            }
+            if (db_table_exists("field_revision_field_translation_lang_{$n}")) {
+                // Do field_revision_field_extended_cataloging $n
+                $q = db_query("select * from {field_revision_field_translation_lang_$n}");
+                $records  = $q->fetchAll();
+                foreach ($records as $r) {
+                    $r1 = (array)$r;
+                    $r1["field_translation_input_lang_{$n}_value"] = $r1["field_translation_lang_{$n}_value"];
+                    unset($r1["field_translation_lang_{$n}_value"]);
+                    $res = db_insert("field_revision_field_translation_input_lang_{$n}")->fields($r1)->execute();
+                }
+            } else {
+                drupal_set_message("Table, field_revision_field_translation_lang_{$n}, doesn't exist in mb_structure_update_7004", "warning");
+            }
+        }
+    } catch (PDOException $pdoe) {
+        drupal_set_message("You need to revert the Mediabase Audio-Video feature to create the new field before running this mb_structure update 7004.", 'error');
+        throw $pdoe;
+    }
+    drupal_set_message("If mb_structure update 7004 was successful, then please drop the tables--" .
+        "field_data_field_translation_lang_1, field_revision_field_translation_lang_1, field_data_field_translation_lang_2, field_revision_field_translation_lang_2--" .
+        "from the database.");
+}

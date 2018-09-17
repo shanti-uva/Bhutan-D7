@@ -1,0 +1,41 @@
+<?php
+
+// Should this be set in some hook?
+variable_set('shanti_acquia_utils_envs', array('dd','predev','dev','stage','prod','ra'));
+
+function shanti_acquia_utils_menu()
+{
+  $items['shanti_acquia_utils/globals'] = array(
+    'title' => 'SHANTI Acquia Utilities: Show All The Globals',
+    'description' => 'Just a test function really.',
+    'page callback' => 'shanti_acquia_utils_globals',
+    'access arguments' => array('administer content types'), # Just a stop gap for now
+  );
+  return $items;
+}
+
+function shanti_acquia_utils_globals()
+{
+  if (function_exists('kpr')) {
+    kpr($GLOBALS);
+  } else {
+    print "<h1>Globals</h1>\n";
+    print "<a name='top'></a>\n";
+    print "<ol>\n";
+    foreach(array_keys($GLOBALS) as $k) {
+      print "<li><a name='toc-$k' href='#$k'>$k</a></li>\n";
+    }
+    print "</ol>\n";
+    print "<table padding='10'>\n";
+    foreach($GLOBALS as $k => $v) {
+      if ($k == 'GLOBALS') {
+        continue;
+      }
+      print "<tr><td valign='top'><a id='$k' name='$k'></a><b><a href='#toc-$k'>$k</a></b></td><td><pre>";
+      print_r($v);
+      print "</pre></td></tr>\n";
+    }
+    print "</table>\n";
+  }
+  return '';
+}

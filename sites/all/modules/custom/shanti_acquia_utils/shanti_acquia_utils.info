@@ -1,0 +1,6 @@
+name = SHANTI Acquia Utilities
+description = "Functions and data to help with running Mandala in the Acquia."
+core = 7.x
+package = SHANTI
+
+files[] = shanti_acquia_utils.module

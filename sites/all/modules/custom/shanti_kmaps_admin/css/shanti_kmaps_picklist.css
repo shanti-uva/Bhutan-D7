@@ -1,0 +1,25 @@
+.delete-me, .kmap-item {
+    cursor:pointer;
+}
+.delete-me {
+    padding: 0 5px 0 0;
+}
+.selected-kmap{
+    font-size: 0.93em;
+    float: left;
+    margin: 0 0.25em 0.25em 0;
+    padding: 0.3rem 0 0.3rem 0.4rem;
+}
+.selected-kmap:hover{
+    color: #555;
+    background-color: transparent;
+}
+.selected-kmap .shanticon-close2:before{
+    color: #888;
+    font-size: 1.12em;
+    cursor:pointer;
+    content: 'ⓧ';
+}
+.selected-kmap:hover .shanticon-close2:before{
+    color: red;
+}

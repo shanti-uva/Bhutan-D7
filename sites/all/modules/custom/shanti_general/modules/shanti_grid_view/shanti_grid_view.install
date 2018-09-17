@@ -1,0 +1,64 @@
+<?php
+/**
+ * Implement hook_schema
+ * Define table with basic shanti image info: fid, nid, and iiif id (on server). 
+ * The iiif id must be unique. 
+ */
+function shanti_grid_view_schema() {
+    $schema = array(
+        'shanti_grid_image_sizes' => array(
+            'description' => 'The base table for Shanti Grid View image sizes.',
+            'fields' => array(
+                'gvid' => array(
+                    'description' => 'The Shanti grid view table index',
+                    'type' => 'serial',
+                    'unsigned' => TRUE,
+                    'not null' => TRUE,
+                ),
+                'iid' => array(
+                    'description' => 'The image id either fid or nid',
+                    'type' => 'varchar',
+                    'length' => 255,
+                    'not null' => TRUE,
+                    'default' => '',
+                ),
+                'isize' => array(
+                    'description' => 'The size of the image being recorded',
+                    'type' => 'varchar',
+                    'length' => 255,
+                    'not null' => TRUE,
+                    'default' => '',
+                ),
+                'width' => array(
+                    'description' => 'The width of the image',
+                    'type' => 'int',
+                    'unsigned' => TRUE,
+                    'not null' => TRUE,
+                ),
+                'height' => array(
+                    'description' => 'The height of the image',
+                    'type' => 'int',
+                    'unsigned' => TRUE,
+                    'not null' => TRUE,
+                ),
+                'ratio' => array(
+                    'description' => 'The aspect ratio of the image',
+                    'type' => 'float',
+                    'unsigned' => TRUE,
+                    'not null' => TRUE,
+                ),
+            ),
+            'primary key' => array('gvid'),
+        ),
+     );
+    return $schema;
+}
+
+/**
+ * Create the shanti_grid_image_sizes table for recording large size images.
+ */
+function shanti_grid_view_update_7001() {
+  $schema = shanti_grid_view_schema();
+  db_create_table('shanti_grid_image_sizes', $schema['shanti_grid_image_sizes']);
+}
+

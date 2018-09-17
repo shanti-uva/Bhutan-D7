@@ -1,0 +1,8 @@
+<?php
+
+/**
+ * Remove all variables for this module
+ */
+function shanti_carousel_uninstall() {
+    db_delete('variable')->condition('name', 'shanti_carousel_%', 'LIKE')->execute();
+}

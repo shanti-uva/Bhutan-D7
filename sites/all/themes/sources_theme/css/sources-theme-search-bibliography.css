@@ -1,0 +1,397 @@
+.page-sources-search div#block-system-main.block.block-system {
+  float: none;
+}
+
+.page-sources-search div.messages {
+  margin: 0;
+}
+
+.page-sources-search .main-content .content-section {
+  padding: 0;
+}
+
+.page-sources-search .content-section .main-col.active {
+  padding-bottom: 0;
+}
+
+.operation-option-container {
+  padding: 10px 0;
+}
+
+.page-sources-search .main-content .content-section .view-content,
+.page-sources-search .main-content .content-section .view-empty {
+  padding: 12px 12px 8px 24px;
+  /* float: left; mf8yk removed 01/08/16 */
+  display: inline-block;
+  max-width: 100%;
+}
+
+.page-sources-search .main-content .content-section .view-empty p {
+  text-align: center;
+  font-size: 20pt;
+}
+
+.page-sources-search .main-content .content-section .view-content.expanded {
+  width: 100%;
+  max-width: 100%;
+}
+
+.page-sources-search.page-sources-search-biblio .main-content .content-section .view-content {
+  width: 100%;
+  max-width: 100%;
+}
+
+.page-sources-search .views-field-biblio-authors {
+  margin-top: 5px;
+  overflow: hidden;
+}
+
+.page-sources-search .views-field-biblio-authors ul {
+  padding: 0;
+  margin: 0;
+  display: block;
+}
+
+.page-sources-search .views-field-biblio-authors ul li {
+  display: inline;
+  float: left;
+}
+
+.views-field-biblio-place-published {
+  float: left;
+  clear: right;
+  margin-bottom: 5px;
+  margin-top: 2px;
+}
+
+.views-field-biblio-place-published span {
+  margin-bottom: 0.25em;
+  margin-top: 1em;
+  font-size: 90%;
+  color: #808080;
+  font-style: italic;
+}
+
+.page-sources-search .views-field-biblio-abst-e,
+.page-sources-search .views-field-field-zotero-tags {
+  clear: left;
+}
+
+.view-biblio-search-api .views-field-title {
+  font-size: 1.18em;
+  font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
+  overflow: hidden;
+  display: block;
+}
+
+.content-section a{
+  color: #00656d;
+}
+
+.page-sources-search .views-row {
+  overflow: hidden;
+  min-height: 60px;
+  padding: 10px 0 10px 0;
+  margin: 0 auto;
+  border-top: 1px solid #fff;
+  border-bottom: 1px solid #ccc;  
+}
+
+.page-sources-search .views-row .icon {
+  color: #008a96;
+  margin-right: 0.75rem;
+}
+
+.page-sources-search .views-field-field-zotero-tags ul {
+  list-style: none;
+  overflow: hidden;
+  padding-left: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.page-sources-search .views-field-field-zotero-tags ul li {
+  display: inline-block;
+  width: auto;
+  float: left;
+}
+
+.page-sources-search .views-field-biblio-abst-e {
+  margin: 5px 0 10px 0;
+}
+
+.page-sources-search .view-empty {
+  padding: 35px 24px 8px 24px;
+}
+
+
+
+
+
+
+
+
+
+
+/* Custom Sort Option */
+
+#block-sources-views-custom-sort-filter .bootstrap-select.select-wrapper .btn {
+  height: 29px;
+}
+
+#block-sources-views-custom-sort-filter .bootstrap-select.select-wrapper label {
+  display: block;
+  padding-left: 4px;
+}
+
+#block-sources-views-custom-sort-filter .bootstrap-select.select-wrapper ul li.selected {
+  background: #eee;
+}
+
+#block-sources-views-custom-sort-filter {
+  text-align: right;
+  clear: both;
+}
+
+#block-sources-views-custom-sort-filter span.select-wrapper {
+  display: inline-block;
+  position: relative;
+}
+
+#block-sources-views-custom-sort-filter.expanded {
+  width: 80%;
+  position: relative;
+  z-index: 1;
+}
+
+#block-sources-views-custom-sort-filter {
+  padding: 0 24px 8px 42px;
+}
+
+#block-sources-views-custom-sort-filter .content .left-side {
+  width: auto;
+  float: left;
+  display: inline-block;
+}
+
+#block-sources-views-custom-sort-filter .content .left-side h1 {
+  font-family: museo-sans-900, sans-serif;
+  text-transform: uppercase;
+  color: #333;
+  margin: 0;
+  font-size: 2.30em;
+  letter-spacing: 5px;
+}
+
+#block-sources-views-custom-sort-filter .content .right-side {
+  width: auto;
+  display: inline-block;
+  float: right;
+}
+
+#block-sources-views-custom-sort-filter .select-wrapper,
+#block-sources-views-custom-sort-filter .select-wrapper select {
+  width: 197px;
+  margin-left: 1px;
+  left: 0;
+}
+
+#block-sources-views-custom-sort-filter span.select-wrapper {
+  padding: 0 5px;
+}
+
+#block-sources-views-custom-sort-filter .select-wrapper select option,
+#block-sources-views-custom-sort-filter .select-wrapper select optgroup {
+  font-size: 0.938em;
+  font-family: museo-sans-300, sans-serif;
+}
+
+#block-sources-views-custom-sort-filter .select-wrapper  .holder {
+  font-size: 0.813em;
+}
+
+#block-sources-views-custom-sort-filter .select-wrapper span.holder {
+  display: block;
+  margin-left: 5px;
+  position: absolute;
+  margin-top: -1px;
+}
+
+
+
+
+
+
+
+/* Level Detail Option */
+
+.detail-level-container,
+.custom-sort-container {
+  width: auto;
+  display: inline-block;
+  float: left;
+}
+
+.detail-level-container {
+  margin-right: 30px;
+  overflow: hidden;
+  height: 30px;
+  width: 135px;
+}
+
+.detail-level-container span {
+  float: left;
+  line-height: 30px;
+  font-size: 0.85em;
+}
+
+.detail-level-container ul {
+  list-style: none;
+  padding: 0;
+  overflow: hidden;
+  float: right;
+  margin: 0;
+  border-radius: 3px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+}
+
+.detail-level-container ul li {
+  display: inline-block;
+  width: 29px;
+  height: 30px;
+  float: left;
+  text-align: center;
+}
+
+.detail-level-container ul li a {
+  text-indent: -9999em;
+  width: 29px;
+  height: 30px;
+  display: block;
+}
+
+a#short-detail {
+  background: url(../images/short-detail-inactive.png) no-repeat;
+}
+
+a#short-detail.active  {
+  background: url(../images/short-detail-active.png) no-repeat;
+}
+
+a#medium-detail {
+  background: url(../images/medium-detail-inactive.png) no-repeat;
+  border-right: 1px solid #eaebeb;
+  border-left: 1px solid #eaebeb;
+}
+
+a#medium-detail.active {
+  background: url(../images/medium-detail-active.png) no-repeat;
+}
+
+a#long-detail {
+  background: url(../images/long-detail-inactive.png) no-repeat;
+}
+
+a#long-detail.active {
+  background: url(../images/long-detail-active.png) no-repeat;
+}
+
+/* Custom Pager */
+
+.page-sources-search  .pager {
+  display: none;
+}
+
+.page-sources-search .attachment.attachment-after {
+  background: #eaeceb;
+}
+
+.page-sources-search .attachment.attachment-after.expanded {
+  position: relative;
+  z-index: 10000;
+}
+
+
+
+
+
+
+.custom-pager {
+  padding: 0 24px;
+  font-size: 0.75em;
+  font-family: 'museo-sans-500',Helvetica,Arial,sans-serif;
+  overflow: auto;
+  width: 100%;
+  color: #333;
+}
+
+.custom-pager .custom-pager-right .pager li,
+.custom-pager .custom-pager-right .pager li > a .icon {
+  text-transform: uppercase;
+}
+
+.custom-pager .custom-pager-left span.label {
+  color: #333;
+  font-size: 1em;
+}
+
+.custom-pager .custom-pager-right #pager-input {
+  min-width: 30px;
+  max-width: 33px;
+  width: 100%;
+  margin: 0 5px;
+  height: 20px;
+  text-align: center;
+  border: none;
+  color: #333;
+  font-size: 1em;
+}
+
+.custom-pager .custom-pager-left {
+  padding-top: 14px;
+  border-right: 1px solid #FFF;
+  width: auto;
+  display: inline-block;
+  float: left;
+  font-size:1.12em;
+}
+
+.custom-pager .custom-pager-right {
+  border-left: 1px solid #FFF;
+  padding: 12px 0 12px 20px;
+  float: right;
+}
+
+.custom-pager-right .pager {
+  display: block;
+  margin-bottom: 0;
+}
+
+.attachment-before .custom-pager .custom-pager-left,
+.attachment-before .custom-pager .custom-pager-right,
+.attachment-after .custom-pager .custom-pager-left {
+  border: none;
+}
+
+.custom-pager .custom-pager-right.expanded,
+.page-sources-search.page-sources-search-biblio .custom-pager .custom-pager-right {
+  margin-right: 0;
+}
+
+
+.custom-sort-container .selectpicker>li>a .check-mark{
+  float: right
+}
+
+
+
+
+
+
+
+
+
+
+
+

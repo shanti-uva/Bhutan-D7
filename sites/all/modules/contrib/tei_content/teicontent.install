@@ -1,0 +1,62 @@
+<?php
+/**
+ * @file
+ * install file for table creation etc.
+ */
+
+
+/**
+ * Implements hook_install ()
+ */
+
+function teicontent_install() {
+  // create node info table
+  drupal_install_schema("teicontent_node_infos");
+}
+
+/**
+ * Implements hook_uninstall ()
+ */
+function teicontent_uninstall() {
+  drupal_uninstall_schema("teicontent_node_infos");
+}
+
+
+/**
+ * Implements hook_schema ()
+ */
+function teicontent_node_infos_schema() {
+  $schema['teicontent_node_infos'] = array(
+    'description' => 'Table for TEI node infos (pagenumbers etc.)',
+    'fields' => array(
+      'nodenr' => array(
+    'type' => 'int',
+    'not null' => TRUE,
+    'default' => 0,
+    'description' => 'Id of the node equals info id'
+      ),
+      'startpage' => array(
+    'type' => 'int',
+    'not null' => TRUE,
+    'default' => 0,
+    'description' => 'start page number'
+      ),
+      'endpage' => array(
+    'type' => 'int',
+    'not null' => TRUE,
+    'default' => 0,
+    'description' => 'last page number'
+      ),
+    'divid' => array(
+    'description' => 'Chapter div id',
+    'type' => 'varchar',
+    'length' => 32,
+    'not null' => TRUE,
+    'default' => '',
+      ),
+    ),
+    'primary key' => array('nodenr'),
+  );
+
+  return $schema;
+}

@@ -1,0 +1,56 @@
+<?php
+
+/*
+ * Implements hook_install: creates explore menu (shanti-explore-menu) and populates from JSON file shanti-collections.json
+ */
+function explore_menu_install() {
+	global $base_url, $base_path;
+	$mn = 'shanti-explore-menu'; // Menu machine name, for example: main-menu
+	if(menu_load($mn)) {
+		drupal_set_message(t('Cannot install Shanti Explore Menu because the menu (' . $mn . ') already exists.'), 'error');
+	} else { 
+	  // Create the Menu
+	  $menu = array(
+	    'menu_name' => $mn, // Drupal menu machine name
+	    'title' => 'Shanti Explore Menu', // Drupal menu display name
+	    'description' => 'Links in the explore menu', // Optional menu description
+	  );
+	  menu_save($menu);
+	  
+	  // Add Links to Menu
+	  $datastr = file_get_contents(drupal_get_path('module', 'explore_menu') . '/js/shanti-collections.json');
+	  $linkdata = json_decode($datastr);
+	  foreach($linkdata->links->production as $n => $link) {
+	  	if(!isset($link->disabled) || $link->disabled == FALSE) {
+	  		$hrefchar = substr($link->href,0,1);
+				if($hrefchar == '/' || $hrefchar == '#') {
+					$link->href = $base_url . $base_path . $link->href;
+				}
+		    $item = array(
+		      'link_path' => $link->href,
+		      'link_title' => $link->text,
+		      'menu_name' => $mn, 
+		      'weight' => ($n - 50),
+		      'language' => $linkdata->language,
+		      'plid' => 0, // Parent menu item, 0 if menu item is on top level
+		      'module' => 'menu',
+		    );
+		    $mlid = menu_link_save($item); 
+			}
+	  }
+	}
+  
+  // Update to Tibetan Language Native value
+  if(module_exists('locale')) {
+    $q = db_update('languages')
+          ->fields(array('native' => 'བོད་ཡིག'))
+          ->condition('language','bo','=')
+          ->execute();
+  }
+}
+
+function explore_menu_uninstall() {
+  $menu = menu_load("shanti-explore-menu");
+  menu_delete($menu);
+}
+

@@ -1,0 +1,349 @@
+<?php
+/**
+ * @file biblio_import_mods.module
+ *
+ * Modifications to the biblio module's import functionality to support importing Nodes into Mandala Collections.
+ **/
+
+/**
+ * Implements hook_permissions
+ */
+function biblio_import_mods_permission() {
+    return array(
+        'administer biblio import' => array(
+            'title' => t('Add Biblio Data Fields'),
+            'description' => t('Add New Fields for Mapping to an Existing Biblio Import Format'),
+            'restrict access' => TRUE,
+        ),
+    );
+}
+
+/**
+ * Implements hook_menu
+ */
+function biblio_import_mods_menu() {
+    $items = array();
+    $items['admin/config/content/biblio/iomap/addfield'] = array(
+        'title' => 'Add Biblio Format Field',
+        'description' => 'Add a field to map to within a biblio import format',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('biblio_import_mods_add_map_field_form'),
+        'access arguments' => array('administer biblio import'),
+        'type' => MENU_NORMAL_ITEM,
+    );
+    return $items;
+}
+
+function biblio_import_mods_add_map_field_form($form, &$form_state) {
+
+    $formats = module_invoke_all('biblio_mapper_options');
+    $options = array();
+    foreach($formats as $key => $format) {
+        if ($format['export']) {
+            $options[$key] = $format['title'];
+        }
+    }
+
+    $form['desc'] = array(
+        '#markup' => '<p>Enter a field name or abbreviation to add to or remove from the selection import format</p>',
+    );
+
+    $form['fieldname'] = array(
+        '#type' => 'textfield',
+        '#title' => t("Field Name"),
+        '#required' => TRUE,
+    );
+
+    $form['action'] = array(
+        '#type' => 'select',
+        '#title' => t('Action'),
+        '#options' => array(
+            'add' => t('Add'),
+            'remove' => t('Remove')
+        ),
+    );
+
+    $form['format'] = array(
+        '#type' => 'select',
+        '#title' => t("Biblio Import Format"),
+        '#options' => $options,
+        '#required' => TRUE,
+    );
+
+    $form['submit'] = array(
+        '#type' => 'submit',
+        '#value' => t('Save'),
+    );
+    return $form;
+}
+
+/**
+ * Custom Form Processing function for biblio_import_mods_add_map_field_form
+ *
+ * Adds field to a import format mapping
+ *
+ * TODO: Use the biblio.modules biblio_get_map and biblio_set_map functions instead of the code here
+ * @param $form
+ * @param $form_state
+ */
+function biblio_import_mods_add_map_field_form_submit($form, &$form_state) {
+    //dpm($form_state, 'form state');
+    $fn = $form_state['input']['fieldname'];
+    $action = $form_state['input']['action'];
+    $format = $form_state['input']['format'];
+    $q = "select {field_map} from biblio_type_maps where format = :format";
+    $result = db_query($q, array(':format' => $format));
+    $row = $result->fetchAssoc();
+    $map = unserialize($row['field_map']);
+    $updated = FALSE;
+
+    if ($action == 'add') {
+        if (!isset($map[$fn])) {
+            $map[$fn] = '';
+            $updated = TRUE;
+            $msg = t('Added @field to field map for @format.', array(
+                '@field' => $fn,
+                '@format' => $format,
+            ));
+        } else {
+            $msg = t('A field named @field is already part of the @format mapping.', array(
+                '@field' => $fn,
+                '@format' => $format,
+            ));
+        }
+    } else {
+        if (isset($map[$fn])) {
+            unset($map[$fn]);
+            $updated = TRUE;
+            $msg = t('The field named @field has been removed from the @format mapping.', array(
+                '@field' => $fn,
+                '@format' => $format,
+            ));
+        } else {
+            $msg = t('There is no field named @field to remove from the @format mapping.', array(
+                '@field' => $fn,
+                '@format' => $format,
+            ));
+        }
+    }
+
+    if ($updated) {
+        $num_updated = db_update('biblio_type_maps')
+            ->fields(array(
+                'field_map' => serialize($map),
+            ))
+            ->condition('format', $format)
+            ->execute();
+        $msg .= t(' @records updated.', array('@records' => $num_updated));
+    }
+    drupal_set_message($msg);
+}
+
+/**
+ * Form Alter for Collections to add import link
+ */
+function biblio_import_mods_form_alter(&$form, &$form_state, $form_id) {
+    // For collection or subcollection nodes
+    if (strstr($form_id, 'collection_node_form') && !empty($form['#entity']->nid)) {
+        // If the collid is one of the user's collections, then provide import link
+        $collid = $form['#entity']->nid;
+        $colls = biblio_import_mods_collections_list_options();  // Gets list of user owned collections
+        if (in_array( $collid, array_keys($colls))) {
+            $form['import_link'] = array(
+                '#prefix' => '<div class="coll-import-link">',
+                '#markup' => l('Import Records', '/biblio/import', array(
+                    'query' => array('collection' => $collid),
+                    'attributes' => array(
+                        'title' => t('Import records into this bibliographic collections'),
+                    )
+                )),
+                '#suffix' => '</div>',
+            );
+            drupal_add_css('.node-form .coll-import-link {
+                    max-width: 200px;
+                    position: absolute;
+                    top: 100px;
+                    right: 80px;
+                }', 'inline');
+        }
+    }
+}
+
+/**
+ * Get a list of <options> for the given user's Collections.
+ */
+function biblio_import_mods_collections_list_options($userid=NULL) {
+  $selected_user = NULL;
+  if (isset($userid)) {
+    $selected_user = user_load($userid);
+  }
+  else {
+    global $user;
+    $selected_user = $user;
+  }
+
+  $user_groups = og_get_groups_by_user($selected_user);
+  if (empty($user_groups['node'])) {
+    return array();
+  }
+  $result = db_query("SELECT {title, nid} FROM {node} WHERE type IN ('collection', 'subcollection') AND nid in (:nids) ORDER BY {title}", array(
+    ':nids' => array_values($user_groups['node'])
+  ));
+  $matches = array();
+  foreach ($result as $collection) {
+    $matches[$collection->nid] = "$collection->title ($collection->nid)";
+  }
+  return $matches;
+}
+
+/**
+ * Ajax form callback to update the list of Collection based on user.
+ */
+function biblio_import_mods_collections_list($form, &$form_state) {
+  $values = $form_state['values'];
+  $form['collections']['fields']['collection']['#options'] = biblio_import_mods_collections_list_options($values['userid']);
+  $form['collections']['fields']['collection'] = form_process_select($form['collections']['fields']['collection']);
+  return $form['collections']['fields']['collection'];
+}
+
+/**
+ * Implements hook_form_biblio_import_form_alter
+ *
+ * Add additional Collections fieldset to support importing into a Collection.
+ */
+function biblio_import_mods_form_biblio_import_form_alter(&$form, &$form_state) {
+  global $user;
+
+  unset($form['import_taxonomy']);
+
+  // Hide the batch processing checkbox (must stay checked)
+  drupal_add_css('div.form-item-batch-process { display: none; }', 'inline');
+
+  // Make File Required
+  //$form['biblio_import_file']['#required'] = TRUE;
+  $form['info'] = array(
+      '#markup'=> t('This form will allow you to import batches of source records into specific collections, or bibliographies. ' .
+        'The currently accepted formats are RIS (.ris) and MARC (.mrc). UVA Library’s Zotero export format uses ".ris" format, ' .
+          'and most bibliography managing programs will export to it. The Library of Congress site exports only to MARC. ' .
+          'The import process is often imperfect and each entry should be reviewed for accuracy and completeness. '
+      ),
+      '#weight' => -49,
+  );
+
+  // File file type chooser
+  $form['filetype']['#empty_option'] = t('- Choose a type -');
+  $form['filetype']['#required'] = TRUE;
+  unset($form['filetype']['#options'][0]);
+  $form['filetype']['#description'] = t('Choose the type of file being imported');
+
+  // Set User ID Default to current user
+  $form['userid']['#title'] = t('Creator of Records');
+  $form['userid']['#description'] = t('Choose the person who will be the creator of these records');
+  $form['userid']['#required'] = TRUE;
+  $form['userid']['#ajax'] = array(
+    'callback' => 'biblio_import_mods_collections_list',
+    'wrapper' => 'biblio-import-collections-list',
+    'method' => 'replace',
+    'event' => 'change',
+  );
+
+  // Add a collections list
+  $options = biblio_import_mods_collections_list_options($user->uid);
+
+  $form['collection'] = array(
+    '#title' => 'Collection',
+    '#type' => 'select',
+    '#description' => t('Optionally, choose a bibliography (collection) into which the records will be imported'),
+    '#empty_option' => '- None -',
+    '#options' => $options,
+    '#weight' => 1,
+  );
+
+  if (!empty($_GET['collection'])) {
+      $form['collection']['#default_value'] = $_GET['collection'];
+  }
+
+  // Add custom submit function to top of submit function list
+  array_unshift($form['#submit'], 'biblio_import_mods_form_biblio_import_form_submit');
+  $form['button']['#weight'] = 25;
+}
+
+/**
+ * Custom import form submit function. Adds chosen collection and user to static variables
+ *
+ * @param $form
+ * @param $form_state
+ */
+function biblio_import_mods_form_biblio_import_form_submit(&$form, &$form_state) {
+    //dpm($form_state, 'form state in submit');
+    if (isset($form_state['input']['collection']) && $form_state['input']['collection'] != -1) {
+        drupal_static('biblio_import_mods_collection', $form_state['input']['collection']);
+        drupal_static('biblio_import_mods_user', $form_state['input']['userid']);
+    }
+}
+
+/**
+ * Implements hook_batch_alter.
+ *
+ * Adds an additional batch operation to the Biblio import batch processes which assigns all of the
+ * newly imported Nodes to the selected Collection.
+ */
+function biblio_import_mods_batch_alter(&$batch) {
+  if ($batch['source_url'] == 'biblio/import') {
+    $collection_id = drupal_static('biblio_import_mods_collection');
+    if ($collection_id) {
+        $_SESSION['collection_id'] = $collection_id;
+    }
+
+
+    array_push($batch['sets'][0]['operations'], array(
+      'biblio_import_mods_update_import',
+      array(
+        $collection_id,
+      ),
+    ));
+    $batch['sets'][0]['file'] = drupal_get_path('module', 'biblio_import_mods') . '/biblio_import_mods.batch.inc';
+    $batch['sets'][0]['count']++;
+    $batch['sets'][0]['total']++;
+
+      // Add a finished function
+    $batch['sets'][0]['finished'] = 'biblio_import_mods_batch_finish';
+  }
+}
+
+
+/**
+ * Batch finish function for importing biblio records
+ */
+function biblio_import_mods_batch_finish($success, $results, $operations) {
+    //dpm($results, 'results in finish');
+
+    $collid = $_SESSION['collection_id'];
+    // If collid is part of import, then make sure each dup is assigned to the collection
+    if (!empty($collid) && !empty($results['dups'])) {
+        $dups = node_load_multiple($results['dups']);
+        foreach ($dups as $dup) {
+            $linked = FALSE;
+            foreach($dup->field_og_collection_ref['und'] as $n => $item) {
+                if ($item['target_id'] == $collid) { $linked = TRUE;}
+            }
+            if (!$linked) {
+                $dup->field_og_collection_ref['und'][] = array(
+                    'target_id' => $collid,
+                );
+                node_save($dup);
+                $ind1 = array_search($dup->nid, $results['dups']);
+                if ($ind1 !== FALSE) { unset($results['dups'][$ind1]); }
+                $ind2 = array_search($dup->nid, $results['nids']);
+                if ($ind2 === FALSE) { $results['nids'][] = $dup->nid; }
+            }
+        }
+    }
+    //dpm($results, 'after update');
+    biblio_import_batch_finished($success, $results, $operations); // original batch finished operation replaced above
+    //$_SESSION['biblio_import_mods_batch_results'] = $results;
+    if ($collid) {
+        $path = drupal_get_path_alias('/node/' . $collid);
+        drupal_goto($path);
+    }
+}

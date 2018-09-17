@@ -1,0 +1,478 @@
+<?php
+
+define('SHANTI_KMAPS_ADMIN_SERVICE', shanti_kmaps_admin_get_service_name());
+define('SHANTI_KMAPS_ADMIN_SERVER_SUBJECTS', 'http://dev-subjects.kmaps.virginia.edu');
+define('SHANTI_KMAPS_ADMIN_SERVER_PLACES', 'http://dev-places.kmaps.virginia.edu');
+define('SHANTI_KMAPS_ADMIN_SERVER_SUBJECTS_EXPLORER', 'http://badger.drupal-dev.shanti.virginia.edu/subjects/__KMAPID__/overview/nojs');
+define('SHANTI_KMAPS_ADMIN_SERVER_PLACES_EXPLORER', 'http://badger.drupal-dev.shanti.virginia.edu/places/__KMAPID__/overview/nojs');
+define('SHANTI_KMAPS_ADMIN_SERVER_SOLR', 'http://kidx.shanti.virginia.edu/solr/kmindex-dev');
+define('SHANTI_KMAPS_ADMIN_SERVER_SOLR_TERMS', 'http://kidx.shanti.virginia.edu/solr/termindex-dev');
+define('SHANTI_KMAPS_ADMIN_PATH', drupal_get_path('module', 'shanti_kmaps_admin'));
+define('SHANTI_KMAPS_ADMIN_ASSET_TYPES', 'texts,images,audio-video,visuals,sources,subjects,places,terms,maps,agents,events');
+define('SHANTI_KMAPS_ADMIN_ROOT_SUBJECTS_ID', '');
+define('SHANTI_KMAPS_ADMIN_ROOT_PLACES_ID', '');
+define('SHANTI_KMAPS_ADMIN_ROOT_SUBJECTS_PATH', '/');
+define('SHANTI_KMAPS_ADMIN_ROOT_PLACES_PATH', '/');
+
+function shanti_kmaps_admin_menu()
+{
+  return array(
+    'admin/config/content/shanti_kmaps_admin' => array(
+      'title' => 'SHANTI KMaps Admin',
+      'description' => 'Specify servers for pulling and pushing KMaps information.',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('shanti_kmaps_admin_admin'),
+      'access arguments' => array('administer shanti_kmaps_admin'),
+      'type' => MENU_NORMAL_ITEM,
+    ),
+    'shanti_kmaps_admin/test' => array(
+      'title' => 'SHANTI KMaps Admin Test',
+      'page callback' => 'shanti_kmaps_admin_test',
+      'page arguments' => '',
+      'access arguments' => array('administer shanti_kmaps_admin'),
+      'type' => MENU_NORMAL_ITEM,
+    ),
+    'shanti_kmaps_admin/vars_json' => array(
+      'title' => 'SHANTI KMaps Admin Vars as JSON',
+      'page callback' => 'shanti_kmaps_admin_vars_json',
+      'page arguments' => '',
+      'access arguments' => array('administer shanti_kmaps_admin'),
+      'type' => MENU_NORMAL_ITEM,
+    ),
+  );
+}
+
+function shanti_kmaps_admin_permission()
+{
+  return array(
+    'administer shanti_kmaps_admin' => array(
+      'title' => t('Administer SHANTI KMaps Admin'),
+    ),
+  );
+}
+
+function shanti_kmaps_admin_admin()
+{
+  $form['shanti_kmaps_admin_server_subjects'] = array(
+    '#type' => 'textfield',
+    '#title' => t('KMaps Subjects Server'),
+    '#default_value' => variable_get('shanti_kmaps_admin_server_subjects', SHANTI_KMAPS_ADMIN_SERVER_SUBJECTS),
+    '#size' => 60,
+    '#maxlength' => 255,
+    '#description' => t('The server used to retrieve data for KMap subject terms. <br/>Do not include an end slash.'),
+    '#required' => TRUE,
+  );
+  $form['shanti_kmaps_admin_server_places'] = array(
+    '#type' => 'textfield',
+    '#title' => t('KMaps Places Server'),
+    '#default_value' => variable_get('shanti_kmaps_admin_server_places', SHANTI_KMAPS_ADMIN_SERVER_PLACES),
+    '#size' => 60,
+    '#maxlength' => 255,
+    '#description' => t('The server used to retrieve data for KMap place terms. <br/>Do not include an end slash.'),
+    '#required' => TRUE,
+  );
+  $form['shanti_kmaps_admin_root_subjects_id'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Root KMaps Subject IDs'),
+    '#default_value' => variable_get('shanti_kmaps_admin_root_subjects_id', SHANTI_KMAPS_ADMIN_ROOT_SUBJECTS_ID),
+    '#size' => 60,
+    '#maxlength' => 255,
+    '#description' => t("The root subject IDs for this site.
+      You may enter a list of IDs separated by whitespace.
+      If you leave this empty, then all subjects will be available."),
+    '#required' => FALSE,
+  );
+
+  $form['shanti_kmaps_admin_root_subjects_filter_enabled'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Filter by Subjects Root'),
+    '#default_value' => variable_get('shanti_kmaps_admin_root_subjects_filter_enabled', 0),
+    '#description' => t("Filter by root subjects id."),
+    '#required' => FALSE,
+  );
+
+  $form['shanti_kmaps_admin_root_places_id'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Root KMaps Place IDs'),
+    '#default_value' => variable_get('shanti_kmaps_admin_root_places_id', SHANTI_KMAPS_ADMIN_ROOT_PLACES_ID),
+    '#size' => 60,
+    '#maxlength' => 255,
+    '#description' => t("The root places ID for this site.
+      You may enter a list of IDs separated by whitespace.
+      If you leave this empty, then all places will be available."),
+    '#required' => FALSE,
+  );
+
+  $form['shanti_kmaps_admin_root_places_filter_enabled'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Filter by Places Root'),
+    '#default_value' => variable_get('shanti_kmaps_admin_root_places_filter_enabled', 0),
+    '#description' => t("Filter by root places id."),
+    '#required' => FALSE,
+  );
+  $form['shanti_kmaps_admin_root_subjects_path'] = array(
+    '#type' => 'hidden',
+    '#required' => FALSE,
+  );
+  $form['shanti_kmaps_admin_root_places_path'] = array(
+    '#type' => 'hidden',
+    '#required' => FALSE,
+  );
+  $form['shanti_kmaps_admin_server_subjects_explorer'] = array(
+    '#type' => 'textfield',
+    '#title' => t('KMaps Subjects Explorer'),
+    '#default_value' => variable_get('shanti_kmaps_admin_server_subjects_explorer', SHANTI_KMAPS_ADMIN_SERVER_SUBJECTS_EXPLORER),
+    '#size' => 60,
+    '#maxlength' => 255,
+    '#description' => t('The site used to view and explore KMap subject terms in the SHANTI KMap Solr
+      Index. <br/>Be sure to use the special string <b>__KMAP__</b> in the URL (with
+      two underscores before and after the uppercase word "KMAP") to specify where the
+      numeric KMap ID actually goes in the URL. <br/>Do not include an end slash.'),
+    '#required' => TRUE,
+  );
+  $form['shanti_kmaps_admin_server_places_explorer'] = array(
+    '#type' => 'textfield',
+    '#title' => t('KMaps Places Explorer'),
+    '#default_value' => variable_get('shanti_kmaps_admin_server_places_explorer', SHANTI_KMAPS_ADMIN_SERVER_PLACES_EXPLORER),
+    '#size' => 60,
+    '#maxlength' => 255,
+    '#description' => t('The site used to view and explore KMap place terms in the SHANTI KMap Solr Index. <br/>Be sure to use the special string <b>__KMAP__</b> in the URL (with two underscores before and after the uppercase word "KMAP") to specify where the numeric KMap ID actually goes in the URL. <br/>Do not include an end slash.'),
+    '#required' => TRUE,
+  );
+  $form['shanti_kmaps_admin_solr_username'] = array(
+    '#type'           => 'textfield',
+    '#title'          => t('KMaps Solr Username'),
+    '#default_value'  => variable_get('shanti_kmaps_admin_solr_username', ''),
+    '#size'           => 60,
+    '#maxlength'      => 255,
+    '#description'    => t('<b>Optional:</b> If the Solr index is implementing HTTP Basic Authentication, then enter the username here.'),
+    '#required'       => FALSE,
+  );
+  $form['shanti_kmaps_admin_solr_password'] = array(
+    '#type'           => 'password',
+    '#title'          => t('KMaps Solr Password'),
+    '#size'           => 15,
+    '#maxlength'      => 64,
+    '#description'    => t('<b>Optional:</b> If the Solr index is implementing HTTP Basic Authentication, then enter the password here. Leave blank to keep the current password.'),
+    '#required'       => FALSE,
+  );
+  $form['shanti_kmaps_admin_server_solr_opt_in'] = array(
+    '#type' => 'checkbox',
+    '#title' => t("Do you want to publish your KMap data to the SHANTI KMap Solr Index?"),
+    '#description' => t("If yes, then make sure you set the next field to a valid Solr URL."),
+    '#default_value' => variable_get('shanti_kmaps_admin_server_solr_opt_in', 0),
+    '#options' => array(0 => 'no', 1 => 'yes'),
+  );
+  $form['shanti_kmaps_admin_server_solr'] = array(
+    '#type' => 'textfield',
+    '#title' => t('KMaps Solr Server Assets Index'),
+    '#default_value' => variable_get('shanti_kmaps_admin_server_solr', SHANTI_KMAPS_ADMIN_SERVER_SOLR),
+    '#size' => 60,
+    '#maxlength' => 255,
+    '#description' => t("The URL to the SHANTI KMap Assets index. <br/>This may include a path to the specific index. <br/>Do not include an end slash."),
+    '#required' => FALSE,
+  );
+  $form['shanti_kmaps_admin_solr_filter_query'] = array(
+    '#type' => 'textfield',
+    '#title' => t('KMaps Solr Project Filter Query'),
+    '#default_value' => variable_get('shanti_kmaps_admin_solr_filter_query', ''),
+    '#size' => 60,
+    '#maxlength' => 255,
+    '#description' => t('Solr filter query to apply to all queries, e.g. <tt>fq=project:my_project OR fq=kmapid:places-99999</tt>.'),
+    '#required' => FALSE,
+  );
+
+  $form['shanti_kmaps_admin_solr_filter_query_kmaps_enabled'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Enable KMap Filter'),
+    '#default_value' => variable_get('shanti_kmaps_admin_solr_filter_query_kmaps_enabled', 0),
+    '#description' => t("Enable Kmap Filter below..."),
+    '#required' => FALSE,
+  );
+
+  $form['shanti_kmaps_admin_solr_filter_query_kmaps'] = array(
+    '#type' => 'textfield',
+    '#title' => t('KMaps Solr Kmaps Filter Query'),
+    '#default_value' => variable_get('shanti_kmaps_admin_solr_filter_query_kmaps', '+(ancestor_uids_generic:places-427 tree:subjects)'),
+    '#size' => 60,
+    '#maxlength' => 255,
+    '#description' => t('Solr filter query to apply to Kmap entity queries.'),
+    '#required' => FALSE,
+  );
+
+  $form['shanti_kmaps_admin_solr_filter_query_assets_enabled'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Enable Asset Filter'),
+    '#default_value' => variable_get('shanti_kmaps_admin_solr_filter_query_assets_enabled', 0),
+    '#description' => t("Enable Asset Filter below..."),
+    '#required' => FALSE,
+  );
+
+  $form['shanti_kmaps_admin_solr_filter_query_assets'] = array(
+    '#type' => 'textfield',
+    '#title' => t('KMaps Solr Asset Filter Query'),
+    '#default_value' => variable_get('shanti_kmaps_admin_solr_filter_query_assets', '+(ancestors_txt:Bhutan asset_type:subjects)'),
+    '#size' => 60,
+    '#maxlength' => 255,
+    '#description' => t('Solr filter query to apply to Kmap asset queries.'),
+    '#required' => FALSE,
+  );
+
+  $form['shanti_kmaps_admin_server_solr_terms'] = array(
+    '#type' => 'textfield',
+    '#title' => t('KMaps Solr Server Terms Index'),
+    '#default_value' => variable_get('shanti_kmaps_admin_server_solr_terms', SHANTI_KMAPS_ADMIN_SERVER_SOLR_TERMS),
+    '#size' => 60,
+    '#maxlength' => 255,
+    '#description' => t("The URL to the SHANTI KMap Terms index. <br/>This may include a path to the specific index. <br/>Do not include an end slash."),
+    '#required' => FALSE,
+  );
+  $form['shanti_kmaps_admin_asset_types'] = array(
+    '#type' => 'textarea',
+    '#title' => t('KMaps Solr Asset Types'),
+    '#default_value' => variable_get('shanti_kmaps_admin_asset_types', SHANTI_KMAPS_ADMIN_ASSET_TYPES),
+    '#description' => t("A comma delimited list of asset types, used throughout the KMap system.<br/>These values should be lowercase plurals with no spaces.<br/>Ideally, this list would come from somewhere authoritative, such as the Rail KMaps server itself.<br>To revert to defaults, copy and paste this riginal list: <tt>".SHANTI_KMAPS_ADMIN_ASSET_TYPES."</tt>"),
+    '#required' => TRUE,
+  );
+
+
+  $form['shanti_kmaps_admin_search_navigation_mode'] = array(
+    '#type' => 'select',
+    '#title' => t('Search Result Action'),
+    '#description' => t("Behavior when you click a search results.  'local' or go to asset 'app'"),
+    '#default_value' => variable_get('shanti_kmaps_admin_search_navigation_mode', 'local'),
+    '#options' => drupal_map_assoc(array('local','app')),
+  );
+
+  $form['shanti_kmaps_admin_debug_mode'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Debug Mode'),
+    '#default_value' => variable_get('shanti_kmaps_admin_debug_mode', 0),
+    '#description' => t("Toggle debug mode. Used by various scripts and modules."),
+    '#required' => FALSE,
+  );
+  $form['shanti_kmaps_admin_include_mms'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Include MMS Images in KMap Index Results'),
+    '#default_value' => variable_get('shanti_kmaps_admin_include_mms', 0),
+    '#description' => t("Toggle to include. Used by KMaps Fields module in popovers."),
+    '#required' => FALSE,
+  );
+  $form['shanti_kmaps_admin_index_response'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Display index response from Kmaps Solr indexing'),
+    '#default_value' => variable_get('shanti_kmaps_admin_index_response', 0),
+    '#description' => t("When checked, shows resonse from SOLR index when kmap doc sent"),
+    '#required' => FALSE,
+  );
+  return system_settings_form($form);
+}
+
+function shanti_kmaps_admin_admin_validate($form, &$form_state)
+{
+  if (!$form_state['values']['shanti_kmaps_admin_server_solr_terms']) {
+    if ($form_state['values']['shanti_kmaps_admin_root_subjects_id'] || $form_state['values']['shanti_kmaps_admin_root_places_id']) {
+      form_set_error('shanti_kmaps_admin_server_solr_terms',
+        t('In order to have a root subjects or places ID, you must set the KMaps Solr Server Terms Index.')
+      );
+    }
+  } else { // http://stackoverflow.com/questions/15617512/get-json-object-from-url
+    $tidx = $form_state['values']['shanti_kmaps_admin_server_solr_terms'];
+
+    # Get the full path to the root subjects IDs
+    if (!$form_state['values']['shanti_kmaps_admin_root_subjects_id']) {
+      form_set_value($form['shanti_kmaps_admin_root_subjects_id'], SHANTI_KMAPS_ADMIN_ROOT_SUBJECTS_ID, $form_state);
+      form_set_value($form['shanti_kmaps_admin_root_subjects_path'], SHANTI_KMAPS_ADMIN_ROOT_SUBJECTS_ID, $form_state);
+      drupal_set_message('Setting empty Root KMaps Subjects ID and Root KMaps Subjects Path.');
+    } else {
+      $ids = preg_split('/\s+/', $form_state['values']['shanti_kmaps_admin_root_subjects_id']);
+      $paths = [];
+      $error = [];
+      foreach ($ids as $id) {
+        $path = shanti_kmaps_admin_get_term_path('subjects-' . $id, $tidx);
+        if (!$path) {
+          $error[] = $id;
+        } else {
+          $paths[] = $path; //'/'.$path;
+        }
+      }
+      if (count($error) > 0) {
+        form_set_error('shanti_kmaps_admin_root_subjects_id',
+          t('The following subjects could not be found in the KMaps Solr Server Terms Index: ' . implode(' ', $error)));
+      } else {
+        $paths = implode(' ', $paths);
+        form_set_value($form['shanti_kmaps_admin_root_subjects_path'], $paths, $form_state);
+        drupal_set_message('Setting Root KMaps Subjects Path to: ' . $paths);
+      }
+    }
+
+    # Get the full path to the root places IDs
+    if (!$form_state['values']['shanti_kmaps_admin_root_places_id']) {
+      form_set_value($form['shanti_kmaps_admin_root_places_id'], SHANTI_KMAPS_ADMIN_ROOT_PLACES_ID, $form_state);
+      form_set_value($form['shanti_kmaps_admin_root_places_path'], SHANTI_KMAPS_ADMIN_ROOT_PLACES_ID, $form_state);
+      drupal_set_message('Setting empty Root KMaps Places ID and Root KMaps Places Path.');
+    } else {
+      $ids = preg_split('/\s+/', $form_state['values']['shanti_kmaps_admin_root_places_id']);
+      $paths = [];
+      $error = [];
+      foreach ($ids as $id) {
+        $path = shanti_kmaps_admin_get_term_path('places-' . $id, $tidx);
+        if (!$path) {
+          $error[] = $id;
+        } else {
+          $paths[] = $path; //'/'.$path;
+        }
+      }
+      if (count($error) > 0) {
+        form_set_error('shanti_kmaps_admin_root_places_id',
+          t('The following places could not be found in the KMaps Solr Server Terms Index: ' . implode(' ', $error)));
+      } else {
+        $paths = implode(' ', $paths);
+        form_set_value($form['shanti_kmaps_admin_root_places_path'], $paths, $form_state);
+        drupal_set_message('Setting Root KMaps Places Path to: ' . $paths);
+      }
+    }
+  }
+
+  if (!($form_state['values']['shanti_kmaps_admin_solr_password'])) {
+    $form_state['values']['shanti_kmaps_admin_solr_password'] = variable_get('shanti_kmaps_admin_solr_password');
+  }
+
+  # Make sure a Solr index is specfified if they opt in
+  if ($form_state['values']['shanti_kmaps_admin_server_solr_opt_in']
+    && !$form_state['values']['shanti_kmaps_admin_server_solr']
+  ) {
+    form_set_error('shanti_kmaps_admin_server_solr',
+      t('You must enter something for the Solr index, since you have chosen to publish to the SHANTI KMap Solr Index.')
+    );
+  }
+
+  # Remove any spaces from the asset type string
+  $asset_types = $form_state['values']['shanti_kmaps_admin_asset_types'];
+  if (preg_match("/\s+/", $asset_types)) {
+    $asset_types = preg_replace("/\s+/", '', $asset_types);
+    form_set_value($form['shanti_kmaps_admin_asset_types'], $asset_types, $form_state);
+    drupal_set_message("Removed extra spaces from the asset types list.");
+  }
+}
+
+function shanti_kmaps_admin_get_term_path($id, $term_index = NULL)
+{
+  if ($term_index == NULL) {
+    $term_index = variable_get('shanti_kmaps_admin_server_solr_terms', SHANTI_KMAPS_ADMIN_SERVER_SOLR_TERMS);
+  }
+  $json = file_get_contents($term_index . '/select?wt=json&fl=ancestor_id_path&q=id:' . $id);
+  $obj = json_decode($json);
+  return $obj->response->numFound == 0 ? false : $obj->response->docs[0]->ancestor_id_path;
+}
+
+function shanti_kmaps_admin_test()
+{
+  $vars = shanti_kmaps_admin_get_vars();
+  dpm($vars);
+}
+
+function shanti_kmaps_admin_vars_json()
+{
+  $vars = shanti_kmaps_admin_get_vars();
+  drupal_json_output($vars);
+}
+
+function shanti_kmaps_admin_get_service_name()
+{
+  return preg_replace("/[\.\/\:]/", '_',
+            preg_replace('/\:8443/', '',
+                preg_replace('/https?:\/\//', '', $GLOBALS['base_url'])));
+}
+
+function shanti_kmaps_admin_preprocess_page()
+{
+  $vars = shanti_kmaps_admin_get_vars();
+  $vars['shanti_kmaps_admin_asset_types'] = shanti_kmaps_admin_get_asset_types();
+  drupal_add_js(array('shanti_kmaps_admin' => $vars), 'setting');
+}
+
+function shanti_kmaps_admin_get_asset_types()
+{
+  $types = array();
+  $types = explode(',', variable_get('shanti_kmaps_admin_asset_types', SHANTI_KMAPS_ADMIN_ASSET_TYPES));
+  return $types;
+}
+
+function shanti_kmaps_admin_get_vars()
+{
+  $vars = array();
+  $sql = "select `name`, `value` from {variable} where `name` like 'shanti_kmaps_admin%'";
+  $rs = db_query($sql);
+  foreach ($rs as $r) {
+    $vars[$r->name] = variable_get($r->name);
+  }
+  return $vars;
+}
+
+function shanti_kmaps_admin_filter_options($domain)
+{
+  static $filter_options;
+  if (!$filter_options) {
+    $filter_options = array(
+      'places' => array(
+        'feature_type' => t('Feature Type'),
+        'associated_subject' => t('Associated Subject'),
+      ),
+      'subjects' => array(), // there are currently no filters for subjects
+    );
+  }
+  return $filter_options[$domain];
+}
+
+function shanti_kmaps_admin_search_filters($namespace, $domain) {
+  $filter_options = shanti_kmaps_admin_filter_options($domain);
+  $filters = array();
+  foreach ($filter_options as $type => $display) {
+    $filters[$type] = array(
+      '#theme' => 'shanti_kmaps_filter',
+      '#namespace' => $namespace,
+      '#filter_type' => $type,
+      '#filter_display' => $display,
+    );
+  }
+  return $filters;
+}
+
+function shanti_kmaps_admin_search_field($namespace, $domain) {
+  return array(
+    '#theme' => 'shanti_kmaps_typeahead',
+    '#namespace' => $namespace,
+    '#domain' => $domain,
+  );
+}
+
+function shanti_kmaps_admin_theme()
+{
+  return array(
+    'shanti_kmaps_filter' => array(
+      'path' => drupal_get_path('module', 'shanti_kmaps_admin') . '/templates',
+      'template' => 'shanti_kmaps_filter',
+      'render element' => 'el',
+    ),
+    'shanti_kmaps_typeahead' => array(
+      'path' => drupal_get_path('module', 'shanti_kmaps_admin') . '/templates',
+      'template' => 'shanti_kmaps_typeahead',
+      'render element' => 'el',
+    ),
+  );
+}
+
+function template_preprocess_shanti_kmaps_filter(&$vars) {
+  // http://themery.com/dgd7/advanced-theming/forms/with-templates
+  $vars['namespace'] = $vars['el']['#namespace'];
+  $vars['display'] = $vars['el']['#filter_display'];
+  $vars['type'] = $vars['el']['#filter_type'];
+}
+
+function template_preprocess_shanti_kmaps_typeahead(&$vars) {
+  $vars['namespace'] = $vars['el']['#namespace'];
+  $vars['domain'] = ucfirst($vars['el']['#domain']);
+}
+
+# TEST

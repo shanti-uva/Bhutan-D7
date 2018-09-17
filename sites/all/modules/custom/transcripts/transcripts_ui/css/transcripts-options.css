@@ -1,0 +1,8 @@
+.transcript-options.bootstrap-select.btn-group .dropdown-menu.open {
+    min-width: 18rem;
+    padding-bottom: 1rem;
+}
+
+.bootstrap-select.btn-group.show-tick .dropdown-menu li a.opt-download .check-mark {
+    display: none;
+}

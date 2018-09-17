@@ -1,0 +1,586 @@
+.view-text-search a {
+  color: #444;
+  display: inline-block;
+  font-size: 1em !important;
+  line-height: 1.32em;
+  padding: 0.2em 0.5em 0 0;
+}
+
+.view-text-search a:hover,
+.view-fulltext-search a:hover,
+.view-text-search a:active,
+.view-fulltext-search a:active{
+  color: #555;
+}
+
+.view-text-search h3 {
+  font-size:1em;
+  padding-left: 0.8rem;
+  padding-top: 0.3rem;
+  border-top: 1px solid #ddd;
+  margin: 1.5rem 0.5rem 0 1.7rem;
+}
+
+.view-text-search h3 a,
+.view-fulltext-search h3 a {
+  color: #111;
+  font-family: 'droidserif',georgia,palatino,'Palatino Linotype',serif;
+  white-space: normal;
+  font-weight: bold;
+  opacity: 0.8;
+}
+
+.view-text-search h3 a:hover,
+.view-fulltext-search h3 a:hover {
+  color: #000;
+}
+
+.view-text-search h3::before {
+  content: '';
+  position: relative;
+  top: 0.6rem;
+  left: -0.2rem;
+  border: none;
+  border-radius: 50%;
+  background-clip: padding-box;
+  width: 0.8rem;
+  height: 0.8rem;
+  float: left;
+  margin: 0 0.5rem 0 -1.7rem;
+  background-color: #a066c0 !important;
+  opacity: 0.8;
+  display: inline-block;
+}
+
+.view-text-search h3:hover::before,
+.view-fulltext-search h3:hover::before {
+  background-color: #fff !important;
+  border: 3px double #a066c0;
+}
+
+.view-text-search h3:active::before,
+.view-fulltext-search h3:active::before {
+  background-color: #a066c0 !important;
+  opacity: 1;
+  border: none !important;
+}
+
+.view-text-search h3 ~ div {
+  padding-left: 2.5rem;
+  font-family: 'Helvetica Neue',helvetica,arial,sans-serif;
+  font-style: italic;
+}
+
+.view-text-search .mega-search-title a,
+.view-fulltext-search .mega-search-title a {
+  margin-left: 1.25rem;
+}
+
+.view-text-search .mega-search-title a::before,
+.view-fulltext-search .mega-search-title a::before {
+  content: '';
+  width: .8rem;
+  height: .8rem;
+  border: 2px solid #aaa;
+  position: relative;
+  bottom: 0.1rem;
+  border-radius: 50%;
+  margin-right: 0.8rem;
+  margin-left: -2rem;
+  display: inline-block;
+}
+
+.view-text-search .mega-search-title a:hover::before,
+.view-fulltext-search .mega-search-title a:hover::before {
+  background-color: #a066c0 !important;
+  border-color: transparent;
+}
+
+.view-text-search .mega-search-title a:active::before,
+.view-fulltext-search .mega-search-title a:active::before {
+  background-color: transparent !important;
+  border-color: #a066c0;
+}
+
+.view-text-search .form-type-textfield.form-item-title,
+.view-fulltext-search .form-type-textfield.form-item-title {
+  margin-right: 0;
+  width: 100%;
+}
+
+.view-fulltext-search .view-filters .description,
+.view-text-search .view-filters .description {
+  display: none;
+}
+
+.views-widget-filter-title .form-control {
+  max-width: 18rem;
+}
+
+#search-flyout.extruder .text {
+  border: 1px solid rgb(238, 238, 238);
+  padding: 5px;
+}
+
+.region-search-flyout {
+  position: relative;
+}
+
+.block-quicktabs {
+  margin-top: 5rem;
+}
+
+.view-text-search > .view-filters,
+.view-fulltext-search > .view-filters {
+  position: absolute;
+  top: -5.2rem;
+  width: 100%;
+}
+
+.extruder .view-filters .ajax-progress {
+  display: none;
+}
+
+.region-search-flyout .nav-tabs {
+  border: none;
+  margin-left: 4rem;
+  position: absolute;
+  top: 0;
+  z-index: 305;
+  margin-top:1.3rem;
+}
+
+.region-search-flyout .nav-tabs>li {
+  margin-bottom: 0;
+}
+
+.region-search-flyout .nav-tabs>li>a,
+.region-search-flyout .nav-tabs>li>a:hover,
+.region-search-flyout .nav-tabs>li>a:active {
+  background-color: transparent;
+  border: 1px solid transparent;
+  padding: 0 10px;
+  color: #333;
+  letter-spacing:.05rem;
+  border-color: transparent;
+  border-radius: 5px;
+}
+
+.region-search-flyout .nav-tabs>li.active>a,
+.region-search-flyout .nav-tabs>li.active>a:hover,
+.region-search-flyout .nav-tabs>li.active>a:active {
+  position: relative;
+  top: 0.05rem;
+  font-weight: bold;
+  border-color: #ccc !important;
+  background-color: #fff !important;
+  border-radius: 5px;
+  padding-top: 0.1rem;
+  font-size: 85%;
+}
+/* override hover ---*/
+.region-search-flyout .nav-tabs>li>a:hover,
+.region-search-flyout .nav-tabs>li>a:active {
+  background-color: #fff !important;
+  color: #000;
+  border: 1px solid #e0e0e0;
+}
+/* set text for Search by ---*/
+.region-search-flyout .nav-tabs::before {
+  content: 'Search by:';
+  font-size: 75%;
+  margin-right: 0.5rem;
+  margin-left: .5rem;
+  float: left;
+  top: .3rem;
+  position: relative;
+  font-weight: bold;
+  color: #777;
+  text-transform: uppercase;
+}
+
+
+/**
+* search scrollbars full-length
+*/
+.text.ui-resizable::-webkit-scrollbar{
+  height: 0;
+  width: 0;
+}
+/* testing targets */
+.texts .text.ui-resizable::-webkit-scrollbar{ /* Texts App so far is only using this full-height scroll, so width set for visible */
+  width: 0.6rem;
+}
+
+.text.ui-resizable::-webkit-scrollbar-track{
+  border-radius: 0.6rem;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.1);
+}
+
+.text.ui-resizable::-webkit-scrollbar-thumb{
+  background-color: #e5e5e5;
+  border-radius: 0.6rem;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.2);
+}
+
+.text.ui-resizable:hover::-webkit-scrollbar-thumb{
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+}
+
+
+/*.view-solr-texts p,*/
+.view-text-search p,
+.view-fulltext-search p{
+  margin: 0.5em 0 0 1em;
+  font-size: 1em;
+}
+
+/*.mega-search-title.depth-1.weight-0,*/
+.view-all-texts-control-box .views-submit-button {
+  display: none;
+}
+/*.view-solr-texts h3,*/
+.view-fulltext-search h3 {
+  margin: 1rem 0 0 0.8rem;
+  font-size: 1em;
+  padding-top: 0;
+}
+.view-fulltext-search h3{
+  font-size: 0.93em;
+  line-height: 1.25em;
+  font-weight: bold !important;
+  border-left: 3px solid #a066c0;
+  padding-left: .7rem;
+  color: #333;
+}
+.view-fulltext-search p{
+  /*font-size: 0.93em;*/
+  border-bottom: 1px solid #aaa;
+  padding-bottom: 1.5rem;
+}
+.view-fulltext-search p{
+  border:none;
+}
+
+.views-exposed-form .views-widget-filter-search_api_views_fulltext {
+  padding-right: 0;
+  width: 100%;
+}
+.view-fulltext-search .view-content{
+  padding-top: 4rem;
+}
+.view-text-search .view-content {
+  padding-bottom:1rem;
+  padding-top:2.5rem;
+  border-bottom:1px solid #ddd;
+}
+.view-text-search .views-exposed-widget.views-widget-filter-title,
+.view-fulltext-search .views-exposed-widget.views-widget-filter-title{
+  padding-top:0;
+}
+
+
+/*--- START / Search Panel / Input & View ----*/
+/*----------------------------------------------*/
+.extruder {
+  padding: 0;
+  display: block;
+  width: 100%;
+}
+
+/**
+* views-exposed-widget is a Texts flyout replacement
+* for class - input-section - that is used across Sarvaka theme
+*/
+.extruder .views-exposed-form .views-exposed-widget{
+  width:100%;
+  padding-top:0;
+}
+
+.extruder .views-exposed-widgets input.form-control:first-child {
+  border-bottom-right-radius: 25px;
+  border-top-right-radius: 25px;
+  background-clip: padding-box;
+}
+
+.extruder .views-exposed-widgets {
+  padding: 0 1.2rem 0 1rem;
+  display: block;
+  width: 100%;
+  background: #f8f8f8;
+  margin-bottom:0.4rem;
+}
+
+.extruder .views-exposed-widgets input.form-control {
+  color: #777;
+  border: 1px solid #ccc;
+  border-radius: 25px;
+  background-clip: padding-box;
+  font-size: 1.06em;
+  height: 35px; /* coordinate with button height below */
+  line-height: 1.44em;
+  margin: 2rem 0 0;
+  padding: 0.2rem 6rem 0 3.2rem;
+  width: 100%;
+  max-width: 100%;
+  overflow: auto;
+  vertical-align: middle;
+  -webkit-box-shadow: 0 2px 5px #eee inset;
+  box-shadow: 0 2px 5px #eee inset;
+  border-collapse: separate;
+  background: #fff;
+  -webkit-transition-property: all;
+  -webkit-transition-duration: 400ms;
+  transition-property: all;
+  transition-duration: 400ms;
+}
+
+.extruder .view-full-text .views-exposed-widgets input.form-control{
+  margin-top: 3.1rem;
+}
+
+ .extruder #quicktabs-search_qt2 .view-full-text .views-exposed-widgets input.form-control{
+  margin-top: 3.2rem;
+}
+
+.extruder .views-exposed-widgets input.form-control:hover {
+  border: 1px solid #ccc;
+  color: #777;
+}
+
+.extruder .views-exposed-widgets input.form-control:focus {
+  border: 1px solid #9097d3;
+  -webkit-box-shadow: 0 0 4px #949bd8;
+  box-shadow: 0 0 4px #949bd8;
+  border-collapse: separate; /* fix ie9 shadow */
+}
+
+.extruder .shanticon-magnify{
+    position: absolute;
+    top: 3.4rem;
+}
+
+.extruder .view-full-text .shanticon-magnify{
+    position: absolute;
+    top: 4.6rem;
+}
+
+.extruder label.flyout-search-label {
+  color:#444;
+  display:block;
+  font-size: 0.93em;
+  position: absolute;
+  left: 3.3rem;
+  top: 0.7rem;
+  font-weight: normal;
+  letter-spacing:0.03rem;
+  text-transform: capitalize;
+  font-family: 'museo-sans-500',helvetica,arial,sans-serif;
+}
+
+.extruder label.flyout-search-label span{
+  text-transform: uppercase;
+  padding-right: 0.3rem;
+  font-weight:bold;
+}
+
+/*--- button group ---*/
+.extruder .views-submit-button {
+  width: 4.5rem !important;
+  height: 35px;
+  position: absolute;
+  top: 2.5rem;
+  right: 1.3rem;
+  z-index: 10;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+}
+
+.extruder .view-full-text .views-submit-button{
+  top:3.7rem;
+}
+
+/*--- submit button ---*/
+.extruder .views-submit-button .btn.btn-primary {
+  display: block;
+  height: 33px;
+ /* 2px less than search input height above */
+  color: #aaa;
+  width: 100%;
+  border: 1px solid #e5e5e5;
+  border-width: 0 0 0 1px;
+  border-radius: 0;
+  border-top-right-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
+  background-clip: padding-box;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  padding: 0;
+  margin: 0;
+  font-size: 1.2rem;
+  background-image: linear-gradient(to bottom,#fff 0,#e0e0e0 100%);
+}
+
+.extruder .views-submit-button .btn.btn-primary:hover {
+  background: #eee;
+  color: #777;
+}
+
+.extruder .views-submit-button .btn.btn-primary:active,
+.extruder .views-submit-button .btn-primary.active {
+  background: transparent;
+  border-color: #fff;
+}
+
+.extruder .views-submit-button .btn.btn-primary span {
+  font-family: 'Glyphicons Halflings' !important;
+  color: transparent;
+  background: transparent;
+}
+
+.extruder .views-submit-button .btn.btn-primary span::before {
+  content: '\e080';
+  color: #aaa;
+  position: relative;
+  top: 0.2rem;
+  right: 0;
+  font-size: 1.5rem;
+}
+
+.extruder .views-submit-button .btn.btn-primary:active span,
+.extruder .views-submit-button .btn.btn-primary.active span {
+  color: #777;
+}
+
+
+
+
+
+
+
+
+
+
+
+.extruder table.pagerer{
+  font-size: 0.75em;
+  margin:1.5rem auto;
+  float:left;
+}
+
+.extruder .view-empty{
+  position: relative;
+  top: 4rem;
+  height: 4rem;
+  float: left;
+  font-size: 1em;
+}
+
+
+
+
+
+
+/* Save for when eset buttons are implemented on Texts ---
+.extruder .views-reset-button {
+  display: none;
+}
+
+.extruder .views-reset-button .btn.btn-primary {
+  position: absolute;
+  right: 7.8rem;
+  top: 3.3rem;
+  z-index: 10;
+  color: transparent;
+  text-shadow: none;
+  box-shadow: none;
+  border: none;
+  background: transparent;
+  background-image: none;
+  padding: 0;
+  margin: 0;
+  border-radius: 50%;
+}
+
+.extruder .views-reset-button .btn.btn-primary:hover,
+.extruder .views-reset-button .btn.btn-primary:active {
+  color: transparent;
+  background-image: none;
+  background: transparent;
+  border: none;
+}
+
+.extruder .views-reset-button .btn.btn-primary span {
+  display: inline-block;
+  width: 2.25rem;
+  height: 2.25rem;
+  cursor: pointer;
+  position: relative;
+  top: -0.55rem;
+  left: 1.5rem;
+  background: transparent;
+  border-radius: 50%;
+  border: none;
+}
+
+.extruder .views-reset-button .btn.btn-primary span::before,
+.extruder .views-reset-button .btn.btn-primary span::after {
+  background: #aaa;
+  width: 1.7rem;
+  height: 1px;
+  position: absolute;
+  top: 1.1rem;
+  left: 0.3rem;
+  content: '';
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+.extruder .views-reset-button .btn.btn-primary span::after {
+  -webkit-transform: rotate(-45deg);
+  -moz-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+}
+
+.extruder .views-reset-button .btn.btn-primary:hover span,
+.extruder .views-reset-button .btn.btn-primary:active span {
+  background: #f0f0f0;
+}
+*/
+
+
+.extruder .views-reset-button{
+  float: none;
+  width: auto;
+  display: inline;
+  padding: 0;
+}
+
+.extruder .view-full-text .searchreset{
+  position: absolute;
+  right: 6.3rem;
+  top: 4.5rem;
+
+  right: -9999px;
+}
+
+.extruder .view-text-search .views-reset-button .btn,
+.extruder .view-fulltext-search .views-reset-button .btn {
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index:-10;
+}
+
+
+/* search by text section */
+.views-exposed-widget .description {
+  display: none;
+}
+
+.view-fulltext-search > .view-content > div{
+  border-top: 1px solid #aaa;
+  margin-top: 0;
+}

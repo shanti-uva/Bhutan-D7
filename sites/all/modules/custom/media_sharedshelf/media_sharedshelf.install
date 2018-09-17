@@ -1,0 +1,158 @@
+<?php
+/**
+ * @file
+ * Install, update and uninstall functions for the Media: SharedShelf module.
+ *
+ * When modifying this module in the future, then use functions of the format
+ * media_sharedshelf_update_700n() where n increments from 1. These functions
+ * exist to indicate new files or functions are added OR will include code to
+ * make modifications to the existing module variables. (See media_flickr for
+ * examples.)
+ */
+
+/**
+ * Implements hook_field_schema().
+ */
+function media_sharedshelf_field_schema($field) {
+	return array(
+		'columns' => array(
+				'fid' => array(
+					'type' => 'int', 'unsigned' => TRUE, 'not null' => FALSE, 
+				), 
+				'title' => array(
+					'type' => 'varchar', 'length' => 255, 'not null' => FALSE, 
+				), 
+				'data' => array(
+					'type' => 'text', 'not null' => FALSE, 'size' => 'big', 'serialize' => TRUE, 
+				), 
+			), 
+		'indexes' => array('fid' => array('fid'), ), 
+		'foreign keys' => array('file_managed' => array('table' => 'file_managed', 'columns' => array('fid' => 'fid'), ), ), );
+}
+
+/**
+ * Implements hook_install().
+ */
+function media_sharedshelf_install() {
+	include_once 'includes/media_sharedshelf.variables.inc';
+	include_once 'includes/media_sharedshelf.utilities.inc';
+	drupal_load('module', 'media');
+	drupal_load('module', 'field');
+	// Create basic fields for each of the media types (ie. bundles).
+	$entities = array('file');
+	foreach (file_type_get_enabled_types() as $name => $type) {
+		foreach (media_sharedshelf_basic_fields() as $field_info) {
+			$field_info['entity_types'] = $entities;
+			if (!field_info_field($field_info['field_name'])) {
+				$field = field_create_field($field_info);
+				$instance = array(
+					'field_name' => $field['field_name'], 
+					'entity_type' => $entities[0], 
+					'label' => $field['settings']['label'], 
+					'description' => $field['settings']['description'], 
+					'bundle' => $name, 'required' => FALSE, 
+				);
+				_media_sharedshelf_error_log($field['field_name'] . ' field created during install.');
+			} else {
+				$instance = array(
+					'field_name' => $field_info['field_name'], 
+					'entity_type' => $entities[0], 
+					'label' => $field_info['settings']['label'], 
+					'description' => $field_info['settings']['description'], 
+					'bundle' => $name, 'required' => FALSE, 
+				);
+			}
+			if (array_key_exists('display', $field_info)) {
+				$instance['display'] = $field_info['display'];
+			}
+			field_create_instance($instance);
+		}
+	}
+	return array();
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function media_sharedshelf_uninstall() {
+	include_once 'includes/media_sharedshelf.variables.inc';
+	include_once 'includes/media_sharedshelf.utilities.inc';
+	foreach (media_sharedshelf_variable_default() as $name => $value) {
+		media_sharedshelf_variable_del($name);
+	}
+	// Delete basic fields.
+	drupal_load('module', 'media');
+	drupal_load('module', 'field');
+	foreach (media_sharedshelf_basic_fields() as $field_info) {
+		$instance = field_info_instance('file', $field_info['field_name'], 'image');
+		field_delete_instance($instance);
+		field_delete_field($field_info['field_name']);
+		_media_sharedshelf_error_log('File (image) ' . $field_info['field_name'] . ' field deleted during uninstall.');
+	}
+	foreach (media_sharedshelf_user_fields() as $field_info) {
+		$instance = field_info_instance('user', $field_info['field_name'], 'user');
+		field_delete_instance($instance);
+		field_delete_field($field_info['field_name']);
+		_media_sharedshelf_error_log('User ' . $field_info['field_name'] . ' field deleted during uninstall.');
+	}
+	/* Doc fields function is not yet defined
+	 foreach (media_sharedshelf_doc_fields() as $field_info) {
+	 $instance = field_info_instance('file', $field_info['field_name'], 'document');
+	 field_delete_instance($instance);
+	 field_delete_field($field_info['field_name']);
+	 _media_sharedshelf_error_log('File (document) ' . $field_info['field_name'] . ' field deleted during uninstall.');
+	 }
+	 */
+	return array( array('success' => TRUE, 'query' => "Deleted all variables in the Media: SharedShelf namespace."));
+}
+
+/**
+ * Attach shared shelf logon info fields to user entity
+ */
+function media_sharedshelf_update_7000() {
+	// Attach shared shelf logon info fields to user entity
+	$fields = media_sharedshelf_user_fields();
+	foreach ($fields as $field) {
+		field_create_field($field);
+	}
+	$instances = array(
+		'ssid' => array(
+			'field_name' => 'field_shared_shelf_id', 
+			'entity_type' => 'user', 
+			'bundle' => 'user', 
+			'label' => 'Your Shared Shelf ID', 
+			'widget' => array('type' => 'text', ), 
+		), 
+		'sspwd' => array(
+			'field_name' => 'field_shared_shelf_password', 
+			'entity_type' => 'user', 
+			'bundle' => 'user', 
+			'label' => 'Your Shared Shelf Password', 
+			'widget' => array('type' => 'text', ), ), 
+		);
+	foreach ($instances as $instance) {
+		field_create_instance($instance);
+	}
+}
+
+function media_sharedshelf_user_fields() {
+	return array(
+		'ssid' => array(
+			'field_name' => 'field_shared_shelf_id', 
+			'type' => 'text', 
+		), 	
+		'sspwd' => array(
+			'field_name' => 'field_shared_shelf_password', 
+			'type' => 'text', 
+		), 
+	);
+}
+
+
+/**
+ * Attach shared shelf logon info fields to user entity
+ */
+function media_sharedshelf_update_7001() {
+	// Attach shared shelf logon info fields to user entity
+}
+	

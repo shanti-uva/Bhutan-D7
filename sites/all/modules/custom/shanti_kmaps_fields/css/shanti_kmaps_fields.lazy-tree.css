@@ -1,0 +1,34 @@
+/* SHANTI KMaps Fields Lazy Tree CSS */
+.field-widget-kmap-typeahead-tree-picker .menu-wrapper {
+    clear: both;
+}
+/* hide suggestions but preserve messages */
+.field-widget-kmap-typeahead-tree-picker .menu-wrapper .kmaps-tt-suggestion {
+    display: none;
+}
+.field-widget-kmap-typeahead-tree-picker .kmaps-tt-header,
+.field-widget-kmap-typeahead-tree-picker .kmaps-tt-message {
+    background-color: #eee;
+    font-weight: bold;
+    border-top: 2px solid #ddd;
+    border-bottom: 1px solid #ddd;
+ }
+.kmap-lazy-tree {
+    clear: both;
+    background: #eee;
+    padding: 5px;
+    margin-bottom: 5px;
+}
+.kmap-lazy-tree .picked {
+    color:gray;
+    text-decoration:line-through;
+}
+.kmap-lazy-tree span.fancytree-active .fancytree-title {
+    color: inherit;
+    background-color: white;
+}
+.kmap_lazy-tree a.fancytree-title:focus,
+.kmap-lazy-tree span.fancytree-focused a:link,
+.kmap-lazy-tree span.fancytree-focused .fancytree-title {
+    outline: none;
+}

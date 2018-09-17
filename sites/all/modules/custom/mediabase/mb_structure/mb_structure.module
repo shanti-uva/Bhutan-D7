@@ -1,0 +1,1447 @@
+<?php
+
+/**
+ * This module provides a UI and some backend utilities for the collection->team group structures
+ **/
+
+/**
+ * Function to return a nodes group
+ */
+
+function mb_structure_get_group($node, $type = 'object')
+{
+  $groups = og_get_entity_groups('node', $node);
+  $gid = array_shift($groups['node']);
+  if ($type == 'id' || $type == 'gid') {
+    return $gid;
+  } else {
+    return node_load($gid);
+  }
+}
+
+/**
+ * Returns a title-link to a collection from just its nid
+ */
+function get_mbcollection_link($nid) {
+    $gnode = node_load($nid);
+    return l($gnode->title, '/node/' . $nid);
+}
+
+/**
+ * Return list of subcollections in collection
+ *      Returns an array of nids
+ * TODO: Use function by similar name in shanti collections to replace this one
+ */
+
+function get_subcollections_in_collection($coll = FALSE)
+{
+  $nids = array();
+  if (is_numeric($coll)) {
+    $coll = node_load($coll);
+  } // convert nid to node
+  // Only collections have subcollections
+  if ($coll->type == "collection") {
+    /**
+     * Sample Query:
+     *       select etid from og_membership where entity_type='node' and field_name='field_og_parent_collection_ref' and gid=3;
+     **/
+    $result = db_select('og_membership', 'ogm')
+      ->fields('ogm', array('etid'))
+      ->condition('entity_type', 'node')
+      ->condition('field_name', 'field_og_parent_collection_ref')
+      ->condition('gid', $coll->nid)
+      ->execute();
+    $nids = $result->fetchCol();
+    //drupal_set_message(count($nids) . ' subcols found');
+  }
+  return $nids;
+}
+
+/**
+ * Return the count of number of items in a collection
+ * TODO: Use function by similar name in shanti_collections to replace this one
+ */
+function get_items_in_collection($coll = FALSE, $return = "count")
+{
+  $nids = array();
+  if (is_numeric($coll)) {
+    $coll = node_load($coll);
+  } // Load collection node if id given
+  if ($coll) {
+    // Get all collection and subcollection nids invovled
+    $nids[] = $coll->nid;
+    $nids = array_merge($nids, get_subcollections_in_collection($coll));
+    /**
+     * Sample Query:
+     *      select count(etid) from og_membership where entity_type='node' and field_name='field_og_collection_ref' and gid in (3,1721,1725,1769,2228,2258,3498,3939,4836,4835,1760,1748,1841);
+     *
+     */
+    $query = db_select('og_membership', 'ogm');
+    $query->join('node', 'n', 'n.nid = ogm.etid');
+    $result = $query->fields('ogm', array('etid'))
+      ->condition('n.type', array('audio', 'video'), 'IN')
+      ->condition('n.status', 1)
+      ->condition('ogm.entity_type', 'node')
+      ->condition('ogm.field_name', 'field_og_collection_ref')
+      ->condition('ogm.gid', $nids, 'IN')
+      ->execute();
+    $nids = $result->fetchCol();
+
+    if ($return == "nids") {
+      return $nids;
+    }
+    /*if ($coll->nid == 3) {
+        return count($nids) - 627;
+        // TODO: Find out why Browse Media Collection view show a count 627 less than count derrived from above for THL only.
+        //             See MANU-3286
+    }*/
+  }
+  return count($nids);
+}
+
+/**
+ * Implements hook_block_info
+ */
+
+function mb_structure_block_info()
+{
+  $blocks = array();
+  $blocks['collection_detail'] = array(
+    'info' => 'Collection Detail',
+    'cache' => DRUPAL_NO_CACHE,
+  );
+  $blocks['collection_manage'] = array(
+    'info' => 'Collection Links (Manage)',
+    'cache' => DRUPAL_NO_CACHE,
+  );
+  $blocks['collection_media_listing'] = array(
+    'info' => 'Collection Media Listing',
+  );
+  $blocks['lets_get_started'] = array(
+    'info' => 'Let\'s get started!',
+    'visibility' => BLOCK_VISIBILITY_PHP,
+    //'pages' => 'user_is_logged_in()'
+  );
+  $blocks['already_started'] = array(
+    'info' => 'Already started?',
+    'visibility' => BLOCK_VISIBILITY_PHP,
+    //'pages' => 'user_is_logged_in()'
+  );
+
+  $blocks['collections_carousel'] = array(
+    'info' => 'Collections Carousel',
+    'visibility' => BLOCK_VISIBILITY_NOTLISTED,
+  );
+  return $blocks;
+}
+
+function mb_structure_block_view($delta)
+{
+  switch ($delta) {
+    case 'collection_detail':
+      $block = array();
+      $node = get_node_from_path();
+      if ($node && in_array($node->type, array("collection", "subcollection"))) {
+        $block_subj = ("collection" == $node->type) ? t("Collection") : t("Subcollection");
+        $block['subject'] = $block_subj;
+        $block['content'] = collection_block_details($node);
+      }
+      return $block;
+
+    case 'collection_manage':
+      $block = array();
+      $node = get_node_from_path();
+      if ($node && in_array($node->type, array("collection", "subcollection"))) {
+        if ($perms = mb_structure_get_group_access_level($node)) {
+          $block['subject'] = t("Manage");
+          $block['content'] = manage_collection_block($node, $perms);
+        }
+      }
+      return $block;
+
+    case 'collection_media_listing':
+      $block['subject'] = t('Media');
+      $block['content'] = collection_media_listing();
+      return $block;
+
+    case 'lets_get_started':
+      if (!user_is_logged_in()) { // is there a better way to do this?
+        return null;
+      }
+      $block['subject'] = t('Create a collection');
+      $block['content'] = drupal_get_form('mb_structure_lets_get_started_form');
+      return $block;
+
+    case 'already_started':
+      $groups = shanti_collections_get_groups_for_user(); // was mb_structure_get_groups_for_user();
+      if (!user_is_logged_in() || empty($groups)) { // is there a better way to do this?
+        return null;
+      }
+      $block['subject'] = t('Add to your collections');
+      $block['content'] = drupal_get_form('mb_structure_already_started_form');
+      return $block;
+
+    case 'collections_carousel':
+      $block['subject'] = t('Collections');
+      $block['content'] = mb_structure_collections_carousel_block();
+      return $block;
+  }
+}
+
+function collection_block_details($node)
+{
+  global $user;
+  $owner = user_load($node->uid);
+  $is_owner = $user->uid == $node->uid;
+  $status = '';
+
+  // administrator user link
+  $coll_man = t("Manager: ");
+  $subcoll_man = t("Subcollection Manager: ");
+  $man_label = ("collection" == $node->type) ? $coll_man : $subcoll_man;
+  $man_name = $owner->name;
+  if (module_exists('realname')) {
+    $man_name = realname_load($owner);
+  }
+
+  $count = get_items_in_collection($node);
+  $count_str = t("@count media item(s)", array('@count' => $count));
+
+  $output = '<div class="collection-stats">';
+  $output .= '<div class="owner"><span class="stat">' . $man_label . '</span> <span class="value">' . $man_name . '</span></div>';
+  $output .= '<div class="item-count">' . $count_str . '</div>';
+  $output .= '<div class="access">' . $status . '</div>';
+  $output .= '</div>';
+  return $output;
+}
+
+/** old collection block for reference (12-5-2014)
+ * function collection_block_details_old() {
+ * global $user;
+ * if ( ! $node = get_node_from_path() ) {
+ * return;
+ * }
+ * if ( in_array($node->type, array( "collection", "team") ) )    {
+ * $output = "<ul>";
+ *
+ * // get the collection group object from the nid
+ * $group = $node; // og_get_group('node', $node->nid);
+ * $owner = user_load($node->uid);
+ * $is_owner = $user->uid == $node->uid;
+ * $gid = $group->nid; // $group->gid;
+ *
+ * // create video
+ * if(og_is_member($gid, 'user') || og_user_access($gid, 'administer group') ){
+ * $create_video_link = l("Upload a Video", "node/add/video", array('query' => array('gids_node[]' => $node->nid)));
+ * $output .= "<li>$create_video_link</li>";
+ * }
+ *
+ * // create audio
+ * if(og_is_member($gid, 'user') || og_user_access($gid, 'administer group') ){
+ * $create_audio_link = l("Upload Audio", "node/add/audio", array('query' => array('gids_node[]' => $node->nid)));
+ * $output .= "<li>$create_audio_link</li>";
+ * }
+ *
+ * if (og_user_access_by_entity('add user', 'node', $node->nid)) {
+ * // Add members
+ * $add_members_link = l("Add Members", "group/node/$node->nid/admin/people/add-user");
+ * $output .= "<li>$add_members_link</li>";
+ *
+ * // View members (Admin)
+ * $view_members_link = l("Manage Members", "group/node/$node->nid/admin/people");
+ * $output .= "<li>$view_members_link</li>";
+ * }
+ *
+ * // add a new team
+ * if( "collection" == $node->type && og_user_access($gid, 'administer group') ){
+ * $create_team_link = l("Add a new Team", "node/add/team", array('query' => array('gids_node[]' => $node->nid)));
+ * $output .= "<li>$create_team_link</li>";
+ * }
+ *
+ * // administrator user link
+ * $coll_man = t("Manager: ");
+ * $team_man = t("Team Manager: ");
+ * $man_label = "collection" == $node->type ? $coll_man : $team_man;
+ * $name = $owner->name;
+ * if ( module_exists('realname')) {
+ * $name = realname_load($owner);
+ * }
+ * $output .= "<li>" . $man_label . l($name, "user/$owner->uid") . "</li>";
+ * /*
+ * //count media objects in collection/team
+ * $query = new EntityFieldQuery();
+ * $result = $query
+ * ->entityCondition('entity_type', 'node')
+ * ->propertyCondition('type', array('audio','video'), 'IN')
+ * ->fieldCondition('group_audience', 'state', array(1), 'IN', 0)
+ * ->fieldCondition('group_audience', 'gid', $gid, '=', 0)
+ * ->execute();
+ *
+ * $count = isset($result['node']) ? sizeof($result['node']) : 0;
+ * $text = t("@count media item(s)", array('@count' => $count));
+ * *//*
+      $output .= "<li>$text</li>";
+   }
+   $output .= "</ul>";
+   return $output;
+}
+ */
+
+/*
+ * Configure carousel block to determine which projects to highlight
+ */
+function mb_structure_block_configure($delta = '')
+{
+  $form = array();
+  if ($delta == 'collections_carousel') {
+    $form['collections_carousel'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Carousel Settings'),
+    );
+    $form['collections_carousel']['project_ids'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Project ID to Include in Carousel'),
+      '#description' => t('Enter the Node IDs for the projects you wish to show in the carousel separated by commas'),
+      '#default_value' => variable_get('carousel_block_project_ids', '3'),
+      '#required' => TRUE,
+    );
+    $form['collections_carousel']['block_speed'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Speed of Carousel'),
+      '#description' => t('Enter the number of seconds to pause between frames'),
+      '#default_value' => variable_get('carousel_block_speed', 8),
+      '#required' => TRUE,
+    );
+  }
+  return $form;
+}
+
+function mb_structure_block_save($delta = '', $edit = array())
+{
+  if ($delta == 'collections_carousel') {
+    variable_set('carousel_block_project_ids', str_replace(' ', '', $edit['project_ids']));
+    variable_set('carousel_block_speed', $edit['block_speed']);
+  }
+}
+
+/**
+ * Returns currents users access to group. False = none; 1 = user (add content), 2 = add members, 3 = administrator
+ */
+function mb_structure_get_group_access_level($group)
+{
+  global $user;
+
+  $can_manage = FALSE;
+  //$group = og_get_group('node', $node->nid);
+  $owner = user_load($group->uid);
+  $is_owner = $user->uid == $group->uid;
+  //$gid = $group->gid;
+  $gid = $group->nid;
+  if (og_is_member('node', $gid, 'user')) {
+    $can_manage = 1;
+  }
+  if (og_user_access_entity('add user', 'node', $gid)) {
+    $can_manage = 2;
+  }
+  if (og_user_access('node', $gid, 'administer group')) {
+    $can_manage = 3;
+  }
+  return $can_manage;
+}
+
+function manage_collection_block($node, $perms)
+{
+
+  $output = '<div class="manage-collection">';
+
+  // create video
+  if ($perms) {
+    $create_video_link = l("Upload a Video", "node/add/video", array('query' => array('gids_node[]' => $node->nid)));
+    $output .= "<div class=\"link\">$create_video_link</div>";
+  }
+
+  // create audio
+  if ($perms) {
+    $create_audio_link = l("Upload Audio", "node/add/audio", array('query' => array('gids_node[]' => $node->nid)));
+    $output .= "<div class=\"link\">$create_audio_link</div>";
+  }
+
+  if ($perms > 1) {
+    // Add members
+    $add_members_link = l("Add Members", "group/node/$node->nid/admin/people/add-user");
+    $output .= "<div class=\"link\">$add_members_link</div>";
+
+    // View members (Admin)
+    $view_members_link = l("Manage Members", "group/node/$node->nid/admin/people");
+    $output .= "<div class=\"link\">$view_members_link</div>";
+  }
+
+  // add a new team
+  if ("collection" == $node->type && $perms == 3) {
+    $create_subcoll_link = l("Add a new Subcollection", "node/add/subcollection", array('query' => array('gids_node[]' => $node->nid)));
+    $output .= "<div class=\"link\">$create_subcoll_link</div>";
+  }
+  $output .= '</div>';
+  return $output;
+
+}
+
+function get_node_from_path()
+{
+  $object = menu_get_object();
+  // Check if this is an existing node.
+  if (!empty($object->nid)) {
+    return $object;
+  } else {
+    // For Apache Search Page (collhome/%) that creates new Collection Home menu_get_object doesn't work (with 'collhome' url)
+    // So use code below to load the node and return. NEED TO CHECK When apache search page replaces the present collection page (2013-08-28, ndg)
+    $menuitem = menu_get_item();
+    if ($menuitem["page_arguments"][0] == "collection_home") {
+      $collid = array_pop($menuitem["page_arguments"]);
+      if ($collpath = drupal_get_normal_path("collection/$collid")) {
+        $nid = array_pop(explode('/', $collpath));
+        if ($node = node_load($nid)) {
+          return $node;
+        }
+      }
+    }
+  }
+}
+
+/** Form alter functions **/
+
+/**
+ * Implementation of hook_form_alter for COLLECTION_NODE_FORM
+ **/
+function mb_structure_form_collection_node_form_alter(&$form, &$form_state, $form_id)
+{
+  //dpm($form, 'form: ' . $form_id);
+  //dpm($form_state, 'form state');
+
+  // Make sure there are no dupe titles
+  $form['title']['#element_validate'][] = 'mb_structure_validate_title';
+  // Hide the ability to set Collection to not be a group
+  $form['group_group']['und']['#type'] = 'hidden';
+  // Hide old subcollection kmap id
+  $form['field_subcoll_root_kmap_id']['#attributes']['class'][] = 'hidden';
+
+}
+
+/**
+ * Implementation of hook_form_alter for subcollection_NODE_FORM
+ **/
+function mb_structure_form_subcollection_node_form_alter(&$form, &$form_state, $form_id)
+{
+
+  // Make sure there are no dupe titles
+  $form['title']['#element_validate'][] = 'mb_structure_validate_title';
+  // Hide the ability to set subcollection to not be a group
+  $form['group_group']['und']['#type'] = 'hidden';
+
+  // Limit COLLECTION PARENT options to  collection and subcollection
+  // TODO: Do we need this reinstated? (2016-05-02)
+  /*
+  $field_language = field_language('node', $form['#node'], 'group_audience');
+  $opts = &$form['group_audience'][$field_language]['#options'];
+  $orig_opts =  !empty($opts) ? $opts : array();
+  $new_opts = array();
+  $coll_key = t('Collections');
+  foreach ($orig_opts as $key => $opt_group) {
+     if (! is_array($opt_group)) { continue; }
+     foreach ($opt_group as $gid => $option) {
+        //$group = og_get_group('group',$gid);
+        if ($node = node_load($gid)) {
+            if ( in_array($node->type, array('collection'))  && ( og_is_member($gid, 'user') || og_user_access($gid, 'administer group') ) ) {
+               $new_opts[$coll_key][$gid] = $orig_opts[$key][$gid];
+            }
+        }
+     }
+     $opts = $new_opts;
+  }
+   */
+}
+
+/**
+ * Implementation of hook_form_alter for VIDEO_NODE_FORM
+ **/
+function mb_structure_form_video_node_form_alter(&$form, &$form_state, $form_id)
+{
+  //dpm(array('form' => $form, 'form state' => $form_state), "vids f and fs");
+  
+  // Remove Preview actions since unhelpful (MANU-1850)
+  if (isset($form['actions']['preview'])) {
+    unset($form['actions']['preview']);
+  }
+  if (isset($form['actions']['preview_changes'])) {
+    unset($form['actions']['preview_changes']);
+  }
+
+  // If pbcore title is empty but there is a node title, then use the latter to fill the former
+  // This happens with videos imported from Kaltura (ndg, 2014-12-12)
+  if (empty($form['field_pbcore_title']['und'][0]['field_title']['und'][0]['value']['#default_value']) && !empty($form['#node']->title)) {
+    $form['field_pbcore_title']['und'][0]['field_title']['und'][0]['value']['#default_value'] = $form['#node']->title;
+  }
+
+  // if Kaltura ID is defined, embed a player that allows thumbnail capture (ndg, 2013-06)
+  $flang = field_language('node', $form_state['node'], 'field_video');
+  $kid = (isset($form_state['node']->field_video[$flang][0]['entryid'])) ? $form_state['node']->field_video[$flang][0]['entryid'] : NULL;
+  if (!empty($kid)) {
+    $embed = '<script src="https://cdnapisec.kaltura.com/p/381832/sp/38183200/embedIframeJs/uiconf_id/14448611/partner_id/381832"></script>
+      <div id="kaltura_player_1373286644" style="width: 400px; height: 360px; float:left; padding-right: 20px; padding-bottom: 20px;" itemprop="video" itemscope itemtype="http://schema.org/VideoObject">
+      <span itemprop="name" content=""></span>
+      <span itemprop="description" content=""></span>
+      <span itemprop="duration" content=""></span>
+      <span itemprop="thumbnail" content=""></span>
+      <span itemprop="width" content="400"></span>
+      <span itemprop="height" content="360"></span>
+      <a href="http://corp.kaltura.com/products/video-platform-features">Video Platform</a>
+      <a href="http://corp.kaltura.com/Products/Features/Video-Management">Video Management</a> 
+      <a href="http://corp.kaltura.com/Video-Solutions">Video Solutions</a>
+      <a href="http://corp.kaltura.com/Products/Features/Video-Player">Video Player</a></div>
+      <script>
+      kWidget.embed({
+        "targetId": "kaltura_player_1373286644",
+        "wid": "_381832",
+        "uiconf_id": 14448611,
+        "flashvars": {
+          "streamerType": "auto",
+          "ks": "YjU4OWVlNWJhNDU0ODViMzBjNWE5ZmFmNTNlNTVlMTkzOTg3ZTVhN3wzODE4MzI7MzgxODMyOzE2ODk4NjQ4NjE7MjsxMzc0NTA0ODYxLjIzNDE7Ozs7"
+        },
+        "cache_st": ' . time() . ',
+        "entry_id": "' . $kid . '"
+      });
+      </script>';
+    $instruct = '<p><b>' . t('Setting the Thumbnail') . '</b>: ' .
+      t('Use this video player to navigate to a frame in the video and press the camera icon to capture that frame for the video&rsquo;s thumbnail. ' .
+        'The newly-captured frame will replace the current default thumbnail after the video record is saved in Mediabase. ') .
+      '</p><div class="mb_oldthumb">';
+    $form['field_video'][$flang]['#prefix'] .= $embed . $instruct;
+    $form['field_video'][$flang]['#suffix'] = '</div>' . $form['field_video'][$flang]['#suffix'];
+    drupal_add_css('.mb_oldthumb .kaltura_field_thumb img, .mb_oldthumb .kaltura_field_thumb br { display: none; }', array('type' => 'inline'));
+   // End of thumbnail capture embed code
+  } else {
+      // Add uploading instructions to the Media section of the form with slightly different markup for Audio vs. Video.
+      // See MANU-4026 (ndg8f)
+        $avtype = $form['type']['#value'];
+        if (in_array($avtype, array('audio', 'video'))) {
+            $filetypes = ($avtype == 'video') ? '.flv, .asf, .qt, .mov, .mpg, .mpeg, .avi, .wmv, .mp4, .m4v, .3gp' : '.flv, .asf, .wmv, .qt, .mov, .mpg, .avi, .mp3, .wav, . mp4, .wma, .3gp';
+            $cdiv = ($avtype == 'video') ? '</div>' : '';
+            $form['field_' . $avtype][$flang]['#suffix'] = $cdiv . t('<div class="media-field-description @mtype">Use the Add Media button to add your @mtype. Max file size is 2GB (<a href="/contact">Contact us</a> for larger files). <br />Acceptable file types are: @ftype. <br />This is a two-step process. First, you <strong>upload</strong> your file, and then you <strong>submit</strong> the uploaded file in the same popup window.</div>', 
+                    array('@mtype' => $avtype, '@ftype' =>$filetypes));
+        }
+  }
+  // Hide old Kmap fields from editors (keep in form to maintain old data)
+  $form['field_tags']['#attributes']['class'][] = 'hidden';  // See MANU-774
+  $instlang = $form['field_pbcore_instantiation']['#language'];
+  $form['field_pbcore_instantiation'][$instlang][0]['field_language']['#attributes']['class'][] = 'hidden'; // See MANU-3370
+
+  // Collection / Subcollection List
+  $form['field_og_collection_ref']['und']['#options'] = shanti_collections_get_groups_for_user(); // was mb_structure_get_groups_for_user();
+  
+  /* TODO: Review and replace or delete
+if ( $collection_node && isset($collection_node->field_subcoll_root_kmap_id[LANGUAGE_NONE]) ) {
+   $tid = $collection_node->field_subcoll_root_kmap_id[LANGUAGE_NONE][0]['tid'];
+   $term = taxonomy_term_load($tid);
+   $kmap_id = $term->kmap_id[LANGUAGE_NONE][0]['value'];
+   drupal_add_js(array('mb_structure' => array( 'subcollection_root_kmap_id' => $kmap_id) ), 'setting');
+
+}  **/
+  $form['#validate'][] = 'mb_structure_form_av_node_form_validate';
+  $form['#validate'][] = 'mb_structure_form_av_node_form_submit';
+}
+
+/**
+ * Add node validation for summary and caption types of descriptions
+ */
+function mb_structure_form_av_node_form_validate($form, &$form_state)
+{
+    // Check for no media error when media has been deleted from node and then saved. Replace error with message and return to edit page.
+    $errors = form_get_errors();
+    $error_messages = drupal_get_messages('error');
+    form_clear_error();
+    $cp = current_path();
+    $from_edit = (preg_match('/node\/\d+\/edit/', $cp)) ? TRUE : FALSE; // is the origin page the edit page
+    if (is_array($errors)) {
+        foreach ($errors as $key => $msg) {
+            if (preg_match('/field_(audio|video)\]\[(en|und)\]\[0\]\[entryid/', $key) && $from_edit) {
+                $type = $form_state['values']['type'];
+                if (substr($type, 0, 1) =='a') { $type = 'an ' . $type; } else { $type = 'a ' . $type;  }
+                drupal_set_message(t('Please add @type file to this record.', array( '@type'=>$type)), 'warning');
+                $form_state['node']->replacing_av = TRUE;
+                if (count($errors) == 1) { form_clear_error(); }
+            } else {
+                $msg = str_replace('field_audio', 'Audio', $msg);
+                $msg = str_replace('field_video', 'Video', $msg); 
+                form_set_error($key, $msg);
+                _mb_structure_reenable_kaltura_button($form);
+            }
+        }
+    }
+    
+    // Check for creator 
+    
+    // Check if captions and summaries are within character limits
+    $lang = key($form_state['values']['field_pbcore_description']);
+    foreach ($form_state['values']['field_pbcore_description'][$lang] as $delta => $desc) {
+        if ($delta === "add_more") {
+            continue;
+        }
+        $dstr = $delta + 1;
+        $desc_type = $desc['field_description_type']['und'][0]['value'];
+        $desc_text = $desc['field_description']['und'][0]['value'];
+        $dlen = mb_strlen(strip_tags($desc_text), 'utf8');
+        if ($desc_type == 'Caption' && $dlen > 140) {
+            form_set_error('field_pbcore_description', "The caption description (#$dstr) is $dlen characters. It can only be a maximum of 140 characters long!");
+            drupal_add_js(array('node_validation_error' => TRUE), 'setting'); // Add to setting node_validation_error flag to get shanti_kmaps_fields.widget.js to reinsert the kmaps tags in form
+        } else if ($desc_type == 'Summary' && $dlen > 750) {
+            form_set_error('field_pbcore_description', "The summary description (#$dstr) is $dlen characters. It can only be a maximum of 750 characters long!");
+            drupal_add_js(array('node_validation_error' => TRUE), 'setting'); // Add to setting node_validation_error flag to get shanti_kmaps_fields.widget.js to reinsert the kmaps tags in form
+        }
+    }
+    
+}
+
+/**
+ * When form validation returns to the edit page, the add media button no longer works but produces a page of JSON for AJAX
+ * This function reenables the ajax call for the submit button on the edit form, if no AV item has been attached.
+ */
+function _mb_structure_reenable_kaltura_button(&$form) {
+    $name = 'field_' . $form['type']['#value'];
+    drupal_add_js(array(
+        'kcw-modal-style' => array(
+          'modalSize' => array(
+            'type' => 'fixed',
+            'width' => 740,
+            'height' => 440,
+          ),
+        ),
+      ), 'setting');
+    field_kaltura_add_modal_js($name);
+    ctools_include('modal');
+    ctools_include('ajax');
+    ctools_modal_add_js();
+    $type = $form['type']['#value'];
+    $field = &$form["field_{$type}"];
+    if (!array_search( 'mb-reenable-kaltura', $field['#attributes']['class'])) {
+        $field['#attributes']['class'][] = 'mb-reenable-kaltura';
+    }
+}
+
+function mb_structure_form_av_node_form_submit($form, &$form_state)
+{
+  // Trim whitespaces from title fields
+  $form_state['values']['title'] = trim($form_state['values']['title']);
+  $tlang = field_language('node', $form_state['node'], 'field_pbcore_title');
+  foreach ($form_state['values']['field_pbcore_title'][$tlang] as $key => $tfieldgrp) {
+    if (is_numeric($key)) {
+      $tval = $tfieldgrp['field_title']['und'][0]['value'];
+      // See https://api.drupal.org/comment/51368#comment-51368
+      $form_state['values']['field_pbcore_title'][$tlang][$key]['entity']->field_title['und'][0]['value'] = trim($tval);
+    }
+  }
+
+  // Remove People field values that have role without a name (MANU-3209 & MANU-3249)
+  $people_types = array('creator', 'contributor', 'publisher', 'sponsor');
+  foreach ($people_types as $ptype) {
+    $field_name = 'field_pbcore_' . $ptype;
+    $field_lang = field_language('node', $form_state['node'], $field_name);
+    if (isset($form_state['input'][$field_name][$field_lang]) && is_array($form_state['input'][$field_name][$field_lang])) {
+      // Removing sponsor role if sponsor is empty so it doesn't show an empty people accordion
+      foreach ($form_state['input']['field_pbcore_' . $ptype][$field_lang] as $n => &$person) {
+        // Deal with field machine name idiosyncracies
+        $name_field = ($ptype == 'sponsor') ? 'field_sponsor_name' : "field_{$ptype}";
+        $role_field = ($ptype == 'publisher') ? 'field_publisher_rome' : "field_{$ptype}_role";
+        if (empty($person[$name_field]['und'][0]['value'])) {
+          $person[$role_field]['und'] = "";
+          if (isset($form_state['values'][$field_name][$field_lang])) {
+            unset($form_state['values'][$field_name][$field_lang][$n]);
+          } else {
+            unset($form_state['values'][$field_name]['und'][$n]);
+          }
+        }
+      }
+      if (is_array($form_state['values'][$field_name][$field_lang]) && count($form_state['values'][$field_name][$field_lang]) == 0) {
+        unset($form_state['values'][$field_name][$field_lang]);
+      }
+    }
+  }
+
+}
+
+function mb_structure_form_alter(&$form, &$form_state, $form_id)
+{
+  if ($form_id == 'og_ui_add_users') {
+    $form['og_user']['#title'] = str_replace('group', '', $form['og_user']['#title']);
+    $node = node_load($form['gid']['#value']);
+    // Using JS to disable second field option in Group Add Member form
+    drupal_add_js("jQuery(document).ready(function() {if (jQuery('#edit-field-name').children().length > 0) {jQuery('#edit-field-name').children().eq(1).attr('disabled','disabled');}})", "inline");
+    drupal_set_title(t('Add people to collection: @nodetitle', array('@nodetitle' => $node->title)));
+  } else if ($form_id == 'views_form_og_members_admin_default') {
+    $obj = menu_get_item();
+    $new_title = str_replace('in group', 'in collection:', $obj['title']);
+    drupal_set_title($new_title);
+  }
+
+  if ($form_id == 'og_ui_user_admin_account') {
+    /* The drop down on page group/node/{NID}/admin/people does not close because of an unknown glitch
+         * This code closes it upon load and adds a click event to the button to toggle it when clicked
+         * This simulates almost exactly the dropdown function, except that after a choice one has to close dropdon
+         *   ndg8f (2015-09-21)
+         */
+    $jscode = '(function ($) { $(document).ready(function () { $("#og-ui-user-admin-account .form-type-select div.dropdown-menu.open").hide(); ' .
+      '$("#og-ui-user-admin-account .form-type-select button.selectpicker").click(function() { ' .
+      '$("#og-ui-user-admin-account .form-type-select div.dropdown-menu.open").toggle(); ' .
+      '}); ' .
+      '$("#og-ui-user-admin-account .form-type-select ul.selectpicker li a").click(function() {$("#og-ui-user-admin-account .form-type-select div.dropdown-menu.open").hide();});' .
+      '}); } (jQuery))';
+    drupal_add_js($jscode, 'inline');
+  }
+  
+    // In AV forms, change button labels for add another field collection item to use the title of the item being added
+    if (in_array($form_id, array('audio_node_form', 'video_node_form'))) {
+        $chs = element_children($form);
+        foreach($chs as $cname) {
+            if (strstr($cname, 'field_')) {
+                $field = &$form[$cname];
+                $lang = (isset($field['#language'])) ? $field['#language'] : 'und';
+                $title = (isset($field[$lang]['#title'])) ? $field[$lang]['#title'] : '';
+                if (!empty($field[$lang]['add_more'])) {
+                    $field[$lang]['add_more']['#value'] = t('Add another ') . $title;
+                } else {
+                    //TODO: Deal with nested fields where you need to get element_children($field[$lang]);
+                }
+            }
+        }
+    }
+}
+
+function mb_structure_page_alter($page)
+{
+  if (!empty($page['content']['system_main']['#action'])) {
+    if (strpos($page['content']['system_main']['#action'], 'group/node') > -1) {
+      $title = drupal_get_title();
+      drupal_set_title(str_replace("group ", "collection: ", $title));
+    }
+  }
+}
+
+/**
+ * Implementation of hook_form_alter for AUDIO_NODE_FORM
+ **/
+function mb_structure_form_audio_node_form_alter(&$form, &$form_state, $form_id)
+{
+  mb_structure_form_video_node_form_alter($form, $form_state, $form_id);
+}
+
+/*
+ * Validate titles of collections and subcollection. Called from mb_structure_form_collection_node_form_alter and subcollection
+ **/
+function mb_structure_validate_title($element, &$form_state)
+{
+  $nid = $form_state['values']['nid'];
+  $sql = "SELECT 1 FROM {node} WHERE title = '%s' AND type = '%s' ";
+  $sql .= is_numeric($nid) ? " AND nid != " . $nid : '';
+  $res = db_query($sql, array($form_state['values']['title'], $form_state['values']['type']))->fetchField();
+  if ($res) {
+    $msg = 'There is already a !type with the title <em>!title</em>. Please provide a unique title.';
+    form_error($element, t($msg, array('!type' => $form_state['values']['type'], '!title' => $form_state['values']['title'])));
+  }
+}
+
+function mb_structure_lets_get_started_form()
+{
+  $form['call_to_action'] = array(
+    '#type' => 'hidden',
+    '#value' => '',
+    '#prefix' => t('It\'s easy to set up a collection and begin uploading your media files.')
+  );
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#icon' => 'grid',
+    '#attributes' => array('class' => array('btn-block')),
+    '#value' => t('Add New Collection'),
+    '#submit' => array('mb_structure_new_collection'),
+  );
+  return $form;
+}
+
+function mb_structure_new_collection(&$form_state, $form)
+{
+  global $base_root, $base_path;
+  //watchdog('mb structure', 'redirect to node add collection');
+  drupal_goto($base_root . $base_path . 'node/add/collection');
+}
+
+function mb_structure_already_started_form()
+{
+  $options = shanti_collections_get_groups_for_user(); // was mb_structure_get_groups_for_user();
+  if (empty ($options)) {
+    return;
+  }
+
+  $form['call_to_action'] = array(
+    '#type' => 'hidden',
+    '#value' => '',
+    '#prefix' => t('Upload media to one of your collections.')
+  );
+  $form['collection_id'] = array(
+    '#type' => 'select',
+    '#options' => $options,
+    '#value' => t('Choose a Collection'),
+  );
+  $form['submit_video'] = array(
+    '#type' => 'submit',
+    '#icon' => 'video',
+    '#attributes' => array('class' => array('btn-block')),
+    '#value' => t('Upload a video'),
+    '#submit' => array('mb_structure_already_started_validate'),
+  );
+  $form['submit_audio'] = array(
+    '#type' => 'submit',
+    '#icon' => 'audio',
+    '#attributes' => array('class' => array('btn-block')),
+    '#value' => t('Upload audio'),
+    '#submit' => array('mb_structure_already_started_validate'),
+  );
+  return $form;
+}
+
+function collection_media_listing()
+{
+    $kmap_id = '';
+    watchdog('mb_structure', "no kmap id in deprecated function collection_media_listing");
+  $view = views_get_view('media_by_kmap');
+  $view->execute_display('default', array($kmap_id));
+  $output = !empty($view->result) ? $view->render() : sprintf('<div>%s</div>', t('There are no media items for this characteristic.'));
+  return $output;
+}
+
+/** Not sure this is necessary: removing for speed improvement
+ * function mb_structure_node_view($node, $view_mode, $langcode) {
+ * if ( in_array($node->type, array('audio','video')) && $collection_node = get_collection_ancestor_node($node) ) {
+ * $path = "node/$collection_node->nid";
+ * $alias = drupal_get_path_alias($path);
+ * $link = l($collection_node->title, $alias);
+ * $node->content['collection_ancestor'] = array(
+ * '#type' => 'item',
+ * '#label_display' => 'inline',
+ * '#markup' => $link,
+ * '#title' => t('Collection:'),
+ * );
+ * $node->content['#group_children']['collection_ancestor'] = 'group_details';
+ * }
+ * }
+ */
+
+/**
+ * Hook views_pre_render used to
+ *      add item count to collection rows
+ */
+function mb_structure_views_pre_render(&$view)
+{
+  //dpq($view->build_info['query']);
+  // dpm($view, 'view in prerender');
+  if ($view->name == "collections") {
+    foreach ($view->result as $n => &$result) {
+      $nid = $result->nid;
+      $ct = get_items_in_collection($nid); // function above
+      $result->item_count = $ct;
+      $lbl = 'item';
+      if ($ct == 0 || $ct > 1) {
+        $lbl .= "s";
+      }
+      $result->item_count_label = t($lbl);
+    }
+  } else if ($view->name == "my_workflow") {
+    // Thumbnail calculated by Kaltura module is wrong. Remove sizing attributes from url
+    foreach ($view->result as $n => &$result) {
+      if (empty($result->field_field_video)) {
+        continue;
+      }
+      $url = $result->field_field_video[0]['rendered']['#thub'];
+      $pts = explode('.png', $url);
+      $url = $pts[0] . '.png';
+      $result->field_field_video[0]['rendered']['#thub'] = $url;
+    }
+  }
+}
+
+/**
+ * Add variable has_transcript
+ */
+function mb_structure_preprocess_html(&$vars)
+{
+  if (function_exists('transcripts_node_has_transcript')) {
+    if ($node = menu_get_object()) {
+      if (arg(2) == NULL && transcripts_node_has_transcript($node)) {
+        $vars['classes_array'][] = 'has-transcript';
+      }
+    }
+  }
+}
+
+
+/**
+ * Add variable has_transcript
+ */
+function mb_structure_preprocess_node(&$vars)
+{
+  // Only do following code if full view mode due to time consuming factor on galleries of multiple nodes
+  if ($vars['view_mode'] == 'full') {
+    // Add a mediabase setting for nid and site environment
+    $env = mediabase_site_environment();
+    drupal_add_js(array('mediabase' => array('nid' => $vars['node']->nid, 'prefix' => 'subs-', 'site_env' => $env)), 'setting');
+
+    if ($vars['type'] == 'video') {
+      // Add a mediabase setting for vratio with the ration of the movie
+      if (!empty($vars['field_video'])) {
+        $kid = $vars['field_video'][0]['entryid'];
+        $vmeta = kaltura_entry_load($kid);
+        //dpm($vmeta, 'video metadata');
+        if (is_object($vmeta) && !empty($vmeta->kaltura_width)) {
+          $vwidth = $vmeta->kaltura_width;
+          $vheight = $vmeta->kaltura_height;
+          $ratio = ($vheight == 0 || $vwidth / $vheight < 1.4) ? "4:3" : "16:9"; // 4:3 == 1.33 but lucky dream's ratio is 1.36 so using < 1.4
+          // Defaults to 4:3 if no height
+          drupal_add_js(array('mediabase' => array('vratio' => $ratio, 'vwidth' => $vwidth, 'vheight' => $vheight)), 'setting');
+        }
+      }
+    }
+    if (module_exists('transcripts_node')) {
+      // Temporarily accounting for both old and new version of transcripts suite
+      // in the end transcripts_node is the new version
+      $vars['has_transcript'] = FALSE;
+      if (transcripts_node_has_transcript($vars['node'])) {
+        $options = array(
+          'term' => isset($_GET['term']) ? '"' . $_GET['term'] . '"' : '',
+          'justhits' => isset($_GET['justhits']) ? true : false,
+        );
+        $trid = transcripts_apachesolr_already_indexed_trid('transcripts_node', 'node', $vars['node']->nid);
+        if ($trid) {
+          // override default tier list if transcript-specific tier list is available
+          $val = transcripts_apachesolr_already_indexed_tiers('transcripts_node', 'node', $vars['node']->nid);
+          if (!empty($val)) {
+            $tiers = array_fill_keys(explode(' ', $val), null);
+            $options['tiers'] = array_intersect_key(transcripts_ui_tiers(), $tiers);
+          }
+          $ui = transcripts_ui_ui('transcripts_apachesolr', $trid, $options);
+          if ($ui->tcuCount > 0) {
+            $vars['trid'] = $trid;
+            $vars['has_transcript'] = TRUE;
+            $vars = array_merge($vars, transcripts_ui_render($ui));
+            if ($result = mb_kaltura_get_caption_assets($vars['node'])) {
+              $disabled = !node_access('update', $vars['node']);
+              $subtitle_options = array_flip($ui->tiers);
+              array_walk($subtitle_options, function (&$value, $key) {
+                $value = 'subs-' . $value;
+              });
+              $subtitle_options = array_flip($subtitle_options);
+              $data_content = array();
+              foreach ($subtitle_options as $key => $val) {
+                $data_content[$key] = '<span class="text">' .$val. '</span><span class="glyphicon glyphicon-hourglass"></span><span class="fa fa-spinner fa-spin"></span>';
+              }
+              $selected = array();
+              if ($result->totalCount > 0) {
+                if ($env == 'prod') {
+                  foreach ($result->objects as $captionAsset) {
+                    if ($key = array_search($captionAsset->label, $subtitle_options)) {
+                      $selected[$key] = $captionAsset->id;
+                    }
+                  }
+                }
+                else {
+                  $prefix = $env.'/';
+                  foreach ($result->objects as $captionAsset) {
+                    if (strpos($captionAsset->label, $prefix) === 0) {
+                      if ($key = array_search(substr($captionAsset->label, strlen($prefix)), $subtitle_options)) {
+                        $selected[$key] = $captionAsset->id;
+                      }
+                    }
+                  }
+                }
+              }
+              $vars['transcript_controls']['content']['transcript_options']['groups']['subtitles'] = array(
+                'label' => t('Subtitles'),
+                'options' => $subtitle_options,
+                'selected' => $selected,
+                'data-content' => $data_content,
+                'class' => array('opt-subtitles'),
+                'disabled' => $disabled,
+              );
+              $vars['transcript_controls']['content']['transcript_options']['#attached']['js'][] = drupal_get_path('module', 'mb_kaltura') . '/js/mb-subtitles.js';
+            } else {
+              watchdog('mb_structure', 'Error trying to retrieve Kaltura subtitles for node id ' . $vars['node']->nid);
+            }
+          }
+        }
+      }
+    } elseif (function_exists('transcripts_node_has_transcript')) {
+      $vars['has_transcript'] = transcripts_node_has_transcript($vars['node']);
+    }
+  } else if ($vars['view_mode'] == 'teaser' && in_array($vars['type'], array('collection', 'subcollection'))) {
+    switch ($vars['group_access']['und'][0]['value']) {
+      case OG_ACCESS_UVA:
+        $vars['access'] = t('UVa Only');
+        break;
+      case OG_ACCESS_PUBLIC:
+        $vars['access'] = t('Public');
+        break;
+      default:
+        $vars['access'] = t('Private');
+    }
+  }
+}
+
+function mb_structure_node_load($nodes, $types)
+{
+  // Fix problem with kaltura_node_index_update expects lang='en' instead of 'und'
+  if (in_array('audio', $types)) {
+    foreach ($nodes as $node) {
+      if ($node->type == 'audio' && isset($node->field_audio['und'])) {
+        $node->field_audio['en'] = $node->field_audio['und'];
+      }
+    }
+  }
+}
+
+/**
+ * Implementing hook_node_presave:
+ *      Checks if pbcore title field is set, if not (ie when there's an import), then uses the title to create a new field collection item for field_pbcore_title
+ *      Added ndg8f (2016-02-18)
+ *      TODO: See if we can customize and add to import from Kaltura.
+ */
+function mb_structure_node_presave($node)
+{
+  if (in_array($node->type, array('audio', 'video'))) {
+      if (empty($node->field_pbcore_title)) {
+        $fc_item = entity_create('field_collection_item', array('field_name' => 'field_pbcore_title'));
+        $fc_item->setHostEntity('node', $node);
+        $fc_wrapper = entity_metadata_wrapper('field_collection_item', $fc_item);
+        $fc_wrapper->field_title->set($node->title);
+        $fc_wrapper->save();
+      }
+      
+      
+   }
+}
+
+function mb_structure_node_insert($node)
+{
+  // Separate function to update a node's kaltura data in case it needs to be called from other contexts.
+  // mb_update_node_kaltura_data($node); // NOTE: Doesn't work for new node because Kaltura Client doesn't return full info
+  $ntype = $node->type;
+  if ($ntype == 'video' || $ntype == 'audio') {
+    $fn = "field_$ntype";
+    $akeys = array_keys($node->{$fn});
+    $lang = array_shift($akeys);
+    $lang = (empty($lang)) ? LANGUAGE_NONE : $lang;
+    $kid = (isset($node->{$fn}[$lang][0]['entryid'])) ? $node->{$fn}[$lang][0]['entryid'] : NULL;
+    if (!empty($kid)) {
+      try {
+        $ent['kaltura_entryid'] = $kid;
+        $ent['kstatus'] = 2;
+        $ent['kaltura_thumbnail_url'] = mb_kaltura_get_thumbnail_url($kid);
+        $ent['kaltura_source'] = 1;
+        $ent['kaltura_title'] = $node->title;
+        $wres = drupal_write_record('node_kaltura', $ent, 'kaltura_entryid');
+      } catch (Exception $ex) {
+        watchdog('mb_structure', 'Could not get write the node_kaltura record for new node (' . $node->nid . ') with kid: ' . $kid);
+      }
+    }
+  }
+}
+
+/**
+ * hook_node_update: Update Kaltura data and thumbnail upon update
+ *
+ */
+function mb_structure_node_update($node)
+{
+  // Separate function to update a node's kaltura data in case it needs to be called from other contexts.
+  if ($node->type == 'video' || $node->type == 'audio') { // added audio 2015-08-19
+    if (!empty($node->replacing_av)) {
+        drupal_goto('node/'  . $node->nid . '/edit');
+    }
+    mb_structure_update_node_kaltura_data($node);
+  }
+}
+
+/**
+ * Impements hook_form_FORM_ID_alter for node delete form to test whether a collection has associated media before deleting
+ * Does not allow one to delete a collection if it has content.
+ * TODO: add option to delete content as well.
+ */
+function mb_structure_form_node_delete_confirm_alter(&$form, &$form_state, $form_id)
+{
+  $node = $form['#node'];
+  if ($node->type == "collection" || $node->type == "subcollection") {
+    $content_nodes = mb_structure_get_groups_nodes($node->nid);
+    $n = count($content_nodes);
+    $items = '';
+    foreach ($content_nodes as $nid) {
+      $n2 = node_load($nid);
+      $items .= l($n2->title, 'node/' . $nid . '/edit') . ', ';
+    }
+    $items = substr($items, 0, strlen($items) - 2) . '.';
+    if ($n > 0) {
+      drupal_set_message(t('This group cannot be deleted because it has @n media items associated with it. Please delete or relocate the following items: !items',
+        array('@n' => $n, '!items' => $items)), 'error');
+      drupal_goto('node/' . $node->nid . '/edit');
+    }
+  }
+}
+
+
+function mb_structure_update_node_kaltura_data($node)
+{
+  /*
+     * Use this function to refresh thumbnail and other Kaltura data for the media object,
+     * If it has a kaltura id, $kid = $node->field_video['und'][0]['entryid'];
+     * Code taked from kaltura_cron() in kaltura.module line 567
+     * Added code to get kaltura video thumb from function (ndg, 2015-03-19)
+     *
+     */
+  $fieldnm = "field_" . $node->type;
+  $langs = array_keys($node->{$fieldnm});
+  $lang = array_shift($langs);
+  $lang = (empty($lang)) ? LANGUAGE_NONE : $lang;
+  $kid = (isset($node->{$fieldnm}[$lang][0]['entryid'])) ? $node->{$fieldnm}[$lang][0]['entryid'] : NULL;
+  if (!empty($kid)) {
+    try {
+      $resultObject = kaltura_entry_load($kid);
+      if ($resultObject) {
+        $thumb_url = ($node->type == "audio") ? mb_structure_get_audio_thumb($node) : mb_kaltura_get_thumbnail_url($resultObject->kaltura_entryid, 190, 220, TRUE);
+        if (empty($thumb_url)) {
+          $thumb_url = $resultObject->kaltura_thumbnailUrl;
+        }
+        $ent['kaltura_entryid'] = $resultObject->kaltura_entryid;
+        $ent['kaltura_tags'] = $resultObject->kaltura_tags;
+        $ent['kaltura_admin_tags'] = $resultObject->kaltura_admin_tags;
+        $ent['kstatus'] = $resultObject->kstatus;
+        $ent['kaltura_media_type'] = $resultObject->kaltura_media_type;
+        $ent['kaltura_duration'] = $resultObject->kaltura_duration;
+        $ent['kaltura_thumbnail_url'] = $thumb_url;
+        $ent['kaltura_partner_data'] = $resultObject->kaltura_partner_data;
+        $ent['kaltura_source'] = $resultObject->kaltura_source;
+        $ent['kaltura_width'] = $resultObject->kaltura_width;
+        $ent['kaltura_height'] = $resultObject->kaltura_height;
+        $ent['kaltura_download_url'] = $resultObject->kaltura_download_url;
+        $ent['kaltura_views'] = $resultObject->kaltura_views;
+        $ent['kaltura_plays'] = $resultObject->kaltura_plays;
+        $ent['kaltura_votes'] = $resultObject->kaltura_votes;
+        $ent['kaltura_rank'] = $resultObject->kaltura_rank;
+        $ent['kaltura_total_rank'] = $resultObject->kaltura_total_rank;
+        $ent['kaltura_title'] = $resultObject->kaltura_title;
+        $ent['kaltura_description'] = $resultObject->kaltura_description;
+        $wres = drupal_write_record('node_kaltura', $ent, 'kaltura_entryid');
+      }
+    } catch (Exception $ex) {
+      watchdog('mb_structure', "Problem updating node Kaltura information: " . $ex->getMessage());
+    }
+  } else {
+    watchdog('mb_structure', "Unable to get node's ({$node->nid}) kaltura entry ID");
+  }
+}
+
+function get_collection_ancestor_node($node)
+{
+  global $base_path;
+  if (is_integer($node)) {
+    $node = node_load($node);
+    if (!$node) {
+      return null;
+    }
+  }
+  $collection_node = FALSE;
+  if ($gids = og_get_entity_groups('node', $node)) {
+    if ($gnode = node_load(array_shift($gids['node']))) {
+      if ($gnode->type == 'collection') {
+        $collection_node = $gnode;
+      } else if ($gnode->type == 'subcollection') {  //  recurse to get to the collection of a subcollection node
+        $collection_node = get_collection_ancestor_node($gnode);
+      }
+      $collection_node->url = $base_path . drupal_get_path_alias('node/' . $collection_node->nid);
+    }
+  }
+  return $collection_node;
+}
+
+function get_subcollection_node($node)
+{
+  global $base_path;
+  if (is_integer($node)) {
+    $node = node_load($node);
+    if (!$node) {
+      return null;
+    }
+  }
+  $subcoll_node = FALSE;
+  foreach (og_get_entity_groups('node', $node) as $type => $gids) {
+    if ($type == "node") {
+      foreach ($gids as $ogmid => $gid) {
+        if ($group_node = node_load($gid)) {
+          if ($group_node->type == 'subcollection') {
+            $subcoll_node = $group_node;
+            $subcoll_node->url = $base_path . drupal_get_path_alias('node/' . $subcoll_node->nid);
+          }
+        }
+      }
+    }
+  }
+  return $subcoll_node;
+}
+
+/**
+ * Returns the url of the audio thumbnail without using Kaltura interface since audio thumb data is stored in drupal
+ * Still need to store thumb in Kaltura for overlay on player. This (I think) is done by call to mb_kaltura_get_thumbnail_url above.
+ */
+function mb_structure_get_audio_thumb($node)
+{
+  $uri = 'public://avimages/generic-audio-thumb.jpg';
+  $thumb_url = file_create_url($uri);
+  if (!empty($node->field_thumbnail_image)) {
+    if ($fi = field_get_items('node', $node, 'field_thumbnail_image')) {
+      $fid = $fi[0]['fid'];
+      $file = file_load($fid);
+      $thumb_url = file_create_url($file->uri);
+    }
+  }
+  return $thumb_url;
+}
+
+/** not called anywhere (2016-05-02)
+ * function mb_structure_is_team_super_user($node) {
+ * if( $node->type == 'team' && isset($node->group_audience[LANGUAGE_NONE]) && $collection_gids = $node->group_audience[LANGUAGE_NONE]) {
+ * return og_user_access($collection_gids[0]['gid'], 'administer group');
+ * }
+ * }
+ */
+/** not called anywhere (2016-05-02)
+ *
+ * function mb_structure_get_team_gids($collection_gid) {
+ * $gids = array();
+ * return $gids;
+ * $query = new EntityFieldQuery();
+ * $result = $query
+ * ->entityCondition('entity_type', 'node')
+ * ->propertyCondition('type', 'team')
+ * ->fieldCondition('group_audience', 'state', array(1), 'IN', 0)
+ * ->fieldCondition('group_audience', 'gid', $collection_gid, '=', 0)
+ * ->execute();
+ * $teams = array();
+ * if (!empty($result['node'])) {
+ * foreach($result['node'] as $nid => $team) {
+ * if ($node = node_load($nid)) {
+ * $team->title = $node->title;
+ * $team->path = drupal_get_path_alias('node/' . $nid);
+ * $teams[$nid] = (array)$team;
+ * }
+ * }
+ * }
+ * return $teams;
+ * }
+ */
+function mb_structure_get_collection_gid($subcollection_gid)
+{
+  if ($subcollection_node = node_load($subcollection_gid)) {
+    $collection_node = get_collection_ancestor_node($subcollection_node);
+    return $collection_node->nid;
+  } else {
+    return FALSE;
+  }
+}
+
+/**
+ * THIS FUNCTION HAS BEEN DEPRECATED USE: shanti_collections_get_groups_for_user($type, $add_optgroup)
+ * 
+ * Returns an array of Collection/Subcollection titles that the current user belongs to, keyed on group id (nid of group node)
+ * This only returns collections that the user is a member of and will not return all groups for admins, as previous version did.
+ *
+ * param $add_optgroup, whether to split the array into two parts: collection and subcollection or not.
+ * 
+ * This has been replicated in shanti_collections.module as function shanti_collections_get_groups_for_user()
+ */
+function mb_structure_get_groups_for_user($add_optgroup = TRUE)
+{
+    global $user;
+    $gids_with_labels = array();
+    $coll_key = t('Collections');
+    $subcoll_key = t('Subcollections');
+    // Subcollection inheriting users not coming through this list see MANU-3976 and MANU-4155
+    $gnids = og_get_groups_by_user($user, 'node');  
+    $allcolls = node_load_multiple($gnids);
+    $colls = array();
+    $subcolls = array();
+    foreach ($allcolls as $gp) {
+        if ($gp->type == "collection") {
+            $colls[$gp->nid] = $gp->title;
+            // Add collections subgroup. Test if subgroup inherits users.
+            $ew = entity_metadata_wrapper('node', $gp);
+            $inp = $ew->og_user_inheritance->value();
+            if ($inp) { // if subcoll inherits users then search for all subcoll of this coll
+                $query = new EntityFieldQuery();
+                $result = $query->entityCondition('entity_type', 'node')
+                    ->entityCondition('bundle', 'subcollection')
+                    ->fieldCondition('field_og_parent_collection_ref', 'target_id', $gp->nid, '=')->execute();
+                if (isset($result['node'])) { // iterate through subcolls and add to subcoll array
+                    $scids = array_keys($result['node']);
+                    $scolls = node_load_multiple($scids);
+                    foreach($scolls as $scnode) {
+                        $subcolls[$scnode->nid] = $scnode->title;
+                    }
+                } 
+            }
+        } else if ($gp->type == "subcollection") {
+            $subcolls[$gp->nid] = $gp->title;
+        }
+    }
+    
+    if ($add_optgroup) {
+        asort($colls);
+        asort($subcolls);
+        $gids_with_labels[$coll_key] = $colls;
+        $gids_with_labels[$subcoll_key] = $subcolls;
+    } else {
+        $gids_with_labels = $colls + $subcolls;
+        asort($gids_with_labels);
+    }
+    return $gids_with_labels;
+}
+
+function mb_structure_already_started_validate(&$form_state, $form)
+{
+  // this had $element,  as the first parameter but caused an error (ndg, 2014-08-19)
+  //dpm(array($form_state, $form), 'form state in started validate');
+  $fobj = (empty($form_state['input'])) ? $form : $form_state; // Travis had form_state but it doesn't have input, form does. Doing this in case there is a situation where form_state does have input
+  $gid = $fobj['input']['collection_id'];
+  /*$group = node_load($gid);
+  $group = og_get_group('group',$gid);
+  $nid = $group->etid;*/
+  $path_format = 'node/add/%s';
+  $path = $fobj['clicked_button']['#id'] == 'edit-submit-video' ? sprintf($path_format, 'video') : sprintf($path_format, 'audio');
+  drupal_goto($path, array('query' => array('field_og_collection_ref' => $gid)));
+}
+
+/**
+ * Creates a Bootstrap carousel for all collections
+ *
+ */
+function mb_structure_collections_carousel_block()
+{
+  $nodes = node_load_multiple(array(), array('type' => 'collection'));
+  $genimage = drupal_get_path('module', 'mediabase') . '/images/collections-generic.png';
+  $slides = array();
+  $nids = variable_get('carousel_block_project_ids', '3');
+  $nids = explode(',', str_replace(' ', '', $nids));
+  $nodes = node_load_multiple($nids);
+  foreach ($nodes as $nid => $node) { // nid = node id, not sequential but node number in Drupal
+    $itemcount = get_items_in_collection($nid); // previously used $node->child_count; which only returns node in the collection itself and not its subcollection
+
+    // if status = published and viewable by anonymous users then add to carousel
+    if ($node) {
+      // Get Author and Date Info
+      $usr = user_load_by_name($node->name);
+      $author = $usr->realname;
+      if ($author == '') {
+        $author = $usr->name;
+        if ($author == '') {
+          $author = 'Unknown User';
+        }
+      }
+      $date = date('F Y', $node->created);
+      // Get image
+      $imgurl = $genimage;
+      // use carousel image if it exists
+      if (isset($node->field_general_featured_image['und'][0]['uri'])) {
+        $imgurl = image_style_url('carousel_image', $node->field_general_featured_image['und'][0]['uri']);
+      }
+
+      // Get Summary
+      $settings = array(
+        'type' => 'text_summary_or_trimmed',
+        'settings' => array('trim_length' => 700),
+        'label' => 'hidden',
+      );
+
+      $field_view = field_view_field('node', $node, 'body', $settings);
+      $summary = render($field_view);
+      if ($itemcount == 1) {
+        $itemcount .= ' ' . t('item');
+      } else {
+        $itemcount .= ' ' . t('items');
+      }
+      $slide = array(
+        'nid' => $nid,
+        'title' => $node->title,
+        'author' => $author,
+        'date' => $date,
+        'path' => drupal_get_path_alias('node/' . $nid),
+        'img' => $imgurl,
+        'summary' => $summary,
+        'itemcount' => $itemcount,
+      );
+      $slides[] = $slide;
+    }
+  }
+  $carousel = array(
+    'element' => array(
+      '#theme' => 'carousel',
+      '#children' => '',
+      'title' => t('Featured Collections'),
+      'link' => l(t('View All Collections'), 'collections/all'),
+      'speed' => variable_get('carousel_block_speed', 8),
+      'slides' => $slides,
+    ),
+  );
+  return drupal_render($carousel);
+}
+
+/**
+ * Returns list of nids content that are content of a group when given then groups NID
+ */
+function mb_structure_get_groups_nodes($nid)
+{
+  $nids = array();
+  if ($g = node_load($nid)) {
+    $query = new EntityFieldQuery();
+    $query
+      ->entityCondition("entity_type", "og_membership", "=")
+      ->propertyCondition("gid", $nid, "=");
+    $result = $query->execute();
+    if (!isset($result["og_membership"]) || !is_array($result["og_membership"])) {
+      return array();
+    }
+    foreach ($result["og_membership"] as $record) {
+      $m = og_membership_load($record->id);
+      if ($m->entity_type == "node") {
+        $nids[] = $m->etid;
+      }
+    }
+  }
+  return $nids;
+}
+
+/* For collection list should use render array if needed. This is old code commented out
+function mb_structure_collections_list_form() {
+  $form = array();
+  $nodes = node_load_multiple(array(), array('type' => 'collection'));
+  $markup = '
+    <div class="btn-group">
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+      Collections <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" role="menu">
+  ';
+  foreach($nodes as $n => $node) {
+    $path = drupal_get_path_alias('node/' . $node->nid);
+    $markup .= '<li><a href="' . url($path) . '">' . $node->title . '</a></li>';
+  }
+  $markup .= '</ul></div>';
+  $form['collections_list'] = array(
+    '#type' => 'markup',
+    '#markup' => $markup,
+  );
+  return $form;
+}
+*/
+

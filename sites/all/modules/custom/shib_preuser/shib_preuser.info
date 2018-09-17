@@ -1,0 +1,7 @@
+name = Shibboleth Pre-Existing User Registration
+description = A Drupal 7 module from SHANTI at UVa to update the shibboleth authentication tables with users registered before enabling shibboleth
+package = Shibboleth
+core = 7.x
+dependencies[] = shib_auth
+files[] = shib_preuser.module
+configure = admin/config/people/shib_auth/preregistration

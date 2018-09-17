@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Sources Zotero Importer feature.
+ */
+
+include_once 'sources_zotero_importer.features.inc';

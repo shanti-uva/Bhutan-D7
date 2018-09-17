@@ -1,0 +1,4 @@
+name = SHANTI Footnotes
+description = Loads the CKEditor Footnotes plugin
+core = 7.x
+package = SHANTI

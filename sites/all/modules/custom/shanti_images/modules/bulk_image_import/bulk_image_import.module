@@ -1,0 +1,300 @@
+<?php
+
+include 'includes/box.inc';
+include 'includes/parser.php';
+
+define('BOX_OAUTH_REDIRECT_URI', '/admin/content/bulk_image_import/import');
+
+function bulk_image_import_settings_form($form, &$form_state) {
+  $form = array();
+
+  $form['box_client_id'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Box API Client ID'),
+    '#default_value' => variable_get('box_client_id')
+  );
+  $form['box_client_secret'] = array(
+    '#type' => 'password',
+    '#title' => t('Box API Client Secret'),
+    '#default_value' => variable_get('box_client_secret')
+  );
+  $form['box_root_folder_id'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Box API Root Folder ID'),
+    '#default_value' => variable_get('box_root_folder_id')
+  );
+
+  return system_settings_form($form);
+}
+
+
+function bulk_image_import_form_submit($form, &$form_state) {
+  $box_auth = array_intersect_key(
+    $form_state['input'],
+    array('access_token' => 1, 'refresh_token' => 1, 'expires_in' => 1)
+  );
+
+  $collection = $form_state['input']['collection'];
+
+  $group = time();
+  $task_ids = array();
+
+  $catalog;
+  foreach (
+    bulk_image_import_read_xml_streaming($_FILES['files']['tmp_name']['metadata_file']) as
+    $type => $value
+  ) {
+    if ($type == 'catalog') {
+      $catalog = $value;
+    }
+    else if ($type == 'item') {
+      $tid = db_insert('bulk_image_import_task')
+           ->fields(array(
+             'xml_data' => $value,
+             'catalog' => $catalog,
+             'group_id' => (string) $group,
+           ))
+           ->execute();
+      array_push($task_ids, $tid);
+    }
+  }
+  $operations = array();
+  foreach($task_ids as $tid) {
+    array_push($operations, array('bulk_image_import_process_task', array($tid,)));
+  }
+  array_unshift(
+    $operations,
+    array('bulk_image_import_set_context', array($box_auth, $group, $collection, )),
+    array('bulk_image_import_find_box_folder', array($catalog,))
+  );
+  $batch = array(
+    'operations' => $operations,
+    'finished' => 'bulk_image_import_batch_finished',
+    'title' => t('Processing Bulk Image Import'),
+    'progress_message' => t('Processed @current out of @total.'),
+    'error_message' => t('Bulk Image Import has encountered an error.'),
+    'file' => drupal_get_path('module', 'bulk_image_import') . '/includes/batch.inc',
+  );
+  batch_set($batch);
+  return;
+}
+
+
+function bulk_image_import_get_user_collections($userid=NULL) {
+  $selected_user = NULL;
+  if (isset($userid)) {
+    $selected_user = user_load($userid);
+  }
+  else {
+    global $user;
+    $selected_user = $user;
+  }
+
+  $user_groups = og_get_groups_by_user($selected_user);
+  if (empty($user_groups['node'])) {
+    return array();
+  }
+  $result = db_query("SELECT {title, nid} FROM {node} WHERE type IN ('collection', 'subcollection') AND nid in (:nids) ORDER BY {title}", array(
+    ':nids' => array_values($user_groups['node'])
+  ));
+  $matches = array();
+  foreach ($result as $collection) {
+    $matches[$collection->nid] = "$collection->title ($collection->nid)";
+  }
+  return $matches;
+}
+
+
+function bulk_image_import_form($form, &$form_state) {
+  global $base_url;
+
+  $form = array();
+  $params = drupal_get_query_parameters();
+  if (isset($params['error'])) {
+    drupal_set_message('Could not authenticate with box.com. Reason: '.$params['error_description'], 'error');
+    watchdog('bulk_image_import', 'Error while authenticating @username (@error): @error_description', array('@username' => $user->name, '@error' => $params['error'], '@error_description' => $params['error_description']), WATCHDOG_ERROR);
+  }
+
+  $box_url = 'https://www.box.com/api/oauth2/authorize?response_type=code&' .
+           'client_id=' . variable_get('box_client_id') .
+           '&redirect_uri=' . $base_url . BOX_OAUTH_REDIRECT_URI;
+  $link = array(
+    '#theme' => 'link',
+    '#text' => t('Authorize Box Connection'),
+    '#path' => $box_url,
+    '#options' => array(
+      'attributes' => array(
+        'class' => array('button', )
+      )
+    )
+  );
+
+  $form['box'] = array(
+    '#type' => 'fieldset',
+    'info' => array(
+      '#markup' => "<h3>Before You Begin:</h3><ul><li>" .
+      t('Clicking the button below will take you to the Box website where you can grant access to files stored on your account. This is necessary in order to download files from Box during the import process. You will select and upload your XML file in the next step.') .
+      "</li><li>" .
+      t('If you would like to import into a Collection or Subcollection please make sure it exists before you proceed.') .
+      "</li></ul><br />"
+    ),
+    'box_auth_btn' => array(
+      '#markup' => render($link)
+    ),
+  );
+
+  $box_access_data;
+  $box_auth_code;
+  if(strpos($_SERVER['HTTP_REFERER'], 'https://app.box.com/api/oauth2/authorize') !== FALSE) {
+    $box_auth_code = $params['code'];
+    if(isset($box_auth_code)) {
+      $box_access_data = bulk_image_import_handle_box_code($box_auth_code);
+      $form['box_auth'] = array();
+      foreach($box_access_data as $key => $value) {
+        $form['box_auth'][$key] = array(
+          '#type' => 'hidden',
+          '#value' => $value,
+        );
+      }
+    }
+  }
+  $form['box_auth_code'] = array(
+    '#type' => 'hidden',
+    '#value' => $box_auth_code,
+  );
+
+  $form['metadata'] = array(
+    '#type' => 'fieldset',
+  );
+
+  $form['metadata']['metadata_file'] = array(
+    '#type' => 'file',
+    '#title' => t('Image Metadata'),
+    '#description' => t('Upload a XML file containing exported data from a MediaPro catalog.'),
+  );
+
+  $options = bulk_image_import_get_user_collections();
+  $options[0] = t('None Selected');
+  $form['metadata']['collection'] = array(
+    '#type' => 'select',
+    '#title' => t('Import into a Collection?'),
+    '#options' => $options,
+    '#description' => t('If you would like to import into a Collection or Subcollection select that Collection from the list below.'),
+    '#default_value' => 0,
+  );
+
+  $form['metadata']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Import'),
+    '#submit' => array("bulk_image_import_form_submit",),
+  );
+
+  if ($box_auth_code == NULL) {
+    hide($form['metadata']);
+  }
+  else {
+    hide($form['box']);
+  }
+
+  return $form;
+}
+
+
+function bulk_image_import_page_alter() {
+  global $base_url;
+  drupal_add_js(array(
+    'bulk_image_import' => array(
+      'BOX_CLIENT_ID' => variable_get('box_client_id'),
+      'redirect_uri' => $base_url . BOX_OAUTH_REDIRECT_URI,
+    ),
+  ), array('type' => 'setting'));
+}
+
+
+function bulk_image_import_menu() {
+  $items = array();;
+
+  $items['admin/content/bulk_image_import'] = array(
+    'title' => 'Bulk Image Import',
+    'description' => 'Administer Bulk Image Import',
+    'page callback' => 'system_admin_menu_block_page',
+    'access arguments' => array('access bulk_image_import'),
+    'file' => 'system.admin.inc',
+    'file path' => drupal_get_path('module', 'system'),
+  );
+  $items['admin/content/bulk_image_import/import'] = array(
+    'title' => 'Import',
+    'description' => 'Import images and metadata from MediaPro',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('bulk_image_import_form'),
+    'access arguments' => array('access bulk_image_import'),
+  );
+  $items['admin/content/bulk_image_import/settings'] = array(
+    'title' => 'Settings',
+    'description' => 'Configure settings for Bulk Image Import',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('bulk_image_import_settings_form'),
+    'access arguments' => array('access bulk_image_import'),
+  );
+  $items['admin/content/bulk_image_import/%/review'] = array(
+    'title' => 'Bulk Image Import review',
+    'page callback' => 'bulk_image_import_review',
+    'page arguments' => array(3,),
+    'access arguments' => array('access bulk_image_import'),
+   );
+
+  return $items;
+}
+
+
+function bulk_image_import_review($group_id) {
+  $no_yes = array('No', 'Yes');
+  $header = array(
+    t('Task ID'),
+    t('Node'),
+    t('Image Linked?'),
+    t('Completed?'),
+    t('Errors'),
+  );
+
+  $query = db_select('bulk_image_import_task', 'b')
+         ->fields('b')
+         ->condition('group_id', $group_id, '=')
+         ->extend('PagerDefault')
+         ->extend('TableSort')
+         ->orderByHeader($header)
+         ->orderBy('tid', 'DESC')
+         ->limit(50);
+  $tasks = $query->execute();
+
+  $rows = array();
+  foreach($tasks as $task) {
+    $node = node_load($task->node_id);
+    $node_link = $node ? l($node->title, "node/" . $node->nid) : t("Not created");
+
+    array_push($rows, array(
+      'data' => array(
+        $task->tid,
+        $node_link,
+        $no_yes[$task->image_linked],
+        $no_yes[$task->complete],
+        'errors' => $task->errors
+      ),
+      array('class' => $task->complete ? 'bulk-image-import-success' : ''),
+    ));
+  }
+
+  $output = theme(
+    'table',
+    array(
+      'header' => $header,
+      'rows' => $rows,
+      'attributes' => array(
+        'id' => array('bulkImageImportReviewTable', ),
+      )
+    )
+  );
+  $output .= theme('pager');
+
+  return $output;
+}

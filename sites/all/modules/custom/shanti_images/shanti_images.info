@@ -1,0 +1,13 @@
+name = Shanti IIIF Images
+description = Module to enable IIIF images in Shanti Mandala
+core = 7.x
+package = Images
+version = 7.x-1.0
+configure = admin/config/media/shanti_images
+dependencies[] = shanti_image_type
+dependencies[] = shanti_grid_view
+dependencies[] = entity
+dependencies[] = file_entity
+dependencies[] = libraries
+files[] = includes/shanti_image.class.php
+scripts[] = js/shanti_images.js

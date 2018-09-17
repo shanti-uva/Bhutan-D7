@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Security Settings for Texts feature.
+ */
+
+include_once 'texts_security_settings_feature.features.inc';

@@ -1,0 +1,54 @@
+.titlearea,
+.carousel-control,
+.breadcrumb .icon,
+.nav-justified>li.active a,
+.nav-justified>li.active a:hover,
+.nav-justified>li.active a:focus{ background:#DD6C00;}
+.nav-justified>li.active:before{ color:#DD6C00;}
+
+/* BEGIN sub-theme colors */
+.titlearea,
+.carousel-control,
+.breadcrumb .icon,
+.nav-tabs.nav-justified>li.active>a,
+.nav-tabs.nav-justified>li.active>a:focus,
+.nav-tabs.nav-justified>li.active>a:hover,
+.shanti-thumbnail-image.shanti-field-visuals .icon {
+  /* background-color: #c4be28 !important; */
+  background-color: #DD6C00 !important;
+}
+/* darker shades below are used to better define details */
+.bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a .check-mark,
+.bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a:active .check-mark,
+.main-content .selectpicker .caret::before,
+.view-section .nav-tabs>li.active>a, 
+.view-section .nav-tabs>li.active>a:hover, 
+.view-section .nav-tabs>li.active>a:active,
+.view-section .fancytree-container .glyphicon,
+.view-section .fancytree-container .fancytree-node:hover > .glyphicon,
+.view-section .fancytree-container .fancytree-node:active > .glyphicon,
+.view-section .fancytree-node.fancytree-active > .glyphicon,
+.view-section .fancytree-node.fancytree-selected > .glyphicon {
+  color: #DD6C00 !important;
+}
+
+.nav-tabs.nav-justified>li.active {
+  border-top-color: #DD6C00 !important;
+}
+
+.ui-resizable-handle.ui-resizable-w,
+.ui-resizable-handle.ui-resizable-w:hover { border-color: #DD6C00 transparent transparent transparent; }
+.ui-resizable-handle.ui-resizable-w:active { border-color: transparent; /* reset */ }
+
+
+@media screen and (min-width: 768px) {
+  .nav-tabs.nav-justified>li.active::before {
+    color: #DD6C00 !important;
+  }
+}
+
+
+/**
+***  END Sarvaka subtheme colors */
+
+/* #FF8300*/

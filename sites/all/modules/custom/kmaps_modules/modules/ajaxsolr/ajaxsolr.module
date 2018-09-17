@@ -1,0 +1,83 @@
+<?php
+/**
+ * Implementation of @link (hook_libraries_info(), http://drupalcontrib.org/api/drupal/contributions%21libraries%21libraries.api.php/function/hook_libraries_info/7)
+ * @return array() of library definitions
+ */
+function ajaxsolr_libraries_info()
+{
+
+    $libraries['ajaxsolr'] = array(
+        'name' => 'Ajax Solr',
+        'vendor url' => '',
+        'dependencies' => array('json2'),
+        'download url' => 'https://github.com/evolvingweb/ajax-solr/archive/master.zip',
+        'version arguments' => array(
+            'file' => 'Version.js',
+            'pattern' => '@(?i:Version) ([0-9\.\-a-z]+)@',
+            'lines' => 2
+        ),
+        'files' => array(
+            'js' => array(
+                'core/Core.js',
+                'core/Parameter.js',
+                'core/ParameterStore.js',
+                'core/ParameterHashStore.js',
+                'core/AbstractWidget.js',
+                'core/AbstractFacetWidget.js',
+                'core/AbstractManager.js',
+                'core/AbstractSpatialWidget.js',
+                'core/AbstractSpellcheckWidget.js',
+                'core/AbstractTextWidget.js',
+                'managers/Manager.jquery.js',
+                'widgets/jquery/AutocompleteTermWidget.js',
+                'widgets/jquery/PagerWidget.js',
+                'widgets/ParameterHistoryStore.js',
+                'widgets/ParameterYUIStore.js',
+                'shanti/FancyTreeUpdatingWidget.js',
+                'shanti/TextWidget.js'
+            ),
+//            'css' => array('skin-' . $theme . '/ui.fancytree.css'),
+        ),
+//        'variants' => array(
+//            'minified' => array(
+//                'files' => array(
+//                    'js' => array(
+//                        'jquery.fancytree.min.js',
+//                    ),
+//                ),
+//            ),
+//            'source' => array(
+//                'files' => array(
+//                    'js' => array(
+//                        'jquery.fancytree.js',
+//                    ),
+//                ),
+//            ),
+//
+//            'all_source' => array(
+//                'files' => array(
+//                    'js' => array(
+//                        'jquery.fancytree-all.js',
+//                    ),
+//                ),
+//            ),
+//            'all_min' => array(
+//                'files' => array(
+//                    'js' => array(
+//                        'jquery.fancytree-all.min.js',
+//                    ),
+//                ),
+//            ),
+//        ),
+//        'integration files' => array(
+//            'fancytree' => array(
+//                'js' => array('fancytree.js'),
+//                'css' => array('fancytree.css'),
+//            ),
+//        ),
+    );
+
+
+
+    return $libraries;
+}

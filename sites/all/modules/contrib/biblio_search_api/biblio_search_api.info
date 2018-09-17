@@ -1,0 +1,8 @@
+name = Biblio Search API
+description = Exposes the fields in the 'biblio' content type to search_api for indexing.
+package = Biblio
+core = 7.x
+
+dependencies[] = biblio
+dependencies[] = entity
+dependencies[] = search_api
