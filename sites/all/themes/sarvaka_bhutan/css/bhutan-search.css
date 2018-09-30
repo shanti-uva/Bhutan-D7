@@ -2,11 +2,11 @@
 .intro-search { display:none;}
 .intro-summary { width:100% !important;}
 
-/*--- Temporary styles to hide advance search options - mf8yk oct 27,2015 ---*/
+/*--- Temporary hide advance search */
 .input-section .input-group input.form-control{ margin-top:7px;}
 .input-section .toggle-link.advanced-link{ display:none !important;}
 .advanced-view .form-group:first-child{ border-top:none;}
-.input-section .input-group .input-group-btn{ top:8px !important;}
+/* .input-section .input-group .input-group-btn{ top:8px !important;} incompatible with kmaps facet search */
 .advanced-view{ display:block !important;}
 .input-section .alert{ position:relative; top:7px;}
 
