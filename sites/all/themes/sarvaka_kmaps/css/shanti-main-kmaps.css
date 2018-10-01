@@ -60,9 +60,25 @@
     background: #3297f7 !important;
 }
 
-.page-places #sidebar-first .nav-pills li.active {
-  border-color: #3297f7 !important; /* Darker shade of red for shadow blend */
+#sidebar-first .nav-pills li.active {
+  border-color: #3297f7 !important; 
 }
+#sidebar-first .nav-pills li.places.active {
+  border-color: #3297f7 !important; 
+}
+#sidebar-first .nav-pills li.subjects.active {
+  border-color: #cc4c39 !important; 
+}
+#sidebar-first .nav-pills li.photos.active {
+  border-color: #b5953b !important; 
+}
+#sidebar-first .nav-pills li.essays.active {
+  border-color: #8c48a1 !important; 
+}
+#sidebar-first .nav-pills li.audio-video.active {
+  border-color: #31acb6 !important; 
+}
+
 
 .page-places .view-section .nav-tabs>li.active>a,
 .page-places .nav-tabs.nav-justified>li.active{
@@ -140,10 +156,6 @@
 .page-subjects .kmaps-tt-menu .kmaps-tt-suggestion:hover::before{
     border-color: #cc4c39 !important; /* set subtheme color */
     background: #cc4c39 !important;
-}
-
-.page-subjects #sidebar-first .nav-pills li.active {
-  border-color: #cc4c39 !important; /* Darker shade of red for shadow blend */
 }
 
 .page-subjects .view-section .nav-tabs>li.active>a,
