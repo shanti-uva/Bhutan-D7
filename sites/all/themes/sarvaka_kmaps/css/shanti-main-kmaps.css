@@ -75,9 +75,9 @@
 }
 
 @media screen and (min-width: 500px) {
-  .page-places .navbar-header .site-slogan{ color:#3676b2 !important; } /* Darker shade for banner site-slogan text */
+  .page-places .navbar-header .site-slogan{ color:#135fa8 !important; } /* Darker shade for banner site-slogan text */
   .page-places .navbar-brand:hover .site-slogan{ color: #555 !important; } 
-  .page-places .navbar-header:active .site-slogan{ color:#3676b2 !important; } 
+  .page-places .navbar-header:active .site-slogan{ color:#135fa8 !important; } 
 }
 
 @media screen and (min-width: 768px) {
@@ -143,7 +143,7 @@
 }
 
 .page-subjects #sidebar-first .nav-pills li.active {
-  border-color: #b24232 !important; /* Darker shade of red for shadow blend */
+  border-color: #cc4c39 !important; /* Darker shade of red for shadow blend */
 }
 
 .page-subjects .view-section .nav-tabs>li.active>a,
@@ -160,9 +160,9 @@
 .page-subjects .ui-resizable-handle.ui-resizable-w:active { /*border-color: #cc4c39 transparent transparent transparent; */ }
 
 @media screen and (min-width: 500px) {
-  .page-subjects .navbar-header .site-slogan{ color:#b24231 !important; } /* Darker shade for banner site-slogan text */
+  .page-subjects .navbar-header .site-slogan{ color: #873326 !important; } /* Darker shade for banner site-slogan text */
   .page-subjects .navbar-brand:hover .site-slogan{ color: #555 !important; } 
-  .page-subjects .navbar-header:active .site-slogan{ color:#b24231 !important; } 
+  .page-subjects .navbar-header:active .site-slogan{ color: #873326 !important; } 
 }
 
 @media screen and (min-width: 768px) {
