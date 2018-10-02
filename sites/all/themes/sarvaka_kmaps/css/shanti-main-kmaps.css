@@ -60,9 +60,27 @@
     background: #3297f7 !important;
 }
 
-.page-places #sidebar-first .nav-pills li.active {
-  border-color: #3297f7 !important; /* Darker shade of red for shadow blend */
+#sidebar-first .nav-pills li.places.active,
+.page-places #sidebar-first .nav-pills li.overview.active {
+  border-color: #3297f7 !important; 
 }
+#sidebar-first .nav-pills li.subjects.active,
+.page-subjects #sidebar-first .nav-pills li.overview.active {
+  border-color: #cc4c39 !important; 
+}
+#sidebar-first .nav-pills li.photos.active {
+  border-color: #b5953b !important; 
+}
+#sidebar-first .nav-pills li.essays.active {
+  border-color: #8c48a1 !important; 
+}
+#sidebar-first .nav-pills li.audio-video.active {
+  border-color: #31acb6 !important; 
+}
+#sidebar-first .nav-pills li.sources.active {
+  border-color: #8c48a1 !important; 
+}
+
 
 .page-places .view-section .nav-tabs>li.active>a,
 .page-places .nav-tabs.nav-justified>li.active{
@@ -75,9 +93,9 @@
 }
 
 @media screen and (min-width: 500px) {
-  .page-places .navbar-header .site-slogan{ color:#3676b2 !important; } /* Darker shade for banner site-slogan text */
+  .page-places .navbar-header .site-slogan{ color:#135fa8 !important; } /* Darker shade for banner site-slogan text */
   .page-places .navbar-brand:hover .site-slogan{ color: #555 !important; } 
-  .page-places .navbar-header:active .site-slogan{ color:#3676b2 !important; } 
+  .page-places .navbar-header:active .site-slogan{ color:#135fa8 !important; } 
 }
 
 @media screen and (min-width: 768px) {
@@ -142,10 +160,6 @@
     background: #cc4c39 !important;
 }
 
-.page-subjects #sidebar-first .nav-pills li.active {
-  border-color: #b24232 !important; /* Darker shade of red for shadow blend */
-}
-
 .page-subjects .view-section .nav-tabs>li.active>a,
 .page-subjects .nav-tabs.nav-justified>li.active{
   border-top-color: #cc4c39 !important;
@@ -160,9 +174,9 @@
 .page-subjects .ui-resizable-handle.ui-resizable-w:active { /*border-color: #cc4c39 transparent transparent transparent; */ }
 
 @media screen and (min-width: 500px) {
-  .page-subjects .navbar-header .site-slogan{ color:#b24231 !important; } /* Darker shade for banner site-slogan text */
+  .page-subjects .navbar-header .site-slogan{ color: #873326 !important; } /* Darker shade for banner site-slogan text */
   .page-subjects .navbar-brand:hover .site-slogan{ color: #555 !important; } 
-  .page-subjects .navbar-header:active .site-slogan{ color:#b24231 !important; } 
+  .page-subjects .navbar-header:active .site-slogan{ color: #873326 !important; } 
 }
 
 @media screen and (min-width: 768px) {
@@ -297,6 +311,49 @@
 .page-images .nav-tabs.nav-justified>li.active>a:hover {
   background: #b5953b !important;
 }
+
+
+.page-places.kmaps-overview .titlearea{
+  background-color:#3297f7;
+}
+.page-subjects.kmaps-overview .titlearea{
+  background-color:#cc4c39;
+}
+.kmaps-places .titlearea{
+  background-color:#3297f7;
+}
+.kmaps-subjects .titlearea{
+  background-color:#cc4c39;
+}
+.kmaps-photos .titlearea,
+.kmaps-images .titlearea{
+  background-color:#b5953b;
+}
+.kmaps-texts .titlearea{
+  background-color:#8c48a1;
+}
+.kmaps-sources .titlearea{
+  background-color:#6f69ae;
+}
+.kmaps-visuals .titlearea{
+  background-color:#558e3c;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
 *
 * END - KMAPS/css/shanti-main-kmaps.css

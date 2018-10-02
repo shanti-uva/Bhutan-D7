@@ -158,8 +158,6 @@ article ul ul ul ul { -webkit-margin-before: 0; margin-top:0;}
   font-size: 110%;
 }
 
-
-
 .collections h4 {
   color: #eee;
   text-align: center;
@@ -205,6 +203,22 @@ article ul ul ul ul { -webkit-margin-before: 0; margin-top:0;}
 .shanticon-images {
   font-size: 90%;
 }
+
+.site-banner .collections ul li a{
+  -webkit-transform: scale(1.1);
+  transform: scale(1.1);
+  -webkit-transition: .2s ease-in-out;
+  transition: .2s ease-in-out;
+}
+.site-banner .collections ul li a:hover {
+  -webkit-transform: scale(1.125);
+   transform: scale(1.125);
+}
+.site-banner .collections ul li a:active {
+  -webkit-transform: scale(1.1);
+   transform: scale(1.1);
+}
+
 /*--- END collections panel ---*/
 /* MINIMUM WIDTH Begins */
 

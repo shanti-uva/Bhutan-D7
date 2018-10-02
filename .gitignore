@@ -3,8 +3,10 @@ sites/*/settings*.php
 
 # Ignore paths that contain user-generated content.
 sites/*/files
+sites/*/files/translations
 sites/*/private
 
 # Ignore IDE files
 .DS_Store
 .idea/
+sites/Bhutan-D7.dd

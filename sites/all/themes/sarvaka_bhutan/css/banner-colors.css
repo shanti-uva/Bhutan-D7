@@ -18,19 +18,19 @@
 .page-places .bx-controls-direction a,
 .page-places .nav-justified>li.active a,
 .page-places .nav-justified>li.active a:focus,
-.page-places .nav-justified>li.active a:hover{ background:#4ca6fb !important;}
+.page-places .nav-justified>li.active a:hover{ background:#3297f7 !important;}
 .page-places .nav-justified>li.active::before,
 .page-places .view-section ul.fancytree-container .glyphicon,
 .page-places .view-section ul.fancytree-container .fancytree-node:hover > .glyphicon,
 .page-places .view-section .fancytree-node.fancytree-active > .glyphicon,
 .page-places .view-section .fancytree-node.fancytree-selected > .glyphicon,
-.page-places .carousel-feature-slides li.active div a::before{ color:#4ca6fb !important;}
+.page-places .carousel-feature-slides li.active div a::before{ color:#3297f7 !important;}
 .page-places .carousel-feature-slides li div a:hover,
 .page-places .carousel-feature-slides li div a:active,
 .page-places .carousel-feature-slides li.active div a,
 .page-places #tab-main .each-photo a.thumbnail:hover,
-.page-places #tab-main .each-text a.thumbnail:hover{ border-color: #4ca6fb !important;}
-.page-places .content-resources .nav-pills li.active{ border-left:10px solid #4ca6fb !important;}
+.page-places #tab-main .each-text a.thumbnail:hover{ border-color: #3297f7 !important;}
+.page-places .content-resources .nav-pills li.active{ border-left:10px solid #3297f7 !important;}
 
 .page-places .input-section .toggle-link,
 .page-places .input-section .toggle-link:hover,
@@ -55,20 +55,20 @@
 .page-subjects .bx-controls-direction a,
 .page-subjects .nav-justified>li.active a,
 .page-subjects .nav-justified>li.active a:focus,
-.page-subjects .nav-justified>li.active a:hover{ background:#dc3c47 !important;}
-.page-subjects .nav-justified>li.active::before{ color:#dc3c47 !important;}
+.page-subjects .nav-justified>li.active a:hover{ background:#cc4c39 !important;}
+.page-subjects .nav-justified>li.active::before{ color:#cc4c39 !important;}
 .page-subjects .view-section ul.fancytree-container .glyphicon,
 .page-subjects .view-section ul.fancytree-container .fancytree-node:hover > .glyphicon,
 .page-subjects .view-section .fancytree-node.fancytree-active > .glyphicon,
 .page-subjects .view-section .fancytree-node.fancytree-selected > .glyphicon,
-.page-subjects .carousel-feature-slides li.active div a:before{ color:#dc3c47 !important;}
+.page-subjects .carousel-feature-slides li.active div a:before{ color:#cc4c39 !important;}
 .page-subjects .carousel-feature-slides li div a:hover,
 .page-subjects .carousel-feature-slides li div a:active,
 .page-subjects .carousel-feature-slides li.active div a,
 .page-subjects #tab-main .each-photo a.thumbnail:hover,
 .page-subjects #tab-main .each-text a.thumbnail:hover,
-.page-subjects .content-resources .nav-pills li.active{ border-color: #dc3c47 !important;}
-/* .page-subjects .content-resources .nav-pills li.active{border-left:10px solid #dc3c47;} */
+.page-subjects .content-resources .nav-pills li.active{ border-color: #cc4c39 !important;}
+/* .page-subjects .content-resources .nav-pills li.active{border-left:10px solid #cc4c39;} */
 
 .page-subjects .input-section a.toggle-link,
 .page-subjects .input-section a.toggle-link:hover,
@@ -79,11 +79,11 @@
 .page-subjects .bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a:active .check-mark,
 .page-subjects .view-section .nav-tabs>li.active>a, 
 .page-subjects .view-section .nav-tabs>li.active>a:hover, 
-.page-subjects .view-section .nav-tabs>li.active>a:active{ color: #dc3c47 !important;}
-.page-subjects .content-resources .nav-pills li.active{ border-color: #dc3c47 !important;}
+.page-subjects .view-section .nav-tabs>li.active>a:active{ color: #cc4c39 !important;}
+.page-subjects .content-resources .nav-pills li.active{ border-color: #cc4c39 !important;}
 .page-subjects .view-section .nav-tabs>li.active>a, 
 .page-subjects .view-section .nav-tabs>li.active>a:hover, 
-.page-subjects .view-section .nav-tabs>li.active>a:active{ border-top-color: #dc3c47 !important;}
+.page-subjects .view-section .nav-tabs>li.active>a:active{ border-top-color: #cc4c39 !important;}
 /* END of Subjects colors */
 
 /**
@@ -94,8 +94,8 @@
 .audio-video.bhutan .breadcrumb .icon,
 .audio-video.bhutan .nav-justified>li.active a,
 .audio-video.bhutan .nav-justified>li.active a:focus,
-.audio-video.bhutan .nav-justified>li.active a:hover{ background-color:#32ccca !important;}
-.audio-video.bhutan .nav-justified>li.active::before{ color:#32ccca !important;}
+.audio-video.bhutan .nav-justified>li.active a:hover{ background-color:#31acb6 !important;}
+.audio-video.bhutan .nav-justified>li.active::before{ color:#31acb6 !important;}
 /* darker shades below are used to better define details */
 .audio-video.bhutan .bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a .check-mark,
 .audio-video.bhutan .bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a:active .check-mark,
@@ -107,11 +107,11 @@
 .audio-video.bhutan .view-section .fancytree-container .fancytree-node:hover > .glyphicon,
 .audio-video.bhutan .view-section .fancytree-container .fancytree-node:active > .glyphicon,
 .audio-video.bhutan .view-section .fancytree-node.fancytree-active > .glyphicon,
-.audio-video.bhutan .view-section .fancytree-node.fancytree-selected > .glyphicon{ color: #2fbebc !important;  /* color: rgba(32, 132, 131, 0.86);*/ }
-.audio-video.bhutan .content-resources .nav-pills li.active{ border-color: #2fbebc !important;}
+.audio-video.bhutan .view-section .fancytree-node.fancytree-selected > .glyphicon{ color: #31acb6 !important;  /* color: rgba(32, 132, 131, 0.86);*/ }
+.audio-video.bhutan .content-resources .nav-pills li.active{ border-color: #31acb6 !important;}
 .audio-video.bhutan .view-section .nav-tabs>li.active>a, 
 .audio-video.bhutan .view-section .nav-tabs>li.active>a:hover, 
-.audio-video.bhutan .view-section .nav-tabs>li.active>a:active{ border-top-color: #2fbebc !important;}
+.audio-video.bhutan .view-section .nav-tabs>li.active>a:active{ border-top-color: #31acb6 !important;}
 /* END Audio-Video colors */
 
 /**
@@ -121,7 +121,7 @@
 .texts.bhutan .breadwrap ol li .icon,
 .texts.bhutan .nav-justified>li.active a,
 .texts.bhutan .nav-justified>li.active a:focus,
-.texts.bhutan .nav-justified>li.active a:hover{ background:#764B8D !important; }
+.texts.bhutan .nav-justified>li.active a:hover{ background:#8c48a1 !important; }
 .texts.bhutan .bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a .check-mark,
 .texts.bhutan .bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a:active .check-mark,
 .texts.bhutan .feature-group .toggle-link.show-features .icon::before,
@@ -133,11 +133,11 @@
 .texts.bhutan .view-section .fancytree-container .fancytree-node:hover > .glyphicon,
 .texts.bhutan .view-section .fancytree-container .fancytree-node:active > .glyphicon,
 .texts.bhutan .view-section .fancytree-node.fancytree-active > .glyphicon,
-.texts.bhutan .view-section .fancytree-node.fancytree-selected > .glyphicon{ color:#764B8D !important; }
+.texts.bhutan .view-section .fancytree-node.fancytree-selected > .glyphicon{ color:#8c48a1 !important; }
 .texts.bhutan .view-section .nav-tabs>li.active>a, 
 .texts.bhutan .view-section .nav-tabs>li.active>a:hover, 
-.texts.bhutan .view-section .nav-tabs>li.active>a:active{ border-top-color: #764B8D !important;}
-.texts.bhutan .content-resources .nav-pills li.active{ border-color: #764B8D !important; }
+.texts.bhutan .view-section .nav-tabs>li.active>a:active{ border-top-color: #8c48a1 !important;}
+.texts.bhutan .content-resources .nav-pills li.active{ border-color: #8c48a1 !important; }
 /* END Texts colors */
 
 /**
@@ -148,7 +148,7 @@
 .images.bhutan .breadcrumb .icon,
 .images.bhutan .nav-justified>li.active a,
 .images.bhutan .nav-justified>li.active a:focus,
-.images.bhutan .nav-justified>li.active a:hover{ background-color:#c0ba27 !important;}
+.images.bhutan .nav-justified>li.active a:hover{ background-color:#b5953b !important;}
 .images.bhutan .nav-justified>li.active::before,
 .images.bhutan .bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a .check-mark,
 .images.bhutan .bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a:active .check-mark,
@@ -160,9 +160,9 @@
 .images.bhutan .view-section .fancytree-container .fancytree-node:hover > .glyphicon,
 .images.bhutan .view-section .fancytree-container .fancytree-node:active > .glyphicon,
 .images.bhutan .view-section .fancytree-node.fancytree-active > .glyphicon,
-.images.bhutan .view-section .fancytree-node.fancytree-selected > .glyphicon{ color:#c0ba27 !important; }
-.images.bhutan .content-resources .nav-pills li.active{ border-color: #c0ba27 !important;}
+.images.bhutan .view-section .fancytree-node.fancytree-selected > .glyphicon{ color:#b5953b !important; }
+.images.bhutan .content-resources .nav-pills li.active{ border-color: #b5953b !important;}
 .images.bhutan .view-section .nav-tabs>li.active>a, 
 .images.bhutan .view-section .nav-tabs>li.active>a:hover, 
-.images.bhutan .view-section .nav-tabs>li.active>a:active{ border-top-color:#c0ba27 !important;}
+.images.bhutan .view-section .nav-tabs>li.active>a:active{ border-top-color:#b5953b !important;}
 /* END Images colors */
