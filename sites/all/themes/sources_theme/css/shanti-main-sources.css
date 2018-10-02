@@ -67,10 +67,10 @@
   border-color: #6f69ae;
   background-color: #6f69ae !important;
 }
-
+/*
 .ui-resizable-handle.ui-resizable-w,
 .ui-resizable-handle.ui-resizable-w:hover,
-.ui-resizable-handle.ui-resizable-w:active { border-color: #645F9D transparent transparent transparent; }
+.ui-resizable-handle.ui-resizable-w:active { border-color: #645F9D transparent transparent transparent; } */
 
 @media screen and (min-width: 500px) {
   .navbar-header .site-slogan{ color: #6f69ae !important; } /* Darker shade for banner site-slogan text */
@@ -90,6 +90,9 @@
 /*** END - colors ***/
 
 
+body:not(.front) article.main-col{
+  max-width: 950px !important;
+}
 
 
 /* override system.menus.css #36 */
@@ -103,7 +106,8 @@ article.main-col li a.active{
 }
 
 
-.library-dropdown, .breadcrumb-child-container{ width: 380px; }
+.library-dropdown, 
+.breadcrumb-child-container{ width: 380px; }
 
 .library-dropdown{ display:none; }
 
@@ -115,7 +119,7 @@ article.main-col li a.active{
 }
 
 .page-sources-search .tab-pane.main-col > div.region-content{
-  max-width: 1050px !important;
+  max-width: 890px !important;
   margin: 0 auto;
 }
 
@@ -440,7 +444,7 @@ article.main-col li a.active{
 }
 
 .node-type-biblio .content .source-full .source-field-authors {
-    padding: 0 0 2rem 3.25rem;
+    padding: 0 0 2rem 1.7rem;
 }
 
 .page-sources-search .views-field-biblio-authors ul,

@@ -54,10 +54,6 @@
   /*background-color: #cbdfdf;*/
 }
 
-.ui-resizable-handle.ui-resizable-w,
-.ui-resizable-handle.ui-resizable-w:hover { border-color: #31acb6 transparent transparent transparent; }
-.ui-resizable-handle.ui-resizable-w:active { border-color: transparent; /* reset */ }
-
 @media screen and (min-width: 500px) {
   .navbar-header .site-slogan{ color:#298e97 !important; } /* Darker shade for banner site-slogan text */
   .navbar-brand:hover .site-slogan{ color: #555 !important; } 
@@ -103,6 +99,10 @@
 .node-type-audio.has-transcript .main-col,
 .node-type-video.has-transcript .main-col {
   max-width: 1900px !important;
+}
+
+.front article.main-col{
+  padding-top: 0;
 }
 
 .front .sidebar-second.sidebar-offcanvas .dropdown-menu.open{

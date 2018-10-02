@@ -109,7 +109,7 @@ label {
 
 mark {
   color: #333;
-  background: transparent;
+  background: rgba(255, 255, 0, 0.48);
   font-weight: bold;
   padding: 0;
 }
@@ -490,7 +490,7 @@ div.contextual-links-wrapper{
   margin: 0;
   color: #333;
   height:42px;
-  line-height: 2.88em;
+  line-height: 2.68em;
 }
 
 .navbar-header .navbar-brand:hover,
@@ -509,10 +509,6 @@ div.contextual-links-wrapper{
   color: #505050;
   font-family: 'museo-sans-300', arial, sans-serif;
 }
-
-.kmaps.front .navbar-header .mandala {
-  font-size: 1.25em;
- } 
 
 .navbar-header .mandala em{
   display:none;
@@ -568,7 +564,7 @@ div.contextual-links-wrapper{
 
 .navbar-brand .shanticon-logo {
   position: relative;
-  top: 0.3rem;
+  top: 0.4rem;
   font-size: 1.62em;
   margin-right: 0.1rem;
   margin-left: 1.18rem;
@@ -641,9 +637,8 @@ div.contextual-links-wrapper{
   padding: 0;
 }
 
-
 .navbar-collapse .navbar-nav.navbar-right:last-child {
-  margin-right: 43px;
+  margin-right: 50px;
 }
 
 .navbar-default .navbar-nav>li {
@@ -903,6 +898,10 @@ div.contextual-links-wrapper{
   font-weight: normal;
   white-space: nowrap;
   text-transform: uppercase;
+  -webkit-transform: scale(1.1);
+  transform: scale(1.1);
+  -webkit-transition: .2s ease-in-out;
+  transition: .2s ease-in-out;
 }
 
 .site-banner .collections ul li a.disabled, .site-banner .collections ul li a.disabled:hover, .site-banner .collections ul li a.disabled:active, 
@@ -915,6 +914,8 @@ div.contextual-links-wrapper{
 .site-banner .collections ul li a:active {
   text-decoration: none;
   color: #fff;
+    -webkit-transform: scale(1.125);
+    transform: scale(1.125);
 }
 
 .site-banner .collections ul .icon {
@@ -1056,6 +1057,24 @@ div.contextual-links-wrapper{
   left: 0;
   z-index: 15;
 }
+
+.page-title .pt-prefix{
+  display:none;
+}
+
+
+.front .pt-prefix,
+.home-carousel .pt-prefix,
+.page-collections-all .pt-prefix{
+  display:inline;
+}
+
+.texts.page-collections-all .pt-prefix,
+.images.page-collections-all .pt-prefix{
+  display:none;
+}
+
+
 
 .breadwrap {
   margin: -0.2rem 0 0 1.8rem;
@@ -2274,7 +2293,7 @@ div.contextual-links-wrapper{
 
 .shanti-thumbnail-link:hover,
 .shanti-thumbnail-link:active {
-  color: rgba(90,101,209,.9000);
+  color: #df3d26;
   box-shadow: none;
   text-decoration: none;
 }
@@ -3643,6 +3662,21 @@ div#carousel-buttons {
   top: .5rem;
 }
 
+/* most pages don't have need of this, so am removing 
+and will reassign only to pages that typically are very long, 
+and are not galleries */
+.places .back-to-top,
+.subjects .back-to-top,
+.audio-video .back-to-top,
+.visuals .back-to-top,
+.images .back-to-top,
+.texts .back-to-top,
+.sources .back-to-top{
+  display:none;
+}
+
+
+
 
 /*-- filtered message after body tag to upgrade older browsers --*/
 /*-- Changine from .progressive to .ie-progressive so it does not conflict with progressive-image JS and CSS --*/
@@ -4979,7 +5013,7 @@ article.main-col > div.region-content::after{
 
   .navbar-header .site-slogan {
     display: inline-block;
-    font-size: 1.25em;
+    font-size: 1.38em;
     line-height: 1.32em;
   }
   
@@ -5140,8 +5174,8 @@ article.main-col > div.region-content::after{
   margin-top: 1rem;
   background-color: #fff;
   min-height:auto;
-  border-left: 1px solid #e0e0e0;
-  border-top: 1px solid #e0e0e0;
+  border-left: 1px solid #ddd;
+  border-top: 1px solid #ddd;
 }
 /* hide carousel nav arrows underneath */
 .front .sidebar-second.sidebar-offcanvas  {
@@ -5326,7 +5360,7 @@ article.main-col > div.region-content::after{
 /*-------------------------*/
 @media screen and (max-width: 991px) {
 
-  /*.btn.btn-default.view-offcanvas-sidebar { display: inline-block !important; }*/
+  .kmaps.node-type-page .btn.btn-default.view-offcanvas-sidebar { display: none !important; }
 }
 
 @media screen and (max-width: 1170px) {

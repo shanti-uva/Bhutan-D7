@@ -24,6 +24,7 @@ class kmaps_views_solr_sources_plugin_query extends views_plugin_query {
     $solrURL = variable_get('shanti_kmaps_admin_server_solr', SHANTI_KMAPS_ADMIN_SERVER_SOLR);
     $solrURL .= '/select?q=kmapid:' . $app . '-' . $kid;
     $solrURL .= '%20AND%20asset_type:sources';
+
     if (!empty($view->exposed_input['asset_subtype']) && !in_array($view->exposed_input['asset_subtype'], ['All'])) {
       $asset_subtype = trim($view->exposed_input['asset_subtype']);
       $asset_subtype = preg_replace('/\s+/', '%20', $asset_subtype);

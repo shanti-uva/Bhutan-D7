@@ -59,8 +59,8 @@ function bulk_image_import_form_submit($form, &$form_state) {
     }
   }
   $operations = array();
-  foreach($task_ids as $tid) {
-    array_push($operations, array('bulk_image_import_process_task', array($tid,)));
+  foreach(array_chunk($task_ids, 3) as $tids) {
+    array_push($operations, array('bulk_image_import_process_group', array($tids,)));
   }
   array_unshift(
     $operations,
@@ -144,7 +144,7 @@ function bulk_image_import_form($form, &$form_state) {
   );
 
   $box_access_data;
-  $box_auth_code;
+  $box_auth_code = '';
   if(strpos($_SERVER['HTTP_REFERER'], 'https://app.box.com/api/oauth2/authorize') !== FALSE) {
     $box_auth_code = $params['code'];
     if(isset($box_auth_code)) {

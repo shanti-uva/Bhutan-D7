@@ -206,10 +206,7 @@ left: -0.1rem;
   background-color: #4d59ca !important;
 }
 
-.front .view-section .nav-tabs>li.active>a,
-.front .nav-tabs.nav-justified>li.active{
-  border-top-color: #4d59ca !important;
-}
+
 
 
 .homepage-intro-text .panel.panel-default{

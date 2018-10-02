@@ -19,15 +19,21 @@
                 $(this)
                     .parent()
                     .addClass("active")
+
+                // If a non-Image tab is clicked, wipe out existing gallery (PIG)
+                if ($(this).attr('href').indexOf('/images') === -1 && typeof(Drupal.settings.shanti_grid_view) !== "undefined") {
+                   Drupal.settings.shanti_grid_view.mypig = ''; // Can't set to false bec. it tests for object and false is an object
+                  // See shanti-grid-view.js behavior for how the progressive image grid is initialize when image tab is chosen.
+                }
             });
 
             //Include index item to breadcrumbs for normal page loads
             if (Drupal.settings.kmaps_explorer) {
                 $("ol.breadcrumb li:first-child a").html(
                     Drupal.settings.kmaps_explorer.app + ": "
-                )
+                );
             } else {
-                $("ol.breadcrumb li:first-child a").html("")
+                $("ol.breadcrumb li:first-child a").html("");
             }
 
             //Functionality for history popstate
@@ -88,6 +94,21 @@
             $(".site-banner, .titlearea.banner, .node-shivanode .visualization, .footer").click(function () {
                 $(".kmap-content:visible").hide();
             });
+
+            // Hack to fix pager ajax problem in Related Images Page
+          /*
+            $('.related-images-show .pagerer .pager li a').each(function() {
+                var href = $(this).attr('href');
+                href = href.replace('photos/ajax', 'photos/nojs');
+                $(this).attr('href', href);
+            });
+
+            $('.related-images-show .pagerer .pager .pager-item.widget.active input').change(function() {
+                var val = $(this).val();
+                val = val - 1;
+                window.location.search = 'page=' + val;
+            });
+            */
 
             // Functionality for columnizer
             $(".kmaps-list-columns.places-in-subjects", context).columnize({

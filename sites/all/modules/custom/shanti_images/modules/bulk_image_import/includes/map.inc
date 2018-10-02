@@ -27,63 +27,63 @@ function bulk_image_import_map_xml_to_node($xml) {
   node_object_prepare($node);
   $node->uid = $GLOBALS['user']->uid;
   $node->status = 1;
-  $node->field_image_description = _bulk_image_import_clean_xml_field($xml->AnnotationFields->Caption);
-  $node->field_orginial_filename = _bulk_image_import_clean_xml_field($xml->AssetProperties->Filename);
-  $node->field_image_capture_device = _bulk_image_import_clean_xml_field($xml->MetaDataFields->Model);
-  $node->field_copyright_holder = _bulk_image_import_clean_xml_field($xml->AnnotationFields->Copyright);
-  $node->field_rights_notes = _bulk_image_import_clean_xml_field($xml->AnnotationFields->Rights);
+  $node_wrapper = entity_metadata_wrapper('node', $node);
+  $node_wrapper->field_original_filename->set(_bulk_image_import_clean_xml_field($xml->AssetProperties->Filename));
+  $node_wrapper->field_image_capture_device->set(_bulk_image_import_clean_xml_field($xml->MetaDataFields->Model));
+  $node_wrapper->field_copyright_holder->set(_bulk_image_import_clean_xml_field($xml->AnnotationFields->Copyright));
+  $node_wrapper->field_rights_notes->set(array(_bulk_image_import_clean_xml_field($xml->AnnotationFields->Rights),));
   $orientation_code = _bulk_image_import_clean_xml_field($xml->MediaProperties->ViewRotation);
   switch($orientation_code) {
   case 1:
-    $node->field_image_rotation = 0;
+    $node_wrapper->field_image_rotation->set(0);
     break;
   case 3:
-    $node->field_image_rotation = 180;
+    $node_wrapper->field_image_rotation->set(180);
     break;
   case 6:
-    $node->field_image_rotation = 90;
+    $node_wrapper->field_image_rotation->set(90);
     break;
   case 8:
-    $node->field_image_rotation = 270;
-    break
+    $node_wrapper->field_image_rotation->set(270);
+    break;
   }
-  $node->field_iso_speed_rating = _bulk_image_import_clean_xml_field($xml->MetaDataFields->ISOSpeedRating);
-  $node->field_exposure_bias = _bulk_image_import_clean_xml_field($xml->MetaDataFields->ExposureBias);
-  $node->field_aperture = _bulk_image_import_clean_xml_field($xml->MetaDataFields->Aperture);
-  $node->field_metering_mode = _bulk_image_import_clean_xml_field($xml->MetaDataFields->MeteringMode);
-  $node->field_light_source = _bulk_image_import_clean_xml_field($xml->MetaDataFields->LightSource);
-  $node->field_flash_settings = _bulk_image_import_clean_xml_field($xml->MetaDataFields->Flash);
-  $node->field_focal_length = (float) _bulk_image_import_clean_xml_field($xml->MetaDataFields->FocalLength);
-  $node->field_sensing_method = _bulk_image_import_clean_xml_field($xml->MetaDataFields->SensingMethod);
-  $node->field_noise_reduction = (_bulk_image_import_clean_xml_field($xml->MetaDataFields->NoiseReduction) == "ON");
-  $node->field_lens = _bulk_image_import_clean_xml_field($xml->MetaDataFields->Lens);
-  $node->field_latitude = _bulk_image_import_clean_xml_field($xml->MetaDataFields->Latitude);
-  $node->field_longitude = _bulk_image_import_clean_xml_field($xml->MetaDataFields->Longitude);
-  $node->field_altitude = (float) rtrim(
+  $node_wrapper->field_iso_speed_rating->set((integer)_bulk_image_import_clean_xml_field($xml->MetaDataFields->ISOSpeedRating));
+  $node_wrapper->field_exposure_bias->set(_bulk_image_import_clean_xml_field($xml->MetaDataFields->ExposureBias));
+  $node_wrapper->field_aperture->set(_bulk_image_import_clean_xml_field($xml->MetaDataFields->Aperture));
+  $node_wrapper->field_metering_mode->set(_bulk_image_import_clean_xml_field($xml->MetaDataFields->MeteringMode));
+  $node_wrapper->field_light_source->set(_bulk_image_import_clean_xml_field($xml->MetaDataFields->LightSource));
+  $node_wrapper->field_flash_settings->set(_bulk_image_import_clean_xml_field($xml->MetaDataFields->Flash));
+  $node_wrapper->field_focal_length->set((float) _bulk_image_import_clean_xml_field($xml->MetaDataFields->FocalLength));
+  $node_wrapper->field_sensing_method->set(_bulk_image_import_clean_xml_field($xml->MetaDataFields->SensingMethod));
+  $node_wrapper->field_noise_reduction->set((_bulk_image_import_clean_xml_field($xml->MetaDataFields->NoiseReduction) == "ON"));
+  $node_wrapper->field_lens->set(_bulk_image_import_clean_xml_field($xml->MetaDataFields->Lens));
+  $node_wrapper->field_latitude->set(_bulk_image_import_clean_xml_field($xml->MetaDataFields->Latitude));
+  $node_wrapper->field_longitude->set(_bulk_image_import_clean_xml_field($xml->MetaDataFields->Longitude));
+  $node_wrapper->field_altitude->set((float) rtrim(
     _bulk_image_import_clean_xml_field($xml->MetaDataFields->Altitude),
     "m"
-  );
-  $node->field_admin_notes = $xml->asXML();
+  ));
+  $node_wrapper->field_admin_notes->set(array($xml->asXML(),));
   if (property_exists($xml->AnnotationFields, 'Keyword')) {
-    $node->field_keywords = _bulk_image_import_clean_xml_field($xml->AnnotationFields->Keyword);
+    $node_wrapper->field_keywords->set(_bulk_image_import_clean_xml_field($xml->AnnotationFields->Keyword));
   }
   if (property_exists($xml->UserFields, 'UserField_1')) {
-    $node->field_organization_name = _bulk_image_import_clean_xml_field($xml->UserFields->UserField_1);
+    $node_wrapper->field_organization_name->set(_bulk_image_import_clean_xml_field($xml->UserFields->UserField_1));
   }
   if (property_exists($xml->UserFields, 'UserField_2')) {
-    $node->field_project_name = _bulk_image_import_clean_xml_field($xml->UserFields->UserField_2);
+    $node_wrapper->field_project_name->set(_bulk_image_import_clean_xml_field($xml->UserFields->UserField_2));
   }
   if (property_exists($xml->UserFields, 'UserField_3')) {
-    $node->field_sponsor_name = _bulk_image_import_clean_xml_field($xml->UserFields->UserField_3);
+    $node_wrapper->field_sponsor_name->set(_bulk_image_import_clean_xml_field($xml->UserFields->UserField_3));
   }
   if (property_exists($xml->UserFields, 'UserField_5')) {
-    $node->field_spot_feature = _bulk_image_import_clean_xml_field($xml->UserFields->UserField_5);
+    $node_wrapper->field_spot_feature->set(_bulk_image_import_clean_xml_field($xml->UserFields->UserField_5));
   }
   if (property_exists($xml->UserFields, 'UserField_6')) {
-    $node->field_public_note = _bulk_image_import_clean_xml_field($xml->UserFields->UserField_6);
+    $node_wrapper->field_general_note->set(_bulk_image_import_clean_xml_field($xml->UserFields->UserField_6));
   }
   if (property_exists($xml->UserFields, 'UserField_7')) {
-    $node->field_private_note = _bulk_image_import_clean_xml_field($xml->UserFields->UserField_7);
+    $node_wrapper->field_private_note->set(_bulk_image_import_clean_xml_field($xml->UserFields->UserField_7));
   }
 
   $matches = NULL;
@@ -116,6 +116,15 @@ function bulk_image_import_map_xml_to_node($xml) {
   }
   $node->field_image_agents['und'][0]['target_id'] = $agent->nid;
   $node->field_image_agents['und'][0]['target_type'] = 'image_agent';
+
+  $caption = new stdClass();
+  $caption->type = 'image_descriptions';
+  $caption->title = _bulk_image_import_clean_xml_field($xml->UserFields->UserField_4);
+  $caption->field_description =_bulk_image_import_clean_xml_field($xml->AnnotationFields->Caption);
+  node_object_prepare($caption);
+  node_save($caption);
+  $node->field_image_descriptions['und'][0]['target_id'] = $caption->nid;
+  $node->field_image_descriptions['und'][0]['target_type'] = 'image_descriptions';
 
   node_save($node);
   shanti_kmaps_fields_node_insert($node);

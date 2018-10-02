@@ -126,10 +126,15 @@
   left: .1rem;
 }
 
+
+
+
+
 .extruder .btn-collapse-flyout{
   float:right;
   /* other related styles are in shanti-search.css */
 } 
+
 
 .btn-show-search-results{
   position: absolute;
@@ -193,30 +198,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /**
 * -----------------------------------------------
 * KMaps Search Flyout
@@ -231,20 +212,6 @@
 .input-section .input-group{
   height: 65px;
   padding: 0 !important;
-}
-    .kmaps.page-subjects .input-section .input-group{
-      height: 53px;
-    }
-.kmaps .extruder .input-section .input-group .input-group-btn,
-.audio-video .extruder .input-section .input-group .input-group-btn{
-  position: absolute;
-  top: 1.9rem;
-  right: 0.1rem;
-}
-
-.audio-video .extruder .input-section .input-group .input-group-btn{
-  position: absolute;
-  right: 0.3rem;
 }
 
 .extruder .input-section .input-group .btn.btn-default{
@@ -305,6 +272,7 @@
 }
 
 /* custom left-edge padding for Subjects Tab - since Places has Earth node that sets up an imbalance */
+.view-section .tab-content .shanti-kmaps-faceted-search-kmaps-1.tab-pane.treeview,
 .view-section .tab-content .shanti-kmaps-faceted-search-kmaps-2.tab-pane.treeview{
   padding-left:.75rem
 }
@@ -342,9 +310,6 @@
 
 .view-section .kmaps-tt-footer{
   border-bottom: 1px solid #ddd;
-}
-
-.view-section .kmaps-tt-footer{
   padding: 0.5rem 0;
 }
 

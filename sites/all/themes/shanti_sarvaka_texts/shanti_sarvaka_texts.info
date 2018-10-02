@@ -17,6 +17,7 @@ regions[header]         = Top Bar Header
 regions[banner]         = Color Strip Banner
 regions[content]        = Content
 regions[search_flyout]  = Search Fly Out
+regions[search_results] = Search Results
 regions[sidebar_first]  = Primary Sidebar
 regions[sidebar_second] = Secondary Sidebar
 regions[highlighted]    = Highlighted
@@ -42,8 +43,12 @@ settings[shanti_sarvaka_shanti_site] = 1
 stylesheets[all][] =  css/shanti-main-texts.css
 stylesheets[all][] =  css/shanti-search-texts.css
 
-;; FOAD	
+;; FOAD
 stylesheets[all][] =  css/jquery.ui.tabs.min.css
+
+;; universal search
+stylesheets[all][] =  ../shanti_sarvaka/css/shanti-search-kmaps.css
+stylesheets[all][] =  ../shanti_sarvaka/css/shanti-search-faceted.css
 
 
 ;;;;;;;;;;;;;;;;;;;;;;

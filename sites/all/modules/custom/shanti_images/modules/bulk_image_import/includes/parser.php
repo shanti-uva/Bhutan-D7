@@ -10,7 +10,6 @@ function bulk_image_import_read_xml_streaming($file) {
     }
     if ($reader->name == 'MediaItem' && $reader->nodeType == XMLReader::ELEMENT) {
       yield 'item' => $reader->readOuterXML();
-      $reader->next('MediaItem');
     }
   }
   $reader->close();

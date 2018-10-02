@@ -18,30 +18,30 @@ define('SHANTI_KMAPS_FACETS_ITEMS_PER_PAGE', 60);
  * Module Init Function (hook_init)
  */
 function shanti_kmaps_facets_init() {
-	global $base_url, $base_path;
+    global $base_url, $base_path;
     $cp = current_path();
     if (!path_is_admin($cp)) {
-    	   libraries_load('json2');
-    	   $res = libraries_load('fancytree','source');
-        libraries_load('ajaxsolr');
-    }
-    drupal_add_library('system', 'drupal.ajax');  //Add Ajax library
+      libraries_load('json2');
+      $res = libraries_load('fancytree', 'source');
+      libraries_load('ajaxsolr');
 
-	$modhome = drupal_get_path('module', 'shanti_kmaps_facets');
-	/*  Added in .info file
-     * drupal_add_css($modhome . "/css/shanti_kmaps_facets.css");
-    drupal_add_js($modhome . "/js/shanti_kmaps_facets.js",array( 'group' => JS_THEME, ));
-	*/
-	drupal_add_js(array(
-			'shanti_kmaps_facets' => array(
-				'mod_home' => $base_url . $base_path . $modhome,
-				'ajaxUrl' => url('kmaps/facets'),
-				/*'resTypes' => shanti_kmaps_facets_get_selected_resource_types(),*/
-				'loadFacetsFromURL' => false,
-				'hideZeros' => variable_get('shanti_kmaps_facets_hide_zeros', SHANTI_KMAPS_FACETS_HIDE_ZEROS),
-			),
-		),
-	'setting');
+      drupal_add_library('system', 'drupal.ajax');  //Add Ajax library
+
+      $modhome = drupal_get_path('module', 'shanti_kmaps_facets');
+      drupal_add_js($modhome . "/js/shanti_kmaps_facets.js", array( 'group' => JS_THEME, ));
+      drupal_add_js($modhome . "/js/custom-ajax.js", array( 'group' => JS_THEME, ));
+
+      drupal_add_js(array(
+        'shanti_kmaps_facets' => array(
+          'mod_home' => $base_url . $base_path . $modhome,
+          'ajaxUrl' => url('kmaps/facets'),
+          /*'resTypes' => shanti_kmaps_facets_get_selected_resource_types(),*/
+          'loadFacetsFromURL' => FALSE,
+          'hideZeros' => variable_get('shanti_kmaps_facets_hide_zeros', SHANTI_KMAPS_FACETS_HIDE_ZEROS),
+        ),
+      ),
+        'setting');
+    }
 }
 
 /**
@@ -355,7 +355,8 @@ function shanti_kmaps_facets_form_block_admin_configure_alter(&$form, &$form_sta
  */
 function shanti_kmaps_facets_block_view($delta = 1) {
     global $base_url, $base_path;
-
+    // the JS breaks the page on admin pages. Not necessary so return.
+  //drupal_set_message("in block view");
     shanti_kmaps_facets_load_library('json2');
     shanti_kmaps_facets_load_library('fancytree','source');
     shanti_kmaps_facets_load_library('ajaxsolr');

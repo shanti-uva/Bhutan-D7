@@ -5,10 +5,10 @@
  */
 function kmaps_views_solr_visuals_views_plugins() {
   $plugin = array();
-  $plugin['query']['kmaps_views_solr_visuals_plugin_query'] = array(
+  $plugin['query']['kmaps_views_solr_images_plugin_query'] = array(
     'title' => t('Solr Visuals Related Assets Query'),
     'help' => t('Fields for Visuals pulled as queries from Solr'),
-    'handler' => 'kmaps_views_solr_visuals_plugin_query',
+    'handler' => 'kmaps_views_solr_images_plugin_query',
   );
   return $plugin;
 }
@@ -24,7 +24,7 @@ function kmaps_views_solr_visuals_views_data() {
   $data['kmaps_views_solr_visuals']['table']['base'] = array(
     'title' => t('Visuals Data'),
     'help' => t('Visuals Query'),
-    'query class' => 'kmaps_views_solr_visuals_plugin_query'
+    'query class' => 'kmaps_views_solr_images_plugin_query'
   );
 
   // Fields
@@ -32,7 +32,7 @@ function kmaps_views_solr_visuals_views_data() {
     'title' => t('Id'),
     'help' => t('The Id of the node'),
     'field' => array(
-      'handler' => 'kmaps_views_solr_visuals_handler_field',
+      'handler' => 'kmaps_views_solr_images_handler_field',
     ),
   );
 
@@ -40,13 +40,13 @@ function kmaps_views_solr_visuals_views_data() {
     'title' => t('Title'),
     'help' => t('The title of the related Visuals'),
     'field' => array(
-      'handler' => 'kmaps_views_solr_visuals_handler_field',
+      'handler' => 'kmaps_views_solr_images_handler_field',
     ),
     'filter' => array(
-      'handler' => 'kmaps_views_solr_visuals_handler_filter_title'
+      'handler' => 'kmaps_views_solr_images_handler_filter_title'
     ),
     'sort' => array(
-      'handler' => 'kmaps_views_solr_visuals_handler_sort_title'
+      'handler' => 'kmaps_views_solr_images_handler_sort_title'
     ),
   );
 
@@ -54,10 +54,10 @@ function kmaps_views_solr_visuals_views_data() {
     'title' => t('Create Date'),
     'help' => t('Created at date'),
     'field' => array(
-      'handler' => 'kmaps_views_solr_visuals_handler_field',
+      'handler' => 'kmaps_views_solr_images_handler_field',
     ),
     'sort' => array(
-      'handler' => 'kmaps_views_solr_visuals_handler_sort_created_date'
+      'handler' => 'kmaps_views_solr_images_handler_sort_created_date'
     ),
   );
 
@@ -65,7 +65,7 @@ function kmaps_views_solr_visuals_views_data() {
     'title' => t('Collection'),
     'help' => t('Collection title'),
     'field' => array(
-      'handler' => 'kmaps_views_solr_visuals_handler_field',
+      'handler' => 'kmaps_views_solr_images_handler_field',
     ),
   );
 
@@ -73,10 +73,10 @@ function kmaps_views_solr_visuals_views_data() {
     'title' => t('Creator'),
     'help' => t('Author of the node'),
     'field' => array(
-      'handler' => 'kmaps_views_solr_visuals_handler_field',
+      'handler' => 'kmaps_views_solr_images_handler_field',
     ),
     'sort' => array(
-      'handler' => 'kmaps_views_solr_visuals_handler_sort_creator'
+      'handler' => 'kmaps_views_solr_images_handler_sort_creator'
     ),
   );
 
@@ -84,10 +84,10 @@ function kmaps_views_solr_visuals_views_data() {
     'title' => t('Asset SubType'),
     'help' => t('Asset Sub-type'),
     'field' => array(
-      'handler' => 'kmaps_views_solr_visuals_handler_field',
+      'handler' => 'kmaps_views_solr_images_handler_field',
     ),
     'filter' => array(
-      'handler' => 'kmaps_views_solr_visuals_handler_filter_asset_subtype'
+      'handler' => 'kmaps_views_solr_images_handler_filter_asset_subtype'
     ),
   );
 
@@ -95,7 +95,23 @@ function kmaps_views_solr_visuals_views_data() {
     'title' => t('Thumb'),
     'help' => t('Link to thumb image'),
     'field' => array(
-      'handler' => 'kmaps_views_solr_visuals_handler_field',
+      'handler' => 'kmaps_views_solr_images_handler_field',
+    ),
+  );
+
+  $data['kmaps_views_solr_visuals']['thumb_width'] = array(
+    'title' => t('Thumb Width'),
+    'help' => t('Width of thumb image'),
+    'field' => array(
+      'handler' => 'kmaps_views_solr_images_handler_field',
+    ),
+  );
+
+  $data['kmaps_views_solr_visuals']['thumb_height'] = array(
+    'title' => t('Thumb Height'),
+    'help' => t('Height of thumb image'),
+    'field' => array(
+      'handler' => 'kmaps_views_solr_images_handler_field',
     ),
   );
 
@@ -103,7 +119,7 @@ function kmaps_views_solr_visuals_views_data() {
     'title' => t('Ajax Url'),
     'help' => t('Ajax link to node'),
     'field' => array(
-      'handler' => 'kmaps_views_solr_visuals_handler_field',
+      'handler' => 'kmaps_views_solr_images_handler_field',
     ),
   );
   

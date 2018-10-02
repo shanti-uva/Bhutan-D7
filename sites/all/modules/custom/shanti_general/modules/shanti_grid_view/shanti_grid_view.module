@@ -23,7 +23,15 @@ function shanti_grid_view_menu() {
         'access arguments' => array('access administration pages'),
         'type' => MENU_NORMAL_ITEM,
       );
-    $items['shanti/grid/info/%/%'] = array(
+      $items['shanti/grid/dinfo/%/%/%'] = array(
+        'title' => '',
+        'description' => 'Api path to return description of node for Shanti grid view for data sources',
+        'page callback' => 'shanti_grid_view_data_item_info',
+        'page arguments' => array(3, 4, 5),
+        'type' => MENU_CALLBACK,
+        'access arguments' => array('access content'),
+      );
+      $items['shanti/grid/info/%/%'] = array(
         'title' => '',
         'description' => 'Api path to return description of node for Shanti grid view',
         'page callback' => 'shanti_grid_view_item_info',
@@ -149,24 +157,110 @@ function shanti_grid_view_entity_info_alter(&$entity_info) {
  *      @param $type : either "node" or "file"
  *      @param $eid :  the entity id of the node or file
  */
-function shanti_grid_view_item_info($type = FALSE, $eid = FALSE) {
-    if ($type && $eid && in_array($type, array('node', 'file'))) {
+function shanti_grid_view_item_info($type = FALSE, $eid = FALSE, $view_name = FALSE) {
+    if (!empty($type) && !empty($eid) ) {
         // Caching grid view entity info for drop down details so it loads faster
         $cache_name = "shanti_grid_view_{$type}_{$eid}_info";
-        $html = '';
         if ($cache = cache_get($cache_name)) {
-              $html = $cache->data;
+          $html = $cache->data;
+        } else if ($type == 'node') {
+            $ent = node_load($eid);
+            $details = node_view($ent, 'grid_details');
+            $html = drupal_render($details);
+            cache_set($cache_name, $html, 'cache');
+        } elseif ($type == 'file') {
+            $ent = file_load($eid);
+            $details = file_view($ent, 'grid_details');
+            $html = drupal_render($details);
+            cache_set($cache_name, $html, 'cache');
         } else {
-              $ent = ($type == 'node') ? node_load($eid) : file_load($eid);
-              $details = ($type == 'node') ?  node_view($ent, 'grid_details') : file_view($ent, 'grid_details');
-              $html = render($details);
-              cache_set($cache_name, $html, 'cache');
+          // Unknown item call (Data items use separate function
+          watchdog('shanti_grid_view', "Bad call to shanti_grid_view_item_info: $eid , $view_name, $type");
         }
         print $html;
         
     } else {
         watchdog('shanti_grid_view', 'Invalid parameters for shanti_grid_view_item_info function');
     }
+}
+
+/**
+ *
+ * A function called by the views data source option, using a custom views data source, if the popdown (ppd) info is to
+ * be obtained from either a function call or caching the views results. In either case, the url for the details is:
+ * .../shanti/grid/dinfo/%/%/% with view name, current display, and ID as the variables. If it's a function type, it
+ * calls that function with the given id and prints the results. If it's a cache, it loads the cache and renders it
+ * according to the settings.
+ *
+ * @param $vname    : The view name
+ * @param $curdis   : The current display
+ * @param $id       : The item's id
+ */
+function shanti_grid_view_data_item_info($vname, $curdis, $id) {
+    $view = views_get_view($vname);
+    $view->set_display($curdis);
+    $view->execute();
+    $view_opts = $view->style_plugin->options;
+    if (isset($view_opts['data_type_info'])) {
+        $options = $view_opts['data_type_info'];
+        if (isset($options['ppd_info'])){
+            $type = $options['ppd_info'];
+            if ($type == 'function') {
+                $render_function = $options['ppd_info_func'];
+                $html = $render_function($id);
+                print $html;
+            } elseif ($type == 'view') {
+                // Used cached view results
+                $cache_name = "grid_view_{$vname}_{$curdis}_rows"; // Build cache name
+                $cdata = cache_get($cache_name);  // Get Cachse
+                if (!empty($cdata)) {
+
+                    // Parse the field map in the grid view settings
+                    $mapstring = $options['ppd_info_cache'];
+                    $mapitems = explode("\n", $mapstring);
+                    $map = array();
+                    foreach($mapitems as $item) {
+                      $pts = explode('|', trim($item));
+                      if (count($pts) == 2) {
+                        $map[$pts[0]] = $pts[1];
+                      }
+                    }
+
+                    // Get the ID field name and match that with given ID
+                    $id_field_name = $options['id'];
+                    $results = unserialize($cdata->data);
+                    foreach ($results as $res) {
+                      if ($res->{$id_field_name} == $id) {
+                        // Use Map to build data array for template
+                        $tmpdata = array();
+                        foreach ($map as $fn => $rep_str) {
+                          if (isset($res->{$fn})) {
+                            $tmpdata[$rep_str] = $res->{$fn};
+                            if ($rep_str == 'GVDATE') {
+                              $dt = strtotime($tmpdata[$rep_str]);
+                              $tmpdata[$rep_str] = format_date($dt, 'custom', 'M j, Y');
+                            }
+                            if ($rep_str == 'GVWIDTH' && strstr($tmpdata[$rep_str], 'x')) {
+                              $pts = explode('x', $tmpdata[$rep_str]);
+                              $tmpdata[$rep_str] = $pts[0];
+                            }
+                            if ($rep_str == 'GVHEIGHT' && strstr($tmpdata[$rep_str], 'x')) {
+                              $pts = explode('x', $tmpdata[$rep_str]);
+                              $tmpdata[$rep_str] = $pts[1];
+                            }
+                          }
+                        }
+                        // Build HTML with template function and data array
+                        $html = shanti_grid_view_render_info($tmpdata);
+                        print $html;
+                        break;
+                      }
+                    }
+                }
+            }
+        }
+    }
+
 }
 
 /**
@@ -193,7 +287,6 @@ function shanti_grid_view_imagefile_url($fid, $size, $mode='image') {
     $url = ($uri) ? file_create_url($uri) : FALSE;
     $otherurl = module_invoke_all('fileurl_for_grid', $fid, $size);
     $url = (empty($otherurl)) ? $url : $otherurl[0];
-    //watchdog('shanti_grid_view', $url);
     if ($mode == 'url') {
         return $url;
     } else {
@@ -232,11 +325,10 @@ function shanti_grid_view_views_pre_render(&$view) {
     global $base_root, $base_path;
     if (isset($view->style_plugin->plugin_name) && $view->style_plugin->plugin_name == 'shanti_grid_view') {
         //dpm($view->current_display, $view->name);
-        $view->item_type = ($view->base_table == 'file_managed') ? 'file' : 'node';  // Determine whether node or file view
-        shanti_grid_set_gallery_session($view->result, 'view'); // Call function to set up session variable for gallery
+        $view->item_type =  _shanti_grid_view_get_item_type($view->base_table);  // Determine whether node or file view
+        shanti_grid_view_set_gallery_session($view->result, 'view'); // Call function to set up session variable for gallery
         
         // Add necessary JS
-        //dpm($view);
         drupal_add_js(drupal_get_path('module', 'shanti_grid_view') . '/js/pig.js', array('group'=>JS_LIBRARY, 'weight'=>9980));
         drupal_add_js(drupal_get_path('module', 'shanti_grid_view') . '/js/pig-shanti-ext.js', array('group'=>JS_LIBRARY, 'weight'=>9990));
         drupal_add_js(drupal_get_path('module', 'shanti_grid_view') . '/js/jquery.actual.min.js', array('group'=>JS_LIBRARY, 'weight'=>9950));
@@ -245,14 +337,16 @@ function shanti_grid_view_views_pre_render(&$view) {
         
         // Add necessary CSS
         drupal_add_css(drupal_get_path('module', 'shanti_grid_view') . '/css/shanti-pig-gallery.css');
-         
-        // Create array for JS Settings
+        drupal_add_css(drupal_get_path('module', 'shanti_grid_view') . '/css/photoswipe.css');
+        drupal_add_css(drupal_get_path('module', 'shanti_grid_view') . '/css/pswp-default-skin.css');
+
+      // Create array for JS Settings
         $settings = array(
             'total_items' => $view->total_rows,
             'items_per_page' => $view->items_per_page,
             'current_page' => $view->current_page,
         );
-        
+
         // Determine which kind of grid view it is based on settings
         if ($view->style_options['iiif_view'] == TRUE) {
             // IIIF view is meant to work with Shanti Images module
@@ -295,18 +389,47 @@ function shanti_grid_view_views_pre_render(&$view) {
             $settings['grid_image_size'] = $view->style_options['iiif_options']['iiif_thumb_size'];
             $settings['popdown_image_size'] = $view->style_options['iiif_options']['iiif_pd_size'];
             $settings['imgdata'] = $imgdata;
+            // Same syntax: https://iiif-test.lib.virginia.edu/mandala/__FNAME__/full/!__SIZE__,__SIZE__/0/default.jpg
             $settings['url_for_size'] = variable_get('shanti_images_view_url','https://iiif.lib.virginia.edu') .
-                $view->style_options['iiif_options']['iiif_url_syntax'];
-            //$settings['url_for_size'] = 'https://iiif-test.lib.virginia.edu/mandala/__FNAME__/full/!__SIZE__,__SIZE__/0/default.jpg';
-            //dpm($settings, 'settings');
-            drupal_add_js(array( 'shanti_grid_view' =>$settings, ), 'setting');
-            
-        } else if ($view->item_type == 'node') {
+                  $view->style_options['iiif_options']['iiif_url_syntax'];
+            drupal_add_js(array( 'shanti_grid_view' => $settings, ), 'setting');
+
+        } else if ($view->style_options['entity_type'] == 'node') {
             // Non-IIIF Node Based View
-            //TODO: Code the Non IIIF node version of the grid
-            drupal_set_message(t('The non-IIIF node version of the Grid View format has yet to be coded.'), 'warning', FALSE);
-            
-        } else if ($view->item_type == 'file') {
+            /*
+             * Need an object with:
+             *    - filename: replaces __FNAME__ in url_for_size syntax
+             *    - title:
+             *    - aspectRatio:
+             *    - rotation:
+             *    - nid
+             *    - path
+             */
+            $imgdata = array();
+            $thumb_field_name = 'field_' . $view->style_options['node_type_info']['thumbnail_image'];
+            $ct = 0;
+            foreach ($view->result as $rn => &$item) {
+              $ct++;
+              $imgobj = new stdClass();
+              $imgobj->nid = $item->nid;
+              $imgobj->title = $item->node_title;
+              $thumb = $item->{$thumb_field_name}[0]['raw'];
+              $imgobj->aspectRatio = $thumb['width'] / $thumb['height'];
+              if ($imgobj->aspectRatio === FALSE) {
+                $imgfile = file_load($thumb['fid']);
+                $imgobj->aspectRatio = $imgfile->width / $imgfile->height;
+              }
+              $imgobj->path = url('node/' . $item->nid);
+              $imgobj->lgimgurl = file_create_url($thumb['uri']);
+              $imgobj->filename = $imgobj->lgimgurl; // if filename is needed to create another url, just use the full image url
+              $imgdata[] = $imgobj;
+            }
+            $settings['entity_type'] = 'node';
+            $settings['imgdata'] = $imgdata;
+            $settings['url_for_size'] = '__FNAME__';  // Just use __FNAME__ and set filename to image url
+            drupal_add_js(array( 'shanti_grid_view' => $settings, ), 'setting');
+
+        } else if ($view->style_options['entity_type'] == 'file') {
             // File Based View 
             $imgdata = array();
             foreach ($view->result as $rn => &$item) {
@@ -328,6 +451,101 @@ function shanti_grid_view_views_pre_render(&$view) {
             $settings['imgdata'] = $imgdata;
             $settings['url_for_size'] = $base_root . $base_path . 'shanti/grid/imagefile/__FNAME__/__SIZE__';
             drupal_add_js(array( 'shanti_grid_view' =>$settings, ), 'setting');
+
+        } elseif ($view->style_options['entity_type'] == 'data') {
+            // Views Custom Data Source
+            $imgdata = array();
+            $id_field_name = $view->style_options['data_type_info']['id'];
+            $title_field_name = $view->style_options['data_type_info']['title'];
+            $thumb_field_name = $view->style_options['data_type_info']['thumbnail_image'];
+            $thumb_width_field = $view->style_options['data_type_info']['thumbnail_width'];
+            $thumb_height_field = $view->style_options['data_type_info']['thumbnail_height'];
+            $iiif_name_field = (!empty($view->style_options['data_type_info']['filename'])) ? $view->style_options['data_type_info']['filename'] : FALSE;
+            $ppd_type = $view->style_options['data_type_info']['ppd_info'];
+            // Determine ppd path based on setting choice for how ppd details are populated
+            if ($ppd_type == 'url') {
+                $ppd_path = $view->style_options['data_type_info']['ppd_info_url'];
+            } elseif ($ppd_type == 'function') {
+                $ppd_path = "/shanti/grid/dinfo/{$view->name}/{$view->current_display}/__ID__";
+            } elseif ($ppd_type == 'view') {
+                $cache_name = "grid_view_{$view->name}_{$view->current_display}_rows";
+                cache_set($cache_name, serialize($view->result));
+                $ppd_path = "/shanti/grid/dinfo/{$view->name}/{$view->current_display}/__ID__";
+            }
+
+            $item_path = $view->style_options['data_type_info']['item_url'];
+            $path_is_view_field = (strstr($item_path, '__ID__')) ? FALSE : TRUE;
+
+            $url4sz = '__FNAME__'; // Just use __FNAME__ and set filename to image url
+            if (!empty($view->style_options['data_type_info']['img_by_size_url'])) {
+              $url4sz = $view->style_options['data_type_info']['img_by_size_url'];
+            }
+
+            $settings['url_for_size'] = $url4sz;
+
+            $ct = 0;
+
+            foreach ($view->result as $rn => &$item) {
+              $ct++;
+              $imgobj = new stdClass();
+              $imgobj->nid = $item->{$id_field_name};
+              $imgobj->ppdpath = str_replace('__ID__', $imgobj->nid, $ppd_path);
+              $imgobj->title = $item->{$title_field_name};
+              $thumb = $item->{$thumb_field_name};
+              $width = $item->{$thumb_width_field};
+              if (strstr($width, 'x')) {
+                $pts = explode('x', $width);
+                $width = trim($pts[0]);
+              }
+              if (strstr($width, '|')) {
+                $pts = explode('|', $width);
+                $width = trim($pts[0]);
+              }
+              $height = $item->{$thumb_height_field};
+              if (strstr($height, 'x')) {
+                $pts = explode('x', $height);
+                $height = trim($pts[1]);
+              }
+              if (strstr($height, '|')) {
+                $pts = explode('|', $height);
+                $height = trim($pts[1]);
+              }
+              if (is_numeric($width) && $width > 0 && is_numeric($height) && $height > 0) {
+                $imgobj->aspectRatio = $width / $height;
+              } else {
+                $imgobj->aspectRatio = 1;
+              }
+              // If there is an iiif name field, use that for file name
+              if ($iiif_name_field !== FALSE && !empty($iiif_name_field)) {
+                $imgobj->filename = $item->{$iiif_name_field};
+                $imgurl = str_replace('__FNAME__', $imgobj->filename, $url4sz);
+                //$ppdurl = str_replace('__SIZE__', '450', $imgurl);
+                $lgurl = str_replace('__SIZE__', '2000', $imgurl);
+                //$imgobj->ppdimgurl = $ppdurl;
+                $imgobj->lgimgurl = $lgurl;
+              } else {
+                // Otherwise assume using full urls (This needs to be enhanced)
+                $imgobj->ppdimgurl = $thumb;
+                $imgobj->lgimgurl = $thumb;
+                $imgobj->filename = $thumb;
+              }
+              if ($path_is_view_field) {
+                $imgobj->path = $item->{$item_path};
+              } else {
+                $imgobj->path = str_replace('__ID__', $imgobj->nid, $item_path); //$imgobj->ppdpath;
+              }
+              $imgdata[] = $imgobj;
+            }
+
+            $settings['entity_type'] = str_replace('_','-', $view->base_table); //'data';
+            $settings['view_name'] = str_replace('_', '-', $view->name);
+            $settings['imgdata'] = $imgdata;
+            $settings['imgdatalen'] = count($imgdata);
+            $settings['popdown_image_size'] = 450;
+            drupal_add_js(array( 'shanti_grid_view' => $settings, ), 'setting');
+
+        } else {
+          drupal_set_message(t('Unknown view entity type in Shanti Grid View'), 'warning');
         }
     }
 }
@@ -335,7 +553,7 @@ function shanti_grid_view_views_pre_render(&$view) {
 /**
  * Stores gallery state in session variable to be used by image page for carousel of thumbs
  */
-function shanti_grid_set_gallery_session($results, $type) {
+function shanti_grid_view_set_gallery_session($results, $type) {
     if ($type == 'view') {
         $data = array();
         foreach($results as $n => $item) {
@@ -345,26 +563,29 @@ function shanti_grid_set_gallery_session($results, $type) {
                 if (isset($item->nid)) {
                     global $base_path;
                     $nid = $item->nid;
-                    $siobj = _shanti_images_get_node_image($nid);
                     $gitem = new stdClass;
                     $gitem->nid = $nid;
-                    $gitem->filename = $siobj->filename;
-                    $gitem->aspectRatio = $siobj->getRatio();
-                    $gitem->title = (isset($item->title)) ? $item->title : '';
-                    $gitem->url = $siobj->getURL('400');
-                    $gitem->path = $base_path . drupal_get_path_alias('node/' . $nid);
-                    $data[] = $gitem;
+                    $gitem->title = $item->title;
+                    $gitem->url = url('/node/' . $item->nid);
+                    /** was Develop branch
+                        $gitem->filename = $siobj->filename;
+                        $gitem->aspectRatio = $siobj->getRatio();
+                        $gitem->title = (isset($item->title)) ? $item->title : '';
+                        $gitem->url = $siobj->getURL('400');
+                        $gitem->path = $base_path . drupal_get_path_alias('node/' . $nid);
+                        $data[] = $gitem;
+                    **/
 
-                    /* old code (06-06-2018)
-                    $title = (isset($item->title)) ?  $item->title : '';
-                    $url = (isset($item->nid)) ? url('/node/' . $item->nid) : '';
-                    $raw = (isset($item->raw['fid'])) ? $item->raw['fid'] : '';
-                    $data[] = array(
-                        'nid' => $nid,
-                        'title' =>$title,
-                        'url' => $url,
-                        'fid' => $raw,
-                    ); */
+                    // Custom code for Shanti Images. Should be moved there
+                    if (module_exists('shanti_images')) {
+                      $siobj = _shanti_images_get_node_image($nid);
+                      $gitem->filename = $siobj->filename;
+                      $gitem->aspectRatio = $siobj->getRatio();
+                      $gitem->url = $siobj->getURL('400');
+                      $gitem->path = $base_path . drupal_get_path_alias('node/' . $nid);
+                    }
+
+                    $data[] = $gitem;
                 }
             }
         } 
@@ -380,7 +601,7 @@ function shanti_grid_set_gallery_session($results, $type) {
  *  @param $uri : The image's URI
  *  @param $style : The machine name of the image style for the derrivative.
  * Helper function to ensure that the proper image derrivatives exist or else make them
- */
+ * @return  url
 function _shanti_grid_get_grid_image($uri, $style) {
     if (!$style) { return $uri; }
     $derriv = image_style_path($style, $uri);
@@ -389,6 +610,7 @@ function _shanti_grid_get_grid_image($uri, $style) {
     }
     return file_create_url($derriv);
 }
+ */
 
 /**
  * Gets image size from module's table is it exists. If not, gets size of image and adds to table
@@ -398,7 +620,7 @@ function _shanti_grid_get_grid_image($uri, $style) {
  *      sz : size type of image either "teaser" or "large"
  *      url : url of image (used with getimagesize() if no size in db)
  */
-function _shanti_grid_get_imagesize($iid, $sz, $url) {
+function _shanti_grid_view_get_imagesize($iid, $sz, $url) {
    
     $res = db_select('shanti_grid_image_sizes', 'sgi')
                    ->fields('sgi')
@@ -412,8 +634,7 @@ function _shanti_grid_get_imagesize($iid, $sz, $url) {
     } else {
         $imagesize = getimagesize($url);
         if (!$imagesize) {
-            $imagesize = array(0, 0); 
-            watchdog('shanti_grid_view', "Cannot get image size for: $url");
+            $imagesize = array(0, 0);
         } else {
             $ratio = parseInt($imagesize[0]) / parseInt($imagesize[1]);
             $q = db_insert('shanti_grid_image_sizes')
@@ -469,7 +690,6 @@ function shanti_grid_view_preprocess_node(&$vars) {
 
 /**
 * Implements hook_theme().
-*/
 function shanti_grid_view_theme($existing, $type, $theme, $path) {
     $theme = array();
     $theme['node__shanti_image__grid_details'] = array(
@@ -481,8 +701,122 @@ function shanti_grid_view_theme($existing, $type, $theme, $path) {
     return $theme;
 }
 
+ */
 function shanti_grid_view_theme_registry_alter(&$theme_registry) {
     if (!empty($theme_registry['shanti_grid_view_gallery'])) {
         $theme_registry['shanti_grid_view_gallery']['path'] = drupal_get_path('module', 'shanti_grid_view') . '/templates';
     }
+}
+
+/**
+ * Function to determine the item type displayed in a view
+ */
+function _shanti_grid_view_get_item_type($table) {
+  if (strstr($table, 'file')) {
+    $entity_type = 'file';
+  } elseif ($table == 'node') {
+    $entity_type = 'node';
+  } else {
+    $entity_type = 'data';
+  }
+  return $entity_type;
+}
+
+
+/**
+ * @param array $indata   : an array of data keyed on the following fields or indexed in this order:
+ *
+ *       GVID         : a unique numeric id, together with type this becomes the id, e.g. "node-1234"
+ *       GVTITLE      : The title
+ *       GVAUTH       : the markup for the author's name/link
+ *       GVSUBTYPE    : the asset subtype
+ *       GVWIDTH      : the width of the image
+ *       GVHEIGHT     : the height of the image
+ *       GVDATE       : the date of the image
+ *       GVCOLLECTION : the name/link for the collection
+ *       GVPLACES     : the markup for the kmaps place tags
+ *       GVSUBJECTS   : the markup for the subjects tags
+ *       GVDESC       : the description for this item
+ *
+ * Prints out the html from a template with the data inserted used in the detail/info pane (ppdinfo)
+ *
+ */
+function shanti_grid_view_render_info($indata = array()) {
+    $tmpl = _shanti_grid_view_get_general_template();
+    $keys = array("GVID", "GVTITLE", "GVAUTH", "GVSUBTYPE", "GVWIDTH", "GVHEIGHT", "GVDATE", "GVCOLLECTION",
+                    "GVPLACES", "GVSUBJECTS", "GVDESC");
+
+    // If indata is not an associative array with the keys, then convert to one by adding keys in sequential order.
+    if (!isset($indata['GVID']) && isset($indata[0])) {
+        $data = array();
+        foreach ($keys as $n => $key) {
+            $data[$key] = $indata[$n];
+        }
+    } else {
+        $data = $indata;
+    }
+
+    // Deal with kmaps
+    if (!empty($data['GVPLACES']) && is_numeric(str_replace('|', '', $data['GVPLACES']))) {
+
+      $kmaps = explode('|', $data['GVPLACES']);
+      $kmap_out = array();
+      foreach($kmaps as $kmp) {
+        $ra = shanti_kmaps_fields_get_popover_array('places', $kmp);
+        $kmap_out[] = render($ra);
+      }
+      $data['GVPLACES'] = implode(' ', $kmap_out);
+    }
+
+    if (!empty($data['GVSUBJECTS']) && is_numeric(str_replace('|', '', $data['GVSUBJECTS']))) {
+
+      $kmaps = explode('|', $data['GVSUBJECTS']);
+      $kmap_out = array();
+      foreach($kmaps as $kmp) {
+        $ra = shanti_kmaps_fields_get_popover_array('subjects', $kmp);
+        $kmap_out[] = render($ra);
+      }
+      $data['GVSUBJECTS'] = implode(' ', $kmap_out);
+    }
+
+    $tmpl = str_replace('GVTYPE', 'data', $tmpl); // Type = type of grid view used for a div class, here "data"
+
+    // Replace Keys with their value in the template
+    foreach ($data as $key => $val) {
+        $tmpl = str_replace($key, $val, $tmpl);
+    }
+
+    // Replace any unsubstituted keys with nothing
+    if (strstr($tmpl, 'GVWIDTH')) {
+      $tmpl = str_replace('class="size-cnt"', 'class="size-cnt hidden"', $tmpl);
+    }
+
+    if (strstr($tmpl, 'GVCOLLECTION')) {
+      $tmpl = str_replace('class="collections"', 'class="collections hidden"', $tmpl);
+    }
+
+    if (strstr($tmpl, 'GVPLACES')) {
+      $tmpl = str_replace('class="place"', 'class="place hidden"', $tmpl);
+    }
+
+    if (strstr($tmpl, 'GVSUBJECTS')) {
+      $tmpl = str_replace('class="subject"', 'class="subject hidden"', $tmpl);
+    }
+
+    $keys[4] = "GVWIDTHx";
+    foreach ($keys as $key) {
+        $tmpl = str_replace($key, '', $tmpl);
+    }
+
+    print $tmpl;
+}
+
+/**
+ * Return the shanti info general template filled out with given info
+ */
+
+function _shanti_grid_view_get_general_template() {
+  $tmpl_url = drupal_get_path("module", "shanti_grid_view") . "/templates/general-grid-details.tpl.php";
+  $tmpl = file_get_contents($tmpl_url);
+  return $tmpl;
 }

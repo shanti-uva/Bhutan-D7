@@ -499,10 +499,14 @@ function _shanti_kmaps_fields_get_solr_doc($nid_list, $force=FALSE)
                 }
             }
         }
+        $tmp['mynode'] = $node;  // Add node to doc so it doesn't have to be reloaded in alter functions
         $doc[] = $tmp;
     }
-
     drupal_alter('kmaps_fields_solr_doc',$doc);
+    // Remove the node object from the solr doc before sending to SOLR
+    foreach($doc as &$adoc) {
+      unset($adoc['mynode']);
+    }
     return $doc;
 }
 

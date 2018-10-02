@@ -44,10 +44,10 @@
 .nav-tabs.nav-justified>li.active{
   border-top-color: #558e3c;
 }
-
+/*
 .ui-resizable-handle.ui-resizable-w,
 .ui-resizable-handle.ui-resizable-w:hover,
-.ui-resizable-handle.ui-resizable-w:active { border-color: #558e3c transparent transparent transparent; }
+.ui-resizable-handle.ui-resizable-w:active { border-color: #558e3c transparent transparent transparent; }*/
 
 @media screen and (min-width: 500px) {
   .navbar-header .site-slogan{ color:#487833 !important; } /* Darker shade for banner site-slogan text */

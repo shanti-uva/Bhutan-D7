@@ -127,3 +127,12 @@ function shanti_file_get_contents($url) {
         ))
     ));
 }
+
+/**
+ * Function to do a solr call and return php object. The full solr URL must be given
+ */
+function shanti_do_solr_query($url, $as_array=FALSE) {
+  $data = shanti_file_get_contents($url);
+  $jdata = json_decode($data, $as_array);
+  return $jdata;
+}

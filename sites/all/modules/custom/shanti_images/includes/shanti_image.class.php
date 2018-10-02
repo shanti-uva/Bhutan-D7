@@ -63,7 +63,6 @@ class ShantiImage
                     'width' => $this->width,
                     'height' => $this->height,
                 );
-                watchdog('shanti image class', "updating table {$this->id} : {$this->nid}");
                 $this->updateTable($data);
             }
         }*/

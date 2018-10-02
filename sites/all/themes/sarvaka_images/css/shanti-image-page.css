@@ -945,6 +945,10 @@ div#fsslider {
     top: -160px;
 }
 
+.image-detail.nocarousel .image-title {
+    top: -60px;
+}
+
 .image-detail .image-title a{
     color:#ccc;
     border-color: #555 !important;

@@ -30,8 +30,7 @@ regions[admin_footer]   = Admin Footer
 
 stylesheets[all][] =  css/shanti-carousel-kmaps.css
 stylesheets[all][] =  css/shanti-main-kmaps.css
-stylesheets[all][] =  css/shanti-search-kmaps.css
-stylesheets[all][] =  css/shanti-search-results-kmaps.css
+stylesheets[all][] =  ../shanti_sarvaka/css/shanti-search-faceted.css
 stylesheets[all][] =  css/shanti-mandala-homepage-kmaps.css
 
 ;; Testing Terms style on Page node-81
@@ -42,7 +41,7 @@ stylesheets[all][] =  css/shanti-main-terms.css
 ;;;;;;;;;;;;;;;;;;;;;;
 scripts[] = js/shanti-main-kmaps.js
 scripts[] = js/bootstrap-tabcollapse.js
-;scripts[] = js/shanti-search-kmaps.js
+; scripts[] = js/shanti-search-kmaps.js
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Theme Settings

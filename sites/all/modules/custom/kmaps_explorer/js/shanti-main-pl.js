@@ -276,6 +276,7 @@ function processPlacesData(data) {
       shantiPlaces.feature_id = data.feature.id;
       shantiPlaces.total_pages = parseInt(data.feature.associated_resources.picture_count / 32);
       //$.get(photosURL, relatedPhotos);
+
       $.ajax({
         url: photosURL,
         beforeSend: function(xhr) {

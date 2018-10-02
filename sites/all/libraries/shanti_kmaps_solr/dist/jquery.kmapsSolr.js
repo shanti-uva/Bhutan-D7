@@ -1,4 +1,4 @@
-/*! Shanti Kmaps Solr - v0.1.0 - 2018-08-22
+/*! Shanti Kmaps Solr - v0.1.0 - 2018-09-27
 * Copyright (c) 2018 ys2n; Licensed MIT */
 /*! Shanti Kmaps Solr - v0.1.0 - 2018-07-24
 * Copyright (c) 2018 ys2n; Licensed MIT */
@@ -479,12 +479,13 @@
     showAssetTypes: function(asset_types) {
       if ($.isArray(asset_types)) {
 
-        if ($.inArray("images", asset_types) > -1) { asset_types.push("picture"); }
-        if ($.inArray("texts", asset_types) > -1){ asset_types.push("document"); }
-        if ($.inArray("audio-video", asset_types) > -1 ) { asset_types.push("video"); }
-        if ($.inArray("sources", asset_types) > -1 ) { asset_types.push("onlineresource"); }
-        if ($.inArray("all", asset_types) > -1 ) { asset_types.push("*"); }
+        // if ($.inArray("images", asset_types) > -1) { asset_types.push("picture"); }
+        // if ($.inArray("texts", asset_types) > -1){ asset_types.push("document"); }
+        // if ($.inArray("audio-video", asset_types) > -1 ) { asset_types.push("video"); }
+        // if ($.inArray("sources", asset_types) > -1 ) { asset_types.push("onlineresource"); }
+        if ($.inArray("all", asset_types) > -1 ) { asset_types = [ "all","subjects","places","images","audio-video","texts","sources","visuals" ]; }
         asset_types = asset_types.join(" ");
+
       }
 
       return this.search({"showAssetTypes":asset_types});
@@ -574,7 +575,7 @@
 
       var showAssetTypes = searchparams.showAssetTypes;
 
-      if (DEBUG) { console.log(" showAssetTypes = " + JSON.stringify(showAssetTypes)); }
+      if (true) { console.log(" showAssetTypes = " + JSON.stringify(showAssetTypes)); }
 
       if ($.isArray(showAssetTypes)) {
         assetTypeList = showAssetTypes;
@@ -583,7 +584,7 @@
       } else if ( showAssetTypes === "" ){
         assetTypeList = [];
       }
-      if (DEBUG)  { console.error("assetTypeList = " + JSON.stringify(assetTypeList)); }
+      if (true)  { console.error("assetTypeList = " + JSON.stringify(assetTypeList)); }
 
       if (assetTypeList !== null) {
         self.state.assetTypeList = assetTypeList;
@@ -1200,13 +1201,14 @@
                 // do some value mapping
 
                 if (value === "picture") {
-                  value = "images";
-                } else if (value === "video") {
-                  value = "audio-video";
+                  value = null;
+                } else
+                  if (value === "video") {
+                  value = null;
                 } else if (value === "document") {
-                  value = "texts";
+                  value = null;
                 } else if (value === "onlineresource") {
-                  value = "sources";
+                  value = null;
                 } else if (value === "__NONE__" ) {
                   if (DEBUG) console.log("ignoring count " + value);
                   value = null; // let's ignore these types for now

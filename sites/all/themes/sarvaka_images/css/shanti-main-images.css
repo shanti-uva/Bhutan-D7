@@ -39,11 +39,11 @@
 .nav-tabs.nav-justified>li.active {
   border-top-color: #b5953b !important;
 }
-
+/*
 .ui-resizable-handle.ui-resizable-w,
 .ui-resizable-handle.ui-resizable-w:hover { border-color: #b5953b transparent transparent transparent; }
-.ui-resizable-handle.ui-resizable-w:active { border-color: transparent; /* reset */ }
-
+.ui-resizable-handle.ui-resizable-w:active { border-color: transparent; ---- reset --- }
+*/
 @media screen and (min-width: 500px) {
   .navbar-header .site-slogan{ color: #92782f !important; } /* Darker shade for banner site-slogan text */
   .navbar-brand:hover .site-slogan{ color: #555 !important; } 
@@ -392,8 +392,6 @@
 .node-image-descriptions.node-teaser .contextual-links-wrapper {
     display: none;
 }
-
-
 
 /* testing optional loader */
 .pswp__preloader,

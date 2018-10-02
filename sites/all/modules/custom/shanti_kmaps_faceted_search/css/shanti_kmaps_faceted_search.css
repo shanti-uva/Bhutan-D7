@@ -405,9 +405,16 @@
 
 .facet-search-controls {
     position: absolute;
-    right: 2.5rem;
+    right: 7rem;
     top: 7.9rem;
 }
+    .texts .facet-search-controls,
+    .images .facet-search-controls{
+      position: absolute;
+      top: 7.2rem;
+      right:5.7rem;
+    }
+
 .facet-search-controls a {
     color: #777;
     font-size: .75em;
@@ -415,23 +422,25 @@
     padding: 0.175rem .5rem 0;
     background: #fff;
     border: 1px solid #ddd;
-    border-radius: .3rem;
+    border-radius: 1rem;
+    padding: .15rem 1.2rem .025rem;
+    letter-spacing: 0.0175rem;
+    background-clip: padding-box;
+    background-image: -webkit-linear-gradient(top,#fff 0,#e0e0e0 100%);
+    background-image: -moz-linear-gradient(top,#fff 0,#e0e0e0 100%);
+    background-image: -o-linear-gradient(top,#fff 0,#e0e0e0 100%);
+    background-image: linear-gradient(to bottom,#fff 0,#e0e0e0 100%);
 }
+
 .facet-search-controls a:hover{
     color:#333;
     border-color:#ccc;
+    background: #eee;
 }
-
-
-
 
 .shanti-kmaps-solr-facet-item > .highlight {
   text-decoration: underline;
 }
-
-
-
-
 /* search input element */
 .shanti-kmaps-solr-facet-quicksearch .facet-quicksearch{
     max-width: 14rem;

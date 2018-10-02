@@ -8,8 +8,23 @@ define('SUBJECTS_URL', 'http://subjects.kmaps.virginia.edu');
 define('PLACES_URL', 'http://places.kmaps.virginia.edu');
 
 function kmaps_explorer_init() {
+
     drupal_add_library('system', 'drupal.ajax');
+
     //variable_set('site_frontpage', 'frontpage');
+    // JS and CSS needed for grid view.
+    $cp = current_path();
+    if (module_exists('shanti_grid_view') && !path_is_admin($cp)) {
+      drupal_add_js(drupal_get_path('module', 'shanti_grid_view') . '/js/pig.js', array('group'=>JS_LIBRARY, 'weight'=>9980));
+      drupal_add_js(drupal_get_path('module', 'shanti_grid_view') . '/js/pig-shanti-ext.js', array('group'=>JS_LIBRARY, 'weight'=>9990));
+      drupal_add_js(drupal_get_path('module', 'shanti_grid_view') . '/js/jquery.actual.min.js', array('group'=>JS_LIBRARY, 'weight'=>9950));
+
+      // Add necessary CSS
+      drupal_add_css(drupal_get_path('module', 'shanti_grid_view') . '/css/shanti-pig-gallery.css');
+      drupal_add_css(drupal_get_path('module', 'shanti_grid_view') . '/css/photoswipe.css');
+      drupal_add_css(drupal_get_path('module', 'shanti_grid_view') . '/css/pswp-default-skin.css');
+    }
+
 }
 
 function kmaps_explorer_menu()
@@ -125,8 +140,8 @@ function kmaps_explorer_menu()
     $items['subjects/%/photos/%'] = array(
         'title' => 'Subjects',
         'description' => 'Creates a callback that shows photos in subjects via ajax',
-        'page callback' => 'kmaps_explorer_subjects_photos',
-        'page arguments' => array(3, 1),
+        'page callback' => 'kmaps_explorer_photos_universal',
+        'page arguments' => array(3, 1, 'subjects'),
         'access arguments' => TRUE,
         'access callback' => TRUE,
     );
@@ -143,8 +158,8 @@ function kmaps_explorer_menu()
     $items['places/%/photos/%'] = array(
         'title' => 'Places',
         'description' => 'Creates a callback that shows photos in places via ajax',
-        'page callback' => 'kmaps_explorer_places_photos',
-        'page arguments' => array(3, 1),
+        'page callback' => 'kmaps_explorer_photos_universal',
+        'page arguments' => array(3, 1, 'places'),
         'access arguments' => TRUE,
         'access callback' => TRUE,
     );
@@ -1036,7 +1051,7 @@ function kmaps_explorer_setup_page($id, $app, $resource = '') {
         //TODO: Need to figure out which of these subjects to display and when.
         if ($solrValue->groupValue == "related_subjects" && $solrValue->doclist->numFound > 0) {
             $subjects_count += $solrValue->doclist->numFound;
-            if ($data_shuffle['subjects']['docs']) {
+            if (!empty($data_shuffle['subjects']['docs'])) {
                 $data_shuffle['subjects']['docs'] = array_merge($data_shuffle['subjects']['docs'], $solrValue->doclist->docs);
             } else {
                 $data_shuffle['subjects']['docs'] = $solrValue->doclist->docs;
@@ -1074,7 +1089,7 @@ function kmaps_explorer_setup_page($id, $app, $resource = '') {
         if ($solrValue->groupValue == "audio-video" && $solrValue->doclist->numFound > 0) {
             $video_count = $solrValue->doclist->numFound;
         }
-        if ($solrValue->groupValue == "picture" && $solrValue->doclist->numFound > 0) {
+        if ($solrValue->groupValue == "images" && $solrValue->doclist->numFound > 0) {
             $images_count = $solrValue->doclist->numFound;
             $data_shuffle['places_photos_count'] = $images_count;
         }
@@ -1109,7 +1124,7 @@ function kmaps_explorer_setup_page($id, $app, $resource = '') {
         $rel_pl_in_pl .= '&wt=json&indent=true&group=true&group.field=block_child_type&group.limit=0&fq=-related_kmaps_node_type:child';
 
         //Make calls to Solr for related subjects and places
-        $rel_pl_in_pl_data = save_to_cache('popovers_1', $app, $kid, $rel_pl_in_pl);
+        $rel_pl_in_pl_data = save_to_cache('popovers_1', $app, $id, $rel_pl_in_pl); // ndg8f was $kid here
         $rel_pl_in_pl_object = json_decode($rel_pl_in_pl_data);
 
         foreach ($rel_pl_in_pl_object->grouped->block_child_type->groups as $key => $group) {
@@ -1126,7 +1141,7 @@ function kmaps_explorer_setup_page($id, $app, $resource = '') {
         $rel_sj_in_sj .= '&wt=json&indent=true&group=true&group.field=block_child_type&group.limit=0&fq=-related_kmaps_node_type:child';
 
         //Make calls to Solr for related subjects and places
-        $rel_sj_in_sj_data = save_to_cache('popovers_1', $app, $kid, $rel_sj_in_sj);
+        $rel_sj_in_sj_data = save_to_cache('popovers_1', $app, $id, $rel_sj_in_sj); // ndg8f was $kid here
         $rel_sj_in_sj_object = json_decode($rel_sj_in_sj_data);
 
         foreach ($rel_sj_in_sj_object->grouped->block_child_type->groups as $key => $group) {
@@ -1376,6 +1391,7 @@ function kmaps_explorer_visuals_universal($type = 'ajax', $id, $app) {
     $title = $data_shuffle['node_title'];
 
     $output = '<h4>' . 'Visuals Related to ' . $title . '</h4>';
+
     $output .= views_embed_view('related_visuals', 'visuals_block', $app, $id);
 
     if ($type == 'ajax') {
@@ -1661,10 +1677,14 @@ function kmaps_explore_pager_ajax($form, &$form_state)
     }
 }
 
+function kmaps_explorer_subjects_photos($type = 'ajax', $id) {
+  kmaps_explorer_photos_universal($type, $id, 'subjects');
+}
+
 /**
  * Function to create ajax content for photos in subjects
  */
-function kmaps_explorer_subjects_photos($type = 'ajax', $id, $page_num = 1, $total_pages = 1, $subpage = FALSE) {
+function kmaps_explorer_subjects_photos_old($type = 'ajax', $id, $page_num = 1, $total_pages = 1, $subpage = FALSE) {
   //Drupal static initializations
   $data_shuffle = &drupal_static('kmaps_explorer_data');
   $setup = kmaps_explorer_setup_page($id, 'subjects', 'photos');
@@ -1808,10 +1828,46 @@ function kmaps_explorer_subjects_photos_node($id, $pid)
     return $content;
 }
 
+function kmaps_explorer_places_photos($type = 'ajax', $id) {
+  kmaps_explorer_photos_universal($type, $id, 'places');
+}
+
+/**
+ * Function to create the ajax content for visuals in places and subjects
+ */
+function kmaps_explorer_photos_universal($type = 'ajax', $id, $app='places') {
+  //Drupal static initializations
+  $data_shuffle = &drupal_static('kmaps_explorer_data');
+  $setup = kmaps_explorer_setup_page($id, $app, 'photos');
+
+  //Retrieve the title of the node
+  $title = $data_shuffle['node_title'];
+
+  $output = '<h4>' . 'Images Related to ' . $title . '</h4>';
+  $output .= views_embed_view('related_images', 'images_block', $app, $id);
+
+  if ($type === 'ajax') {
+    $commands = array();
+    $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . $app . '/' . $id . '/photos/nojs');
+    $page = array('#type' => 'ajax', '#commands' => $commands);
+    ajax_deliver($page);
+  } else {
+    $setup += array(
+      'active_content' => $output,
+      'ajax' => $type == 'ajax' ? TRUE : FALSE,
+      'photo' => TRUE,
+    );
+    $content = theme('kmaps_explorer_initial_template', $setup);
+
+    return $content;
+  }
+}
+
+
 /**
  * Function to create ajax content for photos in places
  */
-function kmaps_explorer_places_photos($type = 'ajax', $id, $page_num = 1, $total_pages = 1, $subpage = FALSE) {
+function kmaps_explorer_places_photos_old($type = 'ajax', $id, $page_num = 1, $total_pages = 1, $subpage = FALSE) {
     //Drupal static initializations
     $data_shuffle = &drupal_static('kmaps_explorer_data');
 
@@ -2112,6 +2168,7 @@ function kmaps_explorer_sources_node_universal($type = 'ajax', $id, $sourceId, $
  * Make call to get the ajax content for visuals and upload DOM.
  */
 function kmaps_explorer_visuals_node_universal($type = 'ajax', $id, $visualsId, $app) {
+    watchdog('kmaps explorer', "Visuals: $type / $app-$id");
     //URL for the asset individual object
     $asset = 'visuals';
     $nodeURL = variable_get('shanti_kmaps_admin_server_solr', SHANTI_KMAPS_ADMIN_SERVER_SOLR);

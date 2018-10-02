@@ -163,6 +163,10 @@ article .shanti-filters table.pagerer {
     height: 3.25em;
   }
 
+  .view-related-images .shanti-filters {
+    height: auto !important;
+  }
+
   .front .shanti-filters .control-box-cell-pager table.pagerer {
     margin-top: 0.4rem;
   }

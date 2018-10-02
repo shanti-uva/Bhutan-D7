@@ -240,27 +240,46 @@
 
         // The templates in shanti_kmaps_solr/templates will be added to the DOM according to the filename
 
-            if ($("#search-results-main").html()) {
-              search_main_template = Handlebars.compile($("#search-results-main").html());
-              search_results_popover_template = Handlebars.compile($("#search-results-details-popover").html());
-              Handlebars.registerPartial('item-template', $('#search-results-item').html());
-              Handlebars.registerPartial('search-results-details-media', $('#search-results-details-media').html());
-              Handlebars.registerPartial('search-results-details-kmaps', $('#search-results-details-kmaps').html());
-            } else {
-              console.error("Handlebars templates are missing!");
-            }
+        if ($("#search-results-main").html()) {
+          search_main_template = Handlebars.compile($("#search-results-main").html());
+          search_results_popover_template = Handlebars.compile($("#search-results-details-popover").html());
+          Handlebars.registerPartial('item-template', $('#search-results-item').html());
+          Handlebars.registerPartial('search-results-details-media', $('#search-results-details-media').html());
+          Handlebars.registerPartial('search-results-details-kmaps', $('#search-results-details-kmaps').html());
+          Handlebars.registerPartial('search-results-gallery-audio-video', $('#search-results-gallery-audio-video').html());
+          Handlebars.registerPartial('search-results-gallery-default', $('#search-results-gallery-default').html());
+          Handlebars.registerPartial('search-results-gallery-visuals', $('#search-results-gallery-visuals').html());
+          Handlebars.registerPartial('search-results-gallery-images', $('#search-results-gallery-images').html());
+        } else {
+          console.error("Handlebars templates are missing!");
+        }
 
-            // map the asset type to a template name
-            Handlebars.registerHelper('choosetemplate', function(asset_type) {
-              var DEFAULT_TEMPLATE = "search-results-details-media";
-              var KMAPS_TEMPLATE = "search-results-details-kmaps";
-              if (DEBUG) console.log("chooseTemplate: asset_type = " + asset_type);
-              if (asset_type === "subjects" || asset_type === "places" || asset_type === "terms") {
-                return KMAPS_TEMPLATE;
-              } else {
-                return DEFAULT_TEMPLATE;
-              }
-            })
+        // map the asset type to a template name
+        Handlebars.registerHelper('choosetemplate', function(asset_type) {
+          var DEFAULT_TEMPLATE = "search-results-details-media";
+          var KMAPS_TEMPLATE = "search-results-details-kmaps";
+          if (DEBUG) console.log("chooseTemplate: asset_type = " + asset_type);
+          if (asset_type === "subjects" || asset_type === "places" || asset_type === "terms") {
+            return KMAPS_TEMPLATE;
+          } else {
+            return DEFAULT_TEMPLATE;
+          }
+        });
+
+        Handlebars.registerHelper('choosegallery', function(view_type) {
+          var DEFAULT_TEMPLATE = "search-results-gallery-default";
+          if (true) console.log("chooseGallery: view_type = " + view_type);
+
+          // see if a template with this name exists
+          var mapped_template = $('#search-results-gallery-' + view_type);
+
+          var template = DEFAULT_TEMPLATE;
+          if(mapped_template[0]) {
+            template = "search-results-gallery-" + view_type;
+          }
+          console.log("Returning template " + template);
+          return template;
+        });
 
             Handlebars.registerHelper('json', function (obj) {
               return JSON.stringify(obj, undefined, 3);
@@ -299,6 +318,7 @@
                 // TODO: ys2n: candidate for removal.  not sure this is necessary
                 $('#facetpicker a').on('click', function () {
                   console.log("opening flyout on click or submit in #facetpicker anchor");
+                  Drupal.attachBehaviors('#faceted-search-results');
                   // openSearchResults();
                   // showResultsTab();
                 });
@@ -328,130 +348,11 @@
                   $('#mandala-veil-bg').css({'z-index' : '-1','opacity' : '0'});
                 });
 
-                // $('#faceted-search-results').on('click', '.results-node-show-viewer', function(evt) {
-                //   evt.preventDefault();
-                //   console.dir(evt);
-                //   // alert(JSON.stringify($(this).data()));
-                //
-                //   var type = $(this).data("asset-type");
-                //   var url_html = $(this).data("url-html");
-                //   var url_json = $(this).data("url-json");
-                //   var url_ajax = $(this).data("url-ajax");
-                //   var id = $(this).data("asset-id");
-                //
-                //
-                //   // derive the path element
-                //   var type_path = "";
-                //   if (type === "audio-video") {
-                //     // https://mandala.shanti.virginia.edu/places/0/text_node/67463/ajax
-                //     // https://mandala.shanti.virginia.edu/places/0/audio-video-node/1275/ajax
-                //     // https://mandala.shanti.virginia.edu/places/0/visuals/node/4696/ajax
-                //     // https://mandala.shanti.virginia.edu/places/0/sources/node/23326/ajax
-                //     // https://images-dev.shanti.virginia.edu/api/json/1056
-                //
-                //     type_path = "audio-video-node";
-                //     id = url_html.split("/").pop();
-                //   } else if ( type === "visuals" ) {
-                //     type_path = "visuals/node";
-                //   } else if ( type === "sources" ) {
-                //     type_path = "sources/node";
-                //   } else if ( type === "texts" ) {
-                //     type_path = "text_node";
-                //   } else if ( type === "picture" || type === "images" ) {
-                //     type_path = "FLARGLEBUTT";
-                //   } else {
-                //     alert("UNKNOWN type = " + type);
-                //   }
-                //
-                //   var path = "places/0/" + type_path + "/" + id + "/ajax";
-                //
-                //   if ( type === "images" ) {
-                //
-                //     console.log("processing images: " + url_ajax);
-                //
-                //     $.get(url_ajax, function (markup) {
-                //       console.log("GETTILICIOUS: " + JSON.stringify(arguments));
-                //       $('#search_results-node-preview').html(markup);
-                //
-                //
-                //
-                //     });
-                //
-                //   } else {
-                //
-                //     // alert("PATH = " + path);
-                //
-                //     var url = path;
-                //     $.getJSON(url, {}, function (x) {
-                //       var groot = $.grep(x, function (x) {
-                //         return x.command === "insert_history"
-                //       });
-                //       var markup = groot[0].data;
-                //       $('#search-results-node-preview').show().find('#search-results-node-preview-content').html(markup);
-                //       // $('.kmaps-inpage-results-pager > .pager').addClass('hidden');
-                //     });
-                //   }
-                // });
-
-                //   var type = $(this).data("asset-type");
-                //   var url_html = $(this).data("url-html");
-                //   var url_json = $(this).data("url-json");
-                //   var url_ajax = $(this).data("url-ajax");
-                //   var id = $(this).data("asset-id");
-                //
-                //
-                //   // derive the path element
-                //   var type_path = "";
-                //   if (type === "audio-video") {
-                //     // https://mandala.shanti.virginia.edu/places/0/text_node/67463/ajax
-                //     // https://mandala.shanti.virginia.edu/places/0/audio-video-node/1275/ajax
-                //     // https://mandala.shanti.virginia.edu/places/0/visuals/node/4696/ajax
-                //     // https://mandala.shanti.virginia.edu/places/0/sources/node/23326/ajax
-                //     // https://images-dev.shanti.virginia.edu/api/json/1056
-                //
-                //     type_path = "audio-video-node";
-                //     id = url_html.split("/").pop();
-                //   } else if ( type === "visuals" ) {
-                //     type_path = "visuals/node";
-                //   } else if ( type === "sources" ) {
-                //     type_path = "sources/node";
-                //   } else if ( type === "texts" ) {
-                //     type_path = "text_node";
-                //   } else if ( type === "picture" || type === "images" ) {
-                //     type_path = "FLARGLEBUTT";
-                //   } else {
-                //     alert("UNKNOWN type = " + type);
-                //   }
-                //
-                //   var path = "places/0/" + type_path + "/" + id + "/ajax";
-                //
-                //   if ( type === "images" ) {
-                //
-                //     console.log("processing images: " + url_ajax);
-                //
-                //     $.get(url_ajax, function (markup) {
-                //       console.log("GETTILICIOUS: " + JSON.stringify(arguments));
-                //       $('#search_results-node-preview').html(markup);
-                //
-                //
-                //
-                //     });
-                //
-                //   } else {
-                //
-                //     // alert("PATH = " + path);
-                //
-                //     var url = path;
-                //     $.getJSON(url, {}, function (x) {
-                //       var groot = $.grep(x, function (x) {
-                //         return x.command === "insert_history"
-                //       });
-                //       var markup = groot[0].data;
-                //       $('#search-results-node-preview').show().find('#search-results-node-preview-content').html(markup);
-                //       // $('.kmaps-inpage-results-pager > .pager').addClass('hidden');
-                //     });
-                //   }
-                // });
+                // wire up extruder event listeners
+                $('#faceted-search-results').on('extopen extclose', function(evt) {
+                  // console.log("extruder event: " + evt.type);
+                  Drupal.attachBehaviors('#faceted-search-results');
+                });
 
 
                 // attach listener to the mbExtruder "flap" or search flyout tab and then
@@ -460,7 +361,7 @@
                   if ($('#search-flyout').hasClass('isOpened')) {
                     // console.log("opening...");
                     if ($('#faceted-search-results').hasClass('filters-applied')) {
-                      console.log("opening flyout on click .on-flap when filters-applied");
+                      // console.log("opening flyout on click .on-flap when filters-applied");
                       // openSearchResults();
                       showResultsTab();
                     }
@@ -617,13 +518,14 @@
                   }
                   // if (Drupal.settings.shanti_kmaps_admin.shanti_kmaps_admin_solr_filter_query_kmaps_enabled ||
                   //   Drupal.settings.shanti_kmaps_admin.shanti_kmaps_admin_solr_filter_query_assets_enabled) {
-                    console.error("Solr Filtering Enabled: ");
-                    console.error(JSON.stringify({
+                    console.log("Solr Filtering Enabled: ");
+                    console.dir({
                         admin_settings: Drupal.settings.shanti_kmaps_admin,
                         kmapFilters: kmapFilters,
-                        assetFilters: assetFilters},
+                        assetFilters: assetFilters
+                      },
                       undefined,
-                      2));
+                      2);
                   // }
 
                   settings.kmapsSolr = $.kmapsSolr(
@@ -815,7 +717,7 @@
 
                             if (Drupal.settings.kmapsSolr.getState().assetTypeList) {
                               assetTypes = Drupal.settings.kmapsSolr.getState().assetTypeList;
-                              if (assetTypes.length === 0) {
+                              if (assetTypes.length === 0 || assetTypes[0] === 'all') {
                                 assetTypes = ['all'];
                               }
                             }
@@ -883,17 +785,23 @@
 
                             if (Drupal.settings.shanti_kmaps_admin.shanti_kmaps_admin_search_navigation_mode === "app") {
                               if (this.asset_type === "subjects" || this.asset_type === "places") {
-                                this.url_asset_nav = "/" + this.asset_type + "/" + this.id + "/overview/nojs?f=" + encodedFilters + "#search";
+                                // this.url_asset_nav = "/" + this.asset_type + "/" + this.id + "/overview/nojs?f=" + encodedFilters + "#search";
+                                this.url_asset_nav = new Handlebars.SafeString(this.url_html + "?f=" + encodedFilters + "#search");
                               } else if (this.asset_type === "texts") {
-                                this.url_asset_nav = ASSET_VIEWER_PATH + "text_node/" + this.id + "/nojs?f=" + encodedFilters + "#search";
+                                // this.url_asset_nav = ASSET_VIEWER_PATH + "text_node/" + this.id + "/nojs?f=" + encodedFilters + "#search";
+                                this.url_asset_nav = new Handlebars.SafeString(this.url_html + "?f=" + encodedFilters + "#search");
                               } else if (this.asset_type === "visuals") {
-                                this.url_asset_nav = ASSET_VIEWER_PATH + "visuals/node/" + this.id + "/nojs?f=" + encodedFilters + "#search";
+                                // this.url_asset_nav = ASSET_VIEWER_PATH + "visuals/node/" + this.id + "/nojs?f=" + encodedFilters + "#search";
+                                this.url_asset_nav = new Handlebars.SafeString(this.url_html + "?f=" + encodedFilters + "#search");
                               } else if (this.asset_type === "sources") {
-                                this.url_asset_nav = ASSET_VIEWER_PATH + "sources/node/" + this.id + "/nojs?f=" + encodedFilters + "#search";
+                                // this.url_asset_nav = ASSET_VIEWER_PATH + "sources/node/" + this.id + "/nojs?f=" + encodedFilters + "#search";
+                                this.url_asset_nav = new Handlebars.SafeString(this.url_html + "?f=" + encodedFilters + "#search");
                               } else if (this.asset_type === "images") {
-                                this.url_asset_nav = ASSET_VIEWER_PATH + "photos_node/" + this.id + "/nojs?f=" + encodedFilters + "#search";
+                                // this.url_asset_nav = ASSET_VIEWER_PATH + "photos_node/" + this.id + "/nojs?f=" + encodedFilters + "#search";
+                                this.url_asset_nav = new Handlebars.SafeString(this.url_html + "?f=" + encodedFilters + "#search");
                               } else if (this.asset_type === "picture") {
-                                this.url_asset_nav = ASSET_VIEWER_PATH + "photos_node/" + this.id + "/nojs?f=" + encodedFilters + "#search";
+                                // this.url_asset_nav = ASSET_VIEWER_PATH + "photos_node/" + this.id + "/nojs?f=" + encodedFilters + "#search";
+                                this.url_asset_nav = new Handlebars.SafeString(this.url_html + "?f=" + encodedFilters + "#search");
                               } else if (this.asset_type === "audio-video") {
                                 var url = this.url_html;
                                 this.url_asset_nav = new Handlebars.SafeString(url + "?f=" + encodedFilters + "#search");
@@ -994,7 +902,7 @@
                           var vmc = $.cookie('search-results-view-mode');
                           if (vmc) {
 
-                            // console.log("vmc = " + JSON.stringify(vmc));
+                            console.log("vmc = " + JSON.stringify(vmc));
                             try {
                               viewMode = JSON.parse(vmc);
                             } catch (e) {
@@ -1006,11 +914,13 @@
                             $.cookie('search-results-view-mode', JSON.stringify(viewMode));
                           }
 
+                          console.dir(viewMode);
 
                           // We use the first item in the array
                           // The implicit assumption here is that this is a radio-button selector
                           // and there will always only be one assetType selected at a time.
                           var current = (assetTypes)?assetTypes[0]:"all";
+                          hbcontext.view_mode = current;
 
                           if ( viewMode[current] === "gallery" ) {
                             hbcontext.list_mode_selected = ""
@@ -1020,11 +930,25 @@
                             hbcontext.gallery_mode_selected = "";
                           }
 
+                          console.error("CURRENT: " + current);
+
                           if (current === "subjects" || current === "places" || current === "texts" || current === "sources") {
                             hbcontext.no_gallery = "no_gallery";
                           }
 
+                          if (current === "audio-video") {
+                            hbcontext.av_gallery = 1;
+                            hbcontext.default_gallery = 0;
+                          } else {
+                            hbcontext.av_gallery = 0;
+                            hbcontext.default_gallery = 1;
+                          }
+
                           var markup = search_main_template(hbcontext);
+
+                          // console.log("HBCONTEXT");
+                          // console.dir(hbcontext);
+
 
                           // TODO: ys2n: this should be configurable
                           $('#faceted-search-results').html(markup);
@@ -1033,6 +957,20 @@
                           //$('#faceted-search-results').resizable({
                           //    handles: 'w'
                           //});
+
+
+                          // attach gallery behaviors (e.g. wookmark)
+                          Drupal.attachBehaviors('.shanti-gallery');
+
+                          $(window).bind('load orientationchange resize searchUpdate extopen', function() {
+                            // console.error("bark!");
+                            Drupal.attachBehaviors('#faceted-search-results');
+                          });
+
+                          $('.ui-resizable').bind('load orientationchange resize searchUpdate extopen', function() {
+                            console.error("bark!");
+                            Drupal.attachBehaviors('#faceted-search-results');
+                          });
 
                           // apply the justified gallery script
                           $('#search-results-gallery').justifiedGallery({
@@ -1056,19 +994,19 @@
                             $(this).popover('hide');
                           })
 
-                          $('.pager-next').click(function () {
+                          $('.kmaps-inpage-results-pager .pager-next').click(function () {
                             Drupal.settings.kmapsSolr.pageNext();
                           });
-                          $('.pager-previous').click(function () {
+                          $('.kmaps-inpage-results-pager .pager-previous').click(function () {
                             Drupal.settings.kmapsSolr.pagePrev();
                           });
-                          $('.pager-last').click(function () {
+                          $('.kmaps-inpage-results-pager .pager-last').click(function () {
                             Drupal.settings.kmapsSolr.pageLast();
                           });
-                          $('.pager-first').click(function () {
+                          $('.kmaps-inpage-results-pager .pager-first').click(function () {
                             Drupal.settings.kmapsSolr.pageFirst();
                           });
-                          $('.pager-input').on('change', function () {
+                          $('.kmaps-inpage-results-pager .pager-input').on('change', function () {
                             var pg = parseInt($(this).val()); // force to be a number...
                             if (isNaN(pg)) {
                               pg = Drupal.settings.kmapsSolr.page();
@@ -1769,8 +1707,10 @@
 
     // encapsulate resultsTab show action
     function showResultsTab() {
-      if ($('#faceted-search-results').hasClass('filters-applied')) {
+      // console.error("showing results tab");
+      if ($('#faceted-search-results').hasClass('filters-applied') && $('#faceted-search-results').hasClass( 'off' ) ){
         $('#btn-show-search-results').show('fast');
+        Drupal.attachBehaviors('#faceted-search-results');
       } else {
         console.log("filters-applied not found! NOT SHOWING RESULTS TAB");
       }
@@ -1786,6 +1726,8 @@
       $('#mandala-veil-bg').css({'z-index' : '290','opacity' : '85'});
       $('#btn-show-search-results').hide('fast');
       $('#btn-collapse-flyout').fadeIn('fast');
+      console.log("openSeachResults");
+      Drupal.attachBehaviors('#faceted-search-results');
     }
 
     // encapsulate searchResults close
@@ -1797,6 +1739,8 @@
       $('#mandala-veil-bg').css({'z-index' : '-1','opacity' : '0'});
       $('#btn-collapse-flyout').fadeOut('fast');
       showResultsTab();
+      console.log("closeSeachResults");
+      Drupal.attachBehaviors('#faceted-search-results');
     }
   /**
    *
@@ -1805,6 +1749,7 @@
    * @param node
    */
   var navigateToKmap = function (evt, item) {
+
     var ftree = item.tree,
       trid = ftree.$div.attr('id'),
       title = item.node.title,
@@ -1829,7 +1774,23 @@
         closeSearchResults();
       } else {
         console.log("NAVIGATE BY REDIRECT! " + domain + " " + kmid + " " + fullkid);
-        window.location = "/" + domain + "/" + kmid + "/overview/nojs";
+
+        var kmloc = "https://mandala-dev.shanti.virginia.edu/" + domain + "/__KMAPID__/overview/nojs";
+
+        if (Drupal.settings && Drupal.settings.shanti_kmaps_admin) {
+          if (domain === "subjects") {
+            kmloc = Drupal.settings.shanti_kmaps_admin.shanti_kmaps_admin_server_subjects_explorer;
+          } else if (domain === "places") {
+            kmloc = Drupal.settings.shanti_kmaps_admin.shanti_kmaps_admin_server_places_explorer;
+          }
+        }
+        kmloc = kmloc.replace('__KMAPID__', kmid)
+
+        console.log("NAVIGATE BY REDIRECT! " + kmloc);
+
+        window.location = kmloc;
+
+        // window.location = "https://mandala-dev.shanti.virginia.edu/" + domain + "/" + kmid + "/overview/nojs";
       }
     }
   }

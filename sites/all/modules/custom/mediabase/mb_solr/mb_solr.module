@@ -754,6 +754,16 @@ function mb_solr_kmaps_fields_solr_doc_alter(&$solrdoc) {
        if (!empty($node->trid)) {
            $sdoc['trid_i'] = $node->trid;
        }
+
+       // Add duration
+       if (!empty($node->duration)) {
+         if (!empty($node->duration['seconds'])) {
+           $sdoc['duration_i'] = $node->duration['seconds'];
+         }
+         if (!empty($node->duration['formatted'])) {
+           $sdoc['duration_s'] = $node->duration['formatted'];
+         }
+       }
    }
 }
 

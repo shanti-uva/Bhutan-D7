@@ -85,6 +85,7 @@
                        }
                    });
                 }
+
                 
                 // Add destination to create link when not logged in
                 if ($("body").is(".not-logged-in")) {
@@ -93,7 +94,12 @@
                     href += '?destination=node/add/shanti-image';
                     lnk.attr('href', href);
                 }
-                
+
+                // Deal with fssolo with no carousel. Add attribute to image-detail so title can be adjusted
+                if ($('#fsslider').hasClass('fssolo')) {
+                    $('aside.image-detail').addClass('nocarousel');
+                }
+
                 /*
                 setTimeout(function() {
                     var biurl = Drupal.settings.shanti_sarvaka.broken_image_icon_url;
@@ -107,7 +113,8 @@
             }
         }
     };
-    
+
+
     /**
      * Behaviors for Edit Pages
      */

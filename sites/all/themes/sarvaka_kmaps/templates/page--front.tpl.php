@@ -318,7 +318,7 @@
 
 			        <h1>Explore the Mandala Collections</h1>
 
-			        <p class="bullet">Mandala Collections are scholarly repositories of <a href="https://texts.shanti.virginia.edu">texts</a>, <a href="https://audio-video.shanti.virginia.edu">audio-video</a>, <a href="https://images.shanti.virginia.edu">images</a>, <a href="https://sources.shanti.virginia.edu">bibliographies</a> (Sources), and <a href="https://visuals.shanti.virginia.edu">visualizations</a> (Visuals), all of which are interlinked by the “Knowledge Maps” terms that reference <a href="https://mandala.shanti.virginia.edu/places">Places</a> and <a href="https://mandala.shanti.virginia.edu/subjects">Subjects.</a></p>
+			        <p class="bullet">Mandala Collections are scholarly repositories of <a href="https://texts.shanti.virginia.edu">Texts</a>, <a href="https://audio-video.shanti.virginia.edu">Audio-video</a>, <a href="https://images.shanti.virginia.edu">Images</a>, <a href="https://sources.shanti.virginia.edu">Bibliographies</a> (Sources), and <a href="https://visuals.shanti.virginia.edu">Visualizations</a> (Visuals), all of which are interlinked by the “Knowledge Maps” terms that reference <a href="https://mandala.shanti.virginia.edu/places">Places</a> and <a href="https://mandala.shanti.virginia.edu/subjects">Subjects.</a></p>
 
 			        <p class="bullet">Hosted at the University of Virginia, these resources and scholarship support research, teaching, collaboration, and publication. Explore the collections through searching and browsing with keywords, subjects, and places. </p>
 
@@ -444,7 +444,7 @@
 					          </div>
 					          <div class="panel-body">
 					            <ul>
-					                <li>First, create a collection and add content to it using one of the Mandala applications, such as  <a href="https://audio-video.shanti.virginia.edu/">Audio-Video</a>,  <a href="https://visuals.shanti.virginia.edu/">Visuals</a>, <a href="https://sources.shanti.virginia.edu/">Sources</a>, or <a href="https://texts.shanti.virginia.edu/">Texts</a>, all of which can be accessed with your UVA computing credentials.</li>
+					                <li>First, create a collection and add content to it using one of the Mandala applications, such as  <a href="https://audio-video.shanti.virginia.edu/">Audio-Video</a>, <a href="https://images.shanti.virginia.edu">Images</a>, <a href="https://visuals.shanti.virginia.edu/">Visuals</a>, <a href="https://sources.shanti.virginia.edu/">Sources</a>, or <a href="https://texts.shanti.virginia.edu/">Texts</a>, all of which can be accessed with your UVA computing credentials.</li>
 					                <li>Next, catalog and connect content together by creating keyword relationships from the Knowledge Maps glossary of terms from <a href="https://mandala.shanti.virginia.edu/subjects">Subjects</a> and <a href="https://mandala.shanti.virginia.edu/places">Places</a>.</li>
 					                <li>Finally, explore your collections in portals that show all of your content, as well as the content of others, and focus your exploration by searching for the Knowledge Map terms that interest you.</li>
 					                <li>Mandala's online help & tutorials are in the <a href="https://wiki.shanti.virginia.edu/display/KB/Mandala+Suite+of+Tools" target="_blank">UVA Knowledge Base.</a></li>

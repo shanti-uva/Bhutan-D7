@@ -7,8 +7,12 @@
  */
 
 ?>
-<div class="shanti-view-dom-id" <?php if(isset($variables['dom_id'])) print 'data-dom-id="' . $variables['dom_id'] . '"'; ?>>
-    <?php if (!empty($view->introtext)): ?>
+<div class="shanti-view-dom-id" <?php
+if (isset($variables['dom_id'])) {
+    print ' data-dom-id="' . $variables['dom_id'] . '"';
+}
+?>>
+  <?php if (!empty($view->introtext)): ?>
          <div class="shanti-view-intro">
              <?php print $view->introtext; ?>
          </div>

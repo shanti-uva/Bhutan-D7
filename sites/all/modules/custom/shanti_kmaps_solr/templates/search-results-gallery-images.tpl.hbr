@@ -1,0 +1,17 @@
+<div id="search-results-node-preview" class="search-results-node-preview  {{#if gallery_mode_selected}}show-gallery{{/if}} search-results-loading">
+  <span class="icon shanticon-collapse" role="button" aria-label="Close Search Preview"></span>
+  <!-- Gallery Ref: http://miromannino.github.io/Justified-Gallery/getting-started/ -->
+  <!-- RESULTS GALLERY -->
+  <div id="search-results-gallery" class="search-results-gallery justified-gallery">
+    {{#each data.docs}}
+      <a class="search-results-gallery-node"  data-lookup-index="{{@index}}" data-asset-type="{{{tree}}}" data-asset-subtype="{{{asset_subtype}}}" data-asset-id="{{{id}}}" data-url-html="{{{url_html}}}" data-url-json="{{{url_json}}}" data-url-ajax="{{{url_ajax}}}" href="{{{url_asset_nav}}}">
+
+        <img alt="{{display_label}}" data-asset-type="{{tree}}" src="{{{url_thumb}}}" {{#if url_thumb_height}} height={{url_thumb_height}} width={{url_thumb_width}} {{/if}} onError="this.src='/sites/all/themes/shanti_sarvaka/images/default/generic-{{tree}}-icon.png'; this.height=110; this.width=150" >
+
+        <!-- Audio and Popover Icons -->
+        <span class="btn-gallery-popup-icon" role="button" aria-label="Close Results Descriptive Popup" data-toggle="popover" data-placement="bottom"><span class="icon fa-info-circle" role="button"></span></span>
+        <span class="gallery-audio-icon"><span class="icon shanticon-audio"></span></span>
+      </a>
+    {{/each}}
+  </div>
+</div>

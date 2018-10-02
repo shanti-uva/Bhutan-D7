@@ -1,0 +1,56 @@
+<div id="search-results-node-preview" class="search-results-node-preview  {{#if gallery_mode_selected}}show-gallery{{/if}} search-results-loading">
+
+  <!-- RESULTS GALLERY -->
+  <ul id="search-results-av-gallery" class="search-results-av-gallery shanti-gallery wookmark-initialised" >
+    {{#each data.docs}}
+
+
+      <li class="shanti-thumbnail audio">
+
+        <div class="shanti-thumbnail-image shanti-field-audio">
+          <a href="{{{url_html}}}" class="shanti-thumbnail-link">
+
+                       <span class="overlay">
+                          <span class="icon"></span>
+                       </span>
+
+            <img src="{{{url_thumb}}}" typeof="foaf:Image" class="k-no-rotate">
+            <span class="icon shanticon-audio"></span>
+          </a>
+        </div>
+
+        <div class="shanti-thumbnail-info">
+          <div class="body-wrap">
+            <div class="shanti-thumbnail-field shanti-field-title en">
+              <span class="field-content"><a href="{{{url_html}}}" class="shanti-thumbnail-link">{{{title}}}</a></span>
+            </div>
+
+            <div class="shanti-thumbnail-field shanti-field-registrar">
+              <span class="shanti-field-content">{{{node_user}}}</span>
+            </div>
+
+            {{#if duration_s}}
+            <div class="shanti-thumbnail-field shanti-field-duration">
+              <span class="shanti-field-content">{{{duration_s}}}</span>
+            </div>
+            {{/if}}
+
+
+            <div class="shanti-thumbnail-field shanti-field-created">
+              <span class="shanti-field-content">{{{node_created}}}</span>
+            </div>
+
+          </div> <!-- end body-wrap -->
+
+          <div class="footer-wrap">
+            <div class="shanti-field shanti-field-group-audience">
+              <div class="shanti-field-content">{{{collection_title}}}</div>
+            </div>
+          </div> <!-- end footer -->
+        </div> <!-- end shanti-thumbnail-info -->
+      </li>
+
+
+    {{/each}}
+  </ul>
+</div>

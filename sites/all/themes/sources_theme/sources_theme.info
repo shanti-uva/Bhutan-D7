@@ -14,6 +14,7 @@ regions[header]         = Top Bar Header
 regions[banner]         = Color Strip Banner
 regions[content]        = Content
 regions[search_flyout]  = Search Fly Out
+regions[search_results] = Search Results
 regions[sidebar_first]  = Primary Sidebar
 regions[sidebar_second] = Secondary Sidebar
 regions[highlighted]    = Highlighted
@@ -29,26 +30,25 @@ regions[admin_footer]   = Admin Footer
 
 stylesheets[all][] =  css/shanti-main-sources.css
 stylesheets[all][] =  css/shanti-search-sources.css
+stylesheets[all][] =  ../shanti_sarvaka/css/shanti-search-kmaps.css
+stylesheets[all][] =  ../shanti_sarvaka/css/shanti-search-faceted.css
 
-
-;; stylesheets[all][] =  css/sources-theme.css 
-; stylesheets[all][] =  css/sources-theme-search-bibliography.css 
-; stylesheets[all][] =  css/sources-theme-breadcrumb.css 
-; stylesheets[all][] =  css/sources-theme-search-flyout.css 
-; stylesheets[all][] =  css/sources-theme-biblio-full-page.css 
-; stylesheets[all][] =  css/sources-theme-fancytree.css 
+; stylesheets[all][] =  css/sources-theme.css
+; stylesheets[all][] =  css/sources-theme-search-bibliography.css
+; stylesheets[all][] =  css/sources-theme-breadcrumb.css
+; stylesheets[all][] =  css/sources-theme-search-flyout.css
+; stylesheets[all][] =  css/sources-theme-biblio-full-page.css
+; stylesheets[all][] =  css/sources-theme-fancytree.css
 
 ;;;;;;;;;;;;;;;;;;;;;;
 ;;; Scripts
 ;;;;;;;;;;;;;;;;;;;;;;
 
-; scripts[] = js/shanti-main-sources.js - mf8yk, not being used
+; scripts[] = js/shanti-main-sources.js
 scripts[] = js/shanti-search-sources.js
 
-; scripts[] = js/sources-theme-search-flyout.js - mf8yk, renamed to shanti-search-sources
-
 ;;;;;;;;;;;;;;;;;;;;;
-;; Theme Settings   
+;; Theme Settings
 ;;;;;;;;;;;;;;;;;;;;;
 ;
 ; These theme settings can be changed in the admin interface as well.

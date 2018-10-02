@@ -26,7 +26,22 @@ function _bulk_image_import_task_handle_error($task, $error) {
   );
 }
 
-function bulk_image_import_process_task($tid, &$context) {
+function bulk_image_import_process_group($tids, &$context) {
+  $auth = &$context['results']['auth'];
+  foreach($tids as $tid) {
+    try {
+      watchdog('shanti_images_bulk_image_import', 'Running import for @tid', array('@tid' => $tid), WATCHDOG_DEBUG);
+      bulk_image_import_process_task($tid, $auth, $context);
+      watchdog('shanti_images_bulk_image_import', 'Finished import for @tid', array('@tid' => $tid), WATCHDOG_DEBUG);
+    }
+    catch (Exception $e){
+      $conext['finished'] = 1;
+      return;
+    }
+  }
+}
+
+function bulk_image_import_process_task($tid, &$auth, &$context) {
   $task = db_query('SELECT * from bulk_image_import_task where tid = :tid', array('tid' => $tid))->fetchAssoc();
   $xml = simplexml_load_string($task['xml_data']);
   if(!$xml){
@@ -40,6 +55,7 @@ function bulk_image_import_process_task($tid, &$context) {
     _bulk_image_import_task_handle_error($task, $message);
     return;
   }
+  /* PREVENTS DUPLICATE IMPORTS
   $external_uid = (string) $xml->AssetProperties->UniqueID;
   db_query('UPDATE bulk_image_import_task SET external_uid = :euid WHERE tid = :tid', array(
     'euid' => $external_uid,
@@ -64,7 +80,7 @@ function bulk_image_import_process_task($tid, &$context) {
       )
     )->fetchAssoc();
     db_query('UPDATE bulk_image_import_task SET node_id = :nid, image_linked = 1, complete = 1 WHERE tid = :tid', array(
-      'nid' => $existing->nid,
+      'nid' => $existing['nid'],
       'tid' => $tid,
     ));
     watchdog(
@@ -79,6 +95,7 @@ function bulk_image_import_process_task($tid, &$context) {
     );
     return;
   }
+  */
 
   // Create a Node
   $node = bulk_image_import_map_xml_to_node($xml);
@@ -87,7 +104,6 @@ function bulk_image_import_process_task($tid, &$context) {
     'tid' => $tid
   ));
   // Download the image to the temp directory
-  $auth = $context['results']['auth'];
   $folder_id = $context['results']['folder_id'];
   $filename = trim(preg_replace('/\s\s+/', ' ', (string) $xml->AssetProperties->Filename));
   try {
@@ -95,7 +111,7 @@ function bulk_image_import_process_task($tid, &$context) {
   }
   catch (Exception $e) {
     _bulk_image_import_task_handle_error($task, "Could not download Box file. Reason: " . $e->getMessage());
-    return;
+    throw($e);
   }
   db_query('UPDATE bulk_image_import_task SET image_linked = 1 WHERE tid = :tid', array('tid' => $tid));
   $siid = _shanti_images_create_record(
@@ -108,7 +124,7 @@ function bulk_image_import_process_task($tid, &$context) {
   $res = shanti_images_upload_iiif($node->nid, $file->fid, $siid);
   if (!$res) {
     _bulk_image_import_task_handle_error($task, "Could not convert Box file");
-    return;
+    throw(new Exception("Could not convert Box file"));
   }
   $collection_id = $context['results']['collection_id'];
   if ($collection_id != 0) {

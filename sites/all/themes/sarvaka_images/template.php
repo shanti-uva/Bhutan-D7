@@ -142,8 +142,9 @@ function sarvaka_images_preprocess_shanti_image(&$vars) {
         $vars['username'] = theme('username', array(  'account' => $nodeowner  ));
     }
     drupal_add_css(drupal_get_path('theme', 'sarvaka_images') . '/css/shanti-image-page.css', array('group' => CSS_THEME));
-    drupal_add_css(drupal_get_path('theme', 'sarvaka_images') . '/css/photoswipe.css', array('group' => CSS_THEME));
-    drupal_add_css(drupal_get_path('theme', 'sarvaka_images') . '/css/pswp-default-skin.css', array('group' => CSS_THEME)); 
+    // Moving to shanti grid view
+    // drupal_add_css(drupal_get_path('theme', 'sarvaka_images') . '/css/photoswipe.css', array('group' => CSS_THEME));
+    // drupal_add_css(drupal_get_path('theme', 'sarvaka_images') . '/css/pswp-default-skin.css', array('group' => CSS_THEME));
     drupal_add_js(array('shanti_images' => array('flexindex' => $activeslide)), 'setting');
 
     // For grid view details use the first agent's date (photographer) to display as date

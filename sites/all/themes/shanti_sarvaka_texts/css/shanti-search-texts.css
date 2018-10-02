@@ -118,8 +118,9 @@
 }
 
 #search-flyout.extruder .text {
-  border: 1px solid rgb(238, 238, 238);
-  padding: 5px;
+  /*border: 1px solid rgb(238, 238, 238);
+  padding: 5px;*/
+  overflow:hidden; /* new addition sept 28, 2018 mf8yk */
 }
 
 .region-search-flyout {
@@ -140,7 +141,7 @@
 .extruder .view-filters .ajax-progress {
   display: none;
 }
-
+/*
 .region-search-flyout .nav-tabs {
   border: none;
   margin-left: 4rem;
@@ -178,14 +179,14 @@
   padding-top: 0.1rem;
   font-size: 85%;
 }
-/* override hover ---*/
+/* override hover 
 .region-search-flyout .nav-tabs>li>a:hover,
 .region-search-flyout .nav-tabs>li>a:active {
   background-color: #fff !important;
   color: #000;
   border: 1px solid #e0e0e0;
 }
-/* set text for Search by ---*/
+/* set text for Search by
 .region-search-flyout .nav-tabs::before {
   content: 'Search by:';
   font-size: 75%;
@@ -198,7 +199,7 @@
   color: #777;
   text-transform: uppercase;
 }
-
+*/
 
 /**
 * search scrollbars full-length

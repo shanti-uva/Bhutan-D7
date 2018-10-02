@@ -1,0 +1,8 @@
+name = Shanti Data Source Test
+description = A test module to work with grid view on using data sources
+core = 7.x
+package = Shanti
+version = 7.x-1.0
+
+dependencies[] = shanti_grid_view
+dependencies[] = kmaps_explorer

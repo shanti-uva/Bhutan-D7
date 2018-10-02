@@ -26,11 +26,11 @@
 
 .carousel-indicators li:hover,
 .carousel-indicators li.active{ border-color: #8c48a1; }
-
+/*
 .ui-resizable-handle.ui-resizable-w,
 .ui-resizable-handle.ui-resizable-w:hover,
 .ui-resizable-handle.ui-resizable-w:active { border-color: #8c48a1 transparent transparent transparent; }
-
+*/
 @media screen and (min-width: 500px) {
   .navbar-header .site-slogan{ color:#8c48a1 !important; } 
   .navbar-brand:hover .site-slogan{ color: #555 !important; } 

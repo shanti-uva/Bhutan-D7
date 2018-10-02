@@ -10,16 +10,11 @@
 
 
 
-#search-flyout.extruder.right.isOpened .extruder-content {
-  border-right-width: 13px;
-}
 
 .page-sources-search .views-widget-sort-by,
 .page-sources-search .views-widget-sort-order {
   display: none;
 }
-
-.input-section{ height: auto; }
 
 .input-section label.flyout-search-label{
   color:#444;
@@ -48,6 +43,9 @@
   top: 3.8rem;
 }
 
+
+
+
 .content-section a.toggle-filter-btn-open {
   margin-top: 12px;
   font-size: 1.375em;
@@ -57,7 +55,7 @@
 }
 
 .view-section input.form-control{
-  max-width: 40rem;
+  max-width: 14rem;
 }
 
 #edit-advanced-search-publication-year .form-type-radio {
@@ -333,7 +331,8 @@ a.open-search-field {
 
 .extruder .input-section .input-group .input-group-btn{
   position: absolute;
-  top: 2.9rem !important;
+  top: 1.9rem;
+  right: 1.6rem;
 }
 
 .input-section .input-group .btn.btn-default{
@@ -662,9 +661,6 @@ button#edit-clear.btn.btn-primary.form-submit{
 
 
 /*--- search flyout ---*/
-.extruder .fancytree-has-children > span.fancytree-title{
-  margin-left: -0.65rem;
-}
 
 .view-section .view-wrap,
 .view-section .tab-content .tab-pane,

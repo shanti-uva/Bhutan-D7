@@ -165,8 +165,8 @@ function mb_kaltura_form_alter(&$form, &$form_state, $form_id)
       break;
 
     case 'video_node_form':
-      $form['field_video']['und'][0]['settings']['#type'] = 'hidden'; // Hide the custom settings for each display format
-      //dpm($form, 'video form');
+      // Hide the custom settings for each display format
+      $form['field_video']['und'][0]['settings']['#access'] = FALSE;
       break;
 
     case 'audio_node_form':

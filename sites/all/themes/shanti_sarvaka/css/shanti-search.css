@@ -332,8 +332,8 @@ object.flip_label {
 }
 
 #search-flyout.extruder.isOpened .flap {
-  width: 48px;
-  margin: 0 0 0 -8px;
+  width: 50px;
+  margin: 0 0 0 -6px;
 }
 
 #search-flyout.extruder.isOpened .flap.on-flap .flapLabel {

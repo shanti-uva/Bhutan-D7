@@ -970,35 +970,28 @@ function shanti_images_kmaps_fields_solr_doc_alter(&$solrdoc) {
        // Do Agents
        // Assign the Agent node references to the creator in the set up page /admin/structure/types/manage/shanti_image
        $mainagent = FALSE;
-       if (!empty($sdoc['creator'])) {
-           foreach ($sdoc['creator'] as $n => $nid) {
-               $node = node_load($nid);
-               if (!$mainagent) {
-                   $mainagent = $node;
-               }
-               $sdoc['creator'][$n] = $node->title;
-           }
+        // TODO: handle multiple agents. Right now only doing first one as creator
+       if (!empty($sdoc['mynode']->field_image_agents['und'])) {
+          $aid = $sdoc['mynode']->field_image_agents['und'][0]['target_id'];
+          $anode = node_load($aid);
+          if ($anode) {
+            $sdoc['creator'] = $anode->title;
+            $mainagent = $anode;
+          }
        }
 
        // Do Caption and Summary
-       // Assign the Description node references to the caption and summary in the set up page /admin/structure/types/manage/shanti_image
-       $caption = array();
-       $summary = array();
+       // TODO: Deal with multiple descriptions and those in different languages
        $maindesc = FALSE;
-       if (!empty($sdoc['caption'])) {
-           foreach($sdoc['caption'] as $o => $nid) {
-               $node = node_load($nid);
-               if (!$maindesc) { $maindesc = $node; }
-               if ($node) {
-                   // Concatenate caption and summary fields from multiple descriptions
-                   // As of Jan 2017, caption and summary are single value fields.
-                   $caption[] = $node->title;
-                   $summary[] = strip_tags($node->field_description['und'][0]['safe_value']);
-               }
+       if (!empty($sdoc['mynode']->field_image_descriptions['und'])) {
+           $descid = $sdoc['mynode']->field_image_descriptions['und'][0]['target_id'];
+           $descnode = node_load($descid);
+           $maindesc = $descnode;
+           $sdoc['caption'] = $descnode->title;
+           if (!empty($descnode->field_summary['und'][0]['safe_value'])) {
+             $sdoc['summary'] = $descnode->field_summary['und'][0]['safe_value'];
            }
        }
-       $sdoc['caption'] = implode(' || ', $caption);
-       $sdoc['summary'] = implode(' || ', $summary);
 
        // Do Dates, use date with first agents
        // TODO: Do we need to make sure agent is explicitly photographer?
@@ -1021,11 +1014,20 @@ function shanti_images_kmaps_fields_solr_doc_alter(&$solrdoc) {
        $siimg = _shanti_images_get_node_image($sdoc['id']);
        if (is_object($siimg)) {
            $img_url = $siimg->getURL(200, 200);
-           $thmbheight = floor(200 * $siimg->getRatio());
+           $img_size = $siimg->getDimensions();
+           if ($img_size['width'] > $img_size['height']) {
+              $thumbwidth = 200;
+              $thmbheight = floor(200 / $siimg->getRatio());
+           } else {
+             $thmbheight = 200;
+             $thumbwidth = floor(200 * $siimg->getRatio());
+           }
            $sdoc['url_thumb'] = $img_url;
-           $sdoc['url_thumb_width'] = "200";
+           $sdoc['url_thumb_width'] = "{$thumbwidth}";
            $sdoc['url_thumb_height'] = "{$thmbheight}";
            $sdoc['url_thumb_size'] = "30000";
+           $sdoc['img_width_s'] = $img_size['width'];
+           $sdoc['img_height_s'] = $img_size['height'];
        } elseif (variable_get('shanti_images_debug', FALSE)) {
            watchdog('shanti_images', "Cannot get shanti image record for node {$sdoc['id']}");
        }
@@ -1240,4 +1242,9 @@ function shanti_images_get_valid_extensions($as_array=TRUE) {
     $ext = explode(' ', $ext);
   }
   return $ext;
+}
+
+function shanti_images_get_image_object($id, $type='node') {
+  $si = new ShantiImage('', $id); // Load existing record from node ID, siid is '' because filled in by table
+  return $si;
 }

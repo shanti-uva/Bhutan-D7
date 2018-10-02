@@ -67,7 +67,8 @@
           <div class="titlearea banner<?php print $variables['banner_class']; ?>">
            <div>
              <header role="banner">
-                <h1 class="page-title"><span class="icon shanticon-<?php print $variables['icon_class']; ?>"></span><span class="page-title-text">
+                <h1 class="page-title"><span class="icon shanticon-<?php print $variables['icon_class']; ?>"></span>
+                  <span class="page-title-text"><span class="pt-prefix">Explore</span> 
                 <?php
                 	if(!empty($variables['default_title']) && !empty($variables['prefix_default_title'])) {
                 		print ($title == '')? $variables['default_title'] : $variables['default_title'] . ': ' . $title;

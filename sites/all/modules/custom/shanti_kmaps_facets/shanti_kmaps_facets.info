@@ -12,6 +12,6 @@ dependencies[] = shanti_kmaps_admin
 configure = admin/config/user-interface/shanti_kmaps_facets
 
 ; Adding CSS and JS.
-scripts[]   =  js/shanti_kmaps_facets.js  
-scripts[]   =  js/custom-ajax.js
+;scripts[]   =  js/shanti_kmaps_facets.js
+;scripts[]   =  js/custom-ajax.js
 stylesheets[all][] = css/shanti_kmaps_facets.css
