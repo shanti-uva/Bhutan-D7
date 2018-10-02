@@ -60,13 +60,12 @@
     background: #3297f7 !important;
 }
 
-#sidebar-first .nav-pills li.active {
+#sidebar-first .nav-pills li.places.active,
+.page-places #sidebar-first .nav-pills li.overview.active {
   border-color: #3297f7 !important; 
 }
-#sidebar-first .nav-pills li.places.active {
-  border-color: #3297f7 !important; 
-}
-#sidebar-first .nav-pills li.subjects.active {
+#sidebar-first .nav-pills li.subjects.active,
+.page-subjects #sidebar-first .nav-pills li.overview.active {
   border-color: #cc4c39 !important; 
 }
 #sidebar-first .nav-pills li.photos.active {
@@ -77,6 +76,9 @@
 }
 #sidebar-first .nav-pills li.audio-video.active {
   border-color: #31acb6 !important; 
+}
+#sidebar-first .nav-pills li.sources.active {
+  border-color: #8c48a1 !important; 
 }
 
 
