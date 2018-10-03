@@ -8,7 +8,7 @@
 *
 */
 
-/* BEGIN THEME COLORS - Places */
+/* BEGIN (Places) colors */
 .page-places .titlearea,
 .page-places .breadcrumb .icon,
 .page-places .fixed-action-button a,
@@ -60,9 +60,27 @@
     background: #3297f7 !important;
 }
 
-.page-places #sidebar-first .nav-pills li.active {
-  border-color: #3297f7 !important; /* darker shade */
+#sidebar-first .nav-pills li.places.active,
+.page-places #sidebar-first .nav-pills li.overview.active {
+  border-color: #3297f7 !important; 
 }
+#sidebar-first .nav-pills li.subjects.active,
+.page-subjects #sidebar-first .nav-pills li.overview.active {
+  border-color: #cc4c39 !important; 
+}
+#sidebar-first .nav-pills li.photos.active {
+  border-color: #b5953b !important; 
+}
+#sidebar-first .nav-pills li.essays.active {
+  border-color: #8c48a1 !important; 
+}
+#sidebar-first .nav-pills li.audio-video.active {
+  border-color: #31acb6 !important; 
+}
+#sidebar-first .nav-pills li.sources.active {
+  border-color: #8c48a1 !important; 
+}
+
 
 .page-places .view-section .nav-tabs>li.active>a,
 .page-places .nav-tabs.nav-justified>li.active{
@@ -70,11 +88,14 @@
   border-top-color: #3297f7 !important;
 }
 
+.page-places .texts-list li:hover::before{
+  /*background: #4ca6fb !important;*/
+}
 
 @media screen and (min-width: 500px) {
-  .page-places .navbar-header .site-slogan{ color:#3676b2 !important; } /* darker shade */
+  .page-places .navbar-header .site-slogan{ color:#135fa8 !important; } /* Darker shade for banner site-slogan text */
   .page-places .navbar-brand:hover .site-slogan{ color: #555 !important; } 
-  .page-places .navbar-header:active .site-slogan{ color:#3676b2 !important; } 
+  .page-places .navbar-header:active .site-slogan{ color:#135fa8 !important; } 
 }
 
 @media screen and (min-width: 768px) {
@@ -87,7 +108,9 @@
 
 
 
-/* BEGIN THEME COLORS - Subjects */
+/**
+* BEGIN (Subjects) colors
+*/
 .page-subjects .titlearea,
 .page-subjects .carousel-control,
 .page-subjects .breadcrumb .icon,
@@ -106,9 +129,16 @@
 .page-subjects .view-section .fancytree-node.fancytree-active > .glyphicon,
 .page-subjects .view-section .fancytree-node.fancytree-selected > .glyphicon,
 .page-subjects .carousel-feature-slides li.active div a::before,
+/*.page-subjects .input-section a.toggle-link,
+.page-subjects .input-section a.toggle-link:hover,
+.page-subjects .input-section .toggle-link .icon::before,
+.page-subjects .input-section .toggle-link:hover .icon::before,*/
 .page-subjects .input-section .selectpicker .caret::before,
 .page-subjects .bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a .check-mark,
 .page-subjects .bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a:active .check-mark,
+/*.page-subjects .view-section .nav-tabs>li.active>a,
+.page-subjects .view-section .nav-tabs>li.active>a:hover,
+.page-subjects .view-section .nav-tabs>li.active>a:active,*/
 .page-subjects .kmaps-sources-summary ul.summary-list > li span.icon.shanticon-essays {
   color: #cc4c39 !important;
 }
@@ -130,10 +160,6 @@
     background: #cc4c39 !important;
 }
 
-.page-subjects #sidebar-first .nav-pills li.active {
-  border-color: #b24232 !important; /* Darker shade of red for shadow blend */
-}
-
 .page-subjects .view-section .nav-tabs>li.active>a,
 .page-subjects .nav-tabs.nav-justified>li.active{
   border-top-color: #cc4c39 !important;
@@ -143,10 +169,14 @@
   /*background: #cc4c39 !important;*/
 }
 
+.page-subjects .ui-resizable-handle.ui-resizable-w,
+.page-subjects .ui-resizable-handle.ui-resizable-w:hover,
+.page-subjects .ui-resizable-handle.ui-resizable-w:active { /*border-color: #cc4c39 transparent transparent transparent; */ }
+
 @media screen and (min-width: 500px) {
-  .page-subjects .navbar-header .site-slogan{ color:#b24231 !important; } /* Darker shade for banner site-slogan text */
+  .page-subjects .navbar-header .site-slogan{ color: #873326 !important; } /* Darker shade for banner site-slogan text */
   .page-subjects .navbar-brand:hover .site-slogan{ color: #555 !important; } 
-  .page-subjects .navbar-header:active .site-slogan{ color:#b24231 !important; } 
+  .page-subjects .navbar-header:active .site-slogan{ color: #873326 !important; } 
 }
 
 @media screen and (min-width: 768px) {
@@ -159,15 +189,62 @@
 .page-subjects ::-moz-selection { background: #2A974B !important;}
 .page-subjects ::selection { background: #2A974B !important;}
 
-.shanti-thumbnail-image .icon{
+.page-places .shanti-thumbnail-image .icon,
+.page-subjects .shanti-thumbnail-image .icon{
   background-color: #8e752e !important;
 }
 
+/* BEGIN Mandala Homepage colors */
+.front.home-carousel .ui-resizable-handle.ui-resizable-nw:active { background-color: #4d59ca !important; }
 
 
+/* custom theme color change under Search Flyout Tabs Places - Subjects */
+.front .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-2>a,
+.front .view-section .shanti-kmaps-faceted-search-kmaps-2 .fancytree-container .glyphicon,
+.front .view-section .shanti-kmaps-faceted-search-kmaps-2 .fancytree-container .fancytree-node:hover > .glyphicon, 
+.front .view-section .shanti-kmaps-faceted-search-kmaps-2 .fancytree-container .fancytree-node:active > .glyphicon, 
+.front .view-section .shanti-kmaps-faceted-search-kmaps-2 .fancytree-node.fancytree-active > .glyphicon,
+.page-places .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-2>a,
+.page-places .view-section .shanti-kmaps-faceted-search-kmaps-2 .fancytree-container .glyphicon,
+.page-places .view-section .shanti-kmaps-faceted-search-kmaps-2 .fancytree-container .fancytree-node:hover > .glyphicon, 
+.page-places .view-section .shanti-kmaps-faceted-search-kmaps-2 .fancytree-container .fancytree-node:active > .glyphicon, 
+.page-places .view-section .shanti-kmaps-faceted-search-kmaps-2 .fancytree-node.fancytree-active > .glyphicon{
+  color: #cc4c39 !important;
+}
+.front .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-1>a,
+.front .view-section .shanti-kmaps-faceted-search-kmaps-1 .fancytree-container .glyphicon,
+.front .view-section .shanti-kmaps-faceted-search-kmaps-1 .fancytree-container .fancytree-node:hover > .glyphicon, 
+.front .view-section .shanti-kmaps-faceted-search-kmaps-1 .fancytree-container .fancytree-node:active > .glyphicon, 
+.front .view-section .shanti-kmaps-faceted-search-kmaps-1 .fancytree-node.fancytree-active > .glyphicon,
+.page-subjects .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-1>a,
+.page-subjects .view-section .shanti-kmaps-faceted-search-kmaps-1 .fancytree-container .glyphicon,
+.page-subjects .view-section .shanti-kmaps-faceted-search-kmaps-1 .fancytree-container .fancytree-node:hover > .glyphicon, 
+.page-subjects .view-section .shanti-kmaps-faceted-search-kmaps-1 .fancytree-container .fancytree-node:active > .glyphicon, 
+.page-subjects .view-section .shanti-kmaps-faceted-search-kmaps-1 .fancytree-node.fancytree-active > .glyphicon{
+  color: #49a0f2 !important;
+}
+.front .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-1>a,
+.page-subjects .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-1>a{
+  border-top-color: #49a0f2 !important;
+}
+.front .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-2>a,
+.page-places .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-2>a{
+  border-top-color: #cc4c39 !important;
+}
+.front .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-facets>a,
+.page-places .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-facets>a,
+.page-subjects .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-facets>a{
+  color: #4d59ca !important;
+}
+.front .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-facets>a,
+.page-subjects .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-facets>a,
+.page-places .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-facets>a{
+  border-top-color: #4d59ca !important;
+}
 
-
-
+.front .ui-resizable-handle.ui-resizable-w,
+.front .ui-resizable-handle.ui-resizable-w:hover,
+.front .ui-resizable-handle.ui-resizable-w:active { /*border-color: #4d59ca transparent transparent transparent;*/ }
 
 
 
@@ -236,21 +313,30 @@
 }
 
 
-/* Image block View Styles */
-.view-related-images .views-exposed-form .form-item label {
-  display: none;
+.page-places.kmaps-overview .titlearea{
+  background-color:#3297f7;
 }
-
-
-/* fixes whole page layout in Drupal admin theme called Seven */
-.page-admin #page{
-  margin:0 !important;
+.page-subjects.kmaps-overview .titlearea{
+  background-color:#cc4c39;
 }
-
-@media screen and (min-width: 500px) {
-  .kmaps-photos .main-wrapper {
-    min-height: 710px;
-  }
+.kmaps-places .titlearea{
+  background-color:#3297f7;
+}
+.kmaps-subjects .titlearea{
+  background-color:#cc4c39;
+}
+.kmaps-photos .titlearea,
+.kmaps-images .titlearea{
+  background-color:#b5953b;
+}
+.kmaps-texts .titlearea{
+  background-color:#8c48a1;
+}
+.kmaps-sources .titlearea{
+  background-color:#6f69ae;
+}
+.kmaps-visuals .titlearea{
+  background-color:#558e3c;
 }
 
 /**
