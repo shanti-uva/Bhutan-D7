@@ -2076,7 +2076,7 @@ function kmaps_explorer_audio_video_node($type = 'ajax', $id, $avId, $app) {
 
     if ($type == 'ajax') {
         $commands = array();
-        $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . $app . '/' . $id . '/audio-video-node/' . $avId . '/nojs');
+        $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . $app . 's/' . $id . '/audio-video-node/' . $avId . '/nojs');
         $commands[] = ajax_command_invoke('body', 'addClass', array('max-col-widths'));
         $page = array('#type' => 'ajax', '#commands' => $commands);
 
@@ -2095,7 +2095,7 @@ function kmaps_explorer_audio_video_node($type = 'ajax', $id, $avId, $app) {
             );
             $content = theme('kmaps_explorer_initial_template_no_sidebar', $setup);
         } else {
-            $setup = kmaps_explorer_setup_page($id, $app, 'audio_video');
+            $setup = kmaps_explorer_setup_page($id, $app . 's', 'audio_video');
             $setup += array(
                 'active_content' => $output,
                 'ajax' => $type == 'ajax' ? TRUE : FALSE,
