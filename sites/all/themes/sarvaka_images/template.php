@@ -142,9 +142,9 @@ function sarvaka_images_preprocess_shanti_image(&$vars) {
         $vars['username'] = theme('username', array(  'account' => $nodeowner  ));
     }
     drupal_add_css(drupal_get_path('theme', 'sarvaka_images') . '/css/shanti-image-page.css', array('group' => CSS_THEME));
-    // Moving to shanti grid view
-    // drupal_add_css(drupal_get_path('theme', 'sarvaka_images') . '/css/photoswipe.css', array('group' => CSS_THEME));
-    // drupal_add_css(drupal_get_path('theme', 'sarvaka_images') . '/css/pswp-default-skin.css', array('group' => CSS_THEME));
+    drupal_add_css(drupal_get_path('theme', 'sarvaka_images') . '/css/photoswipe.css', array('group' => CSS_THEME));
+    drupal_add_css(drupal_get_path('theme', 'sarvaka_images') . '/css/pswp-default-skin.css', array('group' => CSS_THEME));
+
     drupal_add_js(array('shanti_images' => array('flexindex' => $activeslide)), 'setting');
 
     // For grid view details use the first agent's date (photographer) to display as date
@@ -178,6 +178,7 @@ function _sarvaka_images_get_flexslider($node) {
     $sidecount = 5; // number of images on either side of flexslider
     $mainwidth = 1000;
     $thumbwidth = 150;
+    $maxthumbs = 20; // Maximum number of thumbs in the carousel under an image
     $rotation = (!empty($node->field_image_rotation['und'][0]['value'])) ?
         (360 - $node->field_image_rotation['und'][0]['value']) % 360 : 0;
     $back_arrow = '<div class="toppadding">-</div>'; // use toppadding div if no back arrow (no session info) to pad the space above image with dark background
@@ -210,6 +211,12 @@ function _sarvaka_images_get_flexslider($node) {
         if ($coll) {
             // Get items in node's collection and iterate through
             $items = shanti_collections_get_items_in_collection($coll, 'nids'); // Get list of coll nids
+            $myind = array_search($node->nid, $items);
+            $halfmax = intval($maxthumbs / 2);
+            if (!$myind) { $myind = $halfmax; }
+            $thmbst = $myind - $halfmax;
+            if ($thmbst < 0 ) { $thmbst = 0; }
+            $items = array_slice($items, $thmbst, $maxthumbs);
             //dpm($items, 'items in collection');
             if (!empty($items)) {
                 $items = node_load_multiple($items);  // Turn list of nids into node objects
@@ -230,7 +237,9 @@ function _sarvaka_images_get_flexslider($node) {
             $view = views_get_view($vname);
             $view->set_display($dname);
             $view->execute();
+            $imgn = 0;
             foreach ($view->result as $item) {
+                $imgn++;
                 $json = $item->field_field_image[0]['rendered']['#markup'];
                 $jobj = json_decode($json);
                 $gitem = new stdClass;
@@ -239,6 +248,7 @@ function _sarvaka_images_get_flexslider($node) {
                 $gitem->title = $jobj->title;
                 $gitem->path = $jobj->path;
                 $galinfo[] = $gitem;
+                if ($imgn > 40) { break; }
             }
         }
     }

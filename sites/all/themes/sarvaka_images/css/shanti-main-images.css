@@ -214,6 +214,15 @@
     display: none;
 }
 
+.page-mycontent-collections .views-exposed-form .views-exposed-widget {
+  padding: 0em 0em .3em 0em;
+  margin: -6px 0 0 -30px;
+}
+
+.page-mycontent-collections .views-exposed-form .views-exposed-widget input {
+  width: 200px;
+}
+
 /** Pig grid drop down styles specific to images site **/
 .shanti-image-description h2 .desc-author {
     display: block;

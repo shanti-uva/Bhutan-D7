@@ -226,6 +226,25 @@ function kmaps_explorer_menu()
         'access arguments' => TRUE,
         'access callback' => TRUE,
     );
+
+    $items['subjects/%/image-node/%/%'] = array(
+        'title' => 'Subjects',
+        'description' => 'Creates a callback that shows individual image nodes',
+        'page callback' => 'kmaps_explorer_image_node', //using same function for both places and subjects.
+        'page arguments' => array(4, 1, 3, 'subjects'),
+        'access arguments' => TRUE,
+        'access callback' => TRUE,
+    );
+
+    $items['places/%/image-node/%/%'] = array(
+        'title' => 'Places',
+        'description' => 'Creates a callback that shows individual image nodes',
+        'page callback' => 'kmaps_explorer_image_node', //using same function for both places and subjects.
+        'page arguments' => array(4, 1, 3, 'places'),
+        'access arguments' => TRUE,
+        'access callback' => TRUE,
+    );
+
     $items['admin/config/content/kmaps_explorer'] = array(
         'title' => 'SHANTI KMAPS EXPLORER ADMIN',
         'description' => 'Specify settings to clear caches for the kmaps explorer module',
@@ -2100,6 +2119,54 @@ function kmaps_explorer_audio_video_node($type = 'ajax', $id, $avId, $app) {
                 'active_content' => $output,
                 'ajax' => $type == 'ajax' ? TRUE : FALSE,
                 'audio_video' => TRUE,
+            );
+            $content = theme('kmaps_explorer_initial_template', $setup);
+        }
+
+        return $content;
+    }
+}
+
+/**
+ * Function to create ajax content for images individual node items
+ */
+function kmaps_explorer_image_node($type = 'ajax', $id, $imgId, $app) {
+    //URL for the asset individual object
+    $asset = 'images';
+    $nodeURL = variable_get('shanti_kmaps_admin_server_solr', SHANTI_KMAPS_ADMIN_SERVER_SOLR);
+    $nodeURL .= '/select?q=asset_type:' . $asset . '%20AND%20id:' . $imgId . '&wt=json';
+    $node_cache = save_to_cache('json', $asset, $imgId, $nodeURL);
+    $node_data = json_decode($node_cache);
+    $node_data = $node_data->response->numFound > 0 ? $node_data->response->docs[0] : new stdClass();
+    $url = $node_data->url_html;
+    $output = '<iframe scrolling="no" height="1080" width="100%" frameBorder="0" src="' . $url . '?mbframe=on' . '" seamless ></iframe>';
+
+    if ($type == 'ajax') {
+        $commands = array();
+        $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . $app . '/' . $id . '/image-node/' . $imgId . '/nojs');
+        $commands[] = ajax_command_invoke('body', 'addClass', array('max-col-widths'));
+        $page = array('#type' => 'ajax', '#commands' => $commands);
+
+        ajax_deliver($page);
+    } else {
+        if ($id == 0) {
+            //Drupal static initializations
+            $node_shuffle = &drupal_static('kmaps_explorer_asset_node');
+            //Store data for other uses in same session.
+            $node_shuffle['data'] = $node_data;
+            $setup = array(
+                'active_content' => $output,
+                'ajax' => $type == 'ajax' ? TRUE : FALSE,
+                'photo' => TRUE,
+                'type' => 'images',
+            );
+            $content = theme('kmaps_explorer_initial_template_no_sidebar', $setup);
+        } else {
+            $setup = kmaps_explorer_setup_page($id, $app, 'photos');
+            $setup += array(
+                'active_content' => $output,
+                'ajax' => $type == 'ajax' ? TRUE : FALSE,
+                'photo' => TRUE,
             );
             $content = theme('kmaps_explorer_initial_template', $setup);
         }

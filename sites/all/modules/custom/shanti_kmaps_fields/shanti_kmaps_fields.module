@@ -1146,7 +1146,7 @@ function _shanti_kmaps_fields_update_solr_index($solrdoc, $debug = FALSE, $messa
     $opt_in = variable_get('shanti_kmaps_admin_server_solr_opt_in');
     if ($opt_in) {
         $solr_url = variable_get('shanti_kmaps_admin_server_solr');
-        $url = "$solr_url/update/json?commit=true";
+        $url = "$solr_url/update/json";  // removed "?commit=true" per Yuji's request (ndg, 10/3/2018)
         $headers = array('Content-type' => 'application/json; charset=utf-8', 'Content-Length' => strlen($solrdoc));
         $username = variable_get('shanti_kmaps_admin_solr_username');
         $password = variable_get('shanti_kmaps_admin_solr_password');

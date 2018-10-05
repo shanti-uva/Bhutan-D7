@@ -46,9 +46,9 @@
   padding:0;
 }
 
-.no-sidebars article.main-col{
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
+.no-sidebars:not(.kmaps) article.main-col{
+  /*padding-left: 0.5rem;
+  padding-right: 0.5rem;*/
 }
 
 /*---------------------------------*/

@@ -437,8 +437,8 @@
                   if (f) {
                     var json = LZString.decompressFromEncodedURIComponent(f);
                     defaultFilterState = JSON.parse(json);
+                    if (true) { console.log("DEFAULT FILTER STATE = " + JSON.stringify(defaultFilterState)); }
                   }
-                  if (DEBUG) { console.error("INITIAL FILTERS = " + JSON.stringify(defaultFilterState)); }
                   var path = document.location.pathname; // path without hash or queryString
                   var hash = document.location.hash;
                   if (hash) {
@@ -516,8 +516,6 @@
 
 
                   }
-                  // if (Drupal.settings.shanti_kmaps_admin.shanti_kmaps_admin_solr_filter_query_kmaps_enabled ||
-                  //   Drupal.settings.shanti_kmaps_admin.shanti_kmaps_admin_solr_filter_query_assets_enabled) {
                     console.log("Solr Filtering Enabled: ");
                     console.dir({
                         admin_settings: Drupal.settings.shanti_kmaps_admin,
@@ -526,7 +524,6 @@
                       },
                       undefined,
                       2);
-                  // }
 
                   settings.kmapsSolr = $.kmapsSolr(
                     {

@@ -3632,6 +3632,8 @@ div#carousel-buttons {
   border:1px solid #888;
   display: none;
   text-align: center;
+
+    display:none; /* hiding since most pages are short enough not to need this, will add required */
 }
 
 .back-to-top:hover,
@@ -3660,19 +3662,6 @@ div#carousel-buttons {
   content: '\f077';
   position: relative;
   top: .5rem;
-}
-
-/* most pages don't have need of this, so am removing 
-and will reassign only to pages that typically are very long, 
-and are not galleries */
-.places .back-to-top,
-.subjects .back-to-top,
-.audio-video .back-to-top,
-.visuals .back-to-top,
-.images .back-to-top,
-.texts .back-to-top,
-.sources .back-to-top{
-  display:none;
 }
 
 
@@ -4556,7 +4545,7 @@ article.main-col {
 }
 */
 .no-sidebars article.main-col{
-  padding-bottom:50px;
+  padding-bottom:50px !important;
 }
 
 article.main-col > div.region-content::after{

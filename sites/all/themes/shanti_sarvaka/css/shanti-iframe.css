@@ -245,3 +245,12 @@ body.in-frame.html {
 
 
 
+/**
+*  IMAGES - iframe custom styles
+*/
+
+.in-frame.images .image-display .backarrow,
+.in-frame.images .image-display .image-actions {
+  visibility: collapse;
+}
+

@@ -253,37 +253,39 @@
             }
             window.location.href = href;
         };
+        if ($('#fsslider').length > 0) {
+          // Initiate faux slider for image (this creates the forward/backward arrows)
+          // the previous and next slides are empty, uses before callback to load new image
+          var mainInd = ($('#fsslider ul.slides li').length > 1 && picInd != 0) ? 1 : 0;
+          $('#fsslider').flexslider({
+            animation: "fade",
+            controlNav: false,
+            slideshow: false,
+            startAt: mainInd,
+            maxItems: 1,
+            move: 1,
+            before: function(slider) {
+              // before changing the slider image call the function to load the previous or next image depending on direction
+              document.sliderGoTo(slider.direction);
+            }
+          });
+        }
         if($('#fscarousel').length > 0 ) {
-            // Initiate the carousel of thumbs underneath the main image
-              $('#fscarousel').flexslider({
-                animation: "slide",
-                controlNav: false,
-                animationLoop: true,
-                slideshow: false,
-                startAt: startInd,
-                itemWidth: 90,
-                itemMargin: 5,
-                maxItems: 50,
-                move: moveNum
-              });
-          }
-          if ($('#fsslider').length > 0) {
-              // Initiate faux slider for image (this creates the forward/backward arrows)
-              // the previous and next slides are empty, uses before callback to load new image
-              var mainInd = ($('#fsslider ul.slides li').length > 1 && picInd != 0) ? 1 : 0;
-              $('#fsslider').flexslider({
-                animation: "fade",
-                controlNav: false,
-                slideshow: false,
-                startAt: mainInd,
-                maxItems: 1,
-                move: 1,
-                before: function(slider) {
-                    // before changing the slider image call the function to load the previous or next image depending on direction
-                    document.sliderGoTo(slider.direction);
-                }
-              });
-          }
+          // Initiate the carousel of thumbs underneath the main image
+            $('#fscarousel').flexslider({
+              initDelay: 3000,
+              animation: "slide",
+              controlNav: false,
+              animationLoop: true,
+              slideshow: false,
+              startAt: startInd,
+              itemWidth: 90,
+              itemMargin: 5,
+              maxItems: 50,
+              move: moveNum
+            });
+        }
+
           
           // If current image in carousel is first or last, hide the corresponding arrow
           if ($('.flex-active-slide').prev('li').length == 0) {
@@ -405,6 +407,7 @@
         var options = {
             index: 0 // start at first slide
         };
+
         // Initializes and opens PhotoSwipe
         var gallery = new PhotoSwipe( pswpElement, PhotoSwipeUI_Default, items, options);
         gallery.listen('close', function() { $('#pswpdiv').hide(); });

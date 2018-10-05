@@ -1,5 +1,3 @@
-/*! Shanti Kmaps Solr - v0.1.0 - 2018-09-27
-* Copyright (c) 2018 ys2n; Licensed MIT */
 /*! Shanti Kmaps Solr - v0.1.0 - 2018-07-24
 * Copyright (c) 2018 ys2n; Licensed MIT */
 ;(function ($, window, document, undefined) {
@@ -333,7 +331,10 @@
           console.log("Error restoring in-page search state. (" + err + ").  Discarding.");
           sessionStorage.setItem(stateStoreKey, JSON.stringify(defaultState));
         }
-      } else {
+      }
+
+
+      // else {
         // Look for defaultFilterState option
         if (options && typeof options.defaultFilterState !== "undefined") {
           if (typeof this.state === "undefined") {
@@ -346,7 +347,7 @@
             console.log("options.defaultFilterState: " + JSON.stringify(options.defaultFilterState));
           }
         }
-      }
+      // }
 
       this.settings = this.processConfig(config, options);
       this.settings.facetConfigList = this.assembleFacetConfigs();
@@ -433,7 +434,7 @@
           });
         });
       } catch (err) {
-        console.error("ERROR:" + JSON.stringify(err));
+        console.error("ERROR:" + err);
         deferred.reject(self);
       }
 
@@ -483,7 +484,7 @@
         // if ($.inArray("texts", asset_types) > -1){ asset_types.push("document"); }
         // if ($.inArray("audio-video", asset_types) > -1 ) { asset_types.push("video"); }
         // if ($.inArray("sources", asset_types) > -1 ) { asset_types.push("onlineresource"); }
-        if ($.inArray("all", asset_types) > -1 ) { asset_types = [ "all","subjects","places","images","audio-video","texts","sources","visuals" ]; }
+        if ($.inArray("all", asset_types) > -1 || asset_types.length === 0 ) { asset_types = [ "all","subjects","places","images","audio-video","texts","sources","visuals" ]; }
         asset_types = asset_types.join(" ");
 
       }
@@ -581,15 +582,19 @@
         assetTypeList = showAssetTypes;
       } else if ( typeof showAssetTypes === "string" && showAssetTypes.length > 0 ) {
         assetTypeList = showAssetTypes.split(/\s+/);
-      } else if ( showAssetTypes === "" ){
-        assetTypeList = [];
+      } else if ( showAssetTypes === "" ) {
+        assetTypeList = [ "all","places", "subjects", "audio-video", "images", "sources", "texts", "visuals" ];
       }
-      if (true)  { console.error("assetTypeList = " + JSON.stringify(assetTypeList)); }
 
       if (assetTypeList !== null) {
         self.state.assetTypeList = assetTypeList;
         if (DEBUG) console.log("setting state.assetTypeList : " + JSON.stringify(assetTypeList) );
       }
+
+      if (!assetTypeList || assetTypeList === null || assetTypeList.length === 0 ) {
+        assetTypeList = [ "all","places", "subjects", "audio-video", "images", "sources", "texts", "visuals" ];
+      }
+      if (true)  { console.error("assetTypeList = " + JSON.stringify(assetTypeList)); }
 
       // get the current search string and override any
       if ($.type(searchparams.searchString) === "string") {

@@ -245,19 +245,27 @@ function _shanti_sarvaka_get_user_name($uid) {
  *   Extra arguments to pass into the theme_username call. E.g.
  *  array('extra' => ' (admin)')
  *  to append text to the username representation
+ *
+ * @return string markup for username with or without link
  **/
 function _shanti_sarvaka_get_user_link($uid, $theme_args=array()) {
-  $user = user_load($uid);
-  if (!isset($theme_args['extra'])) { $theme_args['extra'] = ''; } // needed for the theme_username()
-  return theme_username(
-    array_merge(
-      array(
-        'name' => _shanti_sarvaka_get_user_name($uid),
-        'link_path' => drupal_get_path_alias('user/' . $user->uid),
-        'link_options' => array(), // l() needs this argument
-      ),
-      $theme_args)
-  );
+  $uname = _shanti_sarvaka_get_user_name($uid);
+  if (user_is_logged_in()) {
+    if (!isset($theme_args['extra'])) {
+      $theme_args['extra'] = '';
+    } // needed for the theme_username()
+    return theme_username(
+      array_merge(
+        array(
+          'name' => $uname,
+          'link_path' => drupal_get_path_alias('user/' . $uid),
+          'link_options' => array(), // l() needs this argument
+        ),
+        $theme_args)
+    );
+  } else {
+    return "<span>$uname</span>";
+  }
 }
 
 function shanti_sarvaka_preprocess_node(&$variables) {
