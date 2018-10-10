@@ -11,6 +11,7 @@
 /* BEGIN THEME COLORS - Places */
 .page-places .titlearea,
 .page-places .breadcrumb .icon,
+.page-places .carousel-control,
 .page-places .fixed-action-button a,
 .page-places .bx-controls-direction a,
 .page-places .nav-tabs.nav-justified>li.active>a,
@@ -19,7 +20,8 @@
   background: #3297f7 !important;
 }
 
-.front-list .place span.fa-plus,
+.page-places .front-list .place span.fa-plus,
+.page-places .front-list .shanticon-places::before,
 .page-places .view-section .fancytree-container .glyphicon,
 .page-places .view-section .fancytree-container .fancytree-node:hover > .glyphicon,
 .page-places .view-section .fancytree-container .fancytree-node:active > .glyphicon,
@@ -91,6 +93,7 @@
 .page-subjects .titlearea,
 .page-subjects .carousel-control,
 .page-subjects .breadcrumb .icon,
+.page-subjects .carousel-control,
 .page-subjects .fixed-action-button a,
 .page-subjects .bx-controls-direction a,
 .page-subjects .nav-tabs.nav-justified>li.active>a,
@@ -99,7 +102,8 @@
   background: #cc4c39 !important;
 }
 
-.front-list .place span.fa-plus
+.page-subjects .front-list .shanticon-places::before,
+.page-subjects .front-list .place span.fa-plus,
 .page-subjects .view-section .fancytree-container .glyphicon,
 .page-subjects .view-section .fancytree-container .fancytree-node:hover > .glyphicon,
 .page-subjects .view-section .fancytree-container .fancytree-node:active > .glyphicon,
@@ -257,13 +261,21 @@
 
 
 
-
-
-
-
 .kmaps:not(.home-carousel) article.main-col{
   padding-bottom:80px !important;
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /**
@@ -273,82 +285,154 @@
 
 
 
-body.bhutan:not(.kb) #sidebar-first .nav-pills li.places.active,
-body.bhutan.page-places:not(.kb) #sidebar-first .nav-pills li.overview.active {
+body.bhutan  .wrap-all #sidebar-first .nav-pills li.places.active,
+body.bhutan.page-places .wrap-all #sidebar-first .nav-pills li.overview.active {
   border-color: #3297f7 !important; 
 }
-body.bhutan #sidebar-first .nav-pills li.subjects.active,
-body.bhutan.page-subjects:not(.kb) #sidebar-first .nav-pills li.overview.active {
+body.bhutan .wrap-all #sidebar-first .nav-pills li.subjects.active,
+body.bhutan.page-subjects .wrap-all #sidebar-first .nav-pills li.overview.active {
   border-color: #cc4c39 !important; 
 }
-body.bhutan:not(.kb) #sidebar-first .nav-pills li.photos.active {
+body.bhutan .wrap-all #sidebar-first .nav-pills li.photos.active {
   border-color: #b5953b !important; 
 }
-body.bhutan:not(.kb) #sidebar-first .nav-pills li.essays.active {
+body.bhutan .wrap-all #sidebar-first .nav-pills li.essays.active {
   border-color: #8c48a1 !important; 
 }
-body.bhutan:not(.kb) #sidebar-first .nav-pills li.audio-video.active {
+body.bhutan .wrap-all #sidebar-first .nav-pills li.audio-video.active {
   border-color: #31acb6 !important; 
 }
-body.bhutan:not(.kb) #sidebar-first .nav-pills li.sources.active {
+body.bhutan .wrap-all #sidebar-first .nav-pills li.sources.active {
   border-color: #8c48a1 !important; 
  }
 
 
 
-
-
-
-
-body.bhutan.page-places:not(.kb) .titlearea,
-body.bhutan.page-places:not(.kb) .fixed-action-button a,
-body.bhutan.page-places.kmaps-overview:not(.kb) .fixed-action-button a,
-body.bhutan.page-places.kmaps-overview:not(.kb) .titlearea{
+body.bhutan.page-places .wrap-all .titlearea,
+body.bhutan.page-places .wrap-all .fixed-action-button a,
+body.bhutan.page-places.kmaps-overview .wrap-all .fixed-action-button a,
+body.bhutan.page-places.kmaps-overview .wrap-all .titlearea{
   background-color:#3297f7 !important;
  }
 
-body.bhutan.page-subjects:not(.kb) .titlearea,
-body.bhutan.page-subjects:not(.kb) .fixed-action-button a,
-body.bhutan.page-subjects.kmaps-overview:not(.kb) .fixed-action-button a,
-body.bhutan.page-subjects.kmaps-overview:not(.kb) .titlearea{
+body.bhutan.page-subjects .wrap-all .titlearea,
+body.bhutan.page-subjects .wrap-all .fixed-action-button a,
+body.bhutan.page-subjects.kmaps-overview .wrap-all .fixed-action-button a,
+body.bhutan.page-subjects.kmaps-overview .wrap-all .titlearea{
   background-color:#cc4c39 !important;
  }
 
-body.bhutan.page-places.kmaps-overview:not(.kb) .fixed-action-button a,
-body.bhutan.kmaps-places:not(.kb) .titlearea{
+body.bhutan.page-places.kmaps-overview .wrap-all .fixed-action-button a,
+body.bhutan.kmaps-places .wrap-all .titlearea{
   background-color:#3297f7 !important;
 }
 
-body.bhutan.page-subjects.kmaps-overview:not(.kb) .fixed-action-button a,
-body.bhutan.kmaps-subjects:not(.kb) .titlearea{
+body.bhutan.page-subjects.kmaps-overview .wrap-all .fixed-action-button a,
+body.bhutan.kmaps-subjects .wrap-all .titlearea{
   background-color:#cc4c39 !important;
 }
-body.bhutan.page-photos.kmaps-overview:not(.kb) .fixed-action-button a,
-body.bhutan.page-images.kmaps-overview:not(.kb) .fixed-action-button a,
-body.bhutan.kmaps-photos:not(.kb) .titlearea,
-body.bhutan.kmaps-images:not(.kb) .titlearea{
+body.bhutan.page-photos.kmaps-overview .wrap-all .fixed-action-button a,
+body.bhutan.page-images.kmaps-overview .wrap-all .fixed-action-button a,
+body.bhutan.kmaps-photos .wrap-all .titlearea,
+body.bhutan.kmaps-images .wrap-all .titlearea{
   background-color:#b5953b !important;
 }
-body.bhutan.page-texts.kmaps-overview:not(.kb) .fixed-action-button a,
-body.bhutan.kmaps-texts:not(.kb) .titlearea{
+body.bhutan.page-texts.kmaps-overview .wrap-all .fixed-action-button a,
+body.bhutan.kmaps-texts .wrap-all .titlearea{
   background-color:#8c48a1 !important;
 }
-body.bhutan.page-sources.kmaps-overview:not(.kb) .fixed-action-button a,
-body.bhutan.kmaps-sources:not(.kb) .titlearea{
+body.bhutan.page-sources.kmaps-overview .wrap-all .fixed-action-button a,
+body.bhutan.kmaps-sources .wrap-all .titlearea{
   background-color:#6f69ae !important;
 }
-body.bhutan.page-visuals.kmaps-overview:not(.kb) .fixed-action-button a,
-body.bhutan.kmaps-visuals:not(.kb) .titlearea{
+body.bhutan.page-visuals.kmaps-overview .wrap-all .fixed-action-button a,
+body.bhutan.kmaps-visuals .wrap-all .titlearea{
   background-color:#558e3c !important;
  }
 
 
 
-body.bhutan:not(.kb) main .view-section .nav-tabs>li.active>a, 
-body.bhutan:not(.kb) main .view-section .nav-tabs>li.active>a:hover, 
-body.bhutan:not(.kb) main .view-section .nav-tabs>li.active>a:active{
+body.bhutan .wrap-all main .view-section .nav-tabs>li.active>a, 
+body.bhutan .wrap-all main .view-section .nav-tabs>li.active>a:hover, 
+body.bhutan .wrap-all main .view-section .nav-tabs>li.active>a:active{
   border-top-color: #4d59ca !important;
 }
+
+
+
+
+/* footer - use of class .abc is purely as selector overrie in this case to be sure Bhutan site receives the styles */
+body.bhutan:not(.abc) .footer, 
+body.bhutan:not(.abc) .footer .sponsors, 
+body.bhutan:not(.abc) .footer .general, 
+body.bhutan:not(.abc) .footer .sponsors .views-row{
+  float:none;
+}
+body.bhutan:not(.abc) .footer{
+  min-height: 90px;
+  padding-top: 5px;
+}
+
+body.bhutan:not(.abc) .footer .general > p{
+  color: #707070;
+  font-size: 70%;
+  bottom: -1.7rem;
+}
+
+body.bhutan:not(.abc) .footer .sponsors p.tagline{
+  color: #aaa;
+  position: relative;
+  left: 0;
+  margin: 0 auto 1rem;
+  font-size: 0.62em;
+  font-family: 'museo-sans-500', helvetica, arial, sans-serif;
+}
+
+body.bhutan:not(.abc) .footer .view-sponsor-logos{
+  position: relative;
+  top: -1.5rem;
+}
+
+body.bhutan:not(.abc) .footer .views-field img.img-responsive{
+  margin: 1.6rem 3rem 0 0;
+}
+
+body.bhutan:not(.abc) .footer .views-row-1 .views-field img.img-responsive{
+  height: 20px;
+  opacity: 0.6;
+}
+
+body.bhutan:not(.abc) .footer .views-row-2 .views-field img.img-responsive{
+  height: 30px;
+  margin-top: 0.7rem;
+  margin-right: 2.5rem;
+}
+
+body.bhutan:not(.abc) .footer .views-row-3 .views-field img.img-responsive{
+  height: 22px;
+  margin-top: 1.4rem;
+  margin-right: 0;
+  opacity: 0.65;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /**

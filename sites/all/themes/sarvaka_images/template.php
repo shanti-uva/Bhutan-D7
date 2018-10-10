@@ -121,7 +121,7 @@ function sarvaka_images_preprocess_node(&$vars) {
 
 function sarvaka_images_preprocess_shanti_image(&$vars) {
     global $user;
-    list($markup, $activeslide) =  _sarvaka_images_get_flexslider($vars['node']);
+    list($markup, $activeslide) =  _sarvaka_images_get_main_flexslider($vars['node']);
     $vars['flexslider_markup'] = $markup;
     if (isset($vars['field_image'][0]) && !empty($vars['field_image'][0]['filename'])) {
         $vars['original_filename'] = $vars['field_image'][0]['filename'];
@@ -145,7 +145,8 @@ function sarvaka_images_preprocess_shanti_image(&$vars) {
     drupal_add_css(drupal_get_path('theme', 'sarvaka_images') . '/css/photoswipe.css', array('group' => CSS_THEME));
     drupal_add_css(drupal_get_path('theme', 'sarvaka_images') . '/css/pswp-default-skin.css', array('group' => CSS_THEME));
 
-    drupal_add_js(array('shanti_images' => array('flexindex' => $activeslide)), 'setting');
+    // Drupal Settings for Shanti Images (shanti_images)
+    drupal_add_js(array('shanti_images' => array('nid' => $vars['node']->nid, 'flexindex' => $activeslide)), 'setting');
 
     // For grid view details use the first agent's date (photographer) to display as date
     if ($vars['view_mode'] == 'grid_details') {
@@ -170,9 +171,50 @@ function sarvaka_images_preprocess_shanti_image(&$vars) {
 }
 
 /**
- * Creates the flex slider markup for an image page
+ * Creates the main flex slider markup for an image page. This holds the main image slide
  */
-function _sarvaka_images_get_flexslider($node) {
+function _sarvaka_images_get_main_flexslider($node) {
+    global $base_url;
+    $mainwidth = 1000;
+    $si = _shanti_images_get_node_image($node->nid);
+    $rotation = $node->field_image_rotation[LANGUAGE_NONE][0]['value'];
+
+    $blururl = $si->getURL(150, '', $rotation); // _shanti_images_build_IIIFURL($fnm, 150, '', $rotation);
+    $url = $si->getURL($mainwidth, '', $rotation); // _shanti_images_build_IIIFURL($fnm, $mainwidth, '', $rotation);
+
+    // use prod server when on DEV but looking for images on prod
+    $is_dev = (strstr($base_url, '.dd') || strstr($base_url, '-dev')) ? TRUE : FALSE;
+    if ($is_dev && preg_match('/shanti-image(-stage)?-\d+/', $si->getIIIFName())) {
+        $url = str_replace('-test', '', $url);
+    }
+
+    $prevlink = '<li><span class="fa fa-spinner fa-spin" style="display:none;"></span><img src="#prev" style="display:none;" /></li>';
+    $nextlink = '<li><span class="fa fa-spinner fa-spin" style="display:none;"></span><img src="#next"  style="display:none;"/></li>';
+    $main_image = '<ul class="slides">' . $prevlink . '<li><div data-href="' . $url . '" class="progressive replace"><img src="'
+                        . $blururl . '" class="preview"/></div></li>' . $nextlink . '</ul>';
+
+    $action_icons = _sarvaka_images_get_action_links($node);
+    $action_icons = str_replace('__MYURL__', $url, $action_icons);
+    $action_icons = str_replace('__MYTITLE__', $node->title, $action_icons);
+
+    $markup = '<div id="fsslider" class="flexslider fsmain">' . $main_image .
+        '</div><div id="fscarousel-placeholder"></div>';
+
+    $back_arrow = '<div class="toppadding">-</div>'; // use toppadding div if no back arrow (no session info) to pad the space above image with dark background
+    if (isset($_SESSION['shanti_gallery_url'])) {
+        $back_arrow = '<a href="__PATH__" class="backarrow"><span class="icon shanticon-arrow-left_2"></span> Back</a>';
+        $back_arrow = str_replace('__PATH__', $_SESSION['shanti_gallery_url'], $back_arrow);
+    }
+
+    $markup = $back_arrow . $markup . $action_icons;
+    return array($markup, 1);
+}
+
+/**
+ * OLD VERSION: Creates the flex slider markup for an image page
+ */
+function _sarvaka_images_get_flexslider_old($node) {
+    global $base_url;
     module_load_include('inc', 'shanti_images', 'includes/shanti_images');
     //dpm($node, 'node');
     $sidecount = 5; // number of images on either side of flexslider
@@ -186,9 +228,9 @@ function _sarvaka_images_get_flexslider($node) {
         $back_arrow = '<a href="__PATH__" class="backarrow"><span class="icon shanticon-arrow-left_2"></span> Back</a>';
         $back_arrow = str_replace('__PATH__', $_SESSION['shanti_gallery_url'], $back_arrow);
     }
-     
-    $action_icons = _sarvaka_images_get_action_links($node); 
-    
+
+    $action_icons = _sarvaka_images_get_action_links($node);
+
     /**
      * Process Gallery Info from session info. 
      * The session variable 'shanti_gallery_info' must have an array of items that are objects with the following properties:
@@ -206,6 +248,7 @@ function _sarvaka_images_get_flexslider($node) {
         $galinfo = $_SESSION['shanti_gallery_info'];
         //dpm($galinfo, 'gallery session info');
     } else {
+
         // When there is no session information, then check if node is part of collection and use the collection node list for gallery
         $coll = shanti_collections_get_collection($node); // Get node's collection
         if ($coll) {
@@ -281,6 +324,12 @@ function _sarvaka_images_get_flexslider($node) {
                  $mylistindex = $n;
                  $blururl = $si->getURL(150, '', $rotation); // _shanti_images_build_IIIFURL($fnm, 150, '', $rotation);
                  $url = $si->getURL($mainwidth, '', $rotation); // _shanti_images_build_IIIFURL($fnm, $mainwidth, '', $rotation);
+                 // use prod server when on DEV but looking for images on prod
+                 if (strstr($base_url, '.dd') || strstr($base_url, '-dev')) {
+                   if (preg_match('/shanti-image(-stage)?-\d+/', $item->filename)) {
+                     $url = str_replace('-test', '', $url);
+                   }
+                 }
                  $prevlink = ($n > 0) ? '<li><span class="fa fa-spinner fa-spin" style="display:none;"></span><img src="#prev" style="display:none;" /></li>' : '';
                  $nextlink = ($n < count($galsplice) - 1) ? '<li><span class="fa fa-spinner fa-spin" style="display:none;"></span><img src="#next"  style="display:none;"/></li>' : '';
                  $main_image = '<ul class="slides">' . $prevlink . '<li><div data-href="' . $url . '" class="progressive replace"><img src="' . $blururl . '" class="preview"/></div></li>' . $nextlink . '</ul>';

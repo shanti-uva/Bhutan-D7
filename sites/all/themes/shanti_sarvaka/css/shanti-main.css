@@ -857,7 +857,7 @@ div.contextual-links-wrapper{
 
 
 /*--- BEGIN collections panel ---*/
-.site-banner .collections {
+.collections {
   background: #222;
   margin: 0 0 .2rem 0;
   padding: 1rem 0 1.8rem 0.8rem;
@@ -867,11 +867,11 @@ div.contextual-links-wrapper{
   z-index: 300;
 }
 
-.site-banner .collections .row {
+.collections .row {
   margin: 0;
 }
 
-.site-banner .collections ul {
+.collections ul {
   text-align: center;
   list-style-type: none;
   max-width: 1050px;
@@ -879,7 +879,7 @@ div.contextual-links-wrapper{
   padding-left:0;
 }
 
-.site-banner .collections ul li {
+.collections ul li {
   margin: 0;
   float: left;
   line-height: 2.12em;
@@ -887,7 +887,7 @@ div.contextual-links-wrapper{
   width: 50%;
 }
 
-.site-banner .collections ul li a {
+.collections ul li a {
   color: #d0d0d0;
   text-decoration: none;
   letter-spacing: 0.08em;
@@ -904,21 +904,21 @@ div.contextual-links-wrapper{
   transition: .2s ease-in-out;
 }
 
-.site-banner .collections ul li a.disabled, .site-banner .collections ul li a.disabled:hover, .site-banner .collections ul li a.disabled:active, 
-.site-banner .collections ul li a.disabled .icon, .site-banner .collections ul li a.disabled:hover .icon {
+.collections ul li a.disabled, .collections ul li a.disabled:hover, .collections ul li a.disabled:active, 
+.collections ul li a.disabled .icon, .collections ul li a.disabled:hover .icon {
   color: #707070;
   cursor: default;
 }
 
-.site-banner .collections ul li a:hover,
-.site-banner .collections ul li a:active {
+.collections ul li a:hover,
+.collections ul li a:active {
   text-decoration: none;
   color: #fff;
     -webkit-transform: scale(1.125);
     transform: scale(1.125);
 }
 
-.site-banner .collections ul .icon {
+.collections ul .icon {
   color: #aaa !important;
   margin-right: 8px;
   font-size: 1.88em;
@@ -926,32 +926,32 @@ div.contextual-links-wrapper{
   top: 0.4rem;
 }
 
-.site-banner .collections ul .icon.shanticon-visuals{
+.collections ul .icon.shanticon-visuals{
   top: 0.54rem;
 }
 
-.site-banner .collections ul .icon.shanticon-logo-shanti {
+.collections ul .icon.shanticon-logo-shanti {
   color: #f0f0f0;
 }
 
-.site-banner .collections ul li a:hover .icon::before{
+.collections ul li a:hover .icon::before{
   color: #e0e0e0;
 }
-.site-banner .collections ul li a:active .icon::before{
+.collections ul li a:active .icon::before{
   color: #fff;
 }
 
-.site-banner .collections ul .icon.shanticon-visuals::before {
+.collections ul .icon.shanticon-visuals::before {
   font-size: 120%;
   position: relative;
   left: -0.15rem;
   margin-right: -0.25rem;
 }
-.site-banner .collections ul .icon.shanticon-logo-shanti::before {
+.collections ul .icon.shanticon-logo-shanti::before {
   font-size: 110%;
 }
 
-.site-banner .collections h4 {
+.collections h4 {
   color: #eee;
   text-align: center;
   margin: 10px 0 18px;
@@ -959,7 +959,7 @@ div.contextual-links-wrapper{
   display: none;
 }
 
-.site-banner .collections .close {
+.collections .close {
   color: #ccc;
   background: transparent;
   background-image: none;
@@ -983,17 +983,17 @@ div.contextual-links-wrapper{
   transition: color 200ms ease 0s;
 }
 
-.site-banner .collections .close:hover,
-.site-banner .collections .close:active {
+.collections .close:hover,
+.collections .close:active {
   filter: alpha(opacity=75);
   opacity: 0.75;
 }
 /* adjust icon fonts for consistency in Explore menu and elsewhere */
-.site-banner .collections .shanticon-visuals {
+.collections .shanticon-visuals {
   font-size: 110%;
 }
 
-.site-banner .collections .shanticon-images {
+.collections .shanticon-images {
   font-size: 90%;
 }
 /*--- END collections panel ---*/
@@ -1143,10 +1143,12 @@ div.contextual-links-wrapper{
   font-size: .82em;
   color: #fff;
   text-decoration: none;
-  height: 1.18em;
+  /*height: 1.18em;*/
   line-height: 1.32em;
   overflow: hidden;
   font-weight: normal;
+    font-size:0.93em;
+    line-height:1.12em;
 }
 
 .breadcrumb li a:hover,
@@ -1358,6 +1360,11 @@ div.contextual-links-wrapper{
 }
 
 
+
+.nav-tabs>li>a{
+  font-family: 'museo-sans-500',helvetica,arial,sans-serif;
+}
+
 /** Vertical Tabs rulesets 
 * ---> Moved to shanti-admin-edit-forms.css 
 */
@@ -1372,10 +1379,9 @@ div.contextual-links-wrapper{
   background: #fff;
   border-right: none;
   font-size: 1.06em;
-  font-family: 'museo-sans-500',helvetica,arial,sans-serif;
   font-weight: bold;
-  -webkit-transition: background 0.25s ease 0s;
-  transition: background 0.25s ease 0s;
+  -webkit-transition: all 0.25s ease 0s;
+  transition: all 0.25s ease 0s;
 }
 
 .nav-tabs.nav-justified>li:hover:not(.active){
@@ -1459,8 +1465,8 @@ div.contextual-links-wrapper{
   border-top: 1px solid #fff;
   border-bottom: 1px solid #c0c0c0;
   font-size: 1.32em;
-      line-height: 3.32em;
-  line-height: 3em;
+  line-height: 3.32em;
+      line-height: 3em;
   height: 3.12em;
   font-family: 'droidserif',georgia,palatino,'Palatino Linotype',serif !important;
   font-weight: normal;
@@ -3128,7 +3134,7 @@ div.block-shanti-carousel > h2 {
   top: .475rem;
   margin-right: .3rem;
   font-size: 1.38em;
-  color: #6f69ae;
+  color: #777;
 }
 
 .carousel .byline {
@@ -3633,7 +3639,7 @@ div#carousel-buttons {
   display: none;
   text-align: center;
 
-    display:none; /* hiding since most pages are short enough not to need this, will add required */
+    display:none !important; /* hiding since most pages are short enough not to need this, will add required */
 }
 
 .back-to-top:hover,
@@ -4528,7 +4534,8 @@ article.main-col {
 .collection-page article.main-col,
 .page-mycontent.images article.main-col,
 .page-mycontent.visuals article.main-col,
-.page-mycontent.audio-video article.main-col{
+.page-mycontent.audio-video article.main-col,
+.page-examples.visuals article.main-col{
   max-width:100% !important;
 }
 
@@ -4927,7 +4934,7 @@ article.main-col > div.region-content::after{
     display:none;
   }
     
-  .site-banner .collections ul li {
+  .collections ul li {
     line-height: 3em;
   }
 
@@ -4959,11 +4966,11 @@ article.main-col > div.region-content::after{
 
 @media screen and (max-width: 499px) {
 
-  .site-banner .collections h4 {
+  .collections h4 {
     font-size: 1em;
   }
 
-  .site-banner .collections > nav > div {
+  .collections > nav > div {
     padding-right: 0;
     padding-left: 0;
   }
@@ -4987,7 +4994,7 @@ article.main-col > div.region-content::after{
 
 @media screen and (min-width: 500px) {
 
-  .site-banner .collections ul li {
+  .collections ul li {
     width: 40%;
     margin-left: 10%;
   }
@@ -5006,15 +5013,15 @@ article.main-col > div.region-content::after{
     line-height: 1.32em;
   }
   
-  .site-banner .collections ul li {
+  .collections ul li {
     width: 20%;
   }
 
-  .site-banner .collections ul li a.disabled, 
-  .site-banner .collections ul li a.disabled:hover,
-  .site-banner .collections ul li a.disabled:active,
-  .site-banner .collections ul li a.disabled .icon,  
-  .site-banner .collections ul li a.disabled:hover .icon {
+  .collections ul li a.disabled, 
+  .collections ul li a.disabled:hover,
+  .collections ul li a.disabled:active,
+  .collections ul li a.disabled .icon,  
+  .collections ul li a.disabled:hover .icon {
     color: #707070;
     cursor: default;
   }
@@ -5043,13 +5050,13 @@ article.main-col > div.region-content::after{
     display: inline-block;
   }
 
-  .site-banner .collections h4 {
+  .collections h4 {
     font-size: 1.06em;
     letter-spacing: 0.25em;
     margin-top: 8px !important;
   }
 
-  .site-banner .collections ul li {
+  .collections ul li {
     width: 15%;
     margin-left: 7%;
   }
@@ -5078,18 +5085,18 @@ article.main-col > div.region-content::after{
     margin-top: 0;
   }
 
-  .site-banner .collections h4 {
+  .collections h4 {
     font-size: 1.12em;
   }
 
-  .site-banner .collections ul li {
+  .collections ul li {
     width: 12%;
     margin-left: 7%;
   }
 
-  .site-banner .collections ul li a.disabled, 
-  .site-banner .collections ul li a.disabled:hover, .site-banner .collections ul li a.disabled:active, 
-  .site-banner .collections ul li a.disabled .icon, .site-banner .collections ul li a.disabled:hover .icon, .site-banner .collections ul li a.disabled:active .icon {
+  .collections ul li a.disabled, 
+  .collections ul li a.disabled:hover, .collections ul li a.disabled:active, 
+  .collections ul li a.disabled .icon, .collections ul li a.disabled:hover .icon, .collections ul li a.disabled:active .icon {
     color: #707070;
     cursor: default;
   }

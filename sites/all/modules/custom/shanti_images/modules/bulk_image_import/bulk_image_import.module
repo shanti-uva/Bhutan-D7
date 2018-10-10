@@ -210,6 +210,15 @@ function bulk_image_import_page_alter() {
   ), array('type' => 'setting'));
 }
 
+function bulk_image_import_permission() {
+  return array(
+    'access bulk_image_import' => array(
+      'title' => t('Administer Bulk Image Import'),
+      'description' => t('Perform administration tasks for Bulk Image Import.'),
+    ),
+  );
+}
+
 
 function bulk_image_import_menu() {
   $items = array();;

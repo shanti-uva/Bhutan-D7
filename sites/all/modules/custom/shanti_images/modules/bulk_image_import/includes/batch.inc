@@ -106,6 +106,12 @@ function bulk_image_import_process_task($tid, &$auth, &$context) {
   // Download the image to the temp directory
   $folder_id = $context['results']['folder_id'];
   $filename = trim(preg_replace('/\s\s+/', ' ', (string) $xml->AssetProperties->Filename));
+  // Hack for handling RAW image files
+  list($dirname, $basename, $extension, $fname) = array_values(pathinfo($filename));
+  if (in_array($extension, array('RAF', 'NEF', 'raf', 'nef'))) {
+    $filename = "$fname.jp2";
+  }
+
   try {
     $file = bulk_image_import_download_box_file($auth, $filename, $folder_id);
   }

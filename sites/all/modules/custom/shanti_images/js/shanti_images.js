@@ -197,4 +197,22 @@
         }
     };
 
+  /**
+   * Behavior to adjist image urls on DEV when the image is on prod
+   * @type {{attach: Drupal.behaviors.shanti_images_dev_adjust.attach}}
+   */
+  Drupal.behaviors.shanti_images_dev_adjust = {
+    attach: function (context, settings) {
+      var hst = window.location.hostname;
+      if (hst.indexOf('.dd') > -1 || hst.indexOf('-dev') > -1) {
+        $('body').find('img[src*="iiif-test"]').each(function () {
+          var src = $(this).attr('src');
+          if (src.match(/shanti-image(-stage)?-\d+/)) {
+            $(this).attr('src', src.replace('-test', ''));
+          }
+        });
+      }
+    }
+  };
+
 }(jQuery));

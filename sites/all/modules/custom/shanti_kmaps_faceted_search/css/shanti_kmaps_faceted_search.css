@@ -408,8 +408,8 @@
     right: 7rem;
     top: 7.9rem;
 }
-    .texts .facet-search-controls,
-    .images .facet-search-controls{
+    .texts:not(.bhutan) .facet-search-controls,
+    .images:not(.bhutan) .facet-search-controls{
       position: absolute;
       top: 7.2rem;
       right:5.7rem;

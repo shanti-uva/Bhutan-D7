@@ -164,9 +164,15 @@ function shanti_collections_get_parent_collection($subcoll) {
 }
 
 /**
- * Return the count of number of items in a collection
+ * Return the count of number of items in a collection or return a list of nids for items in the collection
+ *
+ * @param $coll : the collection node or node id
+ * @param $return : "count" to return a number or "nids" to return a list of node ids
+ * @param $sort : the sort parameters node "field name:order" (asc = default, desc), e.g. 'title:desc' or 'created'
+ *
+ * @return the count of nodes or the list of node ids
  */
-function shanti_collections_get_items_in_collection($coll = FALSE, $return = "count")
+function shanti_collections_get_items_in_collection($coll = FALSE, $return = "count", $sort = 'created')
 {
   $nids = array();
   if (is_numeric($coll)) {
@@ -183,12 +189,23 @@ function shanti_collections_get_items_in_collection($coll = FALSE, $return = "co
      */
     $query = db_select('og_membership', 'ogm');
     $query->join('node', 'n', 'n.nid = ogm.etid');
-    $result = $query->fields('ogm', array('etid'))
+    $query->fields('ogm', array('etid'))
       ->condition('n.status', 1)
       ->condition('ogm.entity_type', 'node')
       ->condition('ogm.field_name', 'field_og_collection_ref')
-      ->condition('ogm.gid', $nids, 'IN')
-      ->execute();
+      ->condition('ogm.gid', $nids, 'IN');
+
+    // Add sort params if there
+    if (!empty($sort)) {
+        $pts = explode(':', $sort);
+        $fieldnm = $pts[0];
+        $order = (count($pts) > 1) ? $pts[1] : 'asc';
+        $query->fields('n', array($fieldnm));
+        $query->orderBy("n.". $fieldnm, $order);
+    }
+
+    // Perform the query and get and return results
+    $result = $query->execute();
     $nids = $result->fetchCol();
 
     if ($return == "nids") {

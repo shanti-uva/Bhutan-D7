@@ -158,6 +158,14 @@ function shanti_images_init() {
         'access callback' => TRUE,
     );
 
+    $items['api/carouseldata/%'] = array(
+        'title' => 'Node Carousel Data',
+        'description' => 'Return the carousel for a particular node',
+        'page callback' => 'shanti_images_get_node_carousel',
+        'page arguments' => array(2),
+        'access callback' => TRUE,
+    );
+
      /**
       * Given an mms id return its iiif file name
       */
@@ -217,6 +225,67 @@ function shanti_images_preprocess_views_view(&$vars) {
         drupal_add_css($me . '/css/shanti-image-list-view.css', 'external');
         drupal_add_js($me . '/js/shanti-image-list-view.js', 'file');
     }
+}
+
+
+/**
+ * Returnes the markup for a carousel underneath a main image
+ *
+ * @param $nid
+ *
+ * @return string markup to insert through ajax
+ */
+function shanti_images_get_node_carousel($nid) {
+    global $base_url;
+    $num_of_sibs = 20;
+    $halfnum = intval($num_of_sibs / 2);
+    $coll = shanti_collections_get_collection($nid); // Get node's collection
+    $galinfo = array();
+    $is_dev = (strstr($base_url, '.dd') || strstr($base_url, '-dev')) ? TRUE : FALSE;
+
+    if ($coll) {
+        $sibids = shanti_collections_get_items_in_collection($coll, 'nids');
+        $myind = array_search($nid, $sibids);
+        if (!$myind) { $myind = $halfnum; }
+        $thmbst = $myind - $halfnum;
+        if ($thmbst < 0 ) { $thmbst = 0; }
+        $items = array_slice($sibids, $thmbst, $num_of_sibs);
+        if (!empty($items)) {
+            $items = node_load_multiple($items);  // Turn list of nids into node objects
+            // Process list of node objects into gallery item objects per specifications above
+            foreach($items as $item) {
+                $gitem = new stdClass;
+                $gitem->nid = $item->nid;
+                $gitem->filename = $item->i3ffiles;
+                $gitem->title = $item->title;
+                $gitem->path = drupal_get_path_alias('node/' . $item->nid);
+                $galinfo[] = $gitem;
+            }
+        }
+        $myind = array_search($nid, array_keys($galinfo));
+    } else {
+        // TODO: what to do if the node has no collection. Show carousel based on the homepage?
+        // TODO: What to do if coming from the homepage? Use collection context or homepage context????
+    }
+
+    $carousel_slides = '<ul class="slides">';
+    foreach($galinfo as $n => $item) {
+        if (!is_object($item) || empty($item->nid)) { continue; } // Took out || empty($item->filename) from condition
+        $si = _shanti_images_get_node_image($item->nid);
+        $item_rotate = (!empty($item->rotation)) ? (360 - $item->rotation) % 360 : 0;
+        $url = $si->getCropped(90, 65, $item_rotate);
+        // use prod server when on DEV but looking for images on prod
+        if ($is_dev && preg_match('/shanti-image(-stage)?-\d+/', $si->getIIIFName())) {
+            $url = str_replace('-test', '', $url);
+        }
+        $ipath = trim($item->path);
+        if (substr($ipath, 0, 1) !== '/' && strpos($ipath, 'http') !== 0) { $ipath = '/' . $ipath; }
+        $active = ($item->nid == $nid) ? ' class="flex-active-slide"' : '';
+        $carousel_slides .= "<li$active><a href=\"{$ipath}\"><img src=\"$url\" /></a></li>";
+    }
+    $carousel_slides .= '</ul>';
+    $markup = '<div id="fscarousel" class="flexslider fscarousel">' . $carousel_slides . '</div>';
+    print $markup;
 }
 
  /**
@@ -536,7 +605,6 @@ function shanti_images_get_license_title($license_url) {
   */
  function shanti_images_preprocess_node(&$vars) {
      if ($vars['type'] == "shanti_image") {
-
          //dpm($vars, 'vars in pp node');
          // Add view mode to classes
 

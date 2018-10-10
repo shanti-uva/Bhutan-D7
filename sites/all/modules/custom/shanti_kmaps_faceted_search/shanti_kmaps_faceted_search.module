@@ -973,6 +973,7 @@ function shanti_kmaps_faceted_search_form_alter(&$form, &$form_state, $form_id) 
               '#type' => 'radios',
               '#default_value' => 0,
 /*              '#options' => array(0 => t('Wingo'), 1 => t('Dingo'), 2 => t('Bingo')), */
+              '#options' => array(), // Added by ndg8f (10/9/18) otherwise fills log with warnings.
               '#attributes' => array('class' => array('shanti-options'))
           ),
         );

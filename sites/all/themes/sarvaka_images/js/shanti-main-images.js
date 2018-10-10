@@ -270,22 +270,44 @@
             }
           });
         }
-        if($('#fscarousel').length > 0 ) {
-          // Initiate the carousel of thumbs underneath the main image
-            $('#fscarousel').flexslider({
-              initDelay: 3000,
-              animation: "slide",
-              controlNav: false,
-              animationLoop: true,
-              slideshow: false,
-              startAt: startInd,
-              itemWidth: 90,
-              itemMargin: 5,
-              maxItems: 50,
-              move: moveNum
-            });
-        }
 
+        // Lower image title until carousel is loaded
+        $('header.image-title').css('top', '-70px');
+
+        $div = $('div.progressive');
+        var divobserver = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.attributeName === "class") {
+                    var attributeValue = $(mutation.target).prop(mutation.attributeName);
+                    if (attributeValue == "progressive") {
+                        var nid = Drupal.settings.shanti_images.nid;
+                        $('body').append('<div id="fscaroload" class="hidden" style="display:none;"></div>');
+                        $('#fscaroload').load('/api/carouseldata/' + nid, function() {
+                            var carousel = $('#fscarousel').detach();
+                            $('#fscarousel-placeholder').replaceWith(carousel);
+                            $('#fscaroload').remove();
+                            $('#fscarousel').flexslider({
+                                animation: "slide",
+                                controlNav: false,
+                                animationLoop: false,
+                                slideshow: false,
+                                startAt: 0,
+                                itemWidth: 90,
+                                itemMargin: 5,
+                                maxItems: 50,
+                                move: 3
+                            });
+                            // Readjust header title with carousel loaded
+                            $('header.image-title').css('top', '-160px');
+                        });
+                    }
+                }
+            });
+        });
+
+        divobserver.observe($div[0], {
+            attributes: true
+        });
           
           // If current image in carousel is first or last, hide the corresponding arrow
           if ($('.flex-active-slide').prev('li').length == 0) {

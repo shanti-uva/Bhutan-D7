@@ -90,38 +90,34 @@
 /*** END - colors ***/
 
 
-body:not(.front) article.main-col{
+
+
+
+/* former breadcrumb dropodwn menu */
+.library-dropdown{ display:none; }
+
+
+
+
+/* page layouts */
+article.main-col{
   max-width: 950px !important;
 }
 
+.front article.main-col{
+  max-width: 1050px;
+}
 
 /* override system.menus.css #36 */
 article.main-col li a.active{
   color: rgb(0, 0, 139);
 }
 
-
-.page-home article.main-col > .region.region-content{
-  max-width: 400px;
-}
-
-
-.library-dropdown, 
-.breadcrumb-child-container{ width: 380px; }
-
-.library-dropdown{ display:none; }
-
-
-
-
 .node-type-collection .content-section{
   padding-bottom: 7rem;
 }
 
-.page-sources-search .tab-pane.main-col > div.region-content{
-  max-width: 890px !important;
-  margin: 0 auto;
-}
+
 
 /* testing white background */
 .page-sources-search div#block-system-main.block.block-system,

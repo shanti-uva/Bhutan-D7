@@ -5,7 +5,6 @@ package = Images
 version = 7.x-0.1
 dependencies[] = shanti_images
 dependencies[] = shanti_kmaps_fields
-dependencies[] = devel
 scripts[] = js/bulk-image-import.js
 
 files[] = box.inc

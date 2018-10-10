@@ -832,12 +832,12 @@ function shanti_mms_import_create_node($data, $publish, $collid='', $admin_note=
     }
 
     unset($_SESSION['image_files_to_add']); // No files to upload because they are already there
-    $siid = _shanti_images_create_record($node->nid, 0, $fn, $data['width'], $data['height']);
-    $siobj = new ShantiImage($siid);
-    $siobj->updateTable(array(  'mmsid' => $data['mmsid'],  ));
 
     // Finally Save the node
     _shanti_mms_import_save_node($node);
+    $siid = _shanti_images_create_record($node->nid, 0, $fn, $data['width'], $data['height']);
+    $siobj = new ShantiImage($siid);
+    $siobj->updateTable(array(  'mmsid' => $data['mmsid'],  ));
 
     // Add i3ffiles to node for result output
     $node->i3ffiles = array($siobj->getIIIFName(TRUE));
