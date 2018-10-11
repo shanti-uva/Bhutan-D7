@@ -2,12 +2,24 @@
 .intro-search { display:none;}
 .intro-summary { width:100% !important;}
 
+.view-section .nav-tabs > li {
+	width: 50%;
+	max-width: none;
+}
+
+.view-section .nav-tabs>li.active>a, 
+.view-section .nav-tabs>li.active>a:hover, 
+.view-section .nav-tabs>li.active>a:active{
+  border-top-color: #4d59ca !important;
+}
+
+
 /*--- Temporary hide advance search */
 .input-section .input-group input.form-control{ margin-top:7px;}
-.input-section .toggle-link.advanced-link{ display:none !important;}
+/*.input-section .toggle-link.advanced-link{ display:none !important;}*/
 .advanced-view .form-group:first-child{ border-top:none;}
 /* .input-section .input-group .input-group-btn{ top:8px !important;} incompatible with kmaps facet search */
-.advanced-view{ display:block !important;}
+/*.advanced-view{ display:block !important;}*/
 .input-section .alert{ position:relative; top:7px;}
 
 /* hiding inner workings */
@@ -18,7 +30,3 @@
   border-top: none !important;
 }
 
-.view-section .nav-tabs > li {
-	width: 50%;
-	max-width: none;
-}

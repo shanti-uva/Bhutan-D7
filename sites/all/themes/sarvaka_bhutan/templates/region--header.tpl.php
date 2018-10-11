@@ -23,10 +23,8 @@
 	       </fieldset>
        </form>
      </nav>
-     
+      <!-- include shanti-explore-menu if it exists this is hidden until explore button clicked -->
+     <?php if(module_exists('explore_menu')) { print render($variables['explore_menu']); } ?>    
  </div>
- <!-- include shanti-explore-menu if it exists this is hidden until explore button clicked -->
- <?php if(module_exists('explore_menu')) { print render($variables['explore_menu']); } ?>
- 
 </div>
 <!-- End of Header Region -->

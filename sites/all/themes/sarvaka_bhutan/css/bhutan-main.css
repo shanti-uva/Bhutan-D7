@@ -38,31 +38,192 @@ article ul ul ul ul { -webkit-margin-before: 0; margin-top:0;}
 .sponsor-list .views-row .website{ display: block;clear: both;}
 .sponsor-list .views-row .website .label{ font-size: 0.9em;color: #555;padding-left:0;}
 
-/** FOOTER **/
-.footer{ min-height: 120px; background:#222;padding: 10px 15px 30px; position:relative;border-top:3px double #ccc;border-bottom:22px solid #000;}
-.footer,	
-.footer .sponsors, 
-.footer .general,
-.footer .sponsors .views-row{ float: left;}
-.footer .sponsors{ width:100%;}
-.footer .view-sponsor-logos{ display:inline-block;position:relative;top:1.5rem;}
 
-/* footer logos */
-.footer .views-field img.img-responsive{ width:auto; max-width:auto; margin:1.6rem 3rem 0 0;opacity:0.5;}
-.footer .views-field img.img-responsive:hover{ opacity:0.8;}
-.footer .views-field img.img-responsive:active{ opacity:0.4;}
 
-.footer .views-row-1 .views-field img.img-responsive{ height:30px;} /* arcadia */
-.footer .views-row-2 .views-field img.img-responsive{ height:40px; margin-top: 0.7rem;} /* shejun */
-.footer .views-row-3 .views-field img.img-responsive{ height:28px; margin-right:0;margin-top:1.4rem;} /* tibet center */
+#sidebar-first .nav-pills li.places.active,
+.page-places #sidebar-first .nav-pills li.overview.active {
+  border-color: #3297f7 !important; 
+}
+#sidebar-first .nav-pills li.subjects.active,
+.page-subjects #sidebar-first .nav-pills li.overview.active {
+  border-color: #cc4c39 !important; 
+}
+#sidebar-first .nav-pills li.photos.active { /* images */
+  border-color: #b5953b !important; 
+}
+#sidebar-first .nav-pills li.essays.active { /* texts */
+  border-color: #8c48a1 !important; 
+}
+#sidebar-first .nav-pills li.audio-video.active {
+  border-color: #31acb6 !important; 
+}
+#sidebar-first .nav-pills li.sources.active {
+  border-color: #8c48a1 !important; 
+ }
 
-/* hide drupal */
-.footer .general .content > span{ display:none;} 
-/* copyright */
-.footer .general > p{ color:#707070;font-size:90%;position:absolute;left:50%;bottom:-2rem;margin:0 0 0 -4.4em;} 
-/* sponsored by */
-.footer .sponsors p.tagline{ color:#888;position:absolute;left:50%;margin:0 0 0 -4.62em;letter-spacing:2px;font-size:0.88em;font-family:'museo sans';text-transform:uppercase;} 
-.footer .sponsors p.tagline::first-letter{ font-size:117%;}
+
+
+.page-places .breadcrumb .icon,
+.page-places .fixed-action-button a,
+.page-places .fixed-action-button a{
+  background-color:#3297f7 !important;
+ }
+
+.page-subjects .breadcrumb .icon,
+.page-subjects .fixed-action-button a,
+.page-subjects .fixed-action-button a{
+  background-color:#cc4c39 !important;
+ }
+
+
+.page-places .breadcrumb .icon,
+.page-places.kmaps-overview .breadcrumb .icon,
+.page-subjects.kmaps-places .breadcrumb .icon,
+.page-places .titlearea,
+.kmaps-places .titlearea,
+.page-places.kmaps-overview .titlearea,
+.page-subjects.kmaps-places .titlearea,
+.page-places .fixed-action-button a{
+  background-color:#3297f7 !important;
+}
+
+.page-subjects .breadcrumb .icon,
+.page-subjects.kmaps-overview .breadcrumb .icon,
+.page-places.kmaps-subjects .breadcrumb .icon,
+.page-subjects .titlearea,
+.kmaps-subjects .titlearea,
+.page-subjects.kmaps-overview .titlearea,
+.page-places.kmaps-subjects .titlearea,
+.page-subjects .fixed-action-button a{
+  background-color:#cc4c39 !important;
+}
+
+.page-places.kmaps-photos .breadcrumb .icon,
+.page-subjects.kmaps-photos .breadcrumb .icon,
+.page-places.kmaps-images .breadcrumb .icon,
+.page-subjects.kmaps-images .breadcrumb .icon,
+.page-places.kmaps-photos .titlearea,
+.page-subjects.kmaps-photos .titlearea,
+.page-places.kmaps-images .titlearea,
+.page-subjects.kmaps-images .titlearea{
+  background-color:#b5953b !important;
+}
+
+.page-places.kmaps-texts .breadcrumb .icon,
+.page-subjects.kmaps-texts .breadcrumb .icon,
+.page-places.kmaps-texts .titlearea,
+.page-subjects.kmaps-texts .titlearea{
+  background-color:#8c48a1 !important;
+}
+
+.page-places.kmaps-audio-video .breadcrumb .icon,
+.page-subjects.kmaps-audio-video .breadcrumb .icon,
+.page-places.kmaps-audio-video .titlearea,
+.page-subjects.kmaps-audio-video .titlearea{
+  background-color:#31acb6 !important;
+}
+
+.page-places.kmaps-sources .breadcrumb .icon,
+.page-subjects.kmaps-sources .breadcrumb .icon,
+.page-places.kmaps-sources .titlearea,
+.page-subjects.kmaps-sources .titlearea{
+  background-color:#6f69ae !important;
+}
+
+.page-places.kmaps-visuals .breadcrumb .icon,
+.page-subjects.kmaps-visuals .breadcrumb .icon,
+.page-places.kmaps-visuals .titlearea,
+.page-subjects.kmaps-visuals .titlearea{
+  background-color:#558e3c !important;
+}
+
+.page-places .kmaps-sources-summary .shanticon-texts,
+.page-subjects .kmaps-sources-summary .shanticon-texts{
+  color:#8c48a1 !important;
+}
+
+.page-places .kmaps-sources-summary .shanticon-sources,
+.page-subjects .kmaps-sources-summary .shanticon-sources{
+  color:#6f69ae !important;
+}
+
+/* temp for testing - it is in Mandala */
+.sidebar-first .nav-pills > li .ajax-progress {
+  position: absolute;
+  right: 0.1rem;
+  top: 0.1rem;
+}
+
+
+
+
+/* footer - use of class .abc is purely as selector overrie in this case to be sure Bhutan site receives the styles */
+.footer{
+  height: 80px;
+  padding-top: 5px;
+  border-bottom: 2rem solid #000 !important;
+}
+
+.footer .sponsors p.tagline{
+  color: #aaa;
+  position: relative;
+  left: 0;
+  margin: 0 auto 1rem;
+  font-size: 0.62em;
+  font-family: 'museo-sans-500', helvetica, arial, sans-serif;
+}
+  .footer .sponsors p.tagline::first-letter{ font-size:117%;}
+
+.footer .view-sponsor-logos{
+  position: relative;
+  top: -1.5rem;
+  left: -19rem;
+  margin-left: 50%; 
+}
+
+.footer .views-field img.img-responsive{
+  margin: 1.6rem 3rem 0 0;
+  width: auto;
+  float: left;
+}
+
+.footer .views-row-1 .views-field img.img-responsive{ /*------ arcadia */ 
+  height: 20px;
+  opacity: 0.6;
+}
+
+.footer .views-row-2 .views-field img.img-responsive{ /*----- shejun */
+  height: 30px;
+  margin-top: 0.7rem;
+  margin-right: 2.5rem;
+  opacity: 0.8;
+}
+
+.footer .views-row-3 .views-field img.img-responsive{ /*------ tibet center */
+  height: 22px;
+  margin-top: 1.4rem;
+  margin-right: 0;
+  opacity: 0.8;
+}
+
+
+.footer .general > p{
+  color: #707070;
+  font-size: 70%;
+  position: absolute;
+  left: 50%;
+  bottom: -2.5rem;
+  margin-left: -4.5rem;
+  white-space: nowrap;
+}
+/*----- hide drupal */ 
+.footer .general .content > span{ display:none;}
+
+
+
+
+
+
 
 @media screen and (max-width: 993px) {	/* this breakpoint from kmaps */
 	
@@ -74,154 +235,10 @@ article ul ul ul ul { -webkit-margin-before: 0; margin-top:0;}
 	/**.footer{ padding-bottom:10px;}
 	.footer .view-sponsor-logos{ left:50%;margin-left:-255px;}**/
 }
-/*--- BEGIN collections panel ---*/
-.collections {
-  background: #222;
-  margin: 0 0 .2rem 0;
-  padding: 1rem 0 1.8rem 0.8rem;
-  position: relative;
-  width: 100%;
-  display: none;
-}
 
-.collections .row {
-  margin: 0;
-}
 
-.collections ul {
-  text-align: center;
-  list-style-type: none;
-  margin: 0 auto 0 2%;
-  margin-bottom: 10px !important;
-}
 
-.collections ul li {
-  margin: 0;
-  float: left;
-  line-height: 4.5em;
-  width: 50%;
-}
-
-.collections ul li a {
-  color: #d0d0d0;
-  text-decoration: none;
-  letter-spacing: 0.08em;
-  margin-left: 0;
-  float: left;
-  font-size: 0.75em;
-  line-height: 2.75em;
-  font-family: 'museo-sans-500',helvetica,arial,sans-serif;
-  font-weight: 500;
-  font-weight: normal;
-  white-space: nowrap;
-  text-transform: uppercase;
-}
-
-.collections ul li a.disabled, .collections ul li a.disabled:hover, .collections ul li a.disabled:active, 
-.collections ul li a.disabled .icon, .collections ul li a.disabled:hover .icon {
-  color: #707070;
-  cursor: default;
-}
-
-.collections ul li a:hover,
-.collections ul li a:active {
-  text-decoration: none;
-  color: #fff;
-}
-
-.collections ul .icon {
-  color: #aaa !important;
-  margin-right: 8px;
-  font-size: 1.75em;
-  position: relative;
-  top: 0.4rem;
-}
-
-.collections ul .icon.shanticon-logo-shanti {
-  color: #f0f0f0;
-}
-
-.collections ul li a:hover .icon::before{
-  color: #fafafa;
-}
-.collections ul li a:active .icon::before{
-  color: #fff;
-}
-
-.collections ul .icon.shanticon-visuals::before {
-  font-size: 120%;
-  position: relative;
-  left: -0.15rem;
-  margin-right: -0.25rem;
-}
-.collections ul .icon.shanticon-logo-shanti::before {
-  font-size: 110%;
-}
-
-.collections h4 {
-  color: #eee;
-  text-align: center;
-  margin: 10px 0 18px;
-  letter-spacing: 0.4rem;
-  display: none;
-}
-
-.collections .close {
-  color: #ccc;
-  background: transparent;
-  background-image: none;
-  font-size: 1.75em;
-  width: 2.5rem;
-  height: 2.5rem;
-  position: absolute;
-  top: 2rem;
-  right: 2rem;
-  z-index: 10 !important;
-  filter: alpha(opacity=35);
-  opacity: 0.35;
-  padding: 0;
-  margin: 0;
-  border: none;
-  text-shadow: none;
-  box-shadow: none;
-  cursor: pointer;
-  display: inline-block;
-  -webkit-transition: color 200ms ease 0s;
-  transition: color 200ms ease 0s;
-}
-
-.collections .close:hover,
-.collections .close:active {
-  filter: alpha(opacity=75);
-  opacity: 0.75;
-}
-/* adjust icon fonts for consistency in Explore menu and elsewhere */
-.shanticon-visuals {
-  font-size: 110%;
-}
-
-.shanticon-images {
-  font-size: 90%;
-}
-
-.site-banner .collections ul li a{
-  -webkit-transform: scale(1.1);
-  transform: scale(1.1);
-  -webkit-transition: .2s ease-in-out;
-  transition: .2s ease-in-out;
-}
-.site-banner .collections ul li a:hover {
-  -webkit-transform: scale(1.125);
-   transform: scale(1.125);
-}
-.site-banner .collections ul li a:active {
-  -webkit-transform: scale(1.1);
-   transform: scale(1.1);
-}
-
-/*--- END collections panel ---*/
-/* MINIMUM WIDTH Begins */
-
+/* MINIMUM WIDTH */
 
 @media screen and (min-width: 400px) {
 
@@ -231,11 +248,6 @@ article ul ul ul ul { -webkit-margin-before: 0; margin-top:0;}
     
   .navbar-header .site-slogan {
     display: inline-block;
-  }
-
-  .collections ul li {
-    width: 40%;
-    margin-left: 10%;
   }
 }
 
@@ -260,19 +272,6 @@ article ul ul ul ul { -webkit-margin-before: 0; margin-top:0;}
     /*text-shadow: 0.05rem 0.05rem #555;*/
     text-shadow:none;
   }
-    /* .navbar-header .navbar-brand{ line-height: 3.75em;} */
-  .collections ul li {
-    width: 20%;
-  }
-
-  .collections ul li a.disabled, 
-  .collections ul li a.disabled:hover,
-  .collections ul li a.disabled:active,
-  .collections ul li a.disabled .icon,  
-  .collections ul li a.disabled:hover .icon {
-    color: #707070;
-    cursor: default;
-  }
 }
 
 
@@ -289,18 +288,6 @@ article ul ul ul ul { -webkit-margin-before: 0; margin-top:0;}
   .menu-toggle {
     display: inline-block;
   }
-
-  .collections h4 {
-    font-size: 1.06em;
-    letter-spacing: 0.25em;
-    margin-top: 8px !important;
-  }
-
-  .collections ul li {
-    width: 15%;
-    margin-left: 8%;
-  }
-
 }
 
 @media screen and (min-width: 850px) {
@@ -312,30 +299,6 @@ article ul ul ul ul { -webkit-margin-before: 0; margin-top:0;}
   .titlearea.has-tabs-secondary ul.tabs.secondary,
   .titlearea.has-tabs-secondary .row-offcanvas > section.content-section .tab-content:nth-of-type(1) {
     margin-top: 0;
-  }
-
-  .collections h4 {
-    font-size: 1.12em;
-  }
-
-  .collections ul {
-    margin-left: -5%;
-  }
-
-  .collections ul li {
-    width: 12%;
-    margin-left: 7%;
-  }
-
-  .collections ul li a {
-    font-size: 0.75em;
-  }
-
-  .collections ul li a.disabled, 
-  .collections ul li a.disabled:hover, .collections ul li a.disabled:active, 
-  .collections ul li a.disabled .icon, .collections ul li a.disabled:hover .icon, .collections ul li a.disabled:active .icon {
-    color: #707070;
-    cursor: default;
   }
 }
 
