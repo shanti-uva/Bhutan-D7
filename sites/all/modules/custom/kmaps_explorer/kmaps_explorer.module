@@ -2145,7 +2145,7 @@ function kmaps_explorer_image_node($type = 'ajax', $id, $imgId, $app) {
     $title = isset($node_data->title) ? $node_data->title[0] : '';
 
     $output = '<h4>' . $title . '</h4>';
-    $output .= '<iframe scrolling="no" height="1600" width="100%" frameBorder="0" src="' . $url . '?mbframe=on' . '" seamless ></iframe>';
+    $output .= '<iframe scrolling="no" height="1800" width="100%" frameBorder="0" src="' . $url . '?mbframe=on' . '" seamless ></iframe>';
 
     if ($type == 'ajax') {
         $commands = array();
