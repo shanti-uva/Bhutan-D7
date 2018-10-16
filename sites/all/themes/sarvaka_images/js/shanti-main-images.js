@@ -97,7 +97,7 @@
 
                 // Deal with fssolo with no carousel. Add attribute to image-detail so title can be adjusted
                 if ($('#fsslider').hasClass('fssolo')) {
-                    $('aside.image-detail').addClass('nocarousel');
+                    $('aside.image-detail-wrapper').addClass('nocarousel');
                 }
 
                 /*
@@ -274,41 +274,28 @@
         // Lower image title until carousel is loaded
         $('header.image-title').css('top', '-70px');
 
-        $div = $('div.progressive');
+        // Initialize the Mutation Observer to place on the main image div to observe when that image is loaded
+        // When it's class goes from "progressive preview" to "progressive" then the main image is loaded and we can load the carousel
         var divobserver = new MutationObserver(function(mutations) {
             mutations.forEach(function(mutation) {
+                // Look for the attribute class (initially this is "progressive preview")
                 if (mutation.attributeName === "class") {
                     var attributeValue = $(mutation.target).prop(mutation.attributeName);
+                    // When the class gets changed to just "progressive"...
                     if (attributeValue == "progressive") {
-                        var nid = Drupal.settings.shanti_images.nid;
-                        $('body').append('<div id="fscaroload" class="hidden" style="display:none;"></div>');
-                        $('#fscaroload').load('/api/carouseldata/' + nid, function() {
-                            var carousel = $('#fscarousel').detach();
-                            $('#fscarousel-placeholder').replaceWith(carousel);
-                            $('#fscaroload').remove();
-                            $('#fscarousel').flexslider({
-                                animation: "slide",
-                                controlNav: false,
-                                animationLoop: false,
-                                slideshow: false,
-                                startAt: 0,
-                                itemWidth: 90,
-                                itemMargin: 5,
-                                maxItems: 50,
-                                move: 3
-                            });
-                            // Readjust header title with carousel loaded
-                            $('header.image-title').css('top', '-160px');
-                        });
+                        shanti_images_page_load_carousel(settings);  // See below
                     }
                 }
             });
         });
 
+        // Add the Observer to the Main Progressive Image Div
+        $div = $('div.progressive');
         divobserver.observe($div[0], {
             attributes: true
         });
-          
+
+        /*
           // If current image in carousel is first or last, hide the corresponding arrow
           if ($('.flex-active-slide').prev('li').length == 0) {
               $('.flex-nav-prev').hide();
@@ -316,6 +303,7 @@
           if ($('.flex-active-slide').next('li').length == 0) {
               $('.flex-nav-next').hide();
           }
+         */
 
           $('.flexslider a:not(.flex-nav-prev > a)').click(function() {
             $('.preloading-horizontal,.image-preloading-text').css('display','block');
@@ -333,6 +321,122 @@
             }
           );
 
+   }
+
+   function shanti_images_page_load_carousel(settings) {
+       // Create a loading div and load the carousel into it. Using API to get slides
+       settings.shanti_images.loading_slides = false;
+       $('body').append('<div id="fscaroload" class="hidden" style="display:none;"></div>');
+       $('#fscaroload').load('/api/carouseldata/' + settings.shanti_images.nid, function() {
+           // Move the carousel div into place where the placeholder is
+           var carousel = $('#fscarousel').detach();
+           $('#fscarousel-placeholder').replaceWith(carousel);
+           $('#fscaroload').remove(); // remove placeholder
+
+           // Initialize carousel
+           $('#fscarousel').flexslider({
+               animation: "slide",
+               controlNav: false,
+               animationLoop: false,
+               slideshow: false,
+               itemWidth: 90,
+               itemMargin: 5,
+               move: 3
+           });
+
+           var slider = $('#fscarousel').data('flexslider');
+           slider.flexAnimate(3, false, true, false);
+
+           // Readjust header title with carousel loaded
+           $('header.image-title').css('top', '-160px');
+
+           // Set up ajax loading of further slides
+           settings.shanti_images.carousel_coll = $('#fscarousel').data('collid');
+           settings.shanti_images.carousel_start = $('#fscarousel').data('start');
+
+           // Watch for hovering on first to show Prev arrow to initial ajax loading of more slides
+           $('#fscarousel .slides').on('hover', 'li:first-child', function() {
+               $('#fscarousel .flex-prev').removeClass('flex-disabled');
+           });
+
+           // Watch for hovering on first to show Prev arrow to initial ajax loading of more slides
+           $('#fscarousel .slides').on('hover', 'li:last-child', function() {
+               if (!$('#fscarousel .flex-next').hasClass('loaded')) {
+                   $('#fscarousel .flex-next').removeClass('flex-disabled');
+               }
+           });
+
+           // Load more slides if at the beginning
+           $('#fscarousel').on('mouseup', '.flex-prev', function(e) {
+               var slider = $('#fscarousel').data('flexslider');
+               if (slider.currentSlide === 1 && !settings.shanti_images.loading_slides ) {
+                   e.stopImmediatePropagation();
+                   settings.shanti_images.loading_slides = true;
+                   var num_to_load = 30;
+                   var collid = settings.shanti_images.carousel_coll;
+                   var start = settings.shanti_images.carousel_start - num_to_load;
+                   settings.shanti_images.carousel_start = start;
+                   $.ajax({
+                       url: '/api/carouseldata/slides/' + collid + '/' + start + '/' + num_to_load,
+                       success: function(data) {
+                           var slider = $('#fscarousel').data('flexslider');
+                           var slides = $(data);
+                           var slen = slides.length;
+                           // add slides in reverse order to front of carousel
+                           for (var n=slen-1; n>-1; n--) {
+                               var slide = slides.eq(n);
+                               slider.addSlide(slide, 0);
+                           }
+
+                           slider.currentSlide = 0;
+                           slider.flexAnimate(10, false, true, false);
+
+                           setTimeout(function() {
+                               settings.shanti_images.loading_slides = false;
+                           }, 500);
+                       }
+                   });
+               }
+           });
+
+           $('#fscarousel').on('mouseup', '.flex-next', function(e) {
+               var slider = $('#fscarousel').data('flexslider');
+               if (slider.currentSlide >= (slider.pagingCount - 2) && !settings.shanti_images.loading_slides ) {
+                   e.stopImmediatePropagation();
+                   settings.shanti_images.loading_slides = true;
+                   var num_to_load = 30;
+                   var slides_per_page = 3;
+                   var collid = settings.shanti_images.carousel_coll;
+                   var start = settings.shanti_images.carousel_start + slider.count;
+                   settings.shanti_images.carousel_start = start;
+                   $.ajax({
+                       url: '/api/carouseldata/slides/' + collid + '/' + start + '/' + num_to_load,
+                       success: function(data) {
+                           if (data === 'END') {
+                               $('#fscarousel .flex-next').addClass('flex-disabled loaded');
+                               settings.shanti_images.loading_slides = false;
+                               return;
+                           }
+                           var slider = $('#fscarousel').data('flexslider');
+                           var slides = $(data);
+                           var slen = slides.length;
+                           var addind = slider.count - 1;
+                           // add slides in reverse order to front of carousel
+                           for (var n=0; n<slen; n++) {
+                               var slide = slides.eq(n);
+                               slider.addSlide(slide, addind + n);
+                           }
+                           var newslide = Math.floor(slider.count / slides_per_page) - Math.floor(num_to_load / slides_per_page) - 1;
+                           slider.flexAnimate(newslide, false, true, false);
+
+                           setTimeout(function() {
+                               settings.shanti_images.loading_slides = false;
+                           }, 500);
+                       }
+                   });
+               }
+           });
+       });
    }
           
    /**

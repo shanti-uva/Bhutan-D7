@@ -179,20 +179,19 @@
         attach: function (context, settings) {
             if (context == document) {
                 $('.shanti-image-rem-mmsid').click(function(e) {
-                    console.log(e);
                     e.preventDefault();
                     var mmsid = $(this).data('mmsid');
                     var jsonurl = '/admin/shanti_images/list/removeid/' + mmsid;
                     $.getJSON(jsonurl, function(data) {
                         if (data.success) {
                             var el = $(e.currentTarget);
-                            el.after('<span class="mms-removed">Item has been removed.</span>');
+                            el.after('<span class="mms-removed">' + data.msg + '</span>');
                             el.remove();
                         } else {
                             console.log("Problem in API call to remove images", data);
                         }
                     });
-                })
+                });
             }
         }
     };

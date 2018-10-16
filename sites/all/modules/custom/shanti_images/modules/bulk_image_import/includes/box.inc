@@ -74,8 +74,13 @@ function bulk_image_import_download_box_file(&$auth, $filename, $folder_id) {
 
   $uri = 'temporary://' . $filename;
   $path = file_stream_wrapper_uri_normalize($uri);
-  $new_file = file_save_data($response->data, $path, FILE_EXISTS_REPLACE);
-  return $new_file;
+  $existing = file_load_multiple(array(), array('uri' => $uri));
+  if(count($existing)) {
+    return reset($existing);
+  }
+  else {
+    return file_save_data($response->data, $path, FILE_EXISTS_REPLACE);
+  }
 }
 
 function bulk_image_import_find_box_file(&$auth, $filename, $folder_id) {

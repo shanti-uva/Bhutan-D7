@@ -404,6 +404,7 @@
 
 
 .facet-search-controls {
+    white-space: nowrap;
     position: absolute;
     right: 7rem;
     top: 7.9rem;

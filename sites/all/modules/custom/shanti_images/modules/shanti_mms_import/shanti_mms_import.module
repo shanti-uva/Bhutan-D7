@@ -398,6 +398,7 @@ function shanti_mms_import_create_mms_node($mmssource, $mmsid, $mmspublish, $def
         $mmsdata = _shanti_mms_import_get_xml($mmsid, $mmssource, $defptgr);  // MMS XML data is more complete than JSON
         if ($mmsdata === false) {
             $fail_reason = "Could not retrieve XML data from MMS";
+            _shanti_images_remove_one_mmsid_from_list($mmsid, FALSE);
         } elseif ($mmsdata['type'] == 'Picture' && $mmsdata['resource_type_id'] == 2660) {
             // Create the Drupal node from the data retrieved.
             $node = shanti_mms_import_create_node($mmsdata, $mmspublish, $collid);
@@ -426,6 +427,7 @@ function shanti_mms_import_create_mms_node($mmssource, $mmsid, $mmspublish, $def
             }
         } else {
             $fail_reason = "Not an image";
+            _shanti_images_remove_one_mmsid_from_list($mmsid, FALSE);
         }
     } else {
         $siobj = _shanti_images_get_record($mmsid, 'mmsid');

@@ -356,16 +356,6 @@
   border-collapse: separate; /* fix ie9 shadow */
 }
 
-.extruder .shanticon-magnify{
-    position: absolute;
-    top: 3.4rem;
-}
-
-.extruder .view-full-text .shanticon-magnify{
-    position: absolute;
-    top: 4.6rem;
-}
-
 .extruder label.flyout-search-label {
   color:#444;
   display:block;

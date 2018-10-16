@@ -146,7 +146,6 @@ function _mb_kaltura_add_audio_thumb($node)
 
 function mb_kaltura_form_alter(&$form, &$form_state, $form_id)
 {
-  drupal_add_js(drupal_get_path('module', 'mb_kaltura') . '/js/keepalive.js');
 
   switch ($form_id) {
     case 'node_delete_confirm':
@@ -165,11 +164,13 @@ function mb_kaltura_form_alter(&$form, &$form_state, $form_id)
       break;
 
     case 'video_node_form':
+      drupal_add_js(drupal_get_path('module', 'mb_kaltura') . '/js/keepalive.js');
       // Hide the custom settings for each display format
       $form['field_video']['und'][0]['settings']['#access'] = FALSE;
       break;
 
     case 'audio_node_form':
+      drupal_add_js(drupal_get_path('module', 'mb_kaltura') . '/js/keepalive.js');
       $field_name = "field_" . $form['type']['#value'];
       if (isset($form[$field_name][LANGUAGE_NONE])) {
         unset($form[$field_name][LANGUAGE_NONE][0]['meta_edit']); // Remove the Edit Metadata link completely

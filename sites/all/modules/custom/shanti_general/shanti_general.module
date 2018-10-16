@@ -101,8 +101,8 @@ function shanti_general_is_public($node) {
             if ($ggca == 1) {
                 return FALSE;
             }
-            // Otherwise not sure what to do?
         } else {
+            // Otherwise not sure what to do?
             watchdog('shanti_general is_public', "Node {$node->nid} ({$node->type}) does not have a Group Content Access field");
         }
 

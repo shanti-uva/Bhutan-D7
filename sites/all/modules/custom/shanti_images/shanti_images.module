@@ -135,7 +135,7 @@ function shanti_images_init() {
     );
 
     /*** API Functions ***/
-    // Return SHIVA json of a single node
+    // Return json of a single image node
     $items['api/ajax/%'] = array(
         'title' => 'Embeddable Image',
         'description' => 'Return an embeddable HTML DIV fragment for an image',
@@ -165,6 +165,30 @@ function shanti_images_init() {
         'page arguments' => array(2),
         'access callback' => TRUE,
     );
+
+     $items['api/carouseldata/slides/%/%/%'] = array(
+         'title' => 'More Slides for Carousel',
+         'description' => 'Return further slides for the carousel ',
+         'page callback' => 'shanti_images_get_more_slides',
+         'page arguments' => array(3,4,5),
+         'access callback' => TRUE,
+     );
+
+     $items['api/mmsid/%'] = array(
+         'title' => 'MMS ID Information',
+         'description' => 'Return info about an image from MMS ID',
+         'page callback' => 'shanti_images_mms_api',
+         'page arguments' => array(2),
+         'access callback' => TRUE,
+     );
+
+     $items['search/mmsid/%'] = array(
+         'title' => 'MMSID Lookup',
+         'description' => 'Return the node page for a specific mmsid (for redirects)',
+         'page callback' => 'shanti_images_mms_lookup',
+         'page arguments' => array(2),
+         'access callback' => TRUE,
+     );
 
      /**
       * Given an mms id return its iiif file name
@@ -229,19 +253,18 @@ function shanti_images_preprocess_views_view(&$vars) {
 
 
 /**
- * Returnes the markup for a carousel underneath a main image
+ * Returns the markup for a carousel underneath a main image
  *
  * @param $nid
  *
  * @return string markup to insert through ajax
  */
 function shanti_images_get_node_carousel($nid) {
-    global $base_url;
-    $num_of_sibs = 20;
+    $num_of_sibs = 30;
     $halfnum = intval($num_of_sibs / 2);
     $coll = shanti_collections_get_collection($nid); // Get node's collection
-    $galinfo = array();
-    $is_dev = (strstr($base_url, '.dd') || strstr($base_url, '-dev')) ? TRUE : FALSE;
+    $markup = '';
+    $data_att = '';
 
     if ($coll) {
         $sibids = shanti_collections_get_items_in_collection($coll, 'nids');
@@ -249,42 +272,73 @@ function shanti_images_get_node_carousel($nid) {
         if (!$myind) { $myind = $halfnum; }
         $thmbst = $myind - $halfnum;
         if ($thmbst < 0 ) { $thmbst = 0; }
-        $items = array_slice($sibids, $thmbst, $num_of_sibs);
-        if (!empty($items)) {
-            $items = node_load_multiple($items);  // Turn list of nids into node objects
-            // Process list of node objects into gallery item objects per specifications above
-            foreach($items as $item) {
-                $gitem = new stdClass;
-                $gitem->nid = $item->nid;
-                $gitem->filename = $item->i3ffiles;
-                $gitem->title = $item->title;
-                $gitem->path = drupal_get_path_alias('node/' . $item->nid);
-                $galinfo[] = $gitem;
-            }
-        }
-        $myind = array_search($nid, array_keys($galinfo));
+        $data_att .= ' data-start="' . $thmbst . '"';
+        $data_att .= ' data-collid="' . $coll->nid . '"';
+        $carousel_slides = '<ul class="slides">' . _shanti_images_get_carousel_slides($sibids, $thmbst, $num_of_sibs, $nid) . '</ul>';
+        $markup = '<div id="fscarousel" class="flexslider fscarousel"' . $data_att . '>' . $carousel_slides . '</div>';
+
     } else {
         // TODO: what to do if the node has no collection. Show carousel based on the homepage?
         // TODO: What to do if coming from the homepage? Use collection context or homepage context????
     }
 
-    $carousel_slides = '<ul class="slides">';
-    foreach($galinfo as $n => $item) {
-        if (!is_object($item) || empty($item->nid)) { continue; } // Took out || empty($item->filename) from condition
-        $si = _shanti_images_get_node_image($item->nid);
-        $item_rotate = (!empty($item->rotation)) ? (360 - $item->rotation) % 360 : 0;
-        $url = $si->getCropped(90, 65, $item_rotate);
-        // use prod server when on DEV but looking for images on prod
-        if ($is_dev && preg_match('/shanti-image(-stage)?-\d+/', $si->getIIIFName())) {
-            $url = str_replace('-test', '', $url);
+
+    print $markup;
+}
+
+function _shanti_images_get_carousel_slides($slideids, $startslide, $num_of_slides, $current = FALSE) {
+    global $base_url;
+    $galinfo = array();
+    $carousel_slides = '';
+    $is_dev = (strstr($base_url, '.dd') || strstr($base_url, '-dev')) ? TRUE : FALSE;
+    $items = array_slice($slideids, $startslide, $num_of_slides);
+    if (!empty($items)) {
+        $items = node_load_multiple($items);  // Turn list of nids into node objects
+        // Process list of node objects into gallery item objects per specifications above
+        foreach($items as $item) {
+            $gitem = new stdClass;
+            $gitem->nid = $item->nid;
+            $gitem->filename = $item->i3ffiles;
+            $gitem->title = $item->title;
+            $gitem->path = drupal_get_path_alias('node/' . $item->nid);
+            $galinfo[] = $gitem;
         }
-        $ipath = trim($item->path);
-        if (substr($ipath, 0, 1) !== '/' && strpos($ipath, 'http') !== 0) { $ipath = '/' . $ipath; }
-        $active = ($item->nid == $nid) ? ' class="flex-active-slide"' : '';
-        $carousel_slides .= "<li$active><a href=\"{$ipath}\"><img src=\"$url\" /></a></li>";
+        foreach($galinfo as $n => $item) {
+            if (!is_object($item) || empty($item->nid)) { continue; } // Took out || empty($item->filename) from condition
+            $si = _shanti_images_get_node_image($item->nid);
+            $item_rotate = (!empty($item->rotation)) ? (360 - $item->rotation) % 360 : 0;
+            $url = $si->getCropped(90, 65, $item_rotate);
+            // use prod server when on DEV but looking for images on prod
+            if ($is_dev && preg_match('/shanti-image(-stage)?-\d+/', $si->getIIIFName())) {
+                $url = str_replace('-test', '', $url);
+            }
+            $ipath = trim($item->path);
+            if (substr($ipath, 0, 1) !== '/' && strpos($ipath, 'http') !== 0) { $ipath = '/' . $ipath; }
+            $active = ($current && $item->nid == $current) ? ' class="flex-active-slide"' : '';
+            $carousel_slides .= "<li$active><a href=\"{$ipath}\"><img src=\"$url\" /></a></li>";
+        }
     }
-    $carousel_slides .= '</ul>';
-    $markup = '<div id="fscarousel" class="flexslider fscarousel">' . $carousel_slides . '</div>';
+    return $carousel_slides;
+}
+
+/**
+ * Get further slides for the carousel based on the parameters
+ *
+ * @param $collid
+ * @param $st
+ * @param $num
+ */
+function shanti_images_get_more_slides($collid, $st, $num) {
+    $markup = '<p>Collection Not Found</p>';
+    $coll = node_load($collid); // Get node's collection
+    if ($coll) {
+        $sibids = shanti_collections_get_items_in_collection($coll, 'nids');
+        if ($st > count($sibids)) {
+            $markup = 'END';
+        } else {
+            $markup = _shanti_images_get_carousel_slides($sibids, $st, $num);
+        }
+    }
     print $markup;
 }
 
@@ -793,6 +847,31 @@ function shanti_images_node_thumb($nid) {
 }
 
 /**
+ * @param $mmsid
+ *
+ * @return JSON Output
+ */
+function shanti_images_mms_api($mmsid) {
+    $si = _shanti_images_get_record($mmsid, 'mmsid');
+    drupal_json_output($si);
+}
+
+/**
+ * Given a particular MMS ID redirect to the Drupal node page if it exists
+ *
+ * @param $mmsid
+ */
+function shanti_images_mms_lookup($mmsid) {
+    $si = _shanti_images_get_record($mmsid, 'mmsid');
+    if ($si && !empty($si->nid)) {
+        $alias = drupal_get_path_alias('node/' . $si->nid);
+        drupal_goto($alias);
+    } else {
+        drupal_not_found();
+    }
+}
+
+/**
  * Function to return the IIIF file name for a given MMS ID
  * API call from hook_menu
  */
@@ -1217,7 +1296,8 @@ function shanti_images_mms_summary_page() {
             $mend = $mid - 1;     // End of the missing range is the new mid minus one
             // If mst is less than mend it's an actual range and print out as such
             if ($mst < $mend) {
-                $missing[] =  _shanti_images_make_mms_range_out($mst, $mend);
+                $remlink = '<a href="#" class="shanti-image-rem-mmsid" data-mmsid="' . $mst . '-' . $mend . '">x</a>';
+                $missing[] =  _shanti_images_make_mms_range_out($mst, $mend) . " $remlink";
             } else {  // Else print out a single item with the ability to remove it (in case it is a doc or video)
                 $remlink = '<a href="#" class="shanti-image-rem-mmsid" data-mmsid="' . $mst . '">x</a>';
                 $missing[] = _shanti_images_make_mms_range_out($mst) . " $remlink";
@@ -1227,10 +1307,39 @@ function shanti_images_mms_summary_page() {
         }
     }
     $rngs[] = _shanti_images_make_mms_range_out($rst, $lastid);
-    $missing[] =  _shanti_images_make_mms_range_out($lastid + 1, '70000');
+    if ($lastid < 69801) {
+        $missing[] = _shanti_images_make_mms_range_out($lastid + 1, '69801');
+    }
+
+    // Do ignored list
+    $ignorelist = array();
+    $lastid = (!empty($ignored)) ? array_shift($ignored) : -1;
+    $rst = $lastid;
+    foreach($ignored as $mid) {
+        // if the next mid in the list is one plus the last one, make it the lastone
+        if ($mid == ($lastid + 1)) {
+            $lastid = $mid;
+        } else {  // otherwise there is a gap so record the previous range in ignore list
+
+            if ($rst == $lastid) {
+                $ignorelist[] = _shanti_images_make_mms_range_out($rst);
+            } else {
+                $ignorelist[] = _shanti_images_make_mms_range_out($rst, $lastid);
+            }
+            // restart the range counting
+            $rst = $mid;
+            $lastid = $mid;
+        }
+    }
+
+    if ($rst == $lastid) {
+        $ignorelist[] = _shanti_images_make_mms_range_out($rst);
+    } else {
+        $ignorelist[] = _shanti_images_make_mms_range_out($rst, $lastid);
+    }
 
     // Create the page with the lists of mms ranges and missing mms ranges
-    $headers = array('List of MMS Ranges', 'Missing MMS Ranges');
+    $headers = array('List of MMS Ranges', 'Missing MMS Ranges', 'Ignored MMS');
     if (empty($rngs)) {
         $rngs[] = "No MMS images have been imported";
         $missing[] = "All MMS images have yet to be imported";
@@ -1256,11 +1365,22 @@ function shanti_images_mms_summary_page() {
         '#children' => array(),
         '#printed' => FALSE,
     );
+    $list3 = array(
+        '#theme' => 'item_list',
+        '#list_type' => 'ul',
+        '#title' => '',
+        '#items' => $ignorelist,
+        '#attributes' => array('class' => 'mms-range-list ignored'),
+        '#wrapper_attributes' => array('class' => 'container'),
+        '#children' => array(),
+        '#printed' => FALSE,
+    );
 
-    $rows = array(array(drupal_render($list1), drupal_render($list2)));
+    $rows = array(array(drupal_render($list1), drupal_render($list2), drupal_render($list3)));
     $page['table'] = array(
         '#markup' => theme('table', array('header' => $headers, 'rows' => $rows)),
     );
+    drupal_add_css("#mms-summary table td {vertical-align: top;}", "inline");
     return $page;
 
 }
@@ -1279,8 +1399,25 @@ function _shanti_images_make_mms_range_out($mst, $msend=FALSE) {
 }
 
 
-function shanti_images_remove_mmsid_from_list($mmsid) {
-    if (empty($mmsid)) { $mmsid = arg(4); }
+function shanti_images_remove_mmsid_from_list($mmsrng = "") {
+    if (empty($mmsrng)) { $mmsrng = arg(4); }
+    if (strstr($mmsrng, '-')) {
+        list($st, $en) = explode('-', $mmsrng);
+        foreach(range($st, $en) as $mmsid) {
+            _shanti_images_remove_one_mmsid_from_list($mmsid);
+        }
+        $jout = array(
+            'success' => TRUE,
+            'msg' => "This range has been ignored",
+        );
+        drupal_json_output($jout);
+    } else {
+        $msg = _shanti_images_remove_one_mmsid_from_list($mmsrng);
+        drupal_json_output($msg);
+    }
+}
+
+function _shanti_images_remove_one_mmsid_from_list($mmsid, $rettype = 'json') {
     $mmslist = variable_get(MMS_DEL_VAR, array());
     if (is_numeric($mmsid)) {
         if (!in_array($mmsid, $mmslist)) {
@@ -1288,20 +1425,22 @@ function shanti_images_remove_mmsid_from_list($mmsid) {
             sort($mmslist);
             variable_set(MMS_DEL_VAR, $mmslist);
             $addstatus = TRUE;
-            $msg = "Added $mmsid to mms ignore list";
+            $msg = "This ID has been ignored";
         } else {
             $addstatus = FALSE;
-            $msg = "MMS ID $mmsid is already in the list";
+            $msg = "MMS ID $mmsid is already in ignore list";
         }
     } else {
         $addstatus = FALSE;
         $msg = "MMS ID was not a number: $mmsid";
     }
-    $jout = array(
-        'success'=> $addstatus,
-        'msg' => $msg,
-    );
-    drupal_json_output($jout);
+    if (is_string($rettype) && $rettype == 'json') {
+        $jout = array(
+            'success' => $addstatus,
+            'msg' => $msg,
+        );
+        return $jout;
+    }
 }
 
 function shanti_images_get_valid_extensions($as_array=TRUE) {

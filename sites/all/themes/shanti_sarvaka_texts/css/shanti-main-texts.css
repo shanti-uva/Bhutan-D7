@@ -445,7 +445,14 @@ left: 0.15rem;
 }
 
 
+.texts .view-collections .views-field.views-field-created {
+  font-style:italic;
+}
 
+.texts .view-collections-by-users .views-field.views-field-type {
+  font-style: italic;
+  margin: 0.5rem 0 0.25rem 0;
+}
 
 
 

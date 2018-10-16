@@ -105,7 +105,7 @@ article.main-col{
 }
 
 .front article.main-col{
-  max-width: 1050px;
+  max-width: 1050px !important;
 }
 
 /* override system.menus.css #36 */
@@ -484,7 +484,11 @@ article.main-col li a.active{
 }
 
 .page-sources-search .title-link-container a{
-  font-weight:bold;
+  /*font-weight:bold;
+  font-family: 'heletica neue','museo-sans-500',arial,sans-serif;*/
+  letter-spacing: 0.0075rem;
+  color: #111;
+  font-size: 1.06em;
 }
 
 .page-sources-search .title-link-container > .shanticon-sources{

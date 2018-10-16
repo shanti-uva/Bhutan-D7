@@ -1,7 +1,7 @@
 name = Sources Biblio Search
 core = 7.x
 package = Sources
-version = 7.x-1.9
+version = 7.x-1.10
 dependencies[] = biblio
 dependencies[] = ctools
 dependencies[] = defaultconfig

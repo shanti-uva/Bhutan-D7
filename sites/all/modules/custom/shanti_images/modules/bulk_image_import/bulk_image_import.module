@@ -58,9 +58,13 @@ function bulk_image_import_form_submit($form, &$form_state) {
       array_push($task_ids, $tid);
     }
   }
+
   $operations = array();
   foreach(array_chunk($task_ids, 3) as $tids) {
-    array_push($operations, array('bulk_image_import_process_group', array($tids,)));
+    array_push($operations, array(
+      'bulk_image_import_process_group',
+      array($tids, $form_state['input']['allow_duplicates'])
+    ));
   }
   array_unshift(
     $operations,
@@ -182,7 +186,12 @@ function bulk_image_import_form($form, &$form_state) {
     '#description' => t('If you would like to import into a Collection or Subcollection select that Collection from the list below.'),
     '#default_value' => 0,
   );
-
+  $form['metadata']['allow_duplicates'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Allow Duplicate Records?'),
+    '#description' => t('If an import fails for some reason, you may want to run it again without creating duplicate records. Leaving this option unchecked will run the import and attempt to repair any Nodes that were not imported correctly.'),
+    '#default_value' => TRUE,
+  );
   $form['metadata']['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Import'),

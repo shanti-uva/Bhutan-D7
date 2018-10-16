@@ -34,3 +34,10 @@
   /*border-top-color: #4ca6fb !important;*/
   border-top-color: #3297f7 !important;
 }
+
+
+.kmaps .extruder .shanticon-magnify {
+    position: absolute;
+    left: 1rem;
+    top: 1.8em;
+}

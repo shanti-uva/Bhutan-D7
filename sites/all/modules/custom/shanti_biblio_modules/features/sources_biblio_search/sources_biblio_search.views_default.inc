@@ -176,12 +176,14 @@ function sources_biblio_search_views_default_views() {
   $handler->display->display_options['exposed_form']['options']['reset_button_label'] = 'Clear';
   $handler->display->display_options['exposed_form']['options']['text_input_required_format'] = 'full_html';
   $handler->display->display_options['defaults']['pager'] = FALSE;
-  $handler->display->display_options['pager']['type'] = 'mini';
+  $handler->display->display_options['pager']['type'] = 'pagerer';
   $handler->display->display_options['pager']['options']['items_per_page'] = '25';
   $handler->display->display_options['pager']['options']['offset'] = '0';
   $handler->display->display_options['pager']['options']['id'] = '0';
+  $handler->display->display_options['pager']['options']['quantity'] = '9';
   $handler->display->display_options['pager']['options']['expose']['items_per_page_options'] = '1, 25';
   $handler->display->display_options['pager']['options']['expose']['items_per_page_options_all_label'] = '';
+  $handler->display->display_options['pager']['options']['preset'] = 'shanti_pager';
   $handler->display->display_options['exposed_block'] = TRUE;
   $handler->display->display_options['defaults']['footer'] = FALSE;
   $handler->display->display_options['defaults']['empty'] = FALSE;
@@ -977,7 +979,7 @@ function sources_biblio_search_views_default_views() {
   $handler->display->display_options['fields']['biblio_label']['hide_empty'] = TRUE;
   $handler->display->display_options['fields']['biblio_label']['empty_zero'] = TRUE;
   $handler->display->display_options['fields']['biblio_label']['link_to_entity'] = 0;
-  /* Field: Indexed Node: Biblio Long Title */
+  /* Field: Indexed Node: Long Title */
   $handler->display->display_options['fields']['field_biblio_long_title']['id'] = 'field_biblio_long_title';
   $handler->display->display_options['fields']['field_biblio_long_title']['table'] = 'search_api_index_database_node_index';
   $handler->display->display_options['fields']['field_biblio_long_title']['field'] = 'field_biblio_long_title';

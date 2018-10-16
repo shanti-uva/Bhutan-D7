@@ -2090,12 +2090,15 @@ function kmaps_explorer_audio_video_node($type = 'ajax', $id, $avId, $app) {
     $node_cache = save_to_cache('json', $asset, $avId, $nodeURL);
     $node_data = json_decode($node_cache);
     $node_data = $node_data->response->numFound > 0 ? $node_data->response->docs[0] : new stdClass();
+    $title = isset($node_data->title) ? $node_data->title[0] : '';
     $url = $node_data->url_html;
-    $output = '<iframe scrolling="no" height="3450" width="100%" frameBorder="0" src="' . $url . '?mbframe=on' . '" seamless ></iframe>';
+
+    $output = '<h4>' . $title . '</h4>';
+    $output .= '<iframe scrolling="no" height="3450" width="100%" frameBorder="0" src="' . $url . '?mbframe=on' . '" seamless ></iframe>';
 
     if ($type == 'ajax') {
         $commands = array();
-        $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . $app . 's/' . $id . '/audio-video-node/' . $avId . '/nojs');
+        $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . $app . '/' . $id . '/audio-video-node/' . $avId . '/nojs');
         $commands[] = ajax_command_invoke('body', 'addClass', array('max-col-widths'));
         $page = array('#type' => 'ajax', '#commands' => $commands);
 
@@ -2114,7 +2117,7 @@ function kmaps_explorer_audio_video_node($type = 'ajax', $id, $avId, $app) {
             );
             $content = theme('kmaps_explorer_initial_template_no_sidebar', $setup);
         } else {
-            $setup = kmaps_explorer_setup_page($id, $app . 's', 'audio_video');
+            $setup = kmaps_explorer_setup_page($id, $app, 'audio_video');
             $setup += array(
                 'active_content' => $output,
                 'ajax' => $type == 'ajax' ? TRUE : FALSE,
@@ -2139,7 +2142,10 @@ function kmaps_explorer_image_node($type = 'ajax', $id, $imgId, $app) {
     $node_data = json_decode($node_cache);
     $node_data = $node_data->response->numFound > 0 ? $node_data->response->docs[0] : new stdClass();
     $url = $node_data->url_html;
-    $output = '<iframe scrolling="no" height="1080" width="100%" frameBorder="0" src="' . $url . '?mbframe=on' . '" seamless ></iframe>';
+    $title = isset($node_data->title) ? $node_data->title[0] : '';
+
+    $output = '<h4>' . $title . '</h4>';
+    $output .= '<iframe scrolling="no" height="1600" width="100%" frameBorder="0" src="' . $url . '?mbframe=on' . '" seamless ></iframe>';
 
     if ($type == 'ajax') {
         $commands = array();
@@ -2300,9 +2306,11 @@ function kmaps_explorer_each_text_node($type = 'ajax', $id, $tid, $app) {
     $node_cache = save_to_cache('json', $asset, $tid, $nodeURL);
     $node_data = json_decode($node_cache);
     $node_data = $node_data->response->numFound > 0 ? $node_data->response->docs[0] : new stdClass();
+    $title = isset($node_data->title) ? $node_data->title[0] : '';
     $url = $node_data->url_ajax;
 
-    $output = theme('kmaps_explorer_texts_individual_node', array(
+    $output = '<h4>' . $title . '</h4>';
+    $output .= theme('kmaps_explorer_texts_individual_node', array(
         'data' => $url,
     ));
 

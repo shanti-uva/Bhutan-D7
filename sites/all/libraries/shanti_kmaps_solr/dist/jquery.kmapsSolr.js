@@ -1,3 +1,5 @@
+/*! Shanti Kmaps Solr - v0.1.0 - 2018-10-15
+* Copyright (c) 2018 ys2n; Licensed MIT */
 /*! Shanti Kmaps Solr - v0.1.0 - 2018-07-24
 * Copyright (c) 2018 ys2n; Licensed MIT */
 ;(function ($, window, document, undefined) {
@@ -705,7 +707,7 @@
 
       // Add configure fq's to fqlist.
 
-      fqlist_full.push("-tree:terms");
+      fqlist_full.push("-tree:(terms picture document video)");
       if(cf.kmapFilterQuery && cf.kmapFilterQuery.length > 0) {
         for (var i = 0; i < cf.kmapFilterQuery.length; i++) {
           if (DEBUG) { console.log("pushing \"" + cf.kmapFilterQuery[i] + "\" onto fqlist..."); }
@@ -1009,7 +1011,7 @@
 
       var assetQueryClause = (assetMatch)?"( " + assetMatch + " ) OR (" + kmapsMatch + ")": "*:*";
       var fqlist_full = [ assetTypeFilter ];
-      fqlist_full.push ("-asset_type:terms");
+      fqlist_full.push ("-asset_type:(terms picture document video)");
       if(cf.assetFilterQuery && cf.assetFilterQuery.length > 0) {
         for (var i = 0; i < cf.assetFilterQuery.length; i++) {
           if (DEBUG) { console.log("pushing assset query \"" + cf.assetFilterQuery[i] + "\" onto fqlist..."); }

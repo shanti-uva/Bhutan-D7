@@ -737,14 +737,19 @@ a.hide-annot::before {
    min-height:400px;
 }
 
+    .kaltura-embed > div{
+      max-width:auto !important;
+    }
+
 .kaltura-embed > div > div{
   min-height:400px;
   max-height:515px;
+      max-height:625px;
   border-width:0;
 }
 
-.audio-video .kaltura-embed,
-.audio-video .kaltura-embed > div > div{
+.kaltura-embed,
+.kaltura-embed > div > div{
   min-height: 100%;
 }
 
@@ -1243,8 +1248,7 @@ h4.node-desc-type {
   }*/
 
   .av-main-video-section {
-    padding-right: 0 !important;
-    width:70% !important;
+    width:100% !important;
   }
 
   .has-transcript .av-main-video-section {

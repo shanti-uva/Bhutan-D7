@@ -1648,11 +1648,6 @@ top: -0.15rem;
 
 
 
-
-
-
-
-
 .search-results-gallery.justified-gallery > .entry-visible {
   border: 1px solid #fff;
 }
@@ -1727,26 +1722,6 @@ top: -0.15rem;
 .ui-resizable-handle.ui-resizable-nw:active { background-color: #4d59ca !important; }
 
 
-.view-section .nav-tabs>li{
-  width: 28%;
-}
-.view-section .nav-tabs>li:last-child{ /* subjects tab */
-  width: 30%;
-}
-
-.input-section .advanced-view{
-  display:none;
-}
-
-
-/**
-*
-* ------- faceted results css
-*
-*/
-
-
-
 /* custom theme color change under Search Flyout Tabs Places - Subjects */
 .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-2>a,
 .view-section .shanti-kmaps-faceted-search-kmaps-2 .fancytree-container .glyphicon,
@@ -1777,27 +1752,11 @@ top: -0.15rem;
 
 .ui-resizable-handle.ui-resizable-nw:active { background-color: #4d59ca !important; }
 
-
-
 .view-section .nav-tabs>li.active>a{
   color: #4d59ca !important;
   border-top-color: #4d59ca !important;
 }
 
-
-.input-section{
-  padding: 1.3rem 3rem 0;
-  height: 9.5rem;
-}
-  .sources .extruder .input-section{
-    padding: 1.3rem 1.5rem 0; 
-  }
-
-.input-section .input-group .input-group-btn{
-  position: absolute;
-  top: 1.9rem;
-  right: 0.1rem;
-}
 
 
 
@@ -1829,144 +1788,6 @@ top: -0.15rem;
 .search-results-list-container .shanti-gallery .footer-wrap .shanti-field-content:empty::before{
   display:none;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/**
-*
-* Assorted hover effects testing
-*
-**/
-
-/*
-.search-results-gallery.justified-gallery > .entry-visible:active img{
-  -webkit-transition: .5s ease-in-out;
-  transition: .5s ease-in-out;
-}
-
-.search-results-gallery.justified-gallery > .entry-visible:active img:hover{
-  -webkit-transform: scale(1.175);
-  transform: scale(1.175);
-}
-
-.search-results-gallery.justified-gallery > .entry-visible:active img:active{
-  -webkit-transform: scale(1);
-  transform: scale(1);
-}
-
-*/
-
-
-/* Circle Radial animation on hover
-.search-results-gallery.justified-gallery > .entry-visible::before {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  z-index: 2;
-  display: block;
-  content: '';
-  width: 0;
-  height: 0;
-  background: rgba(255,255,255,.2);
-  border-radius: 100%;
-  -webkit-transform: translate(-50%, -50%);
-          transform: translate(-50%, -50%);
-  filter: alpha(opacity=0);
-  opacity: 0;
-}
-.search-results-gallery.justified-gallery > .entry-visible:hover::before {
-  -webkit-animation: circle 1s;
-          animation: circle 1s;
-}
-.search-results-gallery.justified-gallery > .entry-visible:active img{
-  -webkit-filter: blur(1px);
-          filter: blur(1px);
-}
-
-@-webkit-keyframes circle {
-  0% {
-    filter: alpha(opacity=100);
-    opacity: 1;
-  }
-  70% {
-    filter: alpha(opacity=100);
-    opacity: 1;
-  }
-  100% {
-    width: 200%;
-    height: 200%;
-    filter: alpha(opacity=0);
-    opacity: 0;
-  }
-}
-@keyframes circle {
-  0% {
-    filter: alpha(opacity=100);
-    opacity: 1;
-  }
-  70% {
-    filter: alpha(opacity=100);
-    opacity: 1;
-  }
-  100% {
-    width: 200%;
-    height: 200%;
-    filter: alpha(opacity=0);
-    opacity: 0;
-  }
-}
-*/
-
-
-
-
-
-
-
-
-/* 
----- flexbox possible approach to audio-video gallery setup ----
-
-.search-results-node-preview {
-  display: flex;
-  flex-direction: row;
-  flex-flow: wrap;
-  flex: 0 1 auto;
-  max-width: 100%;
-  margin: 0 auto;
-}
-
-.search-results-av-gallery {
-  box-sizing: border-box;
-  flex: 33.333% 33.333% auto;
-  flex-basis: 33.333%;
-  max-width: 33.333%;
-  padding-right: 1rem;
-  padding-left: 1rem;
-  padding-bottom: 2rem;
-}
-.shanti-thumbnail {
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100px;
-  background-color: tomato;
-}
-*/
 
 
 

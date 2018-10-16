@@ -10,6 +10,7 @@ dependencies[] = shanti_kmaps_admin
 dependencies[] = shanti_kmaps_typeahead
 dependencies[] = shanti_kmaps_tree
 dependencies[] = entity
+dependencies[] = shanti_general
 #dependencies[] = shanti_collections
 #dependencies[] = shanti_collections_admin
 

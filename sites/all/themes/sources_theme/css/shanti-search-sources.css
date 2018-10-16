@@ -16,6 +16,23 @@
   display: none;
 }
 
+
+
+
+
+.sources .extruder .input-section{
+  padding: 1.3rem 1.5rem 0; 
+}
+.sources .input-group .shanticon-magnify{
+  position: absolute;
+  left: 2.5rem;
+}
+
+
+
+
+
+/*
 .input-section label.flyout-search-label{
   color:#444;
   font-size: 0.93em;
@@ -33,18 +50,25 @@
   font-weight:bold;
 }
 
+
 .input-section .form-item-advanced-search-api-views-fulltext {
   margin-top: 0;
 }
+*/
 
-.input-group .shanticon-magnify{
-  position: absolute;
-  left: 2.5rem !important;
-  top: 3.8rem;
+.extruder .input-section .input-group{
+  /* height: auto !important; */
+  padding: 0 15px !important;
 }
 
+.sources .input-section .input-group .input-group-btn{
+  position: absolute;
+  right: 1.6rem;
+}
 
-
+.view-section input.form-control{
+  max-width: 14rem;
+}
 
 .content-section a.toggle-filter-btn-open {
   margin-top: 12px;
@@ -52,10 +76,6 @@
   background: #fff;
   padding: 15px 25px;
   display: none;
-}
-
-.view-section input.form-control{
-  max-width: 14rem;
 }
 
 #edit-advanced-search-publication-year .form-type-radio {
@@ -305,76 +325,10 @@ a.open-search-field {
   margin: 0;
 }
 
-.view-section .nav-tabs > li {
-  width: 48%;
-}
 
-
-.searchreset {
-  display: none;
-}
-
-.input-section .input-group-btn .searchreset {
-  /*outline: none;
-  border: 1px solid #e5e5e5;
-  border-width: 0 0 0 1px;*/
-}
-
-.input-section .input-group input.form-control{ /* this is temp setup for the resize button - .ui-resizable-handle.ui-resizable-w*/
-  margin-top:2.8rem;
-}
-
-.extruder .input-section .input-group{
-  height: auto !important;
-  padding: 0 15px !important;
-}
-
-.extruder .input-section .input-group .input-group-btn{
-  position: absolute;
-  top: 1.9rem;
-  right: 1.6rem;
-}
-
-.input-section .input-group .btn.btn-default{
-  border: 1px solid #e5e5e5;
-  border-width: 0 0 0 1px;
-}
-
-.input-section .input-group .btn.btn-default .icon{
-  position: absolute;
-  top: -1.4rem;
-  left: -1.1rem;
-}
-
-.input-section .input-group .btn.btn-default .icon::before{
-  top: 0.5rem;
-  right: -0.4rem;
-  font-size: 1.5rem;
-}
-
-.input-section .input-group .btn-default.active,
-.input-section .input-group .btn.btn-default:active{
-  border-color:#fff;
-}
 
 
 /* new additions - mf8yk 12-21-15 */
-
-.input-section .search-group{
-  height: 4rem;
-}
-
-.input-section .selected-filter{
-  margin-bottom:0.75rem;
-  margin-left: 2rem;
-  margin-top: -1.2rem;
-  font-size: 0.88em !important;
-}
-
-.view-section .nav-tabs > li.listview{
-  width: 52%;
-  max-width: 16rem;
-}
 
 .listview .form-item.form-item-advanced-search-publication-year{
   margin-top: .8rem;
@@ -462,6 +416,19 @@ a.open-search-field {
 .listview .form-item-advanced-biblio-publication-type .dropdown-menu > ul li:first-child i.check-mark{
   display:none;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

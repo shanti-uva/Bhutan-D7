@@ -195,6 +195,8 @@ function shanti_kmaps_fields_reindexer_finished($success, $results, $operations)
 {
     // Not sure what to do here ...
     if ($success) {
+        $resp = _shanti_kmaps_fields_commit_solr_update();
+        watchdog('shanti kmaps fields', json_encode($resp));
         $message = $results['processed'] . ' of ' . $results['nid_count'] . ' nodes reindexed.';
         drupal_set_message($message);
     } else {
@@ -1117,9 +1119,11 @@ function _shanti_kmaps_fields_index_node($node) {
         // If the node is public, push solr doc for it
         if (shanti_general_is_public($node)) {
             _shanti_kmaps_fields_push_solr_doc($node->nid, TRUE);
+            return TRUE;
         } else {
             // If node is private, delete solr doc (for cases where public node is made private)
             _shanti_kmaps_fields_delete_solr_doc($node->nid);
+            return FALSE;
         }
     }
 }
@@ -1182,6 +1186,28 @@ function _shanti_kmaps_fields_update_solr_index($solrdoc, $debug = FALSE, $messa
     }
     else {
         drupal_set_message("KMap data not published to SHANTI index, as requested.", 'status', FALSE);
+    }
+}
+
+function _shanti_kmaps_fields_commit_solr_update($debug = FALSE)
+{
+    $opt_in = variable_get('shanti_kmaps_admin_server_solr_opt_in');
+    if ($opt_in) {
+        $solr_url = variable_get('shanti_kmaps_admin_server_solr');
+        $url = "$solr_url/update?commit=true";
+        $headers = array('Content-type' => 'application/json; charset=utf-8', 'Content-Length' => 0);
+        $username = variable_get('shanti_kmaps_admin_solr_username');
+        $password = variable_get('shanti_kmaps_admin_solr_password');
+        if (!empty($username) && !empty($password)) {
+            $headers += array('Authorization' => 'Basic ' . base64_encode("$username:$password"));
+        }
+        $options = array(
+            'method' => 'POST',
+            'data' => '',
+            'headers' => $headers,
+        );
+        $resp = drupal_http_request($url, $options);
+        return $resp;
     }
 }
 

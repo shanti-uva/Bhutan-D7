@@ -819,9 +819,9 @@
                               } else if (this.asset_type === "sources") {
                                 this.url_asset_nav = ASSET_VIEWER_PATH + "sources-node/" + this.id + "/nojs#search";
                               } else if (this.asset_type === "images") {
-                                this.url_asset_nav = ASSET_VIEWER_PATH + "photos-node/" + this.id + "/nojs#search";
+                                this.url_asset_nav = ASSET_VIEWER_PATH + "image-node/" + this.id + "/nojs#search";
                               } else if (this.asset_type === "picture") {
-                                this.url_asset_nav = ASSET_VIEWER_PATH + "photos-node/" + this.id + "/nojs?mms#search"
+                                this.url_asset_nav = ASSET_VIEWER_PATH + "image-node/" + this.id + "/nojs?mms#search"
                               } else if (this.asset_type === "audio-video") {
                                 var path = this.url_html.split('/');
                                 var last = path.pop();

@@ -323,6 +323,7 @@ function shanti_grid_view_views_api() {
  */
 function shanti_grid_view_views_pre_render(&$view) {
     global $base_root, $base_path;
+    $is_dev = (strstr($base_root, '.dd') || strstr($base_root, '-dev')) ? TRUE : FALSE;
     if (isset($view->style_plugin->plugin_name) && $view->style_plugin->plugin_name == 'shanti_grid_view') {
         //dpm($view->current_display, $view->name);
         $view->item_type =  _shanti_grid_view_get_item_type($view->base_table);  // Determine whether node or file view
@@ -358,13 +359,20 @@ function shanti_grid_view_views_pre_render(&$view) {
                 if (module_exists('shanti_images')) {
                     $si = _shanti_images_get_node_image($item->nid);
                     if ($si && !empty($si)) {
+                        $iiifnm = $si->getIIIFName();
+                        $lgimgurl = $si->getURL(1500);
+
+                        if ($is_dev && preg_match('/shanti-image(-stage)?-\d+/', $iiifnm)) {
+                            $lgimgurl = str_replace('-test', '', $lgimgurl);
+                        }
                         $data = array(
-                            "filename" => $si->getIIIFName(),
+                            "filename" => $iiifnm,
                             "title" => $si->title,
                             "aspectRatio" => $si->getRatio(),
                             "rotation" => $si->rotation,
                             "nid" => $item->nid,
                             "path" => drupal_get_path_alias($si->path),
+                            "lgimgurl" => $lgimgurl,
                         );
                         $item->grid_data = json_encode($data);
                         $imgdata[] = (object)$data;

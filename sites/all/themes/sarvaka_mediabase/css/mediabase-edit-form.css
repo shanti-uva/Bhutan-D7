@@ -190,11 +190,13 @@ input.form-inline {
 
 .form-item.form-type-select { padding: 0 0.25em 0 0; }
 
-.form-type-textfield label,
+.form-type-textfield label, /* -- this label on the main search input (in flyout) is not needed */
 .form-item.form-type-select label{
 	font-size: 0.88em;
 	margin-left: 1.5rem;
 	margin-top: .75rem;
+
+      display:none;
 }
 
 .form-item.form-type-select .edit-field-og-collection-ref-und{

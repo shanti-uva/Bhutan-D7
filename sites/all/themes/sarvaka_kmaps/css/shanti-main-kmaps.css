@@ -170,6 +170,12 @@
 
 
 
+
+
+
+
+
+
 .sidebar-first .ajax-progress,
 .sidebar-first .ajax-progress .throbber{
   display:inline-block !important;
@@ -182,7 +188,57 @@
     font-size: 1.25rem !important;
 }
 
+/** Change color for individual assets node pages
+.page-visuals .titlearea,
+.page-visuals .breadcrumb .icon,
+.page-visuals .fixed-action-button a,
+.page-visuals .bx-controls-direction a,
+.page-visuals .nav-tabs.nav-justified>li.active>a,
+.page-visuals .nav-tabs.nav-justified>li.active>a:focus,
+.page-visuals .nav-tabs.nav-justified>li.active>a:hover {
+  background: #558e3c !important;
+}
 
+.page-audio-video .titlearea,
+.page-audio-video .breadcrumb .icon,
+.page-audio-video .fixed-action-button a,
+.page-audio-video .bx-controls-direction a,
+.page-audio-video .nav-tabs.nav-justified>li.active>a,
+.page-audio-video .nav-tabs.nav-justified>li.active>a:focus,
+.page-audio-video .nav-tabs.nav-justified>li.active>a:hover {
+  background: #31acb6 !important;
+}
+
+.page-sources .titlearea,
+.page-sources .breadcrumb .icon,
+.page-sources .fixed-action-button a,
+.page-sources .bx-controls-direction a,
+.page-sources .nav-tabs.nav-justified>li.active>a,
+.page-sources .nav-tabs.nav-justified>li.active>a:focus,
+.page-sources .nav-tabs.nav-justified>li.active>a:hover {
+  background: #6f69ae !important;
+}
+
+.page-texts .titlearea,
+.page-texts .breadcrumb .icon,
+.page-texts .fixed-action-button a,
+.page-texts .bx-controls-direction a,
+.page-texts .nav-tabs.nav-justified>li.active>a,
+.page-texts .nav-tabs.nav-justified>li.active>a:focus,
+.page-texts .nav-tabs.nav-justified>li.active>a:hover {
+  background: #8c48a1 !important;
+}
+
+.page-images .titlearea,
+.page-images .breadcrumb .icon,
+.page-images .fixed-action-button a,
+.page-images .bx-controls-direction a,
+.page-images .nav-tabs.nav-justified>li.active>a,
+.page-images .nav-tabs.nav-justified>li.active>a:focus,
+.page-images .nav-tabs.nav-justified>li.active>a:hover {
+  background: #b5953b !important;
+}
+ */
 
 /* Image block View Styles */
 .view-related-images .views-exposed-form .form-item label {
@@ -202,9 +258,11 @@
 }
 
 
+
 .kmaps:not(.home-carousel) article.main-col{
   padding-bottom:80px !important;
 }
+
 
 
 /**

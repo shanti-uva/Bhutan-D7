@@ -159,6 +159,7 @@ function biblio_long_fields_field_default_field_bases() {
         'Yiddish' => 'Yiddish',
       ),
       'allowed_values_function' => '',
+      'entity_translation_sync' => FALSE,
     ),
     'translatable' => 0,
     'type' => 'list_text',
@@ -178,7 +179,9 @@ function biblio_long_fields_field_default_field_bases() {
     ),
     'locked' => 0,
     'module' => 'text',
-    'settings' => array(),
+    'settings' => array(
+      'entity_translation_sync' => FALSE,
+    ),
     'translatable' => 0,
     'type' => 'text_long',
   );
@@ -197,7 +200,9 @@ function biblio_long_fields_field_default_field_bases() {
     ),
     'locked' => 0,
     'module' => 'text',
-    'settings' => array(),
+    'settings' => array(
+      'entity_translation_sync' => FALSE,
+    ),
     'translatable' => 0,
     'type' => 'text_long',
   );
@@ -217,6 +222,7 @@ function biblio_long_fields_field_default_field_bases() {
     'locked' => 0,
     'module' => 'shanti_kmaps_fields',
     'settings' => array(
+      'entity_translation_sync' => FALSE,
       'kmap_domain' => 'places',
     ),
     'translatable' => 0,
