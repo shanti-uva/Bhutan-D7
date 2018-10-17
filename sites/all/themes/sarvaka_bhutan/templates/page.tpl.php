@@ -1,6 +1,5 @@
 <div class="wrap-all">
-    <span class="sr-only"><a href=".main-content">Skip to main content</a> <a
-                href="#kmaps-search">Skip to search</a></span>
+    <span class="sr-only"><a href=".main-content">Skip to main content</a><a href="#kmaps-search">Skip to search</a></span>
 
     <?php print render($page['header']); ?>
 
@@ -18,16 +17,15 @@
                 <div class="titlearea banner<?php print $variables['banner_class']; ?>">
                     <div>
                         <header role="banner">
-                            <h1 class="page-title"><span
-                                        class="icon shanticon-<?php print $variables['icon_class']; ?>"></span><span
-                                        class="page-title-text">
-                <?php
-                if (!empty($variables['default_title']) && !empty($variables['prefix_default_title'])) {
-                    print ($title == '') ? $variables['default_title'] : $variables['default_title'] . ': ' . $title;
-                } else {
-                    print ($title == '') ? $variables['default_title'] : $title;
-                }
-                ?></span>
+                            <h1 class="page-title"><span class="icon shanticon-<?php print $variables['icon_class']; ?>"></span>
+                                <span class="page-title-text">
+                                    <?php if (!empty($variables['default_title']) && !empty($variables['prefix_default_title'])) {
+                                        print ($title == '') ? $variables['default_title'] : $variables['default_title'] . ': ' . $title;
+                                    } else {
+                                        print ($title == '') ? $variables['default_title'] : $title;
+                                    }
+                                    ?>
+                                </span>
                             </h1>
                         </header>
                         <nav class="breadwrap" style="display:none;">

@@ -147,13 +147,44 @@ article ul ul ul ul { -webkit-margin-before: 0; margin-top:0;}
   color:#6f69ae !important;
 }
 
+
+
+/* search results */
+.kmaps-search-photos .titlearea,
+.kmaps-search-images .titlearea{
+  background-color:#b5953b !important;
+}
+.kmaps-search-sources .titlearea{
+  background-color:#6f69ae !important;
+}
+.kmaps-search-texts .titlearea{
+  background-color:#8c48a1 !important;
+}
+.kmaps-search-visuals .titlearea{
+  background-color:#558e3c !important;
+}
+.kmaps-search-audio-video .titlearea{
+  background-color:#31acb6 !important;
+}
+/* not required in stand-alone sites
+.kmaps-search-places .titlearea{
+  background-color:#3297f7 !important;
+}
+.kmaps-search-subjects .titlearea{
+  background-color:#cc4c39 !important;
+}
+*/
+
+
+
+
+
 /* temp for testing - it is in Mandala */
 .sidebar-first .nav-pills > li .ajax-progress {
   position: absolute;
   right: 0.1rem;
   top: 0.1rem;
 }
-
 
 
 
@@ -179,6 +210,7 @@ article ul ul ul ul { -webkit-margin-before: 0; margin-top:0;}
   top: -1.5rem;
   left: -19rem;
   margin-left: 50%; 
+  width: 100%;
 }
 
 .footer .views-field img.img-responsive{
@@ -189,7 +221,7 @@ article ul ul ul ul { -webkit-margin-before: 0; margin-top:0;}
 
 .footer .views-row-1 .views-field img.img-responsive{ /*------ arcadia */ 
   height: 20px;
-  opacity: 0.6;
+  opacity: 0.7;
 }
 
 .footer .views-row-2 .views-field img.img-responsive{ /*----- shejun */
@@ -203,7 +235,7 @@ article ul ul ul ul { -webkit-margin-before: 0; margin-top:0;}
   height: 22px;
   margin-top: 1.4rem;
   margin-right: 0;
-  opacity: 0.8;
+  opacity: 0.85;
 }
 
 
@@ -221,7 +253,9 @@ article ul ul ul ul { -webkit-margin-before: 0; margin-top:0;}
 
 
 
-
+.kmaps-list-columns .collapsibleList h6 .glyphicon{
+  display:none;
+}
 
 
 
@@ -312,3 +346,95 @@ article ul ul ul ul { -webkit-margin-before: 0; margin-top:0;}
 }
 
 
+
+
+
+
+
+
+
+
+.kmaps-photos .in-frame #fsslider,
+.kmaps-photos .in-frame .image-display,
+.kmaps-photos .in-frame .wrap-all .main-wrapper{
+  background:#eee !important;
+  background-color:#eee !important;
+}
+
+.kmaps-photos .in-frame .image-detail-extended{
+  box-shadow: none !important;
+}
+
+.kmaps-photos .in-frame .image-display{
+  border-top: none !important;
+  margin-top: -2.5rem !important;
+}
+
+.kmaps-photos .in-frame #fscarousel{
+  background: #ddd !important;
+  border-top: 1px solid #ccc !important;
+}
+
+.kmaps-photos .in-frame #fsslider .pswp-link .progressive{
+  border:none !important;
+}
+
+.kmaps-photos .in-frame .image-detail-wrapper .image-title h2{
+  color:#000 !important;
+}
+
+.kmaps-photos .in-frame .image-detail-wrapper .image-title h2::before{
+  color:#555 !important;
+}
+
+.kmaps-photos .in-frame #fscarousel .flex-direction-nav a.flex-prev{
+  position: absolute !important;
+  left: 1rem !important;
+}
+
+.kmaps-photos .in-frame #fscarousel .flex-direction-nav a.flex-next{
+  position: absolute !important;
+  right: 1rem !important;
+}
+
+.kmaps-photos .in-frame #fscarousel .flex-direction-nav a{
+  background: #444 !important;
+}
+
+.kmaps-photos .in-frame .flexslider .slides img{
+  border:2px solid #fff !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+.kmaps-photos .content-section.col-xs-12 article > h4{
+  display:none !important;
+}
+
+/*
+.in-frame.audio-video .titlearea, 
+.in-frame.audio-video .titlearea.has-tabs, 
+.in-frame.audio-video .titlearea > div, 
+.in-frame.audio-video .titlearea header{
+  height: 2em !important;
+}
+
+.in-frame.audio-video .page-title{
+  color:#555;
+  text-shadow: none !important;
+  padding-left: 3rem;
+}
+
+.in-frame.audio-video .titlearea .page-title-text {
+  display:block !important;
+}
+*/
