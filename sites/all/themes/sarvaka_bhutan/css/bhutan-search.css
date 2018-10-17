@@ -1,5 +1,32 @@
 
 
+/* search results */
+.kmaps-search-photos .titlearea,
+.kmaps-search-images .titlearea{
+  background-color:#b5953b !important;
+}
+.kmaps-search-sources .titlearea{
+  background-color:#6f69ae !important;
+}
+.kmaps-search-texts .titlearea{
+  background-color:#8c48a1 !important;
+}
+.kmaps-search-visuals .titlearea{
+  background-color:#558e3c !important;
+}
+.kmaps-search-audio-video .titlearea{
+  background-color:#31acb6 !important;
+}
+/* not required in stand-alone sites
+.kmaps-search-places .titlearea{
+  background-color:#3297f7 !important;
+}
+.kmaps-search-subjects .titlearea{
+  background-color:#cc4c39 !important;
+}
+*/
+
+
 .view-section .nav-tabs>li.active>a, 
 .view-section .nav-tabs>li.active>a:hover, 
 .view-section .nav-tabs>li.active>a:active{
@@ -23,3 +50,6 @@
   border-top: none !important;
 }
 
+.kmaps-search-audio-video .content-section.col-xs-12 article > h4{
+	display:none;
+}
