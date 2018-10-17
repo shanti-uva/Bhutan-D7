@@ -354,54 +354,54 @@ article ul ul ul ul { -webkit-margin-before: 0; margin-top:0;}
 
 
 
-.kmaps-photos .in-frame #fsslider,
-.kmaps-photos .in-frame .image-display,
-.kmaps-photos .in-frame .wrap-all .main-wrapper{
+.node-type-shanti-image.in-frame #fsslider,
+.node-type-shanti-image.in-frame .image-display,
+.node-type-shanti-image.in-frame .wrap-all .main-wrapper{
   background:#eee !important;
   background-color:#eee !important;
 }
 
-.kmaps-photos .in-frame .image-detail-extended{
+.node-type-shanti-image.in-frame .image-detail-extended{
   box-shadow: none !important;
 }
 
-.kmaps-photos .in-frame .image-display{
+.node-type-shanti-image.in-frame .image-display{
   border-top: none !important;
   margin-top: -2.5rem !important;
 }
 
-.kmaps-photos .in-frame #fscarousel{
+.node-type-shanti-image.in-frame #fscarousel{
   background: #ddd !important;
   border-top: 1px solid #ccc !important;
 }
 
-.kmaps-photos .in-frame #fsslider .pswp-link .progressive{
+.node-type-shanti-image.in-frame #fsslider .pswp-link .progressive{
   border:none !important;
 }
 
-.kmaps-photos .in-frame .image-detail-wrapper .image-title h2{
+.node-type-shanti-image.in-frame .image-detail-wrapper .image-title h2{
   color:#000 !important;
 }
 
-.kmaps-photos .in-frame .image-detail-wrapper .image-title h2::before{
+.node-type-shanti-image.in-frame .image-detail-wrapper .image-title h2::before{
   color:#555 !important;
 }
 
-.kmaps-photos .in-frame #fscarousel .flex-direction-nav a.flex-prev{
+.node-type-shanti-image.in-frame #fscarousel .flex-direction-nav a.flex-prev{
   position: absolute !important;
   left: 1rem !important;
 }
 
-.kmaps-photos .in-frame #fscarousel .flex-direction-nav a.flex-next{
+.node-type-shanti-image.in-frame #fscarousel .flex-direction-nav a.flex-next{
   position: absolute !important;
   right: 1rem !important;
 }
 
-.kmaps-photos .in-frame #fscarousel .flex-direction-nav a{
+.node-type-shanti-image.in-frame #fscarousel .flex-direction-nav a{
   background: #444 !important;
 }
 
-.kmaps-photos .in-frame .flexslider .slides img{
+.node-type-shanti-image.in-frame .flexslider .slides img{
   border:2px solid #fff !important;
 }
 
