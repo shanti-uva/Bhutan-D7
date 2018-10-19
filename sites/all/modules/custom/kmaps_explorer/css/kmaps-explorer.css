@@ -1923,17 +1923,17 @@ ul.collapsibleList li {
 .collapsibleListOpen,
 .collapsibleListClosed,
 .collapsible_all_btn {
-  cursor: pointer
+  cursor: pointer;
 }
 
 .collapsible_all_btn {
-  color: #454fa4
+  color: #454fa4;
   font-size: .93em;
 }
 
 .collapsible_all_btn:hover,
 .collapsible_all_btn_selected {
-  color: #df3d26
+  color: #df3d26;
 }
 
 ul.collapsibleList .glyphicon{
@@ -2129,7 +2129,7 @@ ul.collapsibleList.split > li.split > .collapsibleListOpen.split {
   background:#fff;
 }
 
-.kmaps-list-columns ul li div:first-word{
+.kmaps-list-columns ul li div:first-letter {
   text-transform: capitalize;
 }
 

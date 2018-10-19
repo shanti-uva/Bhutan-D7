@@ -199,7 +199,7 @@
                             directAncestors: false //Show only direct A
                         },
                         displayPopup: true,
-                        mandalaURL: "https://mandala.shanti.virginia.edu/%%APP%%/%%ID%%/%%REL%%/nojs"
+                        mandalaURL: Drupal.settings.kmaps_explorer.base_url + "/%%APP%%/%%ID%%/%%REL%%/nojs"
                     });
 
                     //Function for Summary tab in Places
@@ -209,6 +209,7 @@
                         featureId: Drupal.settings.kmaps_explorer.domain + "-" + Drupal.settings.kmaps_explorer.featureId, //Your featureId will have the format APP-ID(eg. subjects-20, places-637)
                         domain: Drupal.settings.kmaps_explorer.domain, //Use the apps name [places|subjects|terms]
                         perspective: Drupal.settings.kmaps_explorer.perspective,
+                        mandalaURL: Drupal.settings.kmaps_explorer.base_url + "/%%APP%%/%%ID%%/%%REL%%/nojs",
                         tree: Drupal.settings.kmaps_explorer.domain
                     });
 
@@ -255,6 +256,7 @@
                                         domain: Drupal.settings.kmaps_explorer.domain, //Use the apps name [places|subjects|terms]
                                         perspective: Drupal.settings.kmaps_explorer.perspective,
                                         feature_path: Drupal.settings.kmaps_explorer.featuresPath, //Change this to your feature path you can use Drupal's mode too, just using %%ID%% to match the pattern
+                                        mandalaURL: Drupal.settings.kmaps_explorer.base_url + "/%%APP%%/%%ID%%/%%REL%%/nojs",
                                         solrUtils: relatedSolrUtils
                                     });
                                     popupsSet = true;
@@ -301,6 +303,7 @@
                                         domain: Drupal.settings.kmaps_explorer.domain, //Use the apps name [places|subjects|terms]
                                         perspective: Drupal.settings.kmaps_explorer.perspective,
                                         feature_path: Drupal.settings.kmaps_explorer.featuresPath, //Change this to your feature path you can use Drupal's mode too, just using %%ID%% to match the pattern
+                                        mandalaURL: Drupal.settings.kmaps_explorer.base_url + "/%%APP%%/%%ID%%/%%REL%%/nojs",
                                         solrUtils: relatedSolrUtils
                                     });
                                     popupsSet = true;

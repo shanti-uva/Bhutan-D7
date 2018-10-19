@@ -782,26 +782,26 @@
 
                             if (Drupal.settings.shanti_kmaps_admin.shanti_kmaps_admin_search_navigation_mode === "app") {
                               if (this.asset_type === "subjects" || this.asset_type === "places") {
-                                // this.url_asset_nav = "/" + this.asset_type + "/" + this.id + "/overview/nojs?f=" + encodedFilters + "#search";
-                                this.url_asset_nav = new Handlebars.SafeString(this.url_html + "?f=" + encodedFilters + "#search");
+                                // this.url_asset_nav = "/" + this.asset_type + "/" + this.id + "/overview/nojs?f=" + encodedFilters;
+                                this.url_asset_nav = new Handlebars.SafeString(this.url_html + "?f=" + encodedFilters);
                               } else if (this.asset_type === "texts") {
-                                // this.url_asset_nav = ASSET_VIEWER_PATH + "text_node/" + this.id + "/nojs?f=" + encodedFilters + "#search";
-                                this.url_asset_nav = new Handlebars.SafeString(this.url_html + "?f=" + encodedFilters + "#search");
+                                // this.url_asset_nav = ASSET_VIEWER_PATH + "text_node/" + this.id + "/nojs?f=" + encodedFilters;
+                                this.url_asset_nav = new Handlebars.SafeString(this.url_html + "?f=" + encodedFilters);
                               } else if (this.asset_type === "visuals") {
-                                // this.url_asset_nav = ASSET_VIEWER_PATH + "visuals/node/" + this.id + "/nojs?f=" + encodedFilters + "#search";
-                                this.url_asset_nav = new Handlebars.SafeString(this.url_html + "?f=" + encodedFilters + "#search");
+                                // this.url_asset_nav = ASSET_VIEWER_PATH + "visuals/node/" + this.id + "/nojs?f=" + encodedFilters;
+                                this.url_asset_nav = new Handlebars.SafeString(this.url_html + "?f=" + encodedFilters);
                               } else if (this.asset_type === "sources") {
-                                // this.url_asset_nav = ASSET_VIEWER_PATH + "sources/node/" + this.id + "/nojs?f=" + encodedFilters + "#search";
-                                this.url_asset_nav = new Handlebars.SafeString(this.url_html + "?f=" + encodedFilters + "#search");
+                                // this.url_asset_nav = ASSET_VIEWER_PATH + "sources/node/" + this.id + "/nojs?f=" + encodedFilters;
+                                this.url_asset_nav = new Handlebars.SafeString(this.url_html + "?f=" + encodedFilters);
                               } else if (this.asset_type === "images") {
-                                // this.url_asset_nav = ASSET_VIEWER_PATH + "photos_node/" + this.id + "/nojs?f=" + encodedFilters + "#search";
-                                this.url_asset_nav = new Handlebars.SafeString(this.url_html + "?f=" + encodedFilters + "#search");
+                                // this.url_asset_nav = ASSET_VIEWER_PATH + "photos_node/" + this.id + "/nojs?f=" + encodedFilters;
+                                this.url_asset_nav = new Handlebars.SafeString(this.url_html + "?f=" + encodedFilters);
                               } else if (this.asset_type === "picture") {
-                                // this.url_asset_nav = ASSET_VIEWER_PATH + "photos_node/" + this.id + "/nojs?f=" + encodedFilters + "#search";
-                                this.url_asset_nav = new Handlebars.SafeString(this.url_html + "?f=" + encodedFilters + "#search");
+                                // this.url_asset_nav = ASSET_VIEWER_PATH + "photos_node/" + this.id + "/nojs?f=" + encodedFilters;
+                                this.url_asset_nav = new Handlebars.SafeString(this.url_html + "?f=" + encodedFilters);
                               } else if (this.asset_type === "audio-video") {
                                 var url = this.url_html;
-                                this.url_asset_nav = new Handlebars.SafeString(url + "?f=" + encodedFilters + "#search");
+                                this.url_asset_nav = new Handlebars.SafeString(url + "?f=" + encodedFilters);
                               } else {
                                 console.error("ERROR unknown asset type! " + this.asset_type + " for " + this.uid);
                                 console.dir(this);
@@ -811,22 +811,22 @@
                             } else /* if (Drupal.settings.shanti_kmaps_admin.shanti_kmaps_admin_search_navigation_mode === "local") */ {
 
                               if (this.asset_type === "subjects" || this.asset_type === "places") {
-                                this.url_asset_nav =  "/" + this.asset_type + "/" + this.id + "/overview/nojs#search";
+                                this.url_asset_nav =  "/" + this.asset_type + "/" + this.id + "/overview/nojs";
                               } else if (this.asset_type === "texts") {
-                                this.url_asset_nav = ASSET_VIEWER_PATH + "text-node/" + this.id + "/nojs#search";
+                                this.url_asset_nav = ASSET_VIEWER_PATH + "text-node/" + this.id + "/nojs";
                               } else if (this.asset_type === "visuals") {
-                                this.url_asset_nav = ASSET_VIEWER_PATH + "visuals-node/" + this.id + "/nojs#search";
+                                this.url_asset_nav = ASSET_VIEWER_PATH + "visuals-node/" + this.id + "/nojs";
                               } else if (this.asset_type === "sources") {
-                                this.url_asset_nav = ASSET_VIEWER_PATH + "sources-node/" + this.id + "/nojs#search";
+                                this.url_asset_nav = ASSET_VIEWER_PATH + "sources-node/" + this.id + "/nojs";
                               } else if (this.asset_type === "images") {
-                                this.url_asset_nav = ASSET_VIEWER_PATH + "image-node/" + this.id + "/nojs#search";
+                                this.url_asset_nav = ASSET_VIEWER_PATH + "photos-node/" + this.id + "/nojs";
                               } else if (this.asset_type === "picture") {
-                                this.url_asset_nav = ASSET_VIEWER_PATH + "image-node/" + this.id + "/nojs?mms#search"
+                                this.url_asset_nav = ASSET_VIEWER_PATH + "photos-node/" + this.id + "/nojs?mms";
                               } else if (this.asset_type === "audio-video") {
                                 var path = this.url_html.split('/');
                                 var last = path.pop();
                                 var type = path.pop();
-                                this.url_asset_nav = "/places/0/" + "audio-video-node/" + this.id + "/nojs#search";
+                                this.url_asset_nav = "/places/0/" + "audio-video-node/" + this.id + "/nojs";
                               } else {
                                 console.error("ERROR unknown asset type! " + this.asset_type);
                               }

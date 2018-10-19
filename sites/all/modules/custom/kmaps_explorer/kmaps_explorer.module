@@ -1200,6 +1200,7 @@ function kmaps_explorer_setup_page($id, $app, $resource = '') {
  * Function to create the ajax content for subjects in subjects
  */
 function kmaps_explorer_subjects_subjects($type = 'ajax', $id, $app) {
+    global $base_url;
     //Drupal static initializations
     $data_shuffle = &drupal_static('kmaps_explorer_data');
 
@@ -1216,6 +1217,7 @@ function kmaps_explorer_subjects_subjects($type = 'ajax', $id, $app) {
     drupal_add_js(
         array(
             'kmaps_explorer' => array(
+                'base_url' => $base_url,
                 'title' => $title,
                 'domain' => 'subjects',
                 'featureId' => $id,
@@ -1541,6 +1543,7 @@ function kmaps_explorer_subjects_places($type = 'ajax', $id, $page_num = 1, $tot
  * Function to create the ajax content for the places in places
  */
 function kmaps_explorer_places_places($type = 'ajax', $id, $page_num = 1, $total_pages = 1, $subpage = FALSE) {
+    global $base_url;
     //Drupal static initializations
     $data_shuffle = &drupal_static('kmaps_explorer_data');
 
@@ -1555,6 +1558,7 @@ function kmaps_explorer_places_places($type = 'ajax', $id, $page_num = 1, $total
     drupal_add_js(
         array(
             'kmaps_explorer' => array(
+                'base_url' => $base_url,
                 'title' => $data_shuffle['node_title'],
                 'domain' => 'places',
                 'featureId' => $id,
