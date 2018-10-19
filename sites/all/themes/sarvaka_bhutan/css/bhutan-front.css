@@ -69,7 +69,7 @@
 
 .home-teaser-wrapper{ background:#f0f0f0; padding-bottom:5rem;}
 .home-teaser-wrapper .container-fixed{ padding-bottom:5rem;}	   
-.teaser{ margin:0; height:200px;}
+.teaser{ margin:0; min-height:200px;}
 .teaser>div{ padding:3rem;}
 .teaser:nth-of-type(even){ background:white; padding-right:2rem; padding-left:8px; border:1px solid #e0e0e0; border-radius:0 12px 12px 0;  -webkit-box-shadow: 0 3px 8px rgba(50,50,50,0.05000);box-shadow: 0 3px 8px rgba(50,50,50,0.05000);}
 .teaser:nth-of-type(even) > div{ border-left:7px solid #f0f0f0;}
@@ -92,10 +92,10 @@
 .tzr-summary .icon:active{ opacity:1;}
 .home-teaser-wrapper .teaser:nth-of-type(even) .tzr-summary .icon{ position:absolute;left:0.5rem;}
 
-.tzr-related{ height:140px; background:#fff;padding:1rem 1.5rem 1.5rem 2rem; border-radius:0 16px 16px 0; border-left:8px solid #aaa; border-right:18px double #f0f0f0;}
+.tzr-related{ display:block; height:140px; background:#fff;padding:1rem 1.5rem 1.5rem 2rem; border-radius:0 16px 16px 0; border-left:8px solid #aaa; border-right:18px double #f0f0f0;}
 .home-teaser-wrapper .teaser:nth-of-type(even) .tzr-related{ background:#f0f0f0; border-right:16px double #fff;}	
 .tzr-audio-video .tzr-related{ border-left-color: rgba(60, 204, 202, 0.9000);}
-.tzr-texts .tzr-related{ border-left-color: #8c48a1;}
+.tzr-texts .tzr-related{ display:none; border-left-color: #8c48a1;}
 .tzr-images .tzr-related{ border-left-color: #b5953b;}
 .tzr-places .tzr-related{ border-left-color: #3297f7;}
 .tzr-subjects .tzr-related{ border-left-color: #cc4c39;}
@@ -137,3 +137,30 @@
 .front.bhutan .input-section .input-group input.form-control{ margin:0;}
 .front.bhutan .input-section .input-group .input-group-btn{ position:absolute;top: 0.1rem;right:0.1rem;}
 .front.bhutan .input-section .input-group{ padding:0;}
+
+
+
+
+
+
+@media screen and (max-width: 768px) {
+
+		.tzr-related{
+			display: none; /* toggle display */
+		}
+
+		.teaser:nth-of-type(even) .tzr-summary p{
+			margin-left: 115px;
+		}
+
+		.home-teaser-wrapper .teaser:nth-of-type(even) .tzr-summary .icon{
+			left:1.75rem;
+		}
+}
+
+
+
+
+
+
+
