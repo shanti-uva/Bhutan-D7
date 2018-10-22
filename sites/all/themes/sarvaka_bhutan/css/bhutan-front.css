@@ -68,8 +68,14 @@
 .intro-search{ }
 
 .home-teaser-wrapper{ background:#f0f0f0; padding-bottom:5rem;}
-.home-teaser-wrapper .container-fixed{ padding-bottom:5rem;}	   
-.teaser{ margin:0; min-height:200px;}
+.home-teaser-wrapper .container-fixed{ padding-bottom:5rem;}	 
+
+.teaser{ 
+	margin:0; 
+	min-height:200px;
+}
+
+
 .teaser>div{ padding:3rem;}
 .teaser:nth-of-type(even){ background:white; padding-right:2rem; padding-left:8px; border:1px solid #e0e0e0; border-radius:0 12px 12px 0;  -webkit-box-shadow: 0 3px 8px rgba(50,50,50,0.05000);box-shadow: 0 3px 8px rgba(50,50,50,0.05000);}
 .teaser:nth-of-type(even) > div{ border-left:7px solid #f0f0f0;}
@@ -100,7 +106,7 @@
 .tzr-related{ display:block; height:140px; background:#fff;padding:1rem 1.5rem 1.5rem 2rem; border-radius:0 16px 16px 0; border-left:8px solid #aaa; border-right:18px double #f0f0f0;}
 .home-teaser-wrapper .teaser:nth-of-type(even) .tzr-related{ background:#f0f0f0; border-right:16px double #fff;}	
 .tzr-audio-video .tzr-related{ border-left-color: rgba(60, 204, 202, 0.9000);}
-.tzr-texts .tzr-related{ display:none; border-left-color: #8c48a1;}
+.tzr-texts .tzr-related{ border-left-color: #8c48a1;}
 .tzr-images .tzr-related{ border-left-color: #b5953b;}
 .tzr-places .tzr-related{ border-left-color: #3297f7;}
 .tzr-subjects .tzr-related{ border-left-color: #cc4c39;}
@@ -161,6 +167,47 @@
 		.home-teaser-wrapper .teaser:nth-of-type(even) .tzr-summary .icon{
 			left:1.75rem;
 		}
+
+
+
+		.teaser{ 
+			border-top: 3px solid transparent !important;
+			border-bottom: 3px solid transparent !important;
+
+			-webkit-transition: all .2s ease-out; 
+					transition: all .2s ease-out;
+		}
+		.teaser:hover{ 
+			border-top: 3px solid #ccc !important;
+			border-bottom: 3px solid #ccc !important;
+		}
+		.teaser:active{ 
+			border-top: 3px solid #aaa !important;
+			border-bottom: 3px solid #aaa !important;
+		}
+			.tzr-audio-video.teaser:active{
+				border-color:#31acb6 !important;
+			}
+			.tzr-photos.teaser:active,
+			.tzr-images.teaser:active{
+				border-color:#b5953b !important;
+			}
+			.tzr-texts.teaser:active{
+				border-color:#8c48a1 !important;
+			}
+			.tzr-subjects.teaser:active{
+				border-color:#cc4c39 !important;
+			}
+			.tzr-places.teaser:active{
+				border-color:#3297f7 !important;
+			}
+				/*.tzr-visuals.teaser:active{
+				border-color:#558e3c;
+				}
+				.tzr-sources.teaser:active{
+					border-color:#6f69ae;
+				}*/
+
 }
 
 
