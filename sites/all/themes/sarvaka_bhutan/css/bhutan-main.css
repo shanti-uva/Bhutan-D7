@@ -399,6 +399,46 @@ article ul ul ul ul { -webkit-margin-before: 0; margin-top:0;}
   display:none !important;
 }
 
+
+
+
+
+
+
+/*
+.in-frame.audio-video .nav-tabs.nav-justified>li.active>a{
+  border-top-color: #31acb6 !important;
+  background-color: #31acb6 !important;
+}
+*/
+
+
+
+
+
+@media screen and (max-width: 991px) {
+/*
+  .in-frame.texts .nav-tabs.nav-justified>li.active>a{
+    background-color: #8c48a1 !important;
+  }
+  .in-frame.texts .nav-tabs.nav-justified>li.active>a:focus,
+  .in-frame.texts .nav-tabs.nav-justified>li.active>a:hover{
+    background: #8c48a1 !important;
+  }
+
+  .in-frame.texts .nav-tabs.nav-justified>li.active{
+    border-top: 5px double #8c48a1 !important;
+  }
+  .in-frame.texts .nav-tabs.nav-justified>li.active::before{
+    color: #8c48a1 !important;
+  }
+*/
+}
+
+
+
+
+
 /*
 .in-frame.audio-video .titlearea, 
 .in-frame.audio-video .titlearea.has-tabs, 
