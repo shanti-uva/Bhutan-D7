@@ -30,7 +30,6 @@
     Drupal.behaviors.bhutanSidebarFooterGravity = {
         attach: function (context, settings) {
             Drupal.ShantiSarvaka.bhutanSidebarFooterGravity = function () {
-                console.log("Here we go again");
                 var height = $(window).height();
                 var mainwrapper_minimum = (height) - 190;
                 var mainwrapper_minimum_hastabs = (height) - 230;
