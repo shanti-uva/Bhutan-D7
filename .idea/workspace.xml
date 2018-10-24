@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c0050dad-07b8-4cc1-9536-ee898922b4be" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/sites/all/themes/sarvaka_bhutan/js/bhutan-search.js" beforeDir="false" afterPath="$PROJECT_DIR$/sites/all/themes/sarvaka_bhutan/js/bhutan-search.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sites/all/themes/sarvaka_bhutan/templates/page.tpl.php" beforeDir="false" afterPath="$PROJECT_DIR$/sites/all/themes/sarvaka_bhutan/templates/page.tpl.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sites/all/themes/sarvaka_bhutan/templates/page--front.tpl.php" beforeDir="false" afterPath="$PROJECT_DIR$/sites/all/themes/sarvaka_bhutan/templates/page--front.tpl.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -19,9 +18,7 @@
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file leaf-file-name="shanti_sarvaka.info" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/sites/all/themes/shanti_sarvaka/shanti_sarvaka.info">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1" />
-          </provider>
+          <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
       <file leaf-file-name="bhutan-search.js" pinned="false" current-in-tab="false">
@@ -42,11 +39,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="page.tpl.php" pinned="false" current-in-tab="true">
+      <file leaf-file-name="page.tpl.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/sites/all/themes/shanti_sarvaka/templates/page.tpl.php">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="568">
-              <caret line="138" lean-forward="true" selection-start-line="138" selection-end-line="138" />
+              <caret line="138" selection-start-line="138" selection-end-line="138" />
             </state>
           </provider>
         </entry>
@@ -54,11 +51,21 @@
       <file leaf-file-name="page.tpl.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/sites/all/themes/sarvaka_bhutan/templates/page.tpl.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="774">
-              <caret line="108" column="37" lean-forward="true" selection-start-line="108" selection-start-column="37" selection-end-line="108" selection-end-column="37" />
+            <state relative-caret-position="409">
+              <caret line="98" selection-start-line="98" selection-end-line="98" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="page--front.tpl.php" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/sites/all/themes/sarvaka_bhutan/templates/page--front.tpl.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="316">
+              <caret line="31" column="21" selection-start-line="31" selection-start-column="21" selection-end-line="31" selection-end-column="21" />
               <folding>
                 <element signature="n#style#0;n#div#0;n#main#0;n#div#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#section#0;n#main#0;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#section#1;n#main#0;n#div#0;n#!!top" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -96,8 +103,9 @@
         <option value="$PROJECT_DIR$/sites/all/modules/custom/kmaps_explorer/js/solr-utils.js" />
         <option value="$PROJECT_DIR$/sites/all/modules/custom/kmaps_explorer/js/custom.js" />
         <option value="$PROJECT_DIR$/sites/all/modules/custom/kmaps_explorer/kmaps_explorer.module" />
-        <option value="$PROJECT_DIR$/sites/all/themes/sarvaka_bhutan/templates/page.tpl.php" />
         <option value="$PROJECT_DIR$/sites/all/themes/sarvaka_bhutan/js/bhutan-search.js" />
+        <option value="$PROJECT_DIR$/sites/all/themes/sarvaka_bhutan/templates/page.tpl.php" />
+        <option value="$PROJECT_DIR$/sites/all/themes/sarvaka_bhutan/templates/page--front.tpl.php" />
       </list>
     </option>
   </component>
@@ -242,28 +250,29 @@
       <workItem from="1538508695542" duration="1289000" />
       <workItem from="1539355931693" duration="13771000" />
       <workItem from="1540392029783" duration="696000" />
+      <workItem from="1540392771656" duration="768000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="24151000" />
+    <option name="totallyTimeSpent" value="24919000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1297" y="0" width="1263" height="1440" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.3128583" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.31777233" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" weight="0.32916668" />
       <window_info anchor="right" id="Database" order="3" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Terminal" order="7" />
-      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
@@ -280,6 +289,37 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/sites/all/themes/shanti_sarvaka/shanti_sarvaka.info">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sites/all/themes/sarvaka_bhutan/js/bhutan-search.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="896">
+          <caret line="32" selection-start-line="32" selection-end-line="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sites/all/themes/sarvaka_bhutan/sarvaka_bhutan.info">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="588">
+          <caret line="21" column="33" selection-start-line="21" selection-start-column="33" selection-end-line="21" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sites/all/themes/sarvaka_bhutan/templates/page.tpl.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3024">
+          <caret line="108" column="37" lean-forward="true" selection-start-line="108" selection-start-column="37" selection-end-line="108" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sites/all/themes/shanti_sarvaka/templates/page.tpl.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3864">
+          <caret line="138" lean-forward="true" selection-start-line="138" selection-end-line="138" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/sites/all/modules/custom/kmaps_explorer/kmaps_explorer.module">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="14924">
@@ -293,9 +333,6 @@
           <caret line="25" column="8" selection-start-line="25" selection-start-column="8" selection-end-line="25" selection-end-column="8" />
         </state>
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/sites/all/themes/sarvaka_bhutan/js/bhutan-main.js">
-      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/sites/all/themes/sarvaka_bhutan/sarvaka_bhutan.info">
       <provider selected="true" editor-type-id="text-editor">
@@ -440,9 +477,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/sites/all/themes/sarvaka_bhutan/js/bhutan-main.js">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/sites/all/modules/custom/kmaps_explorer/kmaps_explorer.module">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="28">
@@ -451,25 +485,12 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/sites/all/themes/shanti_sarvaka/shanti_sarvaka.info">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1" />
-      </provider>
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/sites/all/themes/sarvaka_bhutan/sarvaka_bhutan.info">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="588">
           <caret line="21" column="33" selection-start-line="21" selection-start-column="33" selection-end-line="21" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/sites/all/themes/sarvaka_bhutan/templates/page.tpl.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="774">
-          <caret line="108" column="37" lean-forward="true" selection-start-line="108" selection-start-column="37" selection-end-line="108" selection-end-column="37" />
-          <folding>
-            <element signature="n#style#0;n#div#0;n#main#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#section#0;n#main#0;n#div#0;n#!!top" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -483,7 +504,26 @@
     <entry file="file://$PROJECT_DIR$/sites/all/themes/shanti_sarvaka/templates/page.tpl.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="568">
-          <caret line="138" lean-forward="true" selection-start-line="138" selection-end-line="138" />
+          <caret line="138" selection-start-line="138" selection-end-line="138" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sites/all/themes/sarvaka_bhutan/templates/page.tpl.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="409">
+          <caret line="98" selection-start-line="98" selection-end-line="98" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sites/all/themes/sarvaka_bhutan/templates/page--front.tpl.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="316">
+          <caret line="31" column="21" selection-start-line="31" selection-start-column="21" selection-end-line="31" selection-end-column="21" />
+          <folding>
+            <element signature="n#style#0;n#div#0;n#main#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#section#0;n#main#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#section#1;n#main#0;n#div#0;n#!!top" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
