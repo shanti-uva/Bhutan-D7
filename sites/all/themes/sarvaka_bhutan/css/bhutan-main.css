@@ -7,19 +7,14 @@
 * --------------------------------------------------
 * 
 */
-
 article ul,
 article ul ul,
 article ul ul ul,
 article ul ul ul ul { -webkit-margin-before: 0; margin-top:0;}
-/** To prevent images from spilling out over popup **/
-/* .modal img { max-width: 550px; } */
-
 .navbar-header{ padding-left:1rem;}
 .navbar-header .navbar-brand{ line-height: 2.25em;}
 .site-logo{ width:500px; height:40px; position:relative; top:0rem;}
 .site-title{ display:none !important;}
-/*-- #search-flyout.extruder.right.isOpened .extruder-content{ border-right-width:13px;} --*/
 
 /** PAGE: Sponsors **/
 .page-sponsors .main-wrapper{ min-height:53em;}
@@ -38,8 +33,6 @@ article ul ul ul ul { -webkit-margin-before: 0; margin-top:0;}
 .sponsor-list .views-row .website{ display: block;clear: both;}
 .sponsor-list .views-row .website .label{ font-size: 0.9em;color: #555;padding-left:0;}
 
-
-
 #sidebar-first .nav-pills li.places.active,
 .page-places #sidebar-first .nav-pills li.overview.active {
   border-color: #3297f7 !important; 
@@ -48,9 +41,11 @@ article ul ul ul ul { -webkit-margin-before: 0; margin-top:0;}
 .page-subjects #sidebar-first .nav-pills li.overview.active {
   border-color: #cc4c39 !important; 
 }
+#sidebar-first .nav-pills li.images.active,
 #sidebar-first .nav-pills li.photos.active { /* images */
   border-color: #b5953b !important; 
 }
+#sidebar-first .nav-pills li.texts.active,
 #sidebar-first .nav-pills li.essays.active { /* texts */
   border-color: #8c48a1 !important; 
 }
@@ -59,8 +54,10 @@ article ul ul ul ul { -webkit-margin-before: 0; margin-top:0;}
 }
 #sidebar-first .nav-pills li.sources.active {
   border-color: #8c48a1 !important; 
- }
-
+}
+#sidebar-first .nav-pills li.visuals.active {
+  border-color: #558e3c !important; 
+}
 
 
 .page-places .breadcrumb .icon,
@@ -74,7 +71,6 @@ article ul ul ul ul { -webkit-margin-before: 0; margin-top:0;}
 .page-subjects .fixed-action-button a{
   background-color:#cc4c39 !important;
  }
-
 
 .page-places .breadcrumb .icon,
 .page-places.kmaps-overview .breadcrumb .icon,
@@ -161,7 +157,7 @@ article ul ul ul ul { -webkit-margin-before: 0; margin-top:0;}
 
 
 
-/* footer - use of class .abc is purely as selector overrie in this case to be sure Bhutan site receives the styles */
+
 .footer{
   height: 80px;
   padding-top: 5px;
@@ -232,24 +228,16 @@ article ul ul ul ul { -webkit-margin-before: 0; margin-top:0;}
 
 
 
-@media screen and (max-width: 993px) {	/* this breakpoint from kmaps */
+@media screen and (max-width: 993px) {
 	
 	.view-resources.btn-default{ display:inline-block !important;}
 	.page-sponsors .view-resources.btn-default{ display:none !important;}
 }
 
-@media screen and (min-width: 650px) {
-	/**.footer{ padding-bottom:10px;}
-	.footer .view-sponsor-logos{ left:50%;margin-left:-255px;}**/
-}
 
 
 
 /* MINIMUM WIDTH */
-
-@media screen and (min-width: 400px) {
-
-}
 
 @media screen and (min-width: 500px) {
     
@@ -271,12 +259,10 @@ article ul ul ul ul { -webkit-margin-before: 0; margin-top:0;}
     font-size: 100%;
     position: relative;
     top: 0.025rem;
-    /* text-shadow: 0.05rem 0.05rem #fff; */
   }
 
   .navbar-header .site-slogan:hover,
   .navbar-header .site-slogan:active {
-    /*text-shadow: 0.05rem 0.05rem #555;*/
     text-shadow:none;
   }
 }
@@ -297,10 +283,6 @@ article ul ul ul ul { -webkit-margin-before: 0; margin-top:0;}
   }
 }
 
-@media screen and (min-width: 850px) {
-
-}
-
 @media screen and (min-width: 992px) {
   
   .titlearea.has-tabs-secondary ul.tabs.secondary,
@@ -309,20 +291,12 @@ article ul ul ul ul { -webkit-margin-before: 0; margin-top:0;}
   }
 }
 
-@media screen and (min-width: 1280px) {
-}
 
 @media all and (orientation:portrait) {
 }
 
 @media all and (orientation:landscape) {
 }
-
-
-
-
-
-
 
 
 
@@ -380,7 +354,6 @@ article ul ul ul ul { -webkit-margin-before: 0; margin-top:0;}
 
 
 
-
 /* remove Collections link ui since Collections are not supported in Kmaps / Bhutan */
 .shanti-thumbnail .footer-wrap a,
 .shanti-thumbnail .footer-wrap a:hover{
@@ -395,65 +368,9 @@ article ul ul ul ul { -webkit-margin-before: 0; margin-top:0;}
 
 
 
-.kmaps-photos .content-section.col-xs-12 article > h4{
+.kmaps-photos .content-section.col-xs-12 article > h4
+.kmaps-texts .content-section.col-xs-12 > .tab-content > article > h4,
+.kmaps-texts .content-section.col-xs-12 > .tab-content > article > div > h4{
   display:none !important;
 }
 
-
-
-
-
-
-
-/*
-.in-frame.audio-video .nav-tabs.nav-justified>li.active>a{
-  border-top-color: #31acb6 !important;
-  background-color: #31acb6 !important;
-}
-*/
-
-
-
-
-
-@media screen and (max-width: 991px) {
-/*
-  .in-frame.texts .nav-tabs.nav-justified>li.active>a{
-    background-color: #8c48a1 !important;
-  }
-  .in-frame.texts .nav-tabs.nav-justified>li.active>a:focus,
-  .in-frame.texts .nav-tabs.nav-justified>li.active>a:hover{
-    background: #8c48a1 !important;
-  }
-
-  .in-frame.texts .nav-tabs.nav-justified>li.active{
-    border-top: 5px double #8c48a1 !important;
-  }
-  .in-frame.texts .nav-tabs.nav-justified>li.active::before{
-    color: #8c48a1 !important;
-  }
-*/
-}
-
-
-
-
-
-/*
-.in-frame.audio-video .titlearea, 
-.in-frame.audio-video .titlearea.has-tabs, 
-.in-frame.audio-video .titlearea > div, 
-.in-frame.audio-video .titlearea header{
-  height: 2em !important;
-}
-
-.in-frame.audio-video .page-title{
-  color:#555;
-  text-shadow: none !important;
-  padding-left: 3rem;
-}
-
-.in-frame.audio-video .titlearea .page-title-text {
-  display:block !important;
-}
-*/
