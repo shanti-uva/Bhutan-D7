@@ -7,3 +7,4 @@ sites/*/private
 
 #OSX files
 .DS_Store
+.idea/
