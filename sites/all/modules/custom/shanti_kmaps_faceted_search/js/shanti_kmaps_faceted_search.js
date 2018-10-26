@@ -887,7 +887,7 @@
                               }
                             } else /* if (Drupal.settings.shanti_kmaps_admin.shanti_kmaps_admin_search_navigation_mode === "local") */ {
                               //check if there is a kmaps_id available and if not then use the default setting for asset_viewer_path
-                              if (Drupal.settings.kmaps_explorer.kmaps_id) {
+                              if (typeof Drupal.settings.kmaps_explorer !== 'undefined' && typeof Drupal.settings.kmaps_explorer.kmaps_id !== 'undefined') {
                                   ASSET_VIEWER_PATH = '/' + Drupal.settings.kmaps_explorer.app + '/' + Drupal.settings.kmaps_explorer.kmaps_id + '/';
                               }
                               if (this.asset_type === "subjects" || this.asset_type === "places") {
