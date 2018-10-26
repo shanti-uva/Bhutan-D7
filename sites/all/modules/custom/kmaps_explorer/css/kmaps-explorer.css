@@ -31,6 +31,11 @@ body:not(.home-carousel) .content-section.col-md-9 { width: 99%; padding-left:10
 @media screen and (min-width: 992px) {
   body:not(.front) .content-section.col-md-9,
   body:not(.home-carousel) .content-section.col-md-9 { padding-left:210px; padding-right:0; }
+
+  body.kmaps-texts:not(.front) .content-section.col-md-9,
+  body.kmaps-texts:not(.home-carousel) .content-section.col-md-9{
+    max-width: 1600px !important;
+  }
 }
 
 /* space between Map and accordions on Overview section */
@@ -171,9 +176,17 @@ article table.pagerer:last-child{
   float:left;
 }
 
-.resource-overview-image img {
+.resource-overview-image img{
   height:130px !important;
   margin: 0 1.4rem 1rem 0 !important;
+
+  border-radius: .5rem !important;
+  border: 3px solid #ccc !important;
+  padding: .5rem;
+    border: 2px solid #ccc !important;
+    padding: .8rem;
+    box-shadow: 0 0 5px 1px #ccc inset;
+    border-radius: 0 !important;
 }
 
 .feature-type-wrapper{
@@ -424,13 +437,6 @@ h6.sources-title {
 /**
 * BEGIN Related Visuals
 */
-.content-section.col-xs-12 article > h4{
-  margin-top: .5rem;
-  margin-bottom: 0;
-}
-.kmaps-images .content-section.col-xs-12 article > h4{
-  margin-bottom: 0.7rem;
-}
 
 .shanti-thumbnail-image a .overlay::before {
   content: '\e63c';
@@ -957,8 +963,9 @@ h6.sources-title {
   padding: 0.4rem .5rem 0;
   border-top: 2px dotted transparent;
   float: left;
-  -webkit-transition: border 350ms ease-out;
-  transition: border 350ms ease-out;
+  -webkit-transition: border 500ms ease-out;
+  transition: border 500ms ease-out;
+  text-transform: uppercase;
 }
 
 .front-list .popover-footer-button a:hover{
@@ -1303,7 +1310,7 @@ h6.sources-title {
   .row-offcanvas .btn.btn-default.view-offcanvas-sidebar { display: inline-block !important; position:absolute; left: -1.25rem; top:-0.5rem; border-radius: 0 0.4rem 0.4rem 0; background-clip: padding-box; background: #333; color: #fff; border: none;}
   .row-offcanvas.active .btn.btn-default.view-offcanvas-sidebar { position:absolute; top:-0.5rem; left:-3.6rem; }
   .row-offcanvas .btn.btn-default.view-offcanvas-sidebar .icon{ position:relative; top:0; left:-0.3rem; float:right; }
-  .kmaps .row-offcanvas .btn.btn-default.view-offcanvas-sidebar .icon{ left: 0.5rem; }
+  .kmaps .row-offcanvas .btn.btn-default.view-offcanvas-sidebar .icon{ left: 0.4rem; }
   .row-offcanvas.active .btn.btn-default.view-offcanvas-sidebar .icon{ position:relative; top:0; }
 
   .page-node-edit .row-offcanvas .btn.btn-default.view-offcanvas-sidebar{ display:none; }
@@ -1751,10 +1758,11 @@ p.modal-title {
 
 
 /**
-* -------------------
-* Columnizer Lists
-* -------------------
+* --------------------------------
+* Kmaps Lists - Columnizr layout
+* --------------------------------
 */
+
 /* Sidebar resources in list format can display within Tabs, ID = myTab */
 .kmaps-lists-tabpanels .nav-tabs{
   /*padding-left:3rem;*/
@@ -1807,7 +1815,11 @@ p.modal-title {
 
 
 
-
+/* toggle lists - collapse-all / expand-all */
+#relation_details .panel-body .collapsible_btns_container:last-child{
+  position: absolute;
+  bottom:2rem;
+}
 
 
 
@@ -1987,6 +1999,10 @@ ul.collapsibleList.split > li.split > .collapsibleListOpen.split {
   padding-left: 0;
 }
 
+.kmaps-list-columns .column > ul{
+  margin-left:-1.5rem;
+}
+
 .kmaps-list-columns ul li{
   list-style-type: none;
   margin-right:1rem;
@@ -2012,8 +2028,35 @@ ul.collapsibleList.split > li.split > .collapsibleListOpen.split {
   
 }
 
+
+
+
+
+
+
+.content-section.col-xs-12 article > h4{
+  margin-top: .5rem;
+  margin-bottom: 0;
+}
+.kmaps-audio-video .content-section.col-xs-12 article > h4{
+  margin-left: 2rem;
+  margin-bottom: .5rem;
+  font-size: 1.44em;
+}
+.kmaps-images .content-section.col-xs-12 article > h4{
+  margin-bottom: 0.7rem;
+}
+
 .content-section.col-xs-12 > .tab-content > article > div > h4 {
   margin-top:.4rem;
+  margin-left: 2rem;
+  margin-bottom: 0;
+  font-size: 1.44em;
+}
+
+.kmaps-texts .content-section.col-xs-12 article > h4,
+.kmaps-texts .content-section.col-xs-12 > .tab-content > article > div > h4{
+  display:none;
 }
 
 .kmaps-list-columns h6{
@@ -2026,8 +2069,7 @@ ul.collapsibleList.split > li.split > .collapsibleListOpen.split {
   text-transform: capitalize;
   line-height: 1.32em;
   opacity:.9;
-  margin-right: .75rem;
-  margin-bottom: 0;
+  margin: 0 1rem 0 0;
 }
     .page-subjects .kmaps-list-columns h6{
       background: #cc4c39;
@@ -2067,7 +2109,7 @@ ul.collapsibleList.split > li.split > .collapsibleListOpen.split {
 
 .kmaps-list-columns .column > li{
   list-style-type: none;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
 }
 
 .kmaps-list-columns .column > ul > li {
@@ -2116,6 +2158,7 @@ ul.collapsibleList.split > li.split > .collapsibleListOpen.split {
   border-radius: 1.5rem;
   padding: .3rem 3rem .3rem 3.8rem;
   margin-top: 1.25rem;
+  margin-bottom: .5rem;
   background: #fafafa;
   font-weight: bold;
   color: #555;
@@ -2156,7 +2199,7 @@ ul.collapsibleList.split > li.split > .collapsibleListOpen.split {
 
 .kmaps-list-columns .popover-kmaps{
   position: relative;
-  top: 0.7rem;
+  /*top: 0.7rem;*/
   margin-left: .6rem;
 }
 
@@ -2166,17 +2209,17 @@ ul.collapsibleList.split > li.split > .collapsibleListOpen.split {
 
 .kmaps-list-columns .popover-kmaps-tip{
   position: relative;
-  bottom: 1.6rem;
+  bottom: 1rem;
   font-size: 0.1rem;
 }
 
     .page-subjects.kmaps-places .kmaps-list-columns .popover-kmaps-tip{
       position: relative;
-      bottom: 1rem;
+      bottom: 1.6rem;
     }
     .page-subjects.kmaps-places .kmaps-list-columns .popover-kmaps{
       position: relative;
-      top: 0.1rem;
+      top: 0.7rem;
     }
 
 
@@ -2249,7 +2292,15 @@ ul.collapsibleList.split > li.split > .collapsibleListOpen.split {
 
 
 .relation_tree_container .fancytree-container li{
-  line-height: 2em;
+  line-height: 1.82em;
+}
+
+.relation_tree_container .fancytree-container .fancytree-title::before {
+  background: #444;
+  top: 0.75rem;
+  width: 7px;
+  height: 7px;
+  box-shadow: none;
 }
 
 

@@ -195,9 +195,9 @@ input.form-inline {
 	font-size: 0.88em;
 	margin-left: 1.5rem;
 	margin-top: .75rem;
-
-      display:none;
 }
+
+.form-type-textfield label.flyout-search-label { display:none; }
 
 .form-item.form-type-select .edit-field-og-collection-ref-und{
   margin-top: 1.75rem;
@@ -592,6 +592,9 @@ div#edit-group-audience > div.form-item > div.collection-details-audience {
 
 
 
+.field-type-shanti-kmaps-fields-default .kmap-typeahead-picker {
+  margin-top: 0rem;
+}
 
 .field-widget-kmap-typeahead-picker .field-type-taxonomy-term-reference > label {
 	border-bottom: 1px solid #ccc;
@@ -611,8 +614,12 @@ div#edit-group-audience > div.form-item > div.collection-details-audience {
 	margin-top: -6px;
 }
 
-
-
+.kmap-typeahead-picker .searchreset, .kmap-typeahead-picker .kmfaceted-list-clear  {
+  display: none;
+  visibility: hidden;
+  width: 0;
+  height: 0;
+}
 
 
 
@@ -644,7 +651,6 @@ div#edit-group-audience > div.form-item > div.collection-details-audience {
   text-transform: capitalize;
   font-weight: normal;
 }
-
 
 
 .field-name-field-location .kmap-result-box{
@@ -1063,7 +1069,10 @@ input#field_transcript_value.text-full.form-control.form-inline{
 
 .group-rights .form-type-textfield input.form-text.form-control { width:91% !important; margin-left:0.5rem;}
 
-.field-widget-text-textfield.form-wrapper input.form-text.form-control { max-width:70% !important;}
+.field-widget-text-textfield.form-wrapper input.form-text.form-control {
+    max-width:70% !important;
+    margin-top: 12px;
+}
 
 .field-widget-text-textfield.form-wrapper input.form-text.form-control[placeholder="Enter Title"]{ max-width:100% !important; }
 

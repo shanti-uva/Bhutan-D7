@@ -293,14 +293,15 @@ function _shanti_images_get_carousel_slides($slideids, $startslide, $num_of_slid
     $is_dev = (strstr($base_url, '.dd') || strstr($base_url, '-dev')) ? TRUE : FALSE;
     $items = array_slice($slideids, $startslide, $num_of_slides);
     if (!empty($items)) {
-        $items = node_load_multiple($items);  // Turn list of nids into node objects
+        //$items = node_load_multiple($items);  // Turn list of nids into node objects
         // Process list of node objects into gallery item objects per specifications above
-        foreach($items as $item) {
+        foreach($items as $nid) {
+            $si = _shanti_images_get_node_image($nid);
             $gitem = new stdClass;
-            $gitem->nid = $item->nid;
-            $gitem->filename = $item->i3ffiles;
-            $gitem->title = $item->title;
-            $gitem->path = drupal_get_path_alias('node/' . $item->nid);
+            $gitem->nid = $nid;
+            $gitem->filename = $si->getIIIFName();
+            $gitem->title = $si->title;
+            $gitem->path = $si->path;
             $galinfo[] = $gitem;
         }
         foreach($galinfo as $n => $item) {
@@ -757,6 +758,7 @@ function shanti_images_get_license_title($license_url) {
 /**
  * Whenever a shanti_image node is loaded add i3ffiles array
  */
+/*
 function shanti_images_node_load($nodes, $types) {
     if (in_array('shanti_image', $types)) {
         foreach($nodes as &$node) {
@@ -771,7 +773,7 @@ function shanti_images_node_load($nodes, $types) {
         }
     }
 }
-
+*/
  /**
   * Function to deliver an embeddable div without Drupal page wrappers for any node
   *
@@ -857,6 +859,26 @@ function shanti_images_mms_api($mmsid) {
 }
 
 /**
+ * Function to return the IIIF file name for a given MMS ID
+ * API call from hook_menu
+ */
+function shanti_images_get_mms_filename($mmsid) {
+    header('Content-Type: text/plain');
+    $out = 'FALSE';
+    if (is_numeric($mmsid)) { $mmsid = 'mms-' . $mmsid; }
+    $qry = "select entity_id from field_data_field_other_ids  where field_other_ids_value = '$mmsid';";
+    $res = db_query($qry);
+    $res = $res->fetchCol();
+    if (!empty($res)) {
+        $si = _shanti_images_get_node_image($nid);
+        if ($si) {
+            $out = $si->getIIIFName();
+        }
+    }
+    print $out;
+}
+
+/**
  * Given a particular MMS ID redirect to the Drupal node page if it exists
  *
  * @param $mmsid
@@ -869,26 +891,6 @@ function shanti_images_mms_lookup($mmsid) {
     } else {
         drupal_not_found();
     }
-}
-
-/**
- * Function to return the IIIF file name for a given MMS ID
- * API call from hook_menu
- */
-function shanti_images_get_mms_filename($mmsid) {
-    header('Content-Type: text/plain');
-    $out = 'FALSE';
-    if (is_numeric($mmsid)) { $mmsid = 'mms-' . $mmsid; }
-    $qry = "select entity_id from field_data_field_other_ids  where field_other_ids_value = '$mmsid';";
-    $res = db_query($qry);
-    $res = $res->fetchCol();
-    if (!empty($res)) {
-        $node = node_load($res[0]);
-        if (!empty($node->i3ffiles[0])) {
-            $out = $node->i3ffiles[0];
-        }
-    }
-    print $out;
 }
 
 /**

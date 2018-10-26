@@ -503,7 +503,7 @@ display: block;
   font-size: 1.38em;
   line-height: 1.32em;
   color: #000;
-  border-bottom: 1px solid #ddd !important;
+  border-bottom: 2px solid #ddd !important;
   padding-bottom: 1rem;
   margin: 1rem 0 1.5rem;
   font-family: 'EB Garamond',Baskerville,palatino,'Palatino Linotype','Times New Roman',serif;
@@ -535,9 +535,10 @@ display: block;
 }
 
 #shanti-texts-sidebar .shanti-texts-field td {
-  padding: .1em 0.5em 0 0;
-  float:left;
   font-family: 'Helvetica Neue',helvetica,arial,sans-serif;
+}
+
+#shanti-texts-sidebar table tr.shanti-texts-field:first-child td{
   border-top-color:#fff;
 }
 
@@ -585,7 +586,7 @@ display: block;
 
 #shanti-texts-sidebar .shanti-texts-record-table ul {
   list-style-type: none;
-  margin-left: -1.75rem;
+  margin: 0 0 0 -2rem;
 }
 
 #shanti-texts-sidebar #shanti-texts-meta .shanti-texts-field-label {
@@ -594,8 +595,10 @@ display: block;
   color: #333;
   font-family: 'museo-sans-700', helvetica, sans-serif !important;
   padding-right:0.1rem;
-  position: relative;
-  bottom: .3rem;
+  font-size: .88em;
+  vertical-align: middle;
+  white-space: nowrap;
+}
 }
 
 #shanti-texts-sidebar #shanti-texts-meta .shanti-texts-field-label::after{
@@ -603,7 +606,7 @@ display: block;
   display:inline-block;
   font-size:130%;
   position: relative;
-  right:0.35rem; 
+  right: 0.2rem;
 }
 
 

@@ -110,12 +110,33 @@ article.main-col{
 
 /* override system.menus.css #36 */
 article.main-col li a.active{
-  color: rgb(0, 0, 139);
+  /*color: rgb(0, 0, 139);*/
+}
+
+.page-sources-search .view-empty {
+  padding: 35px 24px 8px 24px;
 }
 
 .node-type-collection .content-section{
   padding-bottom: 7rem;
 }
+
+/* Bibio lists Author and Collection's links */
+.page-sources-search .views-field-biblio-authors li a,
+.page-sources-search .views-field-field-zotero-tags li a,
+.page-sources-search .views-field-field-zotero-collections a{ 
+  font-style: italic; 
+  font-size: 1em; 
+  color: rgb(0,0,139);
+  font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
+}
+.page-sources-search .views-field-biblio-authors li a{
+  font-size: .93em;
+  color:#111;
+}
+
+
+
 
 
 
@@ -484,11 +505,10 @@ article.main-col li a.active{
 }
 
 .page-sources-search .title-link-container a{
-  /*font-weight:bold;
-  font-family: 'heletica neue','museo-sans-500',arial,sans-serif;*/
   letter-spacing: 0.0075rem;
   color: #111;
   font-size: 1.06em;
+  font-family: 'Helvetica Neue',helvetica,arial,sans-serif;
 }
 
 .page-sources-search .title-link-container > .shanticon-sources{
@@ -581,7 +601,6 @@ article.main-col li a.active{
   position: relative;
   font-family: 'FontAwesome';
   font-size: 1.5rem;
-  color: #645F9D !important;
   margin-right: 0rem;
   margin-left: -2.25rem;
   background: #fff;
@@ -629,10 +648,6 @@ article.main-col li a.active{
 .page-sources-search:not(.page-sources-search-biblio) .views-label-field-zotero-tags,
 .page-sources-search:not(.page-sources-search-biblio) .views-field-field-zotero-collections > strong{
   display:none;
-}
-
-.page-sources-search .views-field-field-zotero-collections a{
-  font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
 }
 
 .page-sources-search-biblio .views-label.views-field-biblio-url a{
@@ -789,17 +804,6 @@ article.main-col li a.active{
   float: left;
 }
 
-/* Bibio lists Author and Collection's links */
-.page-sources-search .views-field-biblio-authors li a,
-.page-sources-search .views-field-field-zotero-tags li a{ font-style:italic; padding: 0 .15rem; font-size: 1em; font-family: 'Helvetica Neue', helvetica, arial, sans-serif;}
-
-.page-sources-search .views-field-biblio-authors li a{
-  font-size: .93em;
-}
-
-.page-sources-search .view-empty {
-  padding: 35px 24px 8px 24px;
-}
 
 
 
@@ -883,6 +887,7 @@ article.main-col li a.active{
     font-weight: bold;
     text-transform: uppercase;
     font-family: 'museo-sans-500', helvetica, arial, sans-serif;
+    font-size:90%;
 }
 
 .node-type-biblio .field-name-field-kmap-subjects.field-label-above .field-label,

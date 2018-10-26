@@ -31,6 +31,34 @@
 .ui-resizable-handle.ui-resizable-w:hover,
 .ui-resizable-handle.ui-resizable-w:active { border-color: #8c48a1 transparent transparent transparent; }
 */
+
+@media screen and (max-width: 768px) {
+    
+    .nav-tabs.nav-justified>li.active::before{
+      display:none !important;
+    }
+}
+
+
+@media screen and (max-width: 991px) {
+  .nav-tabs.nav-justified>li.active>a{
+    background: #8c48a1 !important;   
+  }
+  .nav-tabs.nav-justified>li.active>a:focus,
+  .nav-tabs.nav-justified>li.active>a:hover{
+    background: #8c48a1 !important;
+  }
+
+  .nav-tabs.nav-justified>li.active{
+    border-top: 5px double #8c48a1 !important;
+  }
+
+  .nav-tabs.nav-justified>li.active::before{
+    color: #8c48a1 !important;
+  }
+}
+
+
 @media screen and (min-width: 500px) {
   .navbar-header .site-slogan{ color:#8c48a1 !important; } 
   .navbar-brand:hover .site-slogan{ color: #555 !important; } 
@@ -43,19 +71,7 @@
   }
 }
 
-@media screen and (max-width: 991px) {
-  .nav-tabs.nav-justified>li.active>a{
-    background: #8c48a1 !important;   
-  }
-  .nav-tabs.nav-justified>li.active>a:focus,
-  .nav-tabs.nav-justified>li.active>a:hover{
-    background: #8c48a1 !important;
-  }
 
-  .nav-tabs.nav-justified>li.active{
-    border-top: 5px double #8c48a1;
-  }
-}
 
 ::-moz-selection { background: #E6F066 !important; color: #333 !important;}
 ::selection { background: #E6F066 !important; color: #333 !important;}

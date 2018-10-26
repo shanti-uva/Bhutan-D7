@@ -21,12 +21,12 @@
               </a>
 
             <?php else: ?>
-              
+
               <a href="<?php print $variables['home_url']; ?>" class="navbar-brand" title="<?php print $site_name; ?> Homepage">
               <img src="<?php print $logo; ?>" class="site-logo" />
-                <span class="site-title"><?php print $site_name; ?></span> 
+                <span class="site-title"><?php print $site_name; ?></span>
               </a>
-              
+
             <?php endif; ?>
 
             <a href="<?php print $variables['home_url']; ?>" class="navbar-brand" title="<?php print $site_name; ?> Homepage">
@@ -50,7 +50,7 @@
            </fieldset>
            </form>
          </nav>
-        
+
      </div><!-- END Navbar -->
      <?php if(module_exists('explore_menu')) { print render($variables['explore_menu']); } ?>
 
@@ -61,7 +61,7 @@
           <article class="main-content" role="main">
               <!-- Message Area -->
               <?php if (!empty($messages)) { print "<div class=\"messages\">$messages</div>"; } ?>
-            
+
               <!-- Begin Page Content -->
               <section class="content-section clearfix image-display-wrapper <?php if (!empty($bsclass_main)) { print " $bsclass_main"; } ?> ">
                     <?php if ($action_links): ?><ul class="action-links"><?php print render($action_links); ?></ul><?php endif; ?>
@@ -75,6 +75,11 @@
             <div id="search-flyout" class="region extruder right" role="search" style="display: none;">
                <?php print render($page['search_flyout']); ?>
             </div> <!-- End of Search Flyout -->
+
+            <!-- BEGIN faceted search results -->
+            <section id="faceted-search-results" class="faceted-search-results mandala-sliding-panel right-panel search-flyout-collapsed off" style="display:none;" aria-expanded="false" aria-label="Search Results Sliding Panel">
+                <!-- INSERT RESULTS TEMPLATE DATA -->
+            </section>
           <?php endif; ?>
 
     </main> <!-- End Main Content -->

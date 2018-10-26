@@ -31,25 +31,28 @@
                         url = url.replace('_/0/default', '_/' + rotation + '/default');
                       }
                       size = size.toString();
+
                       return url.replace('__FNAME__', filename).replace(/__SIZE__/g, size);
                     },
                     getImageSize: function (lastWindowWidth) {
                       if (lastWindowWidth <= 640)
-                        return 120;
+                        return 170;
                       else if (lastWindowWidth <= 1920)
-                        return 140;
+                        return 180;
                       return 180;
                     },
                     getMinAspectRatio: function (lastWindowWidth) {
                       if (lastWindowWidth <= 640)
                         return 3;
+                      else if (lastWindowWidth <= 800)
+                        return 4;
                       else if (lastWindowWidth <= 1280)
                         return 6;
-                      else if (lastWindowWidth <= 1440)
+                      else if (lastWindowWidth <= 1600)
                         return 8;
                       else if (lastWindowWidth <= 1920)
-                        return 12;
-                      return 18;
+                        return 11;
+                      return 12;
                     },
                   }).enable().activatePopdown();
 
@@ -85,6 +88,22 @@
 
           // Document only calls
           if (context == document) {
+            // Scrolling listener to load further images in a pig gallery
+            window.lastpigload = 0; // keep track of window y offset when last loaded to not run with each pixel change
+            $(window).scroll(function() {
+                var yoff = window.pageYOffset;
+                var diff = yoff - window.lastpigload;
+                // When scrolled difference is more than 50 pixels, go through and load images in view
+                if (Math.abs(diff) > 50) {
+                    var imgs = Drupal.settings.shanti_grid_view.mypig.images;
+                    // Run show routine on each image in gallery
+                    $(imgs).each(function() {
+                        this.show();  // Images only show when in viewport.
+                    });
+                    window.lastpigload = yoff;  // remember this Y offset
+                }
+            });
+
             // Enable mouseover overlays on images in grid
             $(document).on('mouseover', 'img.pig-loaded', function () {
               $('.justopen').removeClass('justopen').fadeOut();

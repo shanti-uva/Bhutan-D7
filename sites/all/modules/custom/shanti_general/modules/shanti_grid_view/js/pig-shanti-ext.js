@@ -525,32 +525,72 @@
         }.bind(this);
 
         this.getElement().appendChild(this.thumbnail);
+        this.show();
       }
 
-      // Show full image
-      if (!this.fullImage) {
-        this.fullImage = new Image();
-        this.fullImage.src = this.pig.settings.urlForSize(this.filename, this.pig.settings.getImageSize(this.pig.lastWindowWidth), this.rotation);
-        this.fullImage.onload = function() {
-
-          // We have to make sure fullImage still exists, we may have already been
-          // deallocated if the user scrolls too fast.
-          if (this.fullImage) {
-            this.fullImage.className += ' ' + this.classNames.loaded;
-          }
-        }.bind(this);
-
-        this.getElement().appendChild(this.fullImage);
-
-        // Add Footer  (code added by ndg8f)
-        this.footer = document.createElement('div');
-        this.footer.className = 'img-footer-overlay';
-        this.footer.style.display = 'none';
-        this.footer.innerHTML = this.title;
-        this.getElement().appendChild(this.footer);
-      }
     }.bind(this), 100);
-  }; // End of ProgressiveImage extension
+  }; // End of ProgressiveImage Load
+
+
+  // Separating out show function so it can be called onscrolll from shanti-grid-view.js
+  // Allows pseudo progressive loading of gallery. All thumbs are loaded but full images are only loaded when in view
+  ProgressiveImage.prototype.show = function() {
+      // Show full image if it is in view
+      if (inview(this.getElement())) {
+          // Check to make sure full image isn't already there
+          if (!this.fullImage) {
+              this.fullImage = new Image();
+              var url = this.pig.settings.urlForSize(
+                  this.filename,
+                  this.pig.settings.getImageSize(this.pig.lastWindowWidth),
+                  this.rotation
+              );
+
+              // Account for prod images on non-prod servers
+              if (url.match(/shanti-image-\d+/)) {
+                  if (window.location.host.match(/(\.dd)|(-dev)|(-stage)/)) {
+                      url = url.replace('-test', '');
+                  }
+              }
+
+              this.fullImage.src = url;
+
+              this.fullImage.onload = function () {
+
+                  // We have to make sure fullImage still exists, we may have already been
+                  // deallocated if the user scrolls too fast.
+                  if (this.fullImage) {
+                      this.fullImage.className += ' ' + this.classNames.loaded;
+                  }
+              }.bind(this);
+
+              this.getElement().appendChild(this.fullImage);
+
+              // Add Footer  (code added by ndg8f)
+              this.footer = document.createElement('div');
+              this.footer.className = 'img-footer-overlay';
+              this.footer.style.display = 'none';
+              this.footer.innerHTML = this.title;
+              this.getElement().appendChild(this.footer);
+          }
+      }
+
+
+  };
+
+  // End of ProgressiveImage extension
+function inview(el) {
+    var wT = window.pageYOffset, wB = wT + window.innerHeight, cRect, pT, pB, p = 0;
+    cRect = el.getBoundingClientRect();
+    pT = wT + cRect.top;
+    pB = pT + cRect.height;
+    if (wT < pB && wB > pT) {
+        return true;
+    }
+
+    return false;
+}
+
 
 //********** HELPER FUNCTION *****************//
 // function to get which transform name

@@ -68,8 +68,7 @@ function bulk_image_import_form_submit($form, &$form_state) {
   }
   array_unshift(
     $operations,
-    array('bulk_image_import_set_context', array($box_auth, $group, $collection, )),
-    array('bulk_image_import_find_box_folder', array($catalog,))
+    array('bulk_image_import_set_context', array($box_auth, $group, $collection, ))
   );
   $batch = array(
     'operations' => $operations,
