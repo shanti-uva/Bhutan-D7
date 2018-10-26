@@ -1,6 +1,5 @@
 <div class="wrap-all">
-    <span class="sr-only"><a href=".main-content">Skip to main content</a><a
-                href="#kmaps-search">Skip to search</a></span>
+    <span class="sr-only"><a href=".main-content">Skip to main content</a><a href="#kmaps-search">Skip to search</a></span>
 
     <?php print render($page['header']); ?>
 
