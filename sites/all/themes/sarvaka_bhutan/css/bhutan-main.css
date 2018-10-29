@@ -139,7 +139,8 @@ article ul ul ul ul { -webkit-margin-before: 0; margin-top:0;}
 }
 
 .page-places .kmaps-sources-summary .shanticon-sources,
-.page-subjects .kmaps-sources-summary .shanticon-sources{
+.page-subjects .kmaps-sources-summary .shanticon-sources,
+.page-places .kmaps-sources-summary ul.summary-list > li span.icon.shanticon-essays{
   color:#6f69ae !important;
 }
 
@@ -186,6 +187,7 @@ article ul ul ul ul { -webkit-margin-before: 0; margin-top:0;}
   margin: 1.6rem 3rem 0 0;
   width: auto;
   float: left;
+  opacity:.8;
 }
 
 .footer .views-row-1 .views-field img.img-responsive{ /*------ arcadia */ 
@@ -207,7 +209,12 @@ article ul ul ul ul { -webkit-margin-before: 0; margin-top:0;}
   opacity: 0.85;
 }
 
-
+.footer .views-field img.img-responsive:hover{
+  opacity:1;
+}
+.footer .views-field img.img-responsive:active{
+  opacity:.7;
+}
 .footer .general > p{
   color: #707070;
   font-size: 70%;
