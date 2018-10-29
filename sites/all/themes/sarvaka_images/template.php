@@ -7,9 +7,9 @@
 
  /**
   *   This is the template.php file for a child sub-theme of the Shanti Sarvaka theme.
-  *   Use it to implement custom functions or override existing functions in the theme. 
-  */ 
-  
+  *   Use it to implement custom functions or override existing functions in the theme.
+  */
+
 function sarvaka_images_preprocess_page(&$vars) {
     // Remove extra search tabs for pages with "search/site" in the current path
     $cp = current_path();
@@ -37,11 +37,11 @@ function sarvaka_images_form_alter(&$form, &$form_state, $form_id) {
             'OR' => t('Any'),
             'NOT' => t('None'),
         );
-        $form['search_api_views_fulltext_op']['#size'] = 5; 
+        $form['search_api_views_fulltext_op']['#size'] = 5;
         $form['search_api_views_fulltext_op']['#prefix'] = '<span>' . t('Contains') . '</span>';
         $form['search_api_views_fulltext_op']['#suffix'] = '<span>' . t('of these words') . '</span>';
         $form['submit']['#value'] = t('Search');
-        //dpm($form, 'exposed form state'); 
+        //dpm($form, 'exposed form state');
     }
     if ($form_id == 'shanti_image_node_form') {
         $css = drupal_get_path('theme', 'sarvaka_images') . '/css/shanti-image-node-edit.css';
@@ -54,7 +54,7 @@ function sarvaka_images_form_alter(&$form, &$form_state, $form_id) {
             $msg = t('Back to viewing the image without saving changes made here');
             $form['#prefix'] = '<a href="' . $url . '" title="' . $msg . '" class="backarrow"><span class="icon shanticon-arrow-left_2"></span> ' . $ltxt . '</a>';
         }
-    } 
+    }
 }
 
 /**
@@ -232,15 +232,15 @@ function _sarvaka_images_get_flexslider_old($node) {
     $action_icons = _sarvaka_images_get_action_links($node);
 
     /**
-     * Process Gallery Info from session info. 
+     * Process Gallery Info from session info.
      * The session variable 'shanti_gallery_info' must have an array of items that are objects with the following properties:
-     * 
+     *
      *          nid: The node's ID
      *          filename: The IIIF filename for the image such as shanti-image-123-456
      *          title: the title of the image's node
      *          path: a path to the node itself (not the image url)
-     * 
-     * To make this adaptable to non-IIIF images, an image property such as $item->img could be added, 
+     *
+     * To make this adaptable to non-IIIF images, an image property such as $item->img could be added,
      * but the code to handle this would have to be written.
      */
     $galinfo = array();
@@ -262,14 +262,15 @@ function _sarvaka_images_get_flexslider_old($node) {
             $items = array_slice($items, $thmbst, $maxthumbs);
             //dpm($items, 'items in collection');
             if (!empty($items)) {
-                $items = node_load_multiple($items);  // Turn list of nids into node objects
+                //$items = node_load_multiple($items);  // Turn list of nids into node objects
                 // Process list of node objects into gallery item objects per specifications above
-                foreach($items as $item) {
+                foreach($items as $nid) {
+                    $si = _shanti_images_get_node_image($nid);
                     $gitem = new stdClass;
-                    $gitem->nid = $item->nid;
-                    $gitem->filename = $item->i3ffiles;
-                    $gitem->title = $item->title;
-                    $gitem->path = drupal_get_path_alias('node/' . $item->nid);
+                    $gitem->nid = $nid;
+                    $gitem->filename = $si->getIIIFName();
+                    $gitem->title = $si->title;
+                    $gitem->path = $si->path;
                     $galinfo[] = $gitem;
                 }
             }
@@ -287,7 +288,7 @@ function _sarvaka_images_get_flexslider_old($node) {
                 $jobj = json_decode($json);
                 $gitem = new stdClass;
                 $gitem->nid = $jobj->nid;
-                $gitem->filename = $jobj->i3ffiles;
+                $gitem->filename = (isset($jobj->i3ffiles)) ? $jobj->i3ffiles : $jobj->filename;
                 $gitem->title = $jobj->title;
                 $gitem->path = $jobj->path;
                 $galinfo[] = $gitem;
@@ -295,7 +296,7 @@ function _sarvaka_images_get_flexslider_old($node) {
             }
         }
     }
-    
+
     // Find index of current image in gallery data
     $myindex = FALSE;
     if (!empty($galinfo)) {
@@ -349,7 +350,7 @@ function _sarvaka_images_get_flexslider_old($node) {
             '</div><div id="fscarousel" class="flexslider fscarousel">' . $carousel_slides . '</div>';
         $markup = $back_arrow . $markup . $action_icons;
         return array($markup, $mylistindex);
-        
+
     } else if ($myindex === FALSE && variable_get('shanti_images_debug', FALSE)) {
         watchdog('sarvaka_images', 'No display of flexslider for node ' . $node->nid . '. Image not found in gallery list. (template.php)');
     }
@@ -365,7 +366,7 @@ function _sarvaka_images_get_flexslider_old($node) {
     $markup = $back_arrow . '<div id="fsslider" class="flexslider fsmain fssolo">' . $slides . '</div>';
     $markup .= $action_icons;
     return array($markup, 0);
-}   
+}
 
 /**
  * Returns the markup for the action links on an image page
@@ -386,10 +387,10 @@ function _sarvaka_images_get_action_links($node) {
     $height = $dbrec->height;
     // Get IIIF full url for images
     $fullurl = $base_path . 'image/download/' . $imgnm . '/full';
-    
+
     // Define different download sizes
     $sizes = array('Large' => 1200, 'Medium' => 800, 'Small' => 400);
-    
+
     // Create action link markup
     $editbtn = (node_access("update", $node) === TRUE) ?  '<a href="/node/' . $node->nid . '/edit" title="' . t('Edit this image’s information') . '"><span class="icon shanticon-editor"></span></a> ' : '';
     $almu = '<div class="image-actions">' . $editbtn . '<a href="#" title="View in IIIF Viewer"><span class="icon shanticon-preview iiif-icon"></span></a>
@@ -399,10 +400,10 @@ function _sarvaka_images_get_action_links($node) {
       <span class="icon shanticon-download"></span></button>
       <span class="drop-arrow"></span>
       <ul class="dropdown-menu">';
-      
+
      // Full image download link
      $almu .= '<li><a href="' . $fullurl . '" download="' . $filetitle . '-full" title="Download Original"><span class="icon shanticon-download"></span>Original (' . $width . 'x' . $height . ')</a></li>';
-        
+
      // Create download links for each size
      if ($width > 0) {
          foreach($sizes as $sstr => $swidth) {
@@ -411,12 +412,12 @@ function _sarvaka_images_get_action_links($node) {
              $almu .= '<li><a href="' . $surl . '" download="' . $filetitle . '-' . strtolower($sstr) . '.jpg" title="Download ' . $sstr . ' Size"><span class="icon shanticon-download"></span>' . $sstr . '  (' . $swidth . 'x' . $sheight . ')</a></li>';
          }
      }
-       
-     // Close action link markup and return it 
+
+     // Close action link markup and return it
      $almu .=  '</ul></div>';
     return $almu;
 }
-    
+
 function sarvaka_images_preprocess_image_agent(&$vars) {
     if ($vars['view_mode'] == 'teaser') {
         // Rework display of agent in teaser incorporated in image node
@@ -453,7 +454,7 @@ function sarvaka_images_preprocess_image_agent(&$vars) {
         }
         if (!empty($parencnt)) {$mu .= ' (' . $parencnt . ')'; }
         $mu .= '</span></li>';
-        
+
         $field_agent = array('#markup' => $mu);
         $vars['content'] = array_merge(array('field_agent' => $field_agent), $vars['content']);
 
@@ -461,13 +462,13 @@ function sarvaka_images_preprocess_image_agent(&$vars) {
         unset($vars['content']['field_agent_role']);
         unset($vars['content']['field_agent_place']);
         unset($vars['content']['field_agent_dates']);
-        
+
     }
 
     // For image agent (hide title in template) use role field changing title of role field (label) to its value and its value to the title (the name)
     /*
     $vars['content']['field_agent_role']['#title'] = ucfirst($vars['content']['field_agent_role'][0]['#markup']);
-    
+
     $markup = $vars['title'];
     $pd = false;
     // Date
@@ -476,24 +477,24 @@ function sarvaka_images_preprocess_image_agent(&$vars) {
         $pd =  render($vars['content']['field_agent_place']);
         $vars['content']['field_agent_place'] = array();
     }
-    
+
     // Date
     if (!empty($vars['content']['field_agent_dates'][0]['#markup'])) {
-        if ($pd) { $pd .= ', '; } 
+        if ($pd) { $pd .= ', '; }
         $pd .= $vars['content']['field_agent_dates'][0]['#markup'];
         $vars['content']['field_agent_dates']= array();
     }
-    
+
     if ($pd) {
         $markup .= ' (' . $pd . ')';
     }
-    
+
     // Notes
     if (!empty($vars['content']['field_agent_notes'][0]['#markup'])) {
         $note = $vars['content']['field_agent_notes'][0]['#markup'];
         $markup .= '<a href="#" data-toggle="popover" title="Note on ' . $vars['title'] .'" data-content="' . $note . '">*</a>';
     }
-    
+
     $vars['content']['field_agent_role'][0]['#markup'] = $markup;
     //dpm($vars, 'vars in ia pp');
      */
@@ -531,7 +532,7 @@ function sarvaka_images_preprocess_ext_class(&$vars) {
 
     $ew = entity_metadata_wrapper('node', $vars['node']);
     $scheme = $ew->field_external_class_scheme->value();
-    
+
     $ew2 = entity_metadata_wrapper('node', $scheme);
     if (!empty($ew2->field_scheme_abbreviation)) {
         $abbr = $ew2->field_scheme_abbreviation->value();
@@ -558,7 +559,7 @@ function sarvaka_images_preprocess_ext_class_scheme(&$vars) {
 
 /**
  * Impelments hook_preprocess_views_view
- * 
+ *
  * Used to adjust markup and add js/css for the image grid on the home page.
  * Old code for Cultural Landscapes project page. By passed by changing grid_views var.
  */
@@ -585,7 +586,9 @@ function sarvaka_images_preprocess_views_view(&$vars) {
                         $ratios[] = _shanti_images_get_ratio($fnm, 'i3fid');
                     } else {
                         $json = json_encode($item);
-                        watchdog('sarvaka_images', 'Shanti image without json: @json', array('@json' => $json) );
+                        if (variable_get('shanti_images_debug', FALSE)) {
+                            watchdog('sarvaka_images', 'Shanti image without json: @json', array('@json' => $json));
+                        }
                     }
                 } else {
                     // Node has no image!
@@ -593,22 +596,24 @@ function sarvaka_images_preprocess_views_view(&$vars) {
                     $genurls[] = '';
                     $infourls[] = '';
                     $ratios[] = '';
-                    watchdog('sarvaka_images', 'Shanti image without image:  @title (@nid)', array(
-                        '@title' => $item->node_title,
-                        '@nid' => $item->nid,
-                    ));
+                    if (variable_get('shanti_images_debug', FALSE)) {
+                        watchdog('sarvaka_images', 'Shanti image without image:  @title (@nid)', array(
+                            '@title' => $item->node_title,
+                            '@nid' => $item->nid,
+                        ));
+                    }
                 }
             }
             $settings = array('shanti_images' => array(
-                'genurls' => $genurls, 
-                'infourls' => $infourls, 
+                'genurls' => $genurls,
+                'infourls' => $infourls,
                 'imgratios' => $ratios
             ));
 
             drupal_add_js($settings, 'setting');
             // Add photoswipe css
             drupal_add_css(drupal_get_path('theme', 'sarvaka_images') . '/css/photoswipe.css', array('group' => CSS_THEME));
-            drupal_add_css(drupal_get_path('theme', 'sarvaka_images') . '/css/pswp-default-skin.css', array('group' => CSS_THEME)); 
+            drupal_add_css(drupal_get_path('theme', 'sarvaka_images') . '/css/pswp-default-skin.css', array('group' => CSS_THEME));
         } else if ($view->name == 'my_collections' && $view->current_display == 'my_collections_page') {
             // Process My Collections (memberships) View into gallery of thumbnails
             $vars['rows'] = '';
@@ -628,7 +633,7 @@ function sarvaka_images_preprocess_views_view(&$vars) {
 }
 
 /**
- * 
+ *
 function sarvaka_images_metadata_process($mdinfo) {
     if (is_array($mdinfo)) {
         if(count($mdinfo) > 0) {
@@ -641,7 +646,7 @@ function sarvaka_images_metadata_process($mdinfo) {
     }
 }
  */
- 
+
 /**
  * Converts the view results of a OG Membership search into a list of thumbnails for gallery
  */
@@ -666,7 +671,7 @@ function sarvaka_images_create_collection_thumb($item) {
         $coll = node_load($item->field_field_og_parent_collection_ref[0]['raw']['target_id']);
         $collink = l($coll->title, $base_path . 'node/' . $coll->nid);
     }
-    $tmpl = '<li class="shanti-thumbnail collection">  
+    $tmpl = '<li class="shanti-thumbnail collection">
         <div class="shanti-thumbnail-image shanti-field-collection">
             <a href="' . $collurl . '" class="shanti-thumbnail-link">
                 <span class="overlay"><span class="icon"></span></span>
@@ -674,39 +679,39 @@ function sarvaka_images_create_collection_thumb($item) {
                 <span class="icon shanticon-grid"></span>
             </a>
         </div>
-        <div class="shanti-thumbnail-info">      
+        <div class="shanti-thumbnail-info">
             <div class="body-wrap">
-                <div class="shanti-thumbnail-field shanti-field-title">        
+                <div class="shanti-thumbnail-field shanti-field-title">
                     <span class="field-content">
                         <a href="' . $collurl . '" class="">' . $item->node_og_membership_title . '</a>
-                    </span>  
-                </div>    
-                <div class="shanti-thumbnail-field shanti-field-author">       
-                    <span class="shanti-field-content">' . $usrlnk . '</span>  
-                </div>    
-                <div class="shanti-thumbnail-field shanti-field-created">       
-                    <span class="shanti-field-content">' . $date . '</span>  
-                </div>                
-                <div class="shanti-thumbnail-field shanti-field-type">       
-                    <span class="shanti-field-content">' . $access . ' ' . ucfirst($item->node_og_membership_type) . '</span>  
+                    </span>
                 </div>
-                <div class="shanti-thumbnail-field shanti-field-itemcount">       
-                    <span class="shanti-field-content">' . $count . '</span>  
+                <div class="shanti-thumbnail-field shanti-field-author">
+                    <span class="shanti-field-content">' . $usrlnk . '</span>
+                </div>
+                <div class="shanti-thumbnail-field shanti-field-created">
+                    <span class="shanti-field-content">' . $date . '</span>
+                </div>
+                <div class="shanti-thumbnail-field shanti-field-type">
+                    <span class="shanti-field-content">' . $access . ' ' . ucfirst($item->node_og_membership_type) . '</span>
+                </div>
+                <div class="shanti-thumbnail-field shanti-field-itemcount">
+                    <span class="shanti-field-content">' . $count . '</span>
                 </div>
                 <div class="shanti-thumbnail-field shanti-field-body">
                                     </div>
             </div> <!-- end of body wrap -->
-            
+
             <div class="footer-wrap">
-              
+
                               <div class="shanti-field shanti-field-group-audience">
                     <div class="shanti-field-content">' . $collink . '</div>
                 </div>
-                            
+
             </div> <!-- end footer -->
         </div>  <!-- end of thumbnail info -->
     </li>';
-    
+
     return $tmpl;
 }
 
@@ -737,7 +742,7 @@ function sarvaka_images_get_image_extension($file) {
 
 /**
  * Implements hook_preprocess_file_entity
- * 
+ *
  * 	   (Not used yet.)
 function sarvaka_images_preprocess_file_entity(&$vars) {
 	dpm($vars, 'vars in file pp');
@@ -745,7 +750,7 @@ function sarvaka_images_preprocess_file_entity(&$vars) {
 }
 
  */
- 
+
 /**
  * Implements hook preprocess field
  * 		Hide empty fields in image nodes
@@ -755,19 +760,19 @@ function sarvaka_images_preprocess_field(&$vars) {
 	/*if ($vars['element']['#bundle'] == 'image' && count($vars['element']['#items']) == 1 && empty($vars['element'][0]['#markup'])) {
 		$vars['classes_array'][] = "hidden";
 	} (commenting out ndg8f 2017-06-02) */
-    // For processing field collections 
+    // For processing field collections
     // From https://www.fourkitchens.com/blog/article/better-way-theme-field-collections/
-    
+
     // Agents field (Photographer, editor, etc.)
      if ($vars['element']['#field_name'] == 'field_agents') {
         //$vars['theme_hook_suggestions'][] = 'field_agents_collected';
         $field_array = array('field_agent', 'field_agent_role','field_agent_place', 'field_agent_dates', 'field_agent_notes');
         rows_from_field_collection($vars, 'field_agents', $field_array);
     }
-     
+
      // Simplify markup of general text fields to be list items with label: value using custom template: field--genfield--shanti-image.tpl.php
      $gen_fields = array(
-        'field_image_digital', 
+        'field_image_digital',
         'field_image_rotation',
         'field_image_quality',
         'field_image_color',
@@ -804,7 +809,7 @@ function sarvaka_images_preprocess_field(&$vars) {
     if (in_array($vars['element']['#field_name'], $desc_fields)) {
         $vars['theme_hook_suggestions'][] = 'field__gendesc__shanti_image';
     }
-    
+
     // Simplify markup of list fields like External Classifications
     $list_fields = array(
         'field_external_classification',
@@ -812,14 +817,14 @@ function sarvaka_images_preprocess_field(&$vars) {
     if (in_array($vars['element']['#field_name'], $list_fields)) {
         $vars['theme_hook_suggestions'][] = 'field__genlist__shanti_image';
     }
-    
+
 }
 
 
 /**
  * Creates a simple text rows array from a field collections, to be used in a
  * field_preprocess function.
- *     From https://www.fourkitchens.com/blog/article/better-way-theme-field-collections/ 
+ *     From https://www.fourkitchens.com/blog/article/better-way-theme-field-collections/
  * @param $vars
  *   An array of variables to pass to the theme template.
  *
@@ -864,20 +869,20 @@ function sarvaka_images_menu_breadcrumb_alter(&$active_trail, $item) {
 	   $map = $item['map']; // Item map tells us about what page we are on
         if ($map[0] == "node" && is_object($map[1])) {
             $node = $map[1];
-            // if it's a collection node, add link to all collections before it's name 
+            // if it's a collection node, add link to all collections before it's name
             if (in_array($node->type, array('collection', 'subcollection'))) {
                 $collslink = array(
-                  'title' => t('Collections'), 
-                  'href' => 'collections', 
-                  'link_path' => 'collections', 
-                  'localized_options' => array(), 
+                  'title' => t('Collections'),
+                  'href' => 'collections',
+                  'link_path' => 'collections',
+                  'localized_options' => array(),
                   'type' => 0,
                 );
                 $newat = array();
                 $newat[0] = array_shift($active_trail);
                 $newat[1] = $collslink;
                 $active_trail = array_merge($newat, $active_trail);
-            } 
+            }
         } else if ($item['path'] == 'collections' && count($active_trail) == 3 && $active_trail[1]['link_title'] == "Collections") {
             unset($active_trail[1]); // Remove the extra "collections" breadcrumb from user menu set up.
         }
@@ -924,7 +929,7 @@ function _get_items_in_collection($coll=FALSE, $return="count") {
         /**
          * Sample Query:
          *      select count(etid) from og_membership where entity_type='node' and field_name='field_og_collection_ref' and gid in (3,1721,1725,1769,2228,2258,3498,3939,4836,4835,1760,1748,1841);
-         * 
+         *
          * NOTE: TODO: the results of this query returns a larger number of results than the view shows for THL. WHY is this?
          */
         $result = db_select('og_membership', 'ogm')
@@ -944,7 +949,7 @@ function _get_items_in_collection($coll=FALSE, $return="count") {
  * Return list of subcollections in collection
  *      Returns an array of nids
  */
- 
+
  function _get_subcollections_in_collection($coll=FALSE) {
     $nids = array();
     if (is_numeric($coll)) {  $coll = node_load($coll);   } // convert nid to node
@@ -965,5 +970,5 @@ function _get_items_in_collection($coll=FALSE, $return="count") {
     }
     return $nids;
  }
- 
+
  /*** THEMING ***/

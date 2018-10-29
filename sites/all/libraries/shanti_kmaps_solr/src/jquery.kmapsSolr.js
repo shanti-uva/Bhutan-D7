@@ -979,12 +979,12 @@
             " caption:"+search +
             " summary:"+ search +
             " names_txt:"+ search +"^9" ;
-          kmapsMatch = "{!join from=uid fromIndex=" + cf.termIndex + " to=kmapid score=none v=$kmapsMatch}";
+          kmapsMatch = "{!join from=uid_i to=kmapid_is score=none v=$kmapsMatch}";
           var qSearch = fqhash.searchString;
           if (search.search(' ') > -1 && search.charAt(0) != '"') {
               qSearch = fqhash.searchString.split(':')[0] + ':"' + search + '"';
           }
-          kmapsMatchQuery = qSearch + " OR " + "name_bod_tibt:\"" + fqhash.searchString.split(':')[1] + "\"";
+          kmapsMatchQuery = qSearch + " OR " + "name_tibt:\"" + fqhash.searchString.split(':')[1] + "\"";
         }
       }
 

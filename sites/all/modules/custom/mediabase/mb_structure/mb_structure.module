@@ -557,8 +557,6 @@ function mb_structure_form_av_node_form_validate($form, &$form_state)
 {
     // Check for no media error when media has been deleted from node and then saved. Replace error with message and return to edit page.
     $errors = form_get_errors();
-    $error_messages = drupal_get_messages('error');
-    form_clear_error();
     $cp = current_path();
     $from_edit = (preg_match('/node\/\d+\/edit/', $cp)) ? TRUE : FALSE; // is the origin page the edit page
     if (is_array($errors)) {
@@ -566,19 +564,12 @@ function mb_structure_form_av_node_form_validate($form, &$form_state)
             if (preg_match('/field_(audio|video)\]\[(en|und)\]\[0\]\[entryid/', $key) && $from_edit) {
                 $type = $form_state['values']['type'];
                 if (substr($type, 0, 1) =='a') { $type = 'an ' . $type; } else { $type = 'a ' . $type;  }
-                drupal_set_message(t('Please add @type file to this record.', array( '@type'=>$type)), 'warning');
-                $form_state['node']->replacing_av = TRUE;
-                if (count($errors) == 1) { form_clear_error(); }
-            } else {
-                $msg = str_replace('field_audio', 'Audio', $msg);
-                $msg = str_replace('field_video', 'Video', $msg); 
-                form_set_error($key, $msg);
-                _mb_structure_reenable_kaltura_button($form);
+                drupal_set_message(t('Please add another @type file to this record.', array( '@type'=>$type)), 'warning');
+                mb_kaltura_delete_node_entry($form_state['node']);
+                drupal_goto('node/' . $form_state['node']->nid . '/edit');
             }
         }
     }
-    
-    // Check for creator 
     
     // Check if captions and summaries are within character limits
     $lang = key($form_state['values']['field_pbcore_description']);

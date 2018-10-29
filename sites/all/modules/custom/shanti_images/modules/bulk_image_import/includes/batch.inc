@@ -1,4 +1,4 @@
-\<?php
+<?php
 
 include 'map.inc';
 
@@ -46,7 +46,6 @@ function _bulk_image_import_create_node($xml, $tid, $context) {
 
 function _bulk_image_import_link_image_to_node($task, $node, $xml, &$context, &$auth) {
   // Download the image to the temp directory
-  $folder_id = $context['results']['folder_id'];
   $filename = trim(preg_replace('/\s\s+/', ' ', (string) $xml->AssetProperties->Filename));
   // Hack for handling RAW image files
   list($dirname, $basename, $extension, $fname) = array_values(pathinfo($filename));
@@ -55,7 +54,7 @@ function _bulk_image_import_link_image_to_node($task, $node, $xml, &$context, &$
   }
 
   try {
-    $file = bulk_image_import_download_box_file($auth, $filename, $folder_id);
+    $file = bulk_image_import_download_box_file($auth, $filename);
   }
   catch (Exception $e) {
     _bulk_image_import_task_handle_error($task, "Could not download Box file. Reason: " . $e->getMessage(), $node);
@@ -65,7 +64,7 @@ function _bulk_image_import_link_image_to_node($task, $node, $xml, &$context, &$
   $siid = _shanti_images_create_record(
     $node->nid,
     $file->fid,
-    $filename,
+    $file->filename,
     (integer) $xml->MediaProperties->Width,
     (integer) $xml->MediaProperties->Height
   );

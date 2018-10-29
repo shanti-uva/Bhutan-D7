@@ -13,6 +13,10 @@
 .in-frame.has-transcript article.main-col{
   max-width: 1600px !important;
 }
+.in-frame.audio-video:not(.front) article.main-col{
+  margin:0 !important;
+  padding-top:0;
+}
 .in-frame .site-banner,
 .in-frame .titlearea .breadwrap, 
 .in-frame .titlearea .banner-tabs,
@@ -40,27 +44,9 @@ body.in-frame.html {
 	margin-top: -1rem;
 }
 .in-frame  .titlearea .page-title-text {
-	/*text-shadow: none !important;
-	color: #222 !important;
-	padding-left: 12px !important;
-	box-shadow: none !important;
-	border: none !important;
-	line-height: 2em !important;
-	position: absolute;
-	left: 2rem;
-	top: -.1rem;
-	font-size: 105%;*/
 	display:none !important;
 }
-/*
-.in-frame .titlearea .page-title {
-	padding-top: 0px;
-}
-.in-frame .titlearea .page-title .icon{
-	display:none;
-}*/
-
-/** Hide JIRA feedback button **/
+/** JIRA feedback **/
 .in-frame .atlwdg-trigger.atlwdg-SUBTLE {
 	display: none !important;
 }
@@ -83,13 +69,12 @@ body.in-frame.html {
 .in-frame.audio-video .titlearea.has-tabs{
 	margin-bottom: 1rem !important;
 }
-
-@media screen and (min-width: 768px) {
-
-  .in-frame.audio-video  .av-main-wrapper{
-    padding-top:0 !important;
+	.in-frame.audio-video .nav-tabs.nav-justified>li.active{
+		border-top-color: #555 !important;
+	}
+	.in-frame.audio-video .nav-tabs.nav-justified>li.active>a{
+		background-color: #555 !important;
   }
-}
 
 
 
@@ -98,6 +83,9 @@ body.in-frame.html {
 /**
 *  TEXTS - iframe custom styles 
 */
+.in-frame.texts article.main-col{
+	max-width:1400px !important;
+}
 .in-frame.texts .titlearea{
   display:none;
 }
@@ -105,13 +93,78 @@ body.in-frame.html {
   display:none;
 }
 
-.kmaps-search-texts article.main-col{
-	max-width:1400px !important;
+.in-frame.texts .nav-tabs.nav-justified>li{
+  position: relative;
+  top: -.4rem;
+}
+.in-frame.texts .nav-tabs.nav-justified>li a{
+  font-size: 0.75em;
+  text-transform: uppercase;
+  line-height: 1.32em;
+  padding-top: 1.5rem;
+}
+
+
+
+
+
+
+
+
+
+@media screen and (max-width: 991px) {
+
+	.in-frame.texts .nav-tabs.nav-justified>li.active>a{
+		background-color: #555 !important;
+	}
+	.in-frame.texts .nav-tabs.nav-justified>li.active>a:focus,
+	.in-frame.texts .nav-tabs.nav-justified>li.active>a:hover{
+		background: #555 !important;
+	}
+
+	.in-frame.texts .nav-tabs.nav-justified>li.active{
+		border-top: 5px double #555 !important;
+	}
+}
+
+@media screen and (max-width: 767px) {
+
+	.in-frame.texts .nav-tabs.nav-justified>li.active::before{
+		color: #555 !important;
+	}
+}
+
+
+
+/*
+@media screen and (min-width: 500px) {
+	
+	.navbar-header .site-slogan{ color:#8c48a1 !important; } 
+	.navbar-brand:hover .site-slogan{ color: #555 !important; } 
+	.navbar-header:active .site-slogan{ color:#8c48a1 !important; } 
+}
+*/
+
+@media screen and (min-width: 768px) {
+  
+	.in-frame.texts .nav-tabs.nav-justified>li.active::before{
+		color: #8c48a1 !important;
+	}
+  	.in-frame.audio-video  .av-main-wrapper{
+		padding-top:0 !important;
+	}
+	.in-frame.texts .nav-tabs.nav-justified>li.active::before,
+	.in-frame.audio-video .nav-tabs.nav-justified>li.active::before{
+		color:#555 !important;
+	}
 }
 
 
 @media screen and (min-width: 992px) {
 
+	.in-frame.texts .nav-tabs.nav-justified>li.active::before{
+		display:none;
+	}
     /* testing these two rulesets is for positioning book reader height */
     .in-frame.texts article.main-col{ position: relative; padding-top:1.7rem;}
     .in-frame.texts article.main-col > div{ min-height:580px; }
@@ -123,23 +176,21 @@ body.in-frame.html {
       bottom:0.1rem;
       padding: 0;
       margin-bottom: 0;
+      max-width: 1400px !important;
     }
     .in-frame.texts.has-tabs #shanti-texts-container{
       position: absolute;
       top: .5rem;
     }  
-
     .in-frame.texts #shanti-texts-sidebar {
       height:100%;
       padding: .4rem 0 0;
       width: 32%;
     }
-
     .in-frame.texts #shanti-texts-body {
       margin-right:1.25rem;
       padding: 3.5rem 1.5rem 0 3.25rem;
     }
-
     .in-frame.texts #shanti-texts-sidebar .tab-content{
       position: absolute;
       top: 38px;
@@ -149,13 +200,10 @@ body.in-frame.html {
       border-right:1px solid #d0d0d0;
       border-bottom: 2px solid #aaa;
     }
-
     .in-frame.texts #shanti-texts-sidebar .tab-content::-webkit-scrollbar {
       height: .7rem; /* horizontal scrolling scroll handle */
       width: 1.5rem; /* vertical scrolling scroll handle */
     }
-
-
     .in-frame.texts .nav-tabs.nav-justified>li{
       border-right: 1px solid #ddd;
       border-top: 2px solid #aaa;
@@ -193,7 +241,7 @@ body.in-frame.html {
       border-top: none;
       box-shadow: none;
       border-right: 1px solid #ddd;
-      border-top: 2px solid #8c48a1;
+      border-top: 2px solid #555;
       background-color: #fff !important;
     }
     .in-frame.texts .nav-tabs.nav-justified>li:hover:not(.active){
@@ -217,31 +265,10 @@ body.in-frame.html {
       border-bottom-color: #fff !important;
       box-shadow: none;
     }
-    .in-frame.texts .nav-tabs.nav-justified>li.active:last-child{
-    }
-    .in-frame.texts .nav-tabs.nav-justified>li.active::before{
-      display:none; /* remove the active-tab-pointer icon */
-    }
 }
 
 
 
-
-.in-frame.texts .nav-tabs.nav-justified>li{
-  position: relative;
-  top: -.4rem;
-}
-
-.in-frame.texts .nav-tabs.nav-justified>li a{
-  font-size: 0.75em;
-  text-transform: uppercase;
-  line-height: 1.32em;
-  padding-top: 1.5rem;
-}
-
-.in-frame.texts .nav-tabs.nav-justified>li.active::before{
-  color: #555 !important;
-}
 
 
 

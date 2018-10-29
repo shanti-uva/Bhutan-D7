@@ -1,4 +1,4 @@
-/*! Shanti Kmaps Solr - v0.1.0 - 2018-10-15
+/*! Shanti Kmaps Solr - v0.1.0 - 2018-10-24
 * Copyright (c) 2018 ys2n; Licensed MIT */
 /*! Shanti Kmaps Solr - v0.1.0 - 2018-07-24
 * Copyright (c) 2018 ys2n; Licensed MIT */
@@ -981,12 +981,12 @@
             " caption:"+search +
             " summary:"+ search +
             " names_txt:"+ search +"^9" ;
-          kmapsMatch = "{!join from=uid fromIndex=" + cf.termIndex + " to=kmapid score=none v=$kmapsMatch}";
+          kmapsMatch = "{!join from=uid_i to=kmapid_is score=none v=$kmapsMatch}";
           var qSearch = fqhash.searchString;
           if (search.search(' ') > -1 && search.charAt(0) != '"') {
               qSearch = fqhash.searchString.split(':')[0] + ':"' + search + '"';
           }
-          kmapsMatchQuery = qSearch + " OR " + "name_bod_tibt:\"" + fqhash.searchString.split(':')[1] + "\"";
+          kmapsMatchQuery = qSearch + " OR " + "name_tibt:\"" + fqhash.searchString.split(':')[1] + "\"";
         }
       }
 

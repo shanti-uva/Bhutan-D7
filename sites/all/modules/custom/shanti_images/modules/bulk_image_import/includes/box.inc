@@ -35,6 +35,7 @@ function bulk_image_import_refresh_box_token(&$auth) {
   }
 }
 
+/* No longer used
 function bulk_image_import_find_box_folder($catalog_name, &$context) {
   $folder_id = NULL;
   $auth = $context['results']['auth'];
@@ -54,11 +55,11 @@ function bulk_image_import_find_box_folder($catalog_name, &$context) {
 
   $context['results']['folder_id'] = $folder_id;
 }
-
+*/
 
 // h/t: http://drupalsun.com/patrick/2013/08/22/drupal-7-how-programmatically-download-files-optionally-save-them-managed-files
-function bulk_image_import_download_box_file(&$auth, $filename, $folder_id) {
-  $file_id = bulk_image_import_find_box_file($auth, $filename, $folder_id);
+function bulk_image_import_download_box_file(&$auth, $filename) {
+  $file_id = bulk_image_import_find_box_file($auth, $filename);
 
   $url = 'https://api.box.com/2.0/files/' . $file_id. '/content';
   $options = array(
@@ -67,8 +68,11 @@ function bulk_image_import_download_box_file(&$auth, $filename, $folder_id) {
   );
   watchdog('shanti_images_bulk_image_import', 'Downloading BOX file', array(), WATCHDOG_DEBUG);
   $response = bulk_image_import_make_box_request($url, $options, $auth);
-  if($response->data == FALSE) {
-    drupal_set_message('Could download Box file for this import. Reason: ' . $response->status_message, 'error');
+  if(!$response->data && $response->redirect_url) {
+    $response = bulk_image_import_make_box_request($response->redirect_url, $options, $auth);
+  }
+  if(!$response->data) {
+    drupal_set_message('Could not download Box file for this import. Reason: ' . json_encode($response), 'error');
     throw new Exception($response->status_message);
   }
 
@@ -76,6 +80,7 @@ function bulk_image_import_download_box_file(&$auth, $filename, $folder_id) {
   $path = file_stream_wrapper_uri_normalize($uri);
   $existing = file_load_multiple(array(), array('uri' => $uri));
   if(count($existing)) {
+    watchdog('shanti_images_bulk_image_import', 'File already exists, skipping save.', array(), WATCHDOG_DEBUG);
     return reset($existing);
   }
   else {
@@ -83,7 +88,7 @@ function bulk_image_import_download_box_file(&$auth, $filename, $folder_id) {
   }
 }
 
-function bulk_image_import_find_box_file(&$auth, $filename, $folder_id) {
+function bulk_image_import_find_box_file(&$auth, $filename) {
   $access_token = $auth['access_token'];
   $url = url(
     'https://api.box.com/2.0/search',
@@ -118,6 +123,7 @@ function bulk_image_import_find_box_file(&$auth, $filename, $folder_id) {
   }
 }
 
+/* No longer used
 function bulk_image_import_fetch_folder_contents(&$auth, $folder_id) {
   $url = 'https://api.box.com/2.0/folders/' . $folder_id;
   $options = array(
@@ -129,6 +135,7 @@ function bulk_image_import_fetch_folder_contents(&$auth, $folder_id) {
   $data = drupal_json_decode($response->data);
   return $data['item_collection']['entries'];
 }
+*/
 
 // h/t: https://projectricochet.com/blog/integrating-drupal-boxcom-api
 function bulk_image_import_handle_box_code($code) {

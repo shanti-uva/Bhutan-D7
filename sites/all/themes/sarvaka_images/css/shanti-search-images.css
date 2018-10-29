@@ -1,141 +1,4 @@
 
-/** Flyout and Search Styles (From Visuals) **/
-#search-flyout.extruder .region-search-flyout{
-  position: relative;
-}
-/* this adjust for the page wrapper that has the bootstrap side padding removed */
-.node-type-shanti-image #search-flyout.extruder{
-    right: 1.5rem !important;
-}
-.node-type-shanti-image #search-flyout.extruder .flap.on-flap{
-  background-color: #333;
-}
-.node-type-shanti-image #search-flyout.extruder .flap .flapLabel,
-.node-type-shanti-image #search-flyout.extruder .flap:hover .flapLabel,
-.node-type-shanti-image #search-flyout.extruder .flap:active .flapLabel{
-  background: #000;
-}
-.node-type-shanti-image #search-flyout.extruder.isOpened .flap.on-flap{
-  background-color: #fff;
-}
-.node-type-shanti-image #search-flyout.extruder.isOpened .flap.on-flap .flapLabel{
-  background-color: #000;
-}
-.node-type-shanti-image #search-flyout.extruder .flap>span .icon{
-  opacity:.6;
-}
-.node-type-shanti-image #search-flyout.extruder.isOpened .flap>span .icon{
-  opacity:1;
-}
-
-
-
-
-
-
-
-
-
-/**
-*  Search Tab and Flyout Styles
-
-.node-type-shanti-image #search-flyout.extruder{
-    margin-top: 7px;}
-
-.node-type-shanti-image.admin-menu #search-flyout.extruder{
-    margin-top: 7px;
-}
-
-.node-type-shanti-image #search-flyout.extruder .flap .flapLabel, 
-.node-type-shanti-image #search-flyout.extruder .flap.on-flap .flapLabel{
-    background: #111;
-}
-
-.node-type-shanti-image #search-flyout.extruder .flap{
-    background: #333;
-    height: 41px;
-    width: 47px;
-    padding: 0.2rem 0 0.62rem 0.2rem;
-    margin: 0 0 0 -0.3rem;
-}
-
-.node-type-shanti-image #search-flyout.extruder .flap:hover{
-    background: #333;
-}
-
-.node-type-shanti-image #search-flyout.extruder.isOpened .flap{
-    width: 40px;
-    margin: 0 0 0 -0.3rem;
-}
-
-.node-type-shanti-image #search-flyout.extruder .flap.on-flap>span .icon{
-    font-size: 1.12em;
-    position: absolute;
-    left: -2.8rem;
-    top: .95rem;
-    color: #999;
-}
-
-.node-type-shanti-image #search-flyout.extruder .flap.on-flap>span .icon:hover{
-    color: #ccc;
-}
-
-.node-type-shanti-image #search-flyout.extruder.isOpened .flap.on-flap>span .icon{
-    font-size: 1.75em;
-    position: absolute;
-    left: .6rem;
-    top: 0;
-    -webkit-transition: all 0.5s ease-in;
-    transition: all 0.5s ease-in;
-}
-
-.node-type-shanti-image #search-flyout.extruder .extruder-content{
-    border: 7px solid #999;
-}
-
-.node-type-shanti-image #search-flyout.extruder .input-section{
-    border: none;
-}
-
-.node-type-shanti-image #search-flyout.extruder .text,
-.node-type-shanti-image #search-flyout.extruder .input-section,
-.node-type-shanti-image #search-flyout.extruder .input-section .input-group,
-.node-type-shanti-image #search-flyout.extruder .extruder-content{
-    background: #fafafa;
-}
-
-
-.node-type-shanti-image #search-flyout.extruder .flap,
-.node-type-shanti-image #search-flyout.extruder.isOpened .flap{
-    box-shadow:none !important;
-    background-color: transparent !important;
-}
-
-.node-type-shanti-image #search-flyout.extruder .flap .flapLabel{
-    display:none !important;
-    background-color: transparent !important;
-}
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -413,3 +276,49 @@
 }
 
 
+
+
+
+
+
+/** 
+*  -------------------------------
+*  --- Flyout and Search Styles
+*  -------------------------------
+**/
+#search-flyout.extruder .region-search-flyout{
+  position: relative;
+}
+/* this adjust for the page wrapper that has the bootstrap side padding removed */
+.node-type-shanti-image #search-flyout.extruder{
+    right: 1.5rem !important;
+}
+
+
+.node-type-shanti-image #search-flyout.extruder .flap{
+  background-color: #333;
+}
+.node-type-shanti-image #search-flyout.extruder .flap:hover{
+  background-color: #555;
+}
+.node-type-shanti-image #search-flyout.extruder.isOpened .flap{
+  background-color: #fff;
+}
+.node-type-shanti-image #search-flyout.extruder.isOpened .flap .flapLabel,
+.node-type-shanti-image #search-flyout.extruder.isOpened .flap .flapLabel:hover{
+  background-color: #000;
+}
+.node-type-shanti-image #search-flyout.extruder .flap>span .icon{
+  opacity:.7;
+}
+.node-type-shanti-image #search-flyout.extruder .flap:hover>span .icon{
+  opacity:.9;
+}
+.node-type-shanti-image #search-flyout.extruder.isOpened .flap>span .icon{
+  opacity:1;
+}
+.node-type-shanti-image #search-flyout.extruder .flap .flapLabel,
+.node-type-shanti-image #search-flyout.extruder .flap:hover .flapLabel,
+.node-type-shanti-image #search-flyout.extruder .flap:active .flapLabel{
+  background: #000;
+}

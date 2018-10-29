@@ -526,6 +526,32 @@ function mb_kaltura_delete_caption_asset($caption_id)
 }
 
 /**
+ * Function to use kaltura module functions to remove an media item from a node.
+ *
+ * @param $node - the node to remove an item from
+ *
+ * @throws
+ */
+function mb_kaltura_delete_node_entry($node) {
+    $nkid = mb_kaltura_get_entryid($node);
+    kaltura_entry_delete($nkid);
+    $fld = 'field_' . $node->type;
+    $lang = $node->language;
+    $node->{$fld}[$lang] = array();
+    if (!empty($node->{$fld}[LANGUAGE_NONE])) {
+        $node->{$fld}[LANGUAGE_NONE] = array();
+    }
+    try {
+        node_save($node);
+    } catch (Exception $e) {
+        // exception is printed to log by node_save
+        drupal_set_message(t('There was a problem deleting the kaltura entry from the node: @nid ', array(
+            '@nid' => $node->nid,
+            )), 'warning');
+    }
+}
+
+/**
  * Return total minutes for a list of a views results. Used in php block in views.
  */
 function mb_kaltura_get_total_minutes($results) {

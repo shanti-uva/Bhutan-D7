@@ -562,7 +562,8 @@ function shanti_grid_view_views_pre_render(&$view) {
  * Stores gallery state in session variable to be used by image page for carousel of thumbs
  */
 function shanti_grid_view_set_gallery_session($results, $type) {
-    if ($type == 'view') {
+    $skip = TRUE;
+    if ($type == 'view' && !$skip) {
         $data = array();
         foreach($results as $n => $item) {
             if ( !empty($item->field_field_image) && !empty($item->field_field_image[0]['rendered']['#markup'])) {

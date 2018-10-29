@@ -148,7 +148,9 @@ function shanti_image_type_field_formatter_view($entity_type, $entity, $field, $
           $element[$delta] = array('#markup' => '{"filename":"' . $siobj->getIIIFName() . '","title":' . json_encode($entity->title) .
               ',"aspectRatio":' . $ratio . ',"rotation":"' . $rotation . '","nid":"' . $eid . '","path":"' . $nodepath . '"}');
       } else {
-          watchdog('shanti_image_type module', "No dimension info for IIIF image in nid: $eid");
+          if (variable_get('shanti_images_debug', FALSE)) {
+              watchdog('shanti_image_type module', "No dimension info for IIIF image in nid: $eid");
+          }
       }
   }
   

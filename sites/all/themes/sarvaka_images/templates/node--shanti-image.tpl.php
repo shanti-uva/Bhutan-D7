@@ -172,7 +172,7 @@
                           </li>
                           <li class="dontsplit">
                               <span class="field-label"><?php print t('Original file:'); ?>&nbsp;</span>
-                              <span class="field-items">
+                              <span class="field-items" style="word-break:break-all">
                                   <?php
                                       print($original_filename);
                                   ?>

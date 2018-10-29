@@ -39,7 +39,7 @@
             mandalaURL: "https://mandala.shanti.virginia.edu/%%APP%%/%%ID%%/%%REL%%/nojs"
         };
 
-    // The actual plugin constructor
+    // The actual plugin varructor
     function Plugin(element, options) {
         this.element = element;
 
@@ -57,7 +57,7 @@
 
     Plugin.prototype = {
         init: function () {
-            const plugin = this;
+            var plugin = this;
             // Place initialization logic here
             // You already have access to the DOM element and the options via the instance,
             // e.g., this.element and this.options
@@ -425,8 +425,8 @@
             };
         },
         getAncestorPath: function () {
-            const plugin = this;
-            const dfd = $.Deferred();
+            var plugin = this;
+            var dfd = $.Deferred();
             var url = plugin.options.termIndex + "/select?" +
                 "&q=" + "id:" + plugin.options.domain + "-" + plugin.options.featureId +
                 "&fl=*level*,ancestor*" + plugin.options.perspective + "*" +
@@ -441,12 +441,12 @@
                 dataType: 'jsonp',
                 jsonp: 'json.wrf'
             }).done(function (data) {
-                const response = data.response;
+                var response = data.response;
                 if (response.numFound < 1) {
                     dfd.resolve([]);
                 } else {
-                    const path = response.docs[0]["ancestor_id_" + plugin.options.perspective + "_path"];
-                    const level = response.docs[0]["level_" + plugin.options.perspective + "_i"];
+                    var path = response.docs[0]["ancestor_id_" + plugin.options.perspective + "_path"];
+                    var level = response.docs[0]["level_" + plugin.options.perspective + "_i"];
                     var url = plugin.options.termIndex + "/select?" +
                         "&q=" + "ancestor_id_" + plugin.options.perspective + "_path:" + path +
                         "&fl=*" +
@@ -468,9 +468,9 @@
             var loadDescendants = options["descendants"] ? !!options["descendants"] : false;
             var loadOnlyDirectAncestors = options["directAncestors"] ? !!options["directAncestors"] : true;
             loadOnlyDirectAncestors = true;
-            const dfd = $.Deferred();
-            const plugin = this;
-            const fieldList = [
+            var dfd = $.Deferred();
+            var plugin = this;
+            var fieldList = [
                 "header",
                 "id",
                 "ancestor*",
@@ -500,16 +500,16 @@
                 dataType: 'jsonp',
                 jsonp: 'json.wrf'
             }).done(function (data) {
-                const response = data.response;
-                const buildTree = function buildTree(doc, children) {
+                var response = data.response;
+                var buildTree = function buildTree(doc, children) {
                     var ancestorsKey = "ancestor_ids_" + plugin.options.perspective;
                     var ancestorsNameKey = "ancestors_" + plugin.options.perspective;
                     if (doc[ancestorsKey] === undefined) {
                         ancestorsKey = "ancestor_ids_closest_" + plugin.options.perspective;
                         ancestorsNameKey = "ancestors_closest_" + plugin.options.perspective;
                     }
-                    const result = doc[ancestorsKey] === undefined ? [] : doc[ancestorsKey].reduceRight(function (acc, val, index) {
-                        const node = {
+                    var result = doc[ancestorsKey] === undefined ? [] : doc[ancestorsKey].reduceRight(function (acc, val, index) {
+                        var node = {
                             title: "<strong>" + doc[ancestorsNameKey][index] + "</strong>",
                             key: plugin.options.domain + "-" + val,
                             expanded: true,
@@ -530,7 +530,7 @@
                 if (response.numFound > 0) {
                     var doc = response.docs[0];
                     if (loadDescendants && plugin.options.featureId) {
-                        const featureChildren = plugin.getDescendantTree(plugin.options.domain + "-" + plugin.options.featureId);
+                        var featureChildren = plugin.getDescendantTree(plugin.options.domain + "-" + plugin.options.featureId);
                         featureChildren.then(function (value) {
                             dfd.resolve(buildTree(doc, value))
                         });
@@ -554,8 +554,8 @@
             return dfd.promise();
         },
         getDescendantTree: function (featureId) {
-            const dfd = $.Deferred();
-            const plugin = this;
+            var dfd = $.Deferred();
+            var plugin = this;
             var fieldList = [
                 "header",
                 "id",
@@ -591,16 +591,16 @@
                 dataType: 'jsonp',
                 jsonp: 'json.wrf'
             }).done(function (data) {
-                const response = data.response;
+                var response = data.response;
                 if (response.numFound > 0) {
-                    const result = response.docs.reduce(function (acc, currentNode, index) {
-                        const regex = new RegExp(plugin.options.domain + "-(.*)");
-                        const match = currentNode["related_" + plugin.options.domain + "_id_s"].match(regex);
+                    var result = response.docs.reduce(function (acc, currentNode, index) {
+                        var regex = new RegExp(plugin.options.domain + "-(.*)");
+                        var match = currentNode["related_" + plugin.options.domain + "_id_s"].match(regex);
                         var key = !match ? "" : match[1] === undefined ? "" : match[1];
                         var feature_type = "";
                         if (plugin.options.domain == "places") {
-                            const expanded_docs = data.expanded[currentNode["related_" + plugin.options.domain + "_id_s"]];
-                            const expanded = expanded_docs ? expanded_docs.docs[0] || [] : [];
+                            var expanded_docs = data.expanded[currentNode["related_" + plugin.options.domain + "_id_s"]];
+                            var expanded = expanded_docs ? expanded_docs.docs[0] || [] : [];
                             var related_subjects_s = expanded["related_subjects_t"] ? expanded["related_subjects_t"].join(",") + ": " : "";
                             feature_type = related_subjects_s;
                             if (related_subjects_s == "") {
@@ -614,7 +614,7 @@
                             ancestorsKey = "ancestor_ids_closest_" + plugin.options.perspective;
                             ancestorsNameKey = "ancestors_closest_" + plugin.options.perspective;
                         }
-                        const child = {
+                        var child = {
                             title: "<strong>" + currentNode["related_" + plugin.options.domain + "_header_s"] + "</strong> (" +
                             feature_type +
                             currentNode["related_" + plugin.options.domain + "_relation_label_s"] + ")",
@@ -641,7 +641,7 @@
     };
 
     // You don't need to change something below:
-    // A really lightweight plugin wrapper around the constructor,
+    // A really lightweight plugin wrapper around the varructor,
     // preventing against multiple instantiations and allowing any
     // public function (ie. a function whose name doesn't start
     // with an underscore) to be called via the jQuery plugin,
@@ -659,7 +659,7 @@
                 if (!$.data(this, 'plugin_' + pluginName)) {
 
                     // if it has no instance, create a new one,
-                    // pass options to our plugin constructor,
+                    // pass options to our plugin varructor,
                     // and store the plugin instance
                     // in the elements jQuery data object.
                     $.data(this, 'plugin_' + pluginName, new Plugin(this, options));

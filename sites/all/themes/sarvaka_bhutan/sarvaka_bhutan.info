@@ -40,6 +40,7 @@ stylesheets[all][] =  fonts/shanticon/css/style.css
 ; scripts[] = js/modernizr.custom.js
 scripts[] = js/imagesloaded.pkgd.min.js
 scripts[] = js/jquery.columnizer.min.js
+scripts[] = js/grayscale.js
 scripts[] = js/bhutan-main.js
 scripts[] = js/bhutan-search.js
 

@@ -181,7 +181,21 @@
           return false;
         }
       });
-    }
+
+      // Remove Add Media Button if an entry has been added. Primarily for replacing AV items
+        if (context === document) {
+            /// Start here
+            var eidel = $('.field-type-field-kaltura-entryid div[id^=field_][id$=entryid] input');
+            if (eidel.length > 0) {
+              var eid = eidel.val();
+              if (typeof(eid) === 'string' && eid.length > 0) {
+                  $('.field-type-field-kaltura-entryid div[id^=edit-field-][id$=-en-0-button], .field-type-field-kaltura-entryid div[id^=edit-field-][id$=-und-0-button]').hide();
+                  $('.field-type-field-kaltura-entryid+.media-field-description, .field-type-field-kaltura-entryid .media-field-description').hide();
+              }
+            }
+        }
+
+    } // End of mb_kaltura Behavior Attach
   };
     
 

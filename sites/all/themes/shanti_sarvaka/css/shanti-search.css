@@ -803,7 +803,7 @@ object.flip_label {
     
 .view-section .nav-tabs>li>a {
   color: #777;
-  font-size: 14px;
+  font-size: 0.93em;
   line-height: 20px;
   margin-right: 4px;
   font-weight: bold;
@@ -831,7 +831,6 @@ object.flip_label {
 .view-section .nav-tabs>li.active>a:hover,
 .view-section .nav-tabs>li.active>a:active {
   color: #555;
-  font-size: 15px;
   background: #f8f8f8;
   text-decoration: none;
   border-color: #ddd;
@@ -855,10 +854,6 @@ object.flip_label {
   font-size: 15px;
   position: relative;
   right: 5px;
-}
-
-.view-section .nav-tabs>li.treeview> a .icon::before{
-
 }
 
 .view-section .listview>div,
