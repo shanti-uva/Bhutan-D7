@@ -57,11 +57,15 @@ body.in-frame.html {
 /**
 *  AUDIO-VIDEO - iframe custom styles 
 */
+.in-frame.audio-video article.main-col{
+	padding-top:0;
+}
 .in-frame.audio-video .titlearea .page-title-text{
 	display:none !important;
 }
 
 .in-frame.audio-video .av-main-video-section{
+    padding-left: 0 !important;
     padding-right: 0 !important;
     width: 70% !important;
 }

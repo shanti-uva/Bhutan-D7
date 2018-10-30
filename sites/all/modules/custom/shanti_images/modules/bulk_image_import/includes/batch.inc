@@ -25,7 +25,7 @@ function _bulk_image_import_task_handle_error($task, $error, $node = NULL) {
     )
   );
   if($node) {
-    $node->published = NODE_NOT_PUBLISHED;
+    $node->status = NODE_NOT_PUBLISHED;
     node_save($node);
   }
 }
@@ -72,6 +72,9 @@ function _bulk_image_import_link_image_to_node($task, $node, $xml, &$context, &$
   if (!$res) {
     _bulk_image_import_task_handle_error($task, "Could not convert Box file", $node);
     throw(new Exception("Could not convert Box file"));
+  }
+  else {
+    _shanti_images_expunge_image_file($node);
   }
 }
 

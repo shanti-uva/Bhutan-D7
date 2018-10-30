@@ -9,19 +9,12 @@
 */
 
 
-
-/*
-** TEMP - - - MAINTAIN DUPLICATED CODE BELOW IN KMAPS THEME - (see) SHANTI-SEARCH-KMAPS.CSS
-**/
-
-
 /* ys2n - problematic solution to the kmfacets vs kmfaceted problem */
-/* dark background for labels display in search flyout */
 .extruder .view-section .active-kmfaceted-list{
   border: none;
   border-radius: 0.2rem;
   padding: .8rem 2rem .7rem 1.3rem;
-  background: #555;
+  background: #555; /* dark background for labels display in search flyout */
   color: #fff !important;
   width:100%;
 }
@@ -108,7 +101,7 @@
 
 .extruder .btn-collapse-flyout{
   float:right;
-  /* other related styles are in shanti-search.css */
+  /* other "btn-collapse-flyout" related styles are in shanti-search.css */
 } 
 
 .btn-show-search-results{
@@ -171,9 +164,6 @@
   opacity: 1;*/
 }
 
-/*------------------------------------------*/
-/*-------- END DUPLICATED KMAPS CSS --------*/
-
 
 
 
@@ -182,11 +172,10 @@
 
 
 /**
-* MIGRATED FROM
-* --------- shanti-search-results-kmaps.css
-* --------- selectors should not bother Mapps that don't need the rules
-*/
-
+* --------------------------
+* -- Faceted search results
+* --------------------------
+**/
 .faceted-search-results {
   background: #fff;
   border: 1px solid #ddd;

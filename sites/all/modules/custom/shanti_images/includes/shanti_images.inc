@@ -63,6 +63,7 @@ function _shanti_images_process_image_files($node) {
  * @return bool|mixed
  */
 function _shanti_images_get_node_by_filename($i3fid) {
+    // TODO: Replace following line with just a sql query
     $dbrec = _shanti_images_get_record($i3fid, 'i3fid');
     if ($dbrec) {
         $node = node_load($dbrec->nid);
@@ -155,6 +156,7 @@ function _shanti_images_expunge_image_file($node) {
 function _shanti_images_get_node_image($nid) {
     if (is_object($nid)) { $nid = $nid->nid; }
     $record = _shanti_images_get_record($nid, 'nid');
+    // TODO: Check if the following can be removed without consequence, since it is in the class itself
     if (!empty($record) && is_object($record) && isset($record->siid)) {
         $imgObj = new ShantiImage($record->siid, $nid);
         if (!empty($record->i3fid)) {

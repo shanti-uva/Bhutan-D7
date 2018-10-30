@@ -174,11 +174,11 @@ function shanti_images_init() {
          'access callback' => TRUE,
      );
 
-     $items['api/mmsid/%'] = array(
+     $items['api/imginfo/%/%'] = array(
          'title' => 'MMS ID Information',
          'description' => 'Return info about an image from MMS ID',
-         'page callback' => 'shanti_images_mms_api',
-         'page arguments' => array(2),
+         'page callback' => 'shanti_images_info_api',
+         'page arguments' => array(3,2),
          'access callback' => TRUE,
      );
 
@@ -849,13 +849,25 @@ function shanti_images_node_thumb($nid) {
 }
 
 /**
- * @param $mmsid
+ * Return JSON for a record in the shanti images table given an id and column name
+ *
+ * @param $imgid : The id
+ * @param $col   : The column identifier
  *
  * @return JSON Output
  */
-function shanti_images_mms_api($mmsid) {
-    $si = _shanti_images_get_record($mmsid, 'mmsid');
-    drupal_json_output($si);
+function shanti_images_info_api($imgid, $col='mmsid') {
+    $sischema = drupal_get_schema('shanti_images');
+    $fnms = array_keys($sischema['fields']);
+    if (in_array($col, $fnms)) {
+        $si = _shanti_images_get_record($imgid, $col);
+        if (!empty($si)) {
+            drupal_json_output($si);
+            return;
+        }
+    }
+    // Else not found
+    drupal_not_found();
 }
 
 /**

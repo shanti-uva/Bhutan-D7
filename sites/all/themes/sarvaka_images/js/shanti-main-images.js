@@ -282,7 +282,7 @@
                 if (mutation.attributeName === "class") {
                     var attributeValue = $(mutation.target).prop(mutation.attributeName);
                     // When the class gets changed to just "progressive"...
-                    if (attributeValue == "progressive") {
+                    if (attributeValue === "progressive") {
                         shanti_images_page_load_carousel(settings);  // See below
                     }
                 }

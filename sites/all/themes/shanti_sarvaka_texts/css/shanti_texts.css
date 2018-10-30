@@ -458,11 +458,12 @@ display: block;
 .shanti-texts-section-kmaps {
   font-family: sans-serif;
   font-size:10pt;
-  border-top: 1px dotted lightgray;
-  border-bottom: 1px dotted lightgray;
+  border-top: 1px solid lightgray;
+  border-bottom: 1px solid lightgray;
   padding: 1rem;
   margin: 1rem 0;
-  background-color: #EEE;
+  background-color: #fafafa;
+  color:#111;
 }
 
 #shanti-texts-meta .shanti-texts-record-table{
@@ -596,7 +597,7 @@ display: block;
   font-family: 'museo-sans-700', helvetica, sans-serif !important;
   padding-right:0.1rem;
   font-size: .88em;
-  vertical-align: middle;
+  vertical-align: bottom;
   white-space: nowrap;
 }
 }
@@ -815,7 +816,7 @@ display: block;
     }
     .node-type-book .nav-tabs.nav-justified>li.active:last-child{
     }
-    .node-type-book .nav-tabs.nav-justified>li.active::before{
+    .page-shanti-texts .nav-tabs.nav-justified>li.active::before{
       display:none; /* remove the active-tab-pointer icon */
     }
 

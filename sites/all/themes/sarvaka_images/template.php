@@ -211,164 +211,6 @@ function _sarvaka_images_get_main_flexslider($node) {
 }
 
 /**
- * OLD VERSION: Creates the flex slider markup for an image page
- */
-function _sarvaka_images_get_flexslider_old($node) {
-    global $base_url;
-    module_load_include('inc', 'shanti_images', 'includes/shanti_images');
-    //dpm($node, 'node');
-    $sidecount = 5; // number of images on either side of flexslider
-    $mainwidth = 1000;
-    $thumbwidth = 150;
-    $maxthumbs = 20; // Maximum number of thumbs in the carousel under an image
-    $rotation = (!empty($node->field_image_rotation['und'][0]['value'])) ?
-        (360 - $node->field_image_rotation['und'][0]['value']) % 360 : 0;
-    $back_arrow = '<div class="toppadding">-</div>'; // use toppadding div if no back arrow (no session info) to pad the space above image with dark background
-    if (isset($_SESSION['shanti_gallery_url'])) {
-        $back_arrow = '<a href="__PATH__" class="backarrow"><span class="icon shanticon-arrow-left_2"></span> Back</a>';
-        $back_arrow = str_replace('__PATH__', $_SESSION['shanti_gallery_url'], $back_arrow);
-    }
-
-    $action_icons = _sarvaka_images_get_action_links($node);
-
-    /**
-     * Process Gallery Info from session info.
-     * The session variable 'shanti_gallery_info' must have an array of items that are objects with the following properties:
-     *
-     *          nid: The node's ID
-     *          filename: The IIIF filename for the image such as shanti-image-123-456
-     *          title: the title of the image's node
-     *          path: a path to the node itself (not the image url)
-     *
-     * To make this adaptable to non-IIIF images, an image property such as $item->img could be added,
-     * but the code to handle this would have to be written.
-     */
-    $galinfo = array();
-    if (!empty($_SESSION['shanti_gallery_info'])) {
-        $galinfo = $_SESSION['shanti_gallery_info'];
-        //dpm($galinfo, 'gallery session info');
-    } else {
-
-        // When there is no session information, then check if node is part of collection and use the collection node list for gallery
-        $coll = shanti_collections_get_collection($node); // Get node's collection
-        if ($coll) {
-            // Get items in node's collection and iterate through
-            $items = shanti_collections_get_items_in_collection($coll, 'nids'); // Get list of coll nids
-            $myind = array_search($node->nid, $items);
-            $halfmax = intval($maxthumbs / 2);
-            if (!$myind) { $myind = $halfmax; }
-            $thmbst = $myind - $halfmax;
-            if ($thmbst < 0 ) { $thmbst = 0; }
-            $items = array_slice($items, $thmbst, $maxthumbs);
-            //dpm($items, 'items in collection');
-            if (!empty($items)) {
-                //$items = node_load_multiple($items);  // Turn list of nids into node objects
-                // Process list of node objects into gallery item objects per specifications above
-                foreach($items as $nid) {
-                    $si = _shanti_images_get_node_image($nid);
-                    $gitem = new stdClass;
-                    $gitem->nid = $nid;
-                    $gitem->filename = $si->getIIIFName();
-                    $gitem->title = $si->title;
-                    $gitem->path = $si->path;
-                    $galinfo[] = $gitem;
-                }
-            }
-        } else {
-            // If a node does not have a collection, use all node list from home page or query
-            $vname = 'shanti_images_gallery';
-            $dname = 'page';
-            $view = views_get_view($vname);
-            $view->set_display($dname);
-            $view->execute();
-            $imgn = 0;
-            foreach ($view->result as $item) {
-                $imgn++;
-                $json = $item->field_field_image[0]['rendered']['#markup'];
-                $jobj = json_decode($json);
-                $gitem = new stdClass;
-                $gitem->nid = $jobj->nid;
-                $gitem->filename = (isset($jobj->i3ffiles)) ? $jobj->i3ffiles : $jobj->filename;
-                $gitem->title = $jobj->title;
-                $gitem->path = $jobj->path;
-                $galinfo[] = $gitem;
-                if ($imgn > 40) { break; }
-            }
-        }
-    }
-
-    // Find index of current image in gallery data
-    $myindex = FALSE;
-    if (!empty($galinfo)) {
-        foreach ($galinfo as $n => $item) {
-            //watchdog('sarvaka_images item: ' . $aitem['nid'], json_encode($item));
-            if (!isset($item->nid) || !isset($node->nid)) { continue; }
-            if ($item->nid == $node->nid) {
-                $myindex = $n;
-                break;
-            }
-        }
-    }
-   // If there is an array of gallery images and an index for the current image
-   // Create Markup for Flexslider and Carousel
-    if (!empty($galinfo) && $myindex !== FALSE) {
-        $galsplice = $galinfo;
-        $main_image = '';
-        $carousel_slides = '<ul class="slides">';
-        $mylistindex = $myindex; // $mylistindex = -1;
-        foreach($galsplice as $n => $item) {
-            if (!is_object($item) || empty($item->nid)) { continue; } // Took out || empty($item->filename) from condition
-            //$dbrec = _shanti_images_get_record($item->nid, 'nid');
-            $si = _shanti_images_get_node_image($item->nid);
-            $item_rotate = (!empty($item->rotation)) ? (360 - $item->rotation) % 360 : 0;
-            if ($item->nid == $node->nid) {
-                 $mylistindex = $n;
-                 $blururl = $si->getURL(150, '', $rotation); // _shanti_images_build_IIIFURL($fnm, 150, '', $rotation);
-                 $url = $si->getURL($mainwidth, '', $rotation); // _shanti_images_build_IIIFURL($fnm, $mainwidth, '', $rotation);
-                 // use prod server when on DEV but looking for images on prod
-                 if (strstr($base_url, '.dd') || strstr($base_url, '-dev')) {
-                   if (preg_match('/shanti-image(-stage)?-\d+/', $item->filename)) {
-                     $url = str_replace('-test', '', $url);
-                   }
-                 }
-                 $prevlink = ($n > 0) ? '<li><span class="fa fa-spinner fa-spin" style="display:none;"></span><img src="#prev" style="display:none;" /></li>' : '';
-                 $nextlink = ($n < count($galsplice) - 1) ? '<li><span class="fa fa-spinner fa-spin" style="display:none;"></span><img src="#next"  style="display:none;"/></li>' : '';
-                 $main_image = '<ul class="slides">' . $prevlink . '<li><div data-href="' . $url . '" class="progressive replace"><img src="' . $blururl . '" class="preview"/></div></li>' . $nextlink . '</ul>';
-                 $action_icons = str_replace('__MYURL__', $url, $action_icons);
-                 $action_icons = str_replace('__MYTITLE__', $item->title, $action_icons);
-                 $url = $si->getCropped(90, 65, $item_rotate); //_shanti_images_build_croppedURL($fnm, $dbrec->width, $dbrec->height, 90, 65, $item_rotate);
-                 $carousel_slides .= "<li class=\"flex-active-slide\"><img src=\"$url\" /></li>";
-                 continue;
-            }
-            $url = $si->getCropped(90, 65, $item_rotate); // _shanti_images_build_croppedURL($dbrec->i3fid, $dbrec->width, $dbrec->height,90, 65, $item_rotate);
-            $ipath = trim($item->path);
-            if (substr($ipath, 0, 1) !== '/' && strpos($ipath, 'http') !== 0) { $ipath = '/' . $ipath; }
-            $carousel_slides .= "<li><a href=\"{$ipath}\"><img src=\"$url\" /></a></li>";
-        }
-        $carousel_slides .= '</ul>';
-        $markup = '<div id="fsslider" class="flexslider fsmain">' . $main_image .
-            '</div><div id="fscarousel" class="flexslider fscarousel">' . $carousel_slides . '</div>';
-        $markup = $back_arrow . $markup . $action_icons;
-        return array($markup, $mylistindex);
-
-    } else if ($myindex === FALSE && variable_get('shanti_images_debug', FALSE)) {
-        watchdog('sarvaka_images', 'No display of flexslider for node ' . $node->nid . '. Image not found in gallery list. (template.php)');
-    }
-
-    // No Session info available or image not found in carousel array
-    // If not gallery info, just show image (Add related images at some point)
-    //watchdog('sarvaka_images', 'No session information available for page creation for node: ' . $node->nid);
-    $si = _shanti_images_get_node_image($node->nid);
-    $url = $si->getURL($mainwidth);
-    $action_icons = str_replace('__MYURL__', $url, $action_icons);
-    $action_icons = str_replace('__MYTITLE__', $node->title, $action_icons);
-    $slides = '<ul class="slides"><li><img src="' . $url . '"></li></ul>';
-    $markup = $back_arrow . '<div id="fsslider" class="flexslider fsmain fssolo">' . $slides . '</div>';
-    $markup .= $action_icons;
-    return array($markup, 0);
-}
-
-/**
  * Returns the markup for the action links on an image page
  */
 function _sarvaka_images_get_action_links($node) {
@@ -569,7 +411,7 @@ function sarvaka_images_preprocess_views_view(&$vars) {
     if (isset($view->name)) {
         if ($view->name == 'shanti_images_gallery' || $view->name == 'collection_shanti_images') {
             // Set Caching to Zero so new images show up right away
-            drupal_add_http_header('Cache-Control', 'public, max-age=0');
+           // drupal_add_http_header('Cache-Control', 'public, max-age=0');
             // Add genurls for image gallery
             $genurls = array();
             $infourls = array();
@@ -583,7 +425,7 @@ function sarvaka_images_preprocess_views_view(&$vars) {
                         $fnm = $iteminfo['filename'];
                         $genurls[] = _shanti_images_build_IIIFURL($fnm, '__W__', '__H__');
                         $infourls[] = _shanti_images_build_InfoURL($fnm);  // URLs for the IIIF info from the IIIF server for each image. Used by IIIF viewers
-                        $ratios[] = _shanti_images_get_ratio($fnm, 'i3fid');
+                        $ratios[] = $iteminfo['aspectRatio']; //_shanti_images_get_ratio($fnm, 'i3fid');
                     } else {
                         $json = json_encode($item);
                         if (variable_get('shanti_images_debug', FALSE)) {

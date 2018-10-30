@@ -304,7 +304,7 @@ a:hover,a:focus,a:active {
 .collections-content .img-thumbnail img {
   height:130px !important;
   margin: 0 1.4rem 1rem 0 !important;
-
+  background: #fff;
   border-radius: .5rem !important;
   border: 3px solid #ccc !important;
   padding: .5rem;
@@ -503,7 +503,7 @@ div.contextual-links-wrapper{
   margin: 0;
   color: #333;
   height:42px;
-  line-height: 2.68em;
+  line-height: 2.82em;
 }
 
 .navbar-header .navbar-brand:hover,
@@ -933,8 +933,8 @@ div.contextual-links-wrapper{
           transform: scale(1.125);
 }
 .collections ul li a:active {
-  -webkit-transform: scale(1);
-          transform: scale(1);
+  -webkit-transform: scale(1.1);
+          transform: scale(1.1);
 }
 .collections ul .icon {
   color: #aaa !important;
@@ -2176,10 +2176,10 @@ div.contextual-links-wrapper{
 }
 
 .shanti-thumbnail-image img:active{
-  -webkit-transform: scale(1);
-  transform: scale(1);
-    /*-webkit-filter: blur(3px);
-            filter: blur(3px);*/
+  /*-webkit-transform: scale(1);
+  transform: scale(1);*/
+    -webkit-filter: blur(3px);
+            filter: blur(3px);
 }
 
 

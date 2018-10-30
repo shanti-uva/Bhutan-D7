@@ -44,10 +44,7 @@
  */
 ?>
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html lang="en" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html lang="en" class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html lang="en" class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
+<html lang="en" class="no-js">
 
 <head> <!-- head had attribute: profile="<?php print $grddl_profile; ?>" -->
   <?php print $head; ?>
@@ -56,7 +53,7 @@
   <?php print $modernizer; ?>
 </head>
 <body class="<?php print $classes; ?>" <?php print $attributes;?>>
-  <!--[if lte IE 8]><p class="ie-progressive">It appears you are using an older browser. Please consider a upgrading to a modern version of your browser to best enjoy this website.</p><![endif]-->
+  <!--[if lte IE 10]><p class="ie-progressive">It appears you are using an older browser. Please consider a upgrading to a modern version of your browser to best enjoy this website.</p><![endif]-->
   <?php print $page_top; ?>
   <?php print $page; ?>
   <?php print $scripts; ?>

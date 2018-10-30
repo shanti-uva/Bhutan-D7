@@ -90,13 +90,12 @@
       '  top: 0;' +
       '  height: 100%;' +
       '  width: 100%;' +
-      '  opacity: 0;' +
       '  transition: ' + (transitionSpeed / 1000) + 's ease opacity;' +
       '  -webkit-transition: ' + (transitionSpeed / 1000) + 's ease opacity;' +
       '}' +
-      '.' + classPrefix + '-figure img.' + classPrefix + '-thumbnail {' +
-      '  -webkit-filter: blur(30px);' +
-      '  filter: blur(30px);' +
+      '.' + classPrefix + '-figure img.' + classPrefix + '-thumbnail {' + 
+      '  -webkit-filter: opacity(10%) blur(30px);' +
+      '  filter: opacity(10%) blur(30px);' + 
       '  left: auto;' +
       '  position: relative;' +
       '  width: auto;' +
@@ -196,13 +195,6 @@
       containerId: 'pig',
 
       /**
-       * Type: window | HTMLElement
-       * Default: window
-       * Description: The window or HTML element that the grid scrolls in.
-       */
-      scroller: window,
-
-      /**
        * Type: string
        * Default: 'pig'
        * Description: The prefix associated with this library that should be
@@ -223,7 +215,7 @@
        * Default: 8
        * Description: Size in pixels of the gap between images in the grid.
        */
-      spaceBetweenImages: 8,
+      spaceBetweenImages: 5,
 
       /**
        * Type: Number
@@ -310,9 +302,9 @@
        */
       getImageSize: function(lastWindowWidth) {
         if (lastWindowWidth <= 640)
-          return 100;
-        else if (lastWindowWidth <= 1920)
           return 250;
+        else if (lastWindowWidth <= 1920)
+          return 300;
         return 500;
       }
     };
@@ -325,8 +317,6 @@
     if (!this.container) {
       console.error('Could not find element with ID ' + this.settings.containerId);
     }
-
-    this.scroller = this.settings.scroller;
 
     // Our global reference for images in the grid.  Note that not all of these
     // images are necessarily in view or loaded.
@@ -470,7 +460,7 @@
 
         // Make sure that the last row also has a reasonable height
         rowAspectRatio = Math.max(rowAspectRatio, this.minAspectRatio);
-
+        
         // Compute this row's height.
         var totalDesiredWidthOfImages = wrapperWidth - this.settings.spaceBetweenImages * (row.length - 1);
         var rowHeight = totalDesiredWidthOfImages / rowAspectRatio;
@@ -494,7 +484,6 @@
             translateY: translateY,
             transition: transition,
           };
-
           // The next image is this.settings.spaceBetweenImages pixels to the
           // right of this image.
           translateX += imageWidth + this.settings.spaceBetweenImages;
@@ -593,7 +582,7 @@
 
     // Now we compute the location of the top and bottom buffers:
     var containerOffset = _getOffsetTop(this.container);
-    var scrollerHeight = this.scroller === window ? window.innerHeight : this.scroller.offsetHeight;
+    var windowHeight = window.innerHeight;
 
     // This is the top of the top buffer. If the bottom of an image is above
     // this line, it will be removed.
@@ -601,7 +590,7 @@
 
     // This is the bottom of the bottom buffer.  If the top of an image is
     // below this line, it will be removed.
-    var maxTranslateY = this.latestYOffset - containerOffset + scrollerHeight + bufferBottom;
+    var maxTranslateY = this.latestYOffset - containerOffset + windowHeight + bufferBottom;
 
     // Here, we loop over every image, determine if it is inside our buffers or
     // no, and either insert it or remove it appropriately.
@@ -640,7 +629,7 @@
     var onScroll = function() {
       // Compute the scroll direction using the latestYOffset and the
       // previousYOffset
-      var newYOffset = _this.scroller === window ? window.pageYOffset : _this.scroller.scrollTop;
+      var newYOffset = window.pageYOffset;
       _this.previousYOffset = _this.latestYOffset || newYOffset;
       _this.latestYOffset = newYOffset;
       _this.scrollDirection = (_this.latestYOffset > _this.previousYOffset) ? 'down' : 'up';
@@ -654,7 +643,6 @@
         });
       }
     };
-
     return onScroll;
   };
 
@@ -666,15 +654,14 @@
    */
   Pig.prototype.enable = function() {
     this.onScroll = this._getOnScroll();
-
-    this.scroller.addEventListener('scroll', this.onScroll);
+    window.addEventListener('scroll', this.onScroll);
 
     this.onScroll();
     this._computeLayout();
     this._doLayout();
 
     optimizedResize.add(function() {
-      this.lastWindowWidth = this.scroller === window ? window.innerWidth : this.scroller.offsetWidth;
+      this.lastWindowWidth = window.innerWidth;
       this._computeLayout();
       this._doLayout();
     }.bind(this));
@@ -688,7 +675,7 @@
    * @returns {object} The Pig instance.
    */
   Pig.prototype.disable = function() {
-    this.scroller.removeEventListener('scroll', this.onScroll);
+    window.removeEventListener('scroll', this.onScroll);
     optimizedResize.disable();
     return this;
   };
@@ -868,20 +855,20 @@
 
   // Export Pig into the global scope.
   if (typeof define === 'function' && define.amd) {
-    define([], function() { return Pig });
+    define(Pig);
   } else if (typeof module !== 'undefined' && module.exports) {
     module.exports = Pig;
   } else {
     global.Pig = Pig;
   }
-
+  
+  
   // Export ProgressiveImage into the global scope. Added by ndg8f
   if (typeof define === 'function' && define.amd) {
-      define(ProgressiveImage);
+    define(ProgressiveImage);
   } else if (typeof module !== 'undefined' && module.exports) {
-      module.exports = ProgressiveImage;
+    module.exports = ProgressiveImage;
   } else {
-      global.ProgressiveImage = ProgressiveImage;
+    global.ProgressiveImage = ProgressiveImage;
   }
-
-}(typeof window !== 'undefined' ? window : this));
+}(this));

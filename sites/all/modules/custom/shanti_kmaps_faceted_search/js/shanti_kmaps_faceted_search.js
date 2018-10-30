@@ -633,7 +633,6 @@
                     Drupal.settings.kmapsSolr.pagePrev();
                   });
 
-
                   $('#faceted-search-results').on('click','.kmaps-inpage-results-pager .pager-last',function () {
                     Drupal.settings.kmapsSolr.pageLast();
                   });
@@ -687,7 +686,6 @@
 
                   });
 
-
                   settings.kmapsSolr = $.kmapsSolr(
                     {
                       'pageSize': 100,
@@ -700,6 +698,14 @@
                       // update handler is called whenever a search is completed
                       updateHandler: function (blob) {
 
+
+                        var start = Date.now();
+                        var now = start;
+                        var last = now;
+                        console.error();
+                        console.error("elapsed A: " + Number(now - last) );
+                        last = now;
+
                         // console.log("RESULTS: " + JSON.stringify(blob.results, undefined, 2));
                         // TODO: ys2n: These should be confgurable (or derivable).
                         var $flist = $("#facetpicker");
@@ -710,9 +716,6 @@
                           'filters': blob.filters,
                           'facets' : blob.facets
                         });
-
-                        var start = new Date().getMilliseconds();
-                        console.error()
 
                         $flist.html(template({
                           facets: blob.facets,
@@ -726,6 +729,10 @@
                             .slice(numShown)
                             .hide();
                         });
+
+                        now = Date.now();
+                        console.error("elapsed B: " + Number(now - last) );
+                        last = now;
 
                         // attach listeners to slide-expand-show truncated list on click
                         $('.shanti-kmaps-solr-facet-title').each(function (_, item) {
@@ -832,6 +839,17 @@
                         // groom asset_results
                         if (blob.asset_results && blob.asset_results.docs) {
                           $.each(blob.asset_results.docs, function() {
+
+                            // FIX URLS for DEVELOPMENT
+
+                            var hst = window.location.hostname;
+                            if (hst.indexOf('.dd') > -1 || hst.indexOf('-dev') > -1 || hst.indexOf('-predev') > -1) {
+                              var thumb = this.url_thumb;
+                              if (thumb && thumb.match(/shanti-image(-stage)?-\d+/)) {
+                                this.url_thumb=thumb.replace('-test', '');
+                              }
+                            }
+
                             // DISPLAY LABEL LOGIC
                             var display_label = "Bloomers!";
                             if (this.header) {
@@ -956,6 +974,11 @@
                           $('.search .search-hint').html("");
                         }
 
+
+                        now = Date.now();
+                        console.error("elapsed C: " + Number(now - last) );
+                        last = now;
+
                         // render template:  see search_main_template retrieval above
                         if (search_main_template) {
 
@@ -1018,15 +1041,27 @@
 
                           var markup = search_main_template(hbcontext);
 
+                          now = Date.now();
+                          console.error("elapsed D: " + Number(now - last) );
+                          last = now;
+
                           // TODO: ys2n: this should be configurable
                           $('#faceted-search-results').html(markup);
 
+                          now = Date.now();
+                          console.error("elapsed E: " + Number(now - last) );
+                          last = now;
+
                           // apply the justified gallery script
-                          $('#search-results-gallery').justifiedGallery({
+                          $('#search-results-gallery.images-gallery').justifiedGallery({
                             rowHeight : 110,
                             lastRow : 'nojustify',
                             margins : 3,
                           });
+
+                          now = Date.now();
+                          console.error("elapsed E1: " + Number(now - last) );
+                          last = now;
 
                           //  apply customized popovers
                           $('#faceted-search-results [data-toggle="popover"]').popover({
@@ -1040,6 +1075,18 @@
                           }).mouseleave(function() {
                             $(this).popover('hide');
                           });
+
+                          now = Date.now();
+                          console.error("elapsed E2: " + Number(now - last) );
+                          last = now;
+
+
+                          // attach gallery behaviors (e.g. wookmark)
+                          Drupal.attachBehaviors('.shanti-gallery');
+
+                          now = Date.now();
+                          console.error("elapsed E3: " + Number(now - last) );
+                          last = now;
 
                           // if the results are unfiltered, lets hide the results-tab
                           if($.isEmptyObject(blob.filters)){
@@ -1124,6 +1171,11 @@
                             }
                           }
 
+
+                          now = Date.now();
+                          console.error("elapsed F: " + Number(now - last) );
+                          last = now;
+
                           //  IS THIS OR NECESSARY?
                           // $('#faceted-search-results').trigger("searchUpdate");
 
@@ -1151,6 +1203,10 @@
                               showResultsTab();
                             }
                           }
+                          now = Date.now();
+                          console.error("elapsed G: " + Number(now - last) );
+                          last = now;
+
                         } // end if (search_main_template)
                       }, // end updateHandler
 
