@@ -901,7 +901,8 @@ line-height: 1em;
     }
 
     .front .btn-group-justified{
-        display:block;
+        
+                display:none;
     }
 
     .homepage-intro-text{

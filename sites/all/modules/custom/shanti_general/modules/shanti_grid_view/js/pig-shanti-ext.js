@@ -490,18 +490,16 @@
    * Overriding ProgressiveImage.prototype.load function
    * Mostly the same. Only code added at bottom
    */
+
   ProgressiveImage.prototype.load = function() {
     // Create a new image element, and insert it into the DOM. It doesn't
     // matter the order of the figure elements, because all positioning
     // is done using transforms.
-    this.existsOnPage = true;
+
     this._updateStyles();
     this.pig.container.appendChild(this.getElement());
+    this.existsOnPage = inview(this.getElement());
 
-    // We run the rest of the function in a 100ms setTimeout so that if the
-    // user is scrolling down the page very fast and hide() is called within
-    // 100ms of load(), the hide() function will set this.existsOnPage to false
-    // and we can exit.
     setTimeout(function() {
 
       // The image was hidden very quickly after being loaded, so don't bother
@@ -528,7 +526,7 @@
         this.show();
       }
 
-    }.bind(this), 100);
+    }.bind(this), 1);
   }; // End of ProgressiveImage Load
 
 

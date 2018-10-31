@@ -327,7 +327,7 @@ function shanti_grid_view_views_pre_render(&$view) {
     if (isset($view->style_plugin->plugin_name) && $view->style_plugin->plugin_name == 'shanti_grid_view') {
         //dpm($view->current_display, $view->name);
         $view->item_type =  _shanti_grid_view_get_item_type($view->base_table);  // Determine whether node or file view
-        shanti_grid_view_set_gallery_session($view->result, 'view'); // Call function to set up session variable for gallery
+        //shanti_grid_view_set_gallery_session($view->result, 'view'); // Call function to set up session variable for gallery
         
         // Add necessary JS
         drupal_add_js(drupal_get_path('module', 'shanti_grid_view') . '/js/pig.js', array('group'=>JS_LIBRARY, 'weight'=>9980));
@@ -351,55 +351,31 @@ function shanti_grid_view_views_pre_render(&$view) {
         // Determine which kind of grid view it is based on settings
         if ($view->style_options['iiif_view'] == TRUE) {
             // IIIF view is meant to work with Shanti Images module
+            // Pass on all settings to Drupal JS
+            $settings['entity_type'] = 'node';
+            $settings['grid_image_size'] = $view->style_options['iiif_options']['iiif_thumb_size'];
+            $settings['popdown_image_size'] = $view->style_options['iiif_options']['iiif_pd_size'];
+            // Same syntax: https://iiif-test.lib.virginia.edu/mandala/__FNAME__/full/!__SIZE__,__SIZE__/0/default.jpg
+            $settings['url_for_size'] = variable_get('shanti_images_view_url','https://iiif.lib.virginia.edu') .
+                  $view->style_options['iiif_options']['iiif_url_syntax'];
+
+
+            // Create imgdata array from view results
             $imgdata = array();
             $imgfield = 'field_' . $view->style_options['iiif_options']['iiif_img_field'];
             foreach ($view->result as $rn => &$item) {
                 $n = 0;
-                $processed = FALSE;
-                if (module_exists('shanti_images')) {
-                    $si = _shanti_images_get_node_image($item->nid);
-                    if ($si && !empty($si)) {
-                        $iiifnm = $si->getIIIFName();
-                        $lgimgurl = $si->getURL(1500);
-
-                        if ($is_dev && preg_match('/shanti-image(-stage)?-\d+/', $iiifnm)) {
-                            $lgimgurl = str_replace('-test', '', $lgimgurl);
-                        }
-                        $data = array(
-                            "filename" => $iiifnm,
-                            "title" => $si->title,
-                            "aspectRatio" => $si->getRatio(),
-                            "rotation" => $si->rotation,
-                            "nid" => $item->nid,
-                            "path" => drupal_get_path_alias($si->path),
-                            "lgimgurl" => $lgimgurl,
-                        );
-                        $item->grid_data = json_encode($data);
-                        $imgdata[] = (object)$data;
-                        $processed = TRUE;
-                    }
+                $data = json_decode($item->{$imgfield}[$n]['rendered']['#markup']); // decode json object to add more fields
+                $lgimg = str_replace('__FNAME__', $data->filename, $settings['url_for_size']);
+                $lgimg = str_replace('__SIZE__','1500', $lgimg);
+                if ($is_dev && preg_match('/shanti-image(-stage)?-\d+/', $data->filename)) {
+                    $lgimg = str_replace('-test', '', $lgimg);
                 }
-                if (!$processed && !empty($item->{$imgfield}[$n]['rendered']['#markup'])) {
-                    // Markup for IIIF view is JSON text with info in it. 
-                    // See shanti_image/features/shanti_image_type/shanti_image_type.module function shanti_image_type_field_formatter_view()
-                     $js = json_decode($item->{$imgfield}[$n]['rendered']['#markup']); // decode json object to add more fields
-                     if (!empty($js->filename) && !empty($js->aspectRatio)  && $js->aspectRatio !== FALSE) {
-                        if (isset($item->title)) { $js->title = $item->node_title; }
-                        if (isset($item->nid)) { $js->nid = $item->nid; }
-                        if (isset($item->path)) { $js->path = drupal_get_path_alias($item->path); }
-                        if (isset($item->rotation)) { $js->rotation = $item->rotation; }
-                        $imgdata[] = $js;
-                     }
-                }
+                $data->lgimgurl = $lgimg;
+                $imgdata[] = $data;
             }
 
-            $settings['entity_type'] = 'node';
-            $settings['grid_image_size'] = $view->style_options['iiif_options']['iiif_thumb_size'];
-            $settings['popdown_image_size'] = $view->style_options['iiif_options']['iiif_pd_size'];
             $settings['imgdata'] = $imgdata;
-            // Same syntax: https://iiif-test.lib.virginia.edu/mandala/__FNAME__/full/!__SIZE__,__SIZE__/0/default.jpg
-            $settings['url_for_size'] = variable_get('shanti_images_view_url','https://iiif.lib.virginia.edu') .
-                  $view->style_options['iiif_options']['iiif_url_syntax'];
             drupal_add_js(array( 'shanti_grid_view' => $settings, ), 'setting');
 
         } else if ($view->style_options['entity_type'] == 'node') {

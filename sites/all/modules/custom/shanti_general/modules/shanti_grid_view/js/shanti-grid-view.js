@@ -24,6 +24,10 @@
                     secondaryImageBufferHeight: 10000,
                     urlForSize: function (filename, size, rotation) {
                       var url = Drupal.settings.shanti_grid_view.url_for_size;
+                      // Adjust url if file is on prod iiif server by removing '-test';
+                      if (filename.match(/shanti-image-(stage-)?\d+/)) {
+                          url = url.replace('-test','');
+                      }
                       if (typeof(size) == 'undefined') {
                         size = '300';
                       }
@@ -103,6 +107,33 @@
                     window.lastpigload = yoff;  // remember this Y offset
                 }
             });
+
+            /* Load rest of thumbnails not in view */
+              /*  This slows down the loading still because it doesn't happen outside the load somehow
+            $(document).ready(setTimeout(function() {
+                var ct = 0;
+                $.each(Drupal.settings.shanti_grid_view.mypig.images,
+                    function() {
+                        if (this.element.childElementCount === 0) {
+                            this.thumbnail = new Image();
+                            this.thumbnail.src = this.pig.settings.urlForSize(this.filename, this.pig.settings.thumbnailSize, this.rotation);
+                            this.thumbnail.className = this.classNames.thumbnail;
+                            this.thumbnail.onload = function() {
+
+                                // We have to make sure thumbnail still exists, we may have already been
+                                // deallocated if the user scrolls too fast.
+                                if (this.thumbnail) {
+                                    this.thumbnail.className += ' ' + this.classNames.loaded;
+                                }
+                            }.bind(this);
+
+                            this.getElement().appendChild(this.thumbnail);
+                            this.show();
+                        }
+                    });
+            }, 5000));
+            */
+
 
             // Enable mouseover overlays on images in grid
             $(document).on('mouseover', 'img.pig-loaded', function () {

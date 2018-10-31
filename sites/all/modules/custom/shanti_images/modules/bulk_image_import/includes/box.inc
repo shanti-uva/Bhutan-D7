@@ -72,16 +72,17 @@ function bulk_image_import_download_box_file(&$auth, $filename) {
     $response = bulk_image_import_make_box_request($response->redirect_url, $options, $auth);
   }
   if(!$response->data) {
-    drupal_set_message('Could not download Box file for this import. Reason: ' . json_encode($response), 'error');
     throw new Exception($response->status_message);
   }
 
   $uri = 'temporary://' . $filename;
   $path = file_stream_wrapper_uri_normalize($uri);
-  $existing = file_load_multiple(array(), array('uri' => $uri));
-  if(count($existing)) {
-    watchdog('shanti_images_bulk_image_import', 'File already exists, skipping save.', array(), WATCHDOG_DEBUG);
-    return reset($existing);
+  if(file_exists(drupal_realpath($path))) {
+    $existing = file_load_multiple(array(), array('uri' => $uri));
+    if(count($existing)) {
+      watchdog('shanti_images_bulk_image_import', 'File already exists, skipping save.', array(), WATCHDOG_DEBUG);
+      return reset($existing);
+    }
   }
   else {
     return file_save_data($response->data, $path, FILE_EXISTS_REPLACE);

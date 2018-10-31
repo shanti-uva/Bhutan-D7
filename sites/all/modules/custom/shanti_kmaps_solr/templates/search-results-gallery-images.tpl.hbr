@@ -2,7 +2,7 @@
   <span class="icon shanticon-collapse" role="button" aria-label="Close Search Preview"></span>
   <!-- Gallery Ref: http://miromannino.github.io/Justified-Gallery/getting-started/ -->
   <!-- RESULTS GALLERY -->
-  <div id="search-results-gallery" class="search-results-gallery justified-gallery">
+  <div id="search-results-gallery" class="search-results-gallery justified-gallery images-gallery">
     {{#each data.docs}}
       <a class="search-results-gallery-node"  data-lookup-index="{{@index}}" data-asset-type="{{{tree}}}" data-asset-subtype="{{{asset_subtype}}}" data-asset-id="{{{id}}}" data-url-html="{{{url_html}}}" data-url-json="{{{url_json}}}" data-url-ajax="{{{url_ajax}}}" href="{{{url_asset_nav}}}">
 
