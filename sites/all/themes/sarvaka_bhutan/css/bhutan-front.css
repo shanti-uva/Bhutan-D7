@@ -59,8 +59,8 @@
 .grid-textbox p{ color:#444; padding-left:2px;font-family:arial, 'Helvetica Neue', helvetica, sans-serif;}
 
 .grayscale img{
-	/* -webkit-filter: grayscale(1);  Google Chrome, Safari 6+ & Opera 15+ */
-  	/* filter: grayscale(1);  Microsoft Edge and Firefox 35+ */
+	-webkit-filter: grayscale(1);  /* Google Chrome, Safari 6+ & Opera 15+ */
+    filter: grayscale(1);  /* Microsoft Edge and Firefox 35+ */
 }
 
 .home-intro{ max-width:900px; margin:12px auto 20px;}
@@ -146,8 +146,9 @@
 
 @media screen and (max-width: 450px) {
 
-	.grid-textbox{ margin-right:0; }
-	.tzr-summary p{ margin-left:0; }
+	.grid-textbox{ margin-right:0 !important; }
+	.tzr-summary p{ margin-left:0 !important; }
+	.tzr-summary .icon{ display:none; }
 }
 
 
