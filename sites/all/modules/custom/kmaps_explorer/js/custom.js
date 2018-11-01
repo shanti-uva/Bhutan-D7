@@ -14,9 +14,15 @@
             var $related = $("#sidebar-first > ul.nav-pills > li a");
             $related.click(function() {
                 $("#sidebar-first > ul.nav-pills > li").removeClass("active");
-                $(this)
-                    .parent()
-                    .addClass("active");
+                $body = $('body');
+                //Remove previous kmaps- classes added.
+                $body.removeClass(function(index, className) {
+                    return (className.match(/(^|\s)kmaps-\S+/g) || []).join(' ');
+                });
+
+                $(this).parent().addClass("active");
+                //Add kmaps classes for banner colors.
+                $body.addClass('kmaps-' + $(this).parent().attr('class').split(" ")[0]);
 
                 // If a non-Image tab is clicked, wipe out existing gallery (PIG)
                 if (
@@ -383,6 +389,6 @@
                     return "UNKNOWN";
                 }
             });
-        }
+        } //End of attach function.
     };
 })(jQuery);

@@ -27,7 +27,7 @@
       <?php endif; ?>
 
       <?php if($solr_text_count > 0): ?>
-        <li class="essays <?php print isset($text) ? 'active' : ''; ?>">
+        <li class="texts <?php print isset($text) ? 'active' : ''; ?>">
           <a href="<?php print base_path() . $type . '/' . $kid; ?>/texts/nojs" class="use-ajax">
             <span class="icon shanticon-texts"></span>
             Texts
@@ -49,7 +49,7 @@
       <?php endif; ?>
 
       <?php if($images_count > 0): ?>
-        <li class="photos <?php print isset($photo) ? 'active' : ''; ?>">
+        <li class="images <?php print isset($photo) ? 'active' : ''; ?>">
           <a href="<?php print base_path() . $type . '/' . $kid; ?>/photos/nojs" class="use-ajax">
             <span class="icon shanticon-photos"></span>
             Images

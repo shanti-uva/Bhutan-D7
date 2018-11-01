@@ -132,43 +132,4 @@
 		} // End of Attach:
 	}; // End of behavior bhutan_images_loaded
 
-	// Adjust Banner Color based on URL
-	Drupal.behaviors.bhutan_resource_banner_adjust = {
-		attach: function (context, settings) {
-			if(context == window.document) { 
-				/**
-				 * On each Ajax call completion test for 3rd item in path if it is one of 
-				 * 			[ 'audio-video', 'texts', 'images', 'photos' ]
-				 * Add that class to the body, though always use 'images' for photos. 
-				 * If none of those clases found, remove any of those classes added
-				 * And make sure that either page-places or page-subject, etc. is set.
-				 * Classes determine the color of the banner
-				 * Color styles are in sarvaka_bhutan/css/banner-colors.css except for default places and subject styles
-				 */
-				$(document).ajaxComplete(function() {
-					var pgclasses = [ 'audio-video', 'texts', 'images', 'photos' ];
-					var pn = window.location.pathname;
-					var pathpts = pn.split('/');
-					if(pathpts.length == 0 ) { return;}
-					if(pathpts[0] == '') { pathpts.shift();}
-					if(pathpts.length < 3) {return;}
-					var pgtype = pathpts[2];
-					if($('body').hasClass(pgtype)) { return; }
-					$('body').removeClass(pgclasses.join(' '));
-					if(pgclasses.indexOf(pgtype) > -1) {
-						if(pgtype == 'photos') { pgtype = 'images'; }
-						$('body').addClass(pgtype);
-					} else if(pgtype == 'places' || pgtype == 'subjects') {
-						var optype = (pgtype == 'places') ? 'subjects' : 'places';
-						if(!$('body').hasClass('page-' + pgtype)) {
-							var bclass = $('body').attr("class");
-							bclass = bclass.replace('page-' + optype, 'page-' + pgtype);
-							$('body').attr('class', bclass);
-						}
-					}
-				});
-      }
-    }
-  }; // End of bhutan_resource_banner_adjust behavior
-  
 } (jQuery)); // End of JQuery Wrapper

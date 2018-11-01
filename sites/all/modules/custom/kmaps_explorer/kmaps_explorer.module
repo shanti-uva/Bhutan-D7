@@ -809,7 +809,6 @@ function kmaps_explorer_subjects_overview($type = 'ajax', $id, $app) {
         $commands[] = ajax_command_html('.page-title span:last-child', $node_data->header);
         $commands[] = ajax_command_html('ol.breadcrumb', $breadcrumb);
         $commands[] = ajax_command_invoke('ol.breadcrumb', 'css', array('display', 'block'));
-        $commands[] = ajax_command_invoke('body', 'addClass', array('kmaps-' . $data_shuffle['asset']));
         $page = array('#type' => 'ajax', '#commands' => $commands);
 
         ajax_deliver($page);
@@ -944,7 +943,6 @@ function kmaps_explorer_places_overview($type = 'ajax', $id, $app) {
         $commands[] = ajax_command_html('.page-title span:last-child', $node_data->header);
         $commands[] = ajax_command_html('ol.breadcrumb', $breadcrumb);
         $commands[] = ajax_command_invoke('ol.breadcrumb', 'css', array('display', 'block'));
-        $commands[] = ajax_command_invoke('body', 'addClass', array('kmaps-' . $data_shuffle['asset']));
         $page = array('#type' => 'ajax', '#commands' => $commands);
 
         ajax_deliver($page);
@@ -1255,7 +1253,6 @@ function kmaps_explorer_subjects_subjects($type = 'ajax', $id, $app) {
 
     if ($type == 'ajax') {
         $commands = array();
-        $commands[] = ajax_command_invoke('body', 'addClass', array('kmaps-' . $data_shuffle['asset']));
         $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . 'subjects/' . $id . '/subjects/nojs');
         $page = array('#type' => 'ajax', '#commands' => $commands);
 
@@ -1296,7 +1293,6 @@ function kmaps_explorer_places_subjects($type = 'ajax', $id, $app) {
 
     if ($type == 'ajax') {
         $commands = array();
-        $commands[] = ajax_command_invoke('body', 'addClass', array('kmaps-' . $data_shuffle['asset']));
         $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . 'places/' . $id . '/subjects/nojs');
         $page = array('#type' => 'ajax', '#commands' => $commands);
 
@@ -1332,7 +1328,6 @@ function kmaps_explorer_subjects_essays($type = 'ajax', $id, $app) {
 
     if ($type == 'ajax') {
         $commands = array();
-        $commands[] = ajax_command_invoke('body', 'addClass', array('kmaps-' . $data_shuffle['asset']));
         $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . 'subjects/' . $id . '/texts/nojs');
         $page = array('#type' => 'ajax', '#commands' => $commands);
 
@@ -1368,8 +1363,6 @@ function kmaps_explorer_places_essays($type = 'ajax', $id, $app) {
 
     if ($type == 'ajax') {
         $commands = array();
-        $commands[] = ajax_command_invoke('body', 'addClass', array('kmaps-' . $data_shuffle['asset']));
-        $commands[] = ajax_command_invoke('body', 'addClass', array('kmaps-' . $data_shuffle['asset']));
         $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . 'places/' . $id . '/texts/nojs');
         $page = array('#type' => 'ajax', '#commands' => $commands);
 
@@ -1405,7 +1398,6 @@ function kmaps_explorer_sources_universal($type = 'ajax', $id, $app) {
 
     if ($type == 'ajax') {
         $commands = array();
-        $commands[] = ajax_command_invoke('body', 'addClass', array('kmaps-' . $data_shuffle['asset']));
         $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . $app . '/' . $id . '/sources/nojs');
         $page = array('#type' => 'ajax', '#commands' => $commands);
 
@@ -1442,7 +1434,6 @@ function kmaps_explorer_visuals_universal($type = 'ajax', $id, $app) {
 
     if ($type == 'ajax') {
         $commands = array();
-        $commands[] = ajax_command_invoke('body', 'addClass', array('kmaps-' . $data_shuffle['asset']));
         $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . $app . '/' . $id . '/visuals/nojs');
         $page = array('#type' => 'ajax', '#commands' => $commands);
 
@@ -1509,7 +1500,7 @@ function kmaps_explorer_subjects_places($type = 'ajax', $id, $page_num = 1, $tot
     $items = new stdClass();
 
     $c_name = 'subplaces_' . $page_num;
-    $subplace_data = save_to_cache($c_name, $app, $id, $subplace_url);
+    $subplace_data = save_to_cache($c_name, 'subjects', $id, $subplace_url);
     $subjectsObj = json_decode($subplace_data);
     foreach($subjectsObj->grouped->tree->groups as $solrKey => $solrValue) {
         if ($solrValue->groupValue == 'places' && $solrValue->doclist->numFound > 0) {
@@ -1544,7 +1535,6 @@ function kmaps_explorer_subjects_places($type = 'ajax', $id, $page_num = 1, $tot
 
     if ($type == 'ajax') {
         $commands = array();
-        $commands[] = ajax_command_invoke('body', 'addClass', array('kmaps-' . $data_shuffle['asset']));
         $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . 'subjects/' . $id . '/places/nojs/' . $page_num . '/' . $total_pages);
         $commands[] = ajax_command_append('#tab-main', $pagination);
         $page = array('#type' => 'ajax', '#commands' => $commands);
@@ -1611,7 +1601,6 @@ function kmaps_explorer_places_places($type = 'ajax', $id, $page_num = 1, $total
 
     if ($type == 'ajax') {
         $commands = array();
-        $commands[] = ajax_command_invoke('body', 'addClass', array('kmaps-' . $data_shuffle['asset']));
         $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . 'places/' . $id . '/places/nojs');
         $page = array('#type' => 'ajax', '#commands' => $commands);
 
@@ -1813,7 +1802,6 @@ function kmaps_explorer_subjects_photos_old($type = 'ajax', $id, $page_num = 1, 
 
   if ($type == 'ajax') {
       $commands = array();
-      $commands[] = ajax_command_invoke('body', 'addClass', array('kmaps-' . $data_shuffle['asset']));
       $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . 'subjects/' . $id . '/photos/nojs/' . $page_num . '/' . $total_pages);
       $commands[] = ajax_command_append('#tab-main', $pagination);
       $page = array('#type' => 'ajax', '#commands' => $commands);
@@ -1908,7 +1896,6 @@ function kmaps_explorer_photos_universal($type = 'ajax', $id, $app='places') {
 
   if ($type === 'ajax') {
     $commands = array();
-    $commands[] = ajax_command_invoke('body', 'addClass', array('kmaps-' . $data_shuffle['asset']));
     $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . $app . '/' . $id . '/photos/nojs');
     $page = array('#type' => 'ajax', '#commands' => $commands);
     ajax_deliver($page);
@@ -2005,7 +1992,6 @@ function kmaps_explorer_places_photos_old($type = 'ajax', $id, $page_num = 1, $t
 
     if($type == 'ajax') {
         $commands = array();
-        $commands[] = ajax_command_invoke('body', 'addClass', array('kmaps-' . $data_shuffle['asset']));
         $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . 'places/' . $id . '/photos/nojs/' . $page_num . '/' . $total_pages);
         $commands[] = ajax_command_append('#tab-main', $pagination);
         $page = array('#type' => 'ajax', '#commands' => $commands);
@@ -2107,7 +2093,6 @@ function kmaps_explorer_subjects_audio_video($type = 'ajax', $id, $app, $page_nu
 
     if ($type == 'ajax') {
         $commands = array();
-        $commands[] = ajax_command_invoke('body', 'addClass', array('kmaps-' . $data_shuffle['asset']));
         $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . $app . 's/' . $id . '/audio-video/nojs');
         $page = array('#type' => 'ajax', '#commands' => $commands);
 
@@ -2152,7 +2137,6 @@ function kmaps_explorer_audio_video_node($type = 'ajax', $id, $avId, $app) {
 
     if ($type == 'ajax') {
         $commands = array();
-        $commands[] = ajax_command_invoke('body', 'addClass', array('kmaps-' . $data_shuffle['asset']));
         $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . $app . '/' . $id . '/audio-video-node/' . $avId . '/nojs');
         $commands[] = ajax_command_invoke('body', 'addClass', array('max-col-widths'));
         $page = array('#type' => 'ajax', '#commands' => $commands);
@@ -2208,7 +2192,6 @@ function kmaps_explorer_image_node($type = 'ajax', $id, $imgId, $app) {
 
     if ($type == 'ajax') {
         $commands = array();
-        $commands[] = ajax_command_invoke('body', 'addClass', array('kmaps-' . $data_shuffle['asset']));
         $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . $app . '/' . $id . '/image-node/' . $imgId . '/nojs');
         $commands[] = ajax_command_invoke('body', 'addClass', array('max-col-widths'));
         $page = array('#type' => 'ajax', '#commands' => $commands);
@@ -2268,7 +2251,6 @@ function kmaps_explorer_sources_node_universal($type = 'ajax', $id, $sourceId, $
     ));
     if ($type == 'ajax') {
         $commands = array();
-        $commands[] = ajax_command_invoke('body', 'addClass', array('kmaps-' . $data_shuffle['asset']));
         $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . $app . '/' . $id . '/sources-node/' . $sourceId . '/nojs');
         $page = array('#type' => 'ajax', '#commands' => $commands);
 
@@ -2330,7 +2312,6 @@ function kmaps_explorer_visuals_node_universal($type = 'ajax', $id, $visualsId, 
 
     if ($type == 'ajax') {
         $commands = array();
-        $commands[] = ajax_command_invoke('body', 'addClass', array('kmaps-' . $data_shuffle['asset']));
         $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . $app . '/' . $id . '/visuals-node/' . $visualsId . '/nojs');
         $page = array('#type' => 'ajax', '#commands' => $commands);
 
@@ -2389,7 +2370,6 @@ function kmaps_explorer_each_text_node($type = 'ajax', $id, $tid, $app) {
 
     if ($type == 'ajax') {
         $commands = array();
-        $commands[] = ajax_command_invoke('body', 'addClass', array('kmaps-' . $data_shuffle['asset']));
         $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . $app . '/' . $id . '/text-node/' . $tid . '/nojs');
         $page = array('#type' => 'ajax', '#commands' => $commands);
 
