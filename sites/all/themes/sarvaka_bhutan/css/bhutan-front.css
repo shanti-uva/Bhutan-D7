@@ -107,7 +107,11 @@
 .home-teaser-wrapper .teaser:nth-of-type(even) .tzr-summary .icon{ position:absolute;left:0.5rem;}
 
 .tzr-related{ display:block; height:140px; background:#fff;padding:1rem 1.5rem 1.5rem 2rem; border-radius:0 16px 16px 0; border-left:8px solid #aaa; border-right:18px double #f0f0f0;}
-.home-teaser-wrapper .teaser:nth-of-type(even) .tzr-related{ background:#f0f0f0; border-right:16px double #fff;}	
+.home-teaser-wrapper .teaser .tzr-related{ transform: scale(1); -webkit-transform: scale(1); -webkit-transition: all .35s ease-out; transition: all .35s ease-out;}	
+.home-teaser-wrapper .teaser .tzr-related:hover{ transform: scale(1.025); -webkit-transform: scale(1.025); }
+
+.home-teaser-wrapper .teaser:nth-of-type(even) .tzr-related{ background:#f0f0f0; border-right:16px double #fff;}
+
 .tzr-audio-video .tzr-related{ border-left-color: rgba(60, 204, 202, 0.9000);}
 .tzr-texts .tzr-related{ border-left-color: #8c48a1;}
 .tzr-images .tzr-related{ border-left-color: #b5953b;}
