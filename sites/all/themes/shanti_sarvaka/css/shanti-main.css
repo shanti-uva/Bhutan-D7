@@ -44,7 +44,7 @@ body {
   -webkit-font-smoothing: antialiased; /* Chrome fonts assist */
   -moz-osx-font-smoothing: grayscale; /* FF fonts assist */
   font-family: 'droidserif',georgia,palatino,'Palatino Linotype',serif;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.015em;
   font-weight: normal;
   overflow: hidden;
   margin-top: 0 !important;
@@ -68,7 +68,7 @@ body.lightbox-processed{ background-color:#fff; color:#333;}
 .h1, .h2, .h3, h1, h2, h3 {
   margin-top: 20px;
   margin-bottom: 5px;
-  letter-spacing: 0.015rem;
+  letter-spacing: 0.0175rem;
   font-weight: normal;
   font-family: 'Helvetica Neue',helvetica,arial,sans-serif;
 }
@@ -302,16 +302,13 @@ a:hover,a:focus,a:active {
 }
 
 .collections-content .img-thumbnail img {
-  height:130px !important;
+  height: 130px !important;
   margin: 0 1.4rem 1rem 0 !important;
   background: #fff;
-  border-radius: .5rem !important;
-  border: 3px solid #ccc !important;
-  padding: .5rem;
-    border: 2px solid #ccc !important;
-    padding: .8rem;
-    box-shadow: 0 0 5px 1px #ccc inset;
-    border-radius: 0 !important;
+  border-radius: .3rem !important;
+  border: 1px solid #ccc !important;
+  padding: .8rem;
+  box-shadow: 0 0 5px 1px #ccc inset;
 }
 
 .show-more a, 
@@ -893,7 +890,7 @@ div.contextual-links-wrapper{
 }
 
 .collections ul li {
-  margin: 0;
+  margin: 0 0 0 10%;
   float: left;
   line-height: 2.12em;
   height: 2.25em;
@@ -1404,7 +1401,7 @@ div.contextual-links-wrapper{
 
 .nav-tabs.nav-justified>li:hover:not(.active){
   background: #fefefe;
-  box-shadow: 0 0 2px 1px #ddd;
+  box-shadow: 0 0 2px 1px #ccc;
 }
 
 .nav-tabs.nav-justified>li:active{
@@ -1870,7 +1867,7 @@ div.contextual-links-wrapper{
 }
 
 .related-resources-popover .parents strong {
-  color: #454fa4;
+  color: #444;
   font-size: 1em;
   margin-top: -0.12em;
  /*display:inline;*/
@@ -5020,7 +5017,6 @@ article.main-col > div.region-content::after{
 
   .collections ul li {
     width: 40%;
-    margin-left: 10%;
   }
 
   .sidebar,
@@ -5115,7 +5111,6 @@ article.main-col > div.region-content::after{
 
   .collections ul li {
     width: 12%;
-    margin-left: 7%;
   }
 
   .collections ul li a.disabled, 

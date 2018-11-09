@@ -20,10 +20,6 @@ function shanti_images_views_data() {
             'left_field' => 'nid',
             'field' => 'nid',
         ),
-        'users' => array(
-            'left_field' => 'uid',
-            'field' => 'uid',
-        ),
     );
 
     $data['shanti_images']['siid'] = array(
@@ -31,7 +27,6 @@ function shanti_images_views_data() {
         'help' => t('The auto-incremented Shanti Image ID'),
         'field' => array(
             'handler' => 'views_handler_field_numeric',
-            'click sortable' => TRUE,
         ),
         'filter' => array(
             'handler' => 'views_handler_filter_numeric',
@@ -39,17 +34,33 @@ function shanti_images_views_data() {
         'sort' => array(
             'handler' => 'views_handler_sort',
         ),
+        'argument' => array(
+          'handler' => 'views_handler_argument_numeric',
+        ),
     );
 
     $data['shanti_images']['nid'] = array(
-        'title' => t('Shanti Images Node ID'),
-        'help' => t('The node associated with the image'),
+        'title' => t('Node ID'),
+        'help' => t('The record node ID.'),
+        'field' => array(
+            'handler' => 'views_handler_field_node',
+        ),
+        'sort' => array(
+            'handler' => 'views_handler_sort',
+        ),
+        'filter' => array(
+            'handler' => 'views_handler_filter_numeric',
+        ),
         'relationship' => array(
             'base' => 'node',
-            'base field' => 'nid', // The name of the field on the joined table.
-            // 'field' => 'nid' -- see hook_views_data_alter(); not needed here.
+            'field' => 'nid',
             'handler' => 'views_handler_relationship',
-            'label' => t('Image Node'),
+            'label' => t('Node'),
+        ),
+        'argument' => array(
+            'handler' => 'views_handler_argument_node_nid',
+            'numeric' => TRUE,
+            'validate type' => 'nid',
         ),
     );
 
@@ -58,7 +69,6 @@ function shanti_images_views_data() {
         'help' => t('The original file ID'),
         'field' => array(
             'handler' => 'views_handler_field_numeric',
-            'click sortable' => TRUE,
         ),
         'filter' => array(
             'handler' => 'views_handler_filter_numeric',
@@ -66,17 +76,8 @@ function shanti_images_views_data() {
         'sort' => array(
             'handler' => 'views_handler_sort',
         ),
-    );
-
-    $data['shanti_images']['uid'] = array(
-        'title' => t('Shanti Images User ID'),
-        'help' => t('The ID of the user who uploaded the image'),
-        'relationship' => array(
-            'base' => 'users',
-            'base field' => 'uid', // The name of the field on the joined table.
-            // 'field' => 'nid' -- see hook_views_data_alter(); not needed here.
-            'handler' => 'views_handler_relationship',
-            'label' => t('Image User'),
+        'argument' => array(
+          'handler' => 'views_handler_argument_numeric',
         ),
     );
 
@@ -85,13 +86,15 @@ function shanti_images_views_data() {
         'help' => t('The MMS ID of the original image'),
         'field' => array(
             'handler' => 'views_handler_field_numeric',
-            'click sortable' => TRUE,
         ),
         'filter' => array(
             'handler' => 'views_handler_filter_numeric',
         ),
         'sort' => array(
             'handler' => 'views_handler_sort',
+        ),
+        'argument' => array(
+          'handler' => 'views_handler_argument_numeric',
         ),
     );
 
@@ -100,7 +103,6 @@ function shanti_images_views_data() {
         'help' => t('The IIIF filename for image'),
         'field' => array(
             'handler' => 'views_handler_field',
-            'click sortable' => TRUE,
         ),
         'sort' => array(
             'handler' => 'views_handler_sort',
@@ -109,7 +111,7 @@ function shanti_images_views_data() {
             'handler' => 'views_handler_filter_string',
         ),
         'argument' => array(
-            'handler' => 'views_handler_argument_string',
+          'handler' => 'views_handler_argument_string',
         ),
     );
 
@@ -118,7 +120,6 @@ function shanti_images_views_data() {
         'help' => t('The original filename for the image'),
         'field' => array(
             'handler' => 'views_handler_field',
-            'click sortable' => TRUE,
         ),
         'sort' => array(
             'handler' => 'views_handler_sort',
@@ -127,8 +128,43 @@ function shanti_images_views_data() {
             'handler' => 'views_handler_filter_string',
         ),
         'argument' => array(
-            'handler' => 'views_handler_argument_string',
+          'handler' => 'views_handler_argument_string',
         ),
     );
+
+    $data['shanti_images']['width'] = array(
+        'title' => t('Width'),
+        'help' => t('The original width of the image'),
+        'field' => array(
+            'handler' => 'views_handler_field_numeric',
+        ),
+        'sort' => array(
+            'handler' => 'views_handler_sort',
+        ),
+        'filter' => array(
+            'handler' => 'views_handler_filter_numeric',
+        ),
+        'argument' => array(
+          'handler' => 'views_handler_argument_numeric',
+        ),
+    );
+
+    $data['shanti_images']['height'] = array(
+        'title' => t('Height'),
+        'help' => t('The original height of the image'),
+        'field' => array(
+            'handler' => 'views_handler_field_numeric',
+        ),
+        'sort' => array(
+            'handler' => 'views_handler_sort',
+        ),
+        'filter' => array(
+            'handler' => 'views_handler_filter_numeric',
+        ),
+        'argument' => array(
+          'handler' => 'views_handler_argument_string',
+        ),
+    );
+
     return $data;
 }

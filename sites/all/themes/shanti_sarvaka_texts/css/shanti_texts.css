@@ -8,6 +8,16 @@
 * Complete Explantion: http://stackoverflow.com/questions/12316501/including-google-web-fonts-link-or-import/12380004#12380004
 */
 
+.content-section #shanti-texts-body a{
+  border-bottom: 1px solid #99bafb !important;
+}
+.content-section #shanti-texts-body a:hover{
+  border-bottom: 1px solid transparent !important;
+}
+.content-section #shanti-texts-body a:active{
+  border-bottom: 1px solid #99bafb !important;
+}
+
 .tab-pane.main-col > div,
 .page-node-devel .tab-pane.main-col > div {
     margin-bottom: 0;
@@ -39,14 +49,37 @@
   background-color: #ffc;
 }
 
+
+
 .shanti-texts-section {
   border-bottom: 3px double #eee;
   padding-bottom: 1em;
   margin-top: -1rem;
 }
 
+.shanti-texts-section.text-level-3,
+.shanti-texts-section.text-level-4,
+.shanti-texts-section.text-level-5,
+.shanti-texts-section.text-level-6,
+.shanti-texts-section.text-level-7{
+  background: white;
+}
+
+.shanti-texts-section.text-level-3{
+  margin-top: -2rem;
+  padding-left:2.4rem;
+}
+
+.shanti-texts-section.text-level-4,
+.shanti-texts-section.text-level-5,
+.shanti-texts-section.text-level-6,
+.shanti-texts-section.text-level-7{
+  margin-top: -1.5rem;
+  padding-left: 2.4rem;
+}
+
 .shanti-texts-section-title {
-  margin-top: 1rem;
+  margin-top: 1.5rem;
   padding-top: 1rem;
   margin-bottom: 0;
   font-weight: normal;
@@ -71,30 +104,39 @@
   margin-bottom:5px;
 }
 
-.shanti-texts-section-title.text-level-1,
-.shanti-texts-section-title.text-level-2,
-.shanti-texts-section-title.text-level-3,
-.shanti-texts-section-title.text-level-4 {
+.shanti-texts-section-title.text-level-2 {
   margin-bottom: 1rem;
   font-size: 1.44em;
 }
-.shanti-texts-section-title.text-level-4 {
-  font-variant:small-caps;
+
+.shanti-texts-section-title.text-level-3,
+.shanti-texts-section-title.text-level-4,
+.shanti-texts-section-title.text-level-5,
+.shanti-texts-section-title.text-level-6,
+.shanti-texts-section-title.text-level-7{
+  font-size: 1.18em;
+  background: #f7f7f7;
+  padding: 1.5rem 1rem 1.5rem 3.5rem;
+  line-height: 1.5em;
+  margin-bottom: 2rem;
+  font-weight: bold;
+  letter-spacing: 0.0375rem;
+  color: #555;
 }
-.shanti-texts-section-title.text-level-5 {
-  font-size: 1.25em;
-  margin-left: 1.5rem;
+
+.shanti-texts-section-title.text-level-3{
+  border-left: 8px double #ccc;
 }
-.shanti-texts-section-title.text-level-6 {
-  font-size: 1.25em;
-  font-style: italic;
-  margin-left: 1.5rem;
-}
+
+.shanti-texts-section-title.text-level-4,
+.shanti-texts-section-title.text-level-5,
+.shanti-texts-section-title.text-level-6,
 .shanti-texts-section-title.text-level-7 {
-  font-size: 1.25em;
-  text-decoration: underline;
-  margin-left: 1.5rem;
+  border-left: 3px solid #ccc;
+  margin-top: 1rem;
+  padding: 1rem 1rem 1rem 2.4rem;
 }
+
 .shanti-texts-section-title.text-level-1,
 .shanti-texts-section.text-level-1 .shanti-texts-section-kmaps {
   display:none;
@@ -104,7 +146,7 @@
 
 
 #shanti-texts-sidebar .tab-content {
-  padding: 2rem 1.5rem 2rem 2rem;
+  padding: 2rem 1.5rem;
   overflow-y: scroll;
   max-height: 54rem;
   width: 100%;
@@ -123,11 +165,12 @@
   margin: 0;
   height: 100%;
   background-color: white;
-  box-shadow: inset 0 3px 5px #ddd;
+  box-shadow: inset 0 -.2rem 5px #ddd;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  position: relative;
   border-radius: 0;
   border-top: 2px solid #aaa;
-  overflow-y: scroll;
-  position: relative;
   border-bottom: 2px solid #aaa;
   border-left: 2px solid #ccc;
   border-right: 1px solid #d0d0d0;
@@ -182,6 +225,10 @@
   /* display:none; */
 }
 
+#shanti-texts-body .text-level-1 img{
+  margin: 0 auto; /* centering the top image */
+}
+
 #shanti-texts-body ul{
   margin-left:1rem;
 }
@@ -234,14 +281,21 @@
 #shanti-texts-toc ul{
   margin-top: 0;
   padding-top: 0;
-  padding-left: 1.25rem;
   font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
 }
 
 #shanti-texts-toc > ul {
   margin-left: 0;
-  padding-left: 0;
+  padding-left: 2.5rem;
   margin-top: 1.5rem;
+}
+#shanti-texts-toc > ul > li > ul{
+  padding-left: 1.25rem;
+}
+
+#shanti-texts-toc > ul > li > ul > li > ul,
+#shanti-texts-toc > ul > li > ul > li > ul > li > ul{
+  padding-left: 1.75rem;
 }
 
 #shanti-texts-toc ul li{
@@ -256,7 +310,7 @@ display: block;
 #shanti-texts-links .links li {
   list-style-type: square;
   color: #454fa4;
-  line-height: 1.75em;
+  line-height: 1.82em;
 }
 
 #shanti-texts-toc > li.toc-item-node {
@@ -271,25 +325,28 @@ display: block;
   background: linear-gradient(to bottom, #f7f7f7 0, #f7f7f7 25px, #ffffff 25px, #ffffff 100%);
 }
 
-
 #shanti-texts-toc a{
   border: none;
   display:inline-block;
   color: rgb(0, 0, 139);
+    color:#000;
 }
 
 #shanti-texts-toc a:hover{
   color: #df3d26;
 }
+#shanti-texts-toc a:active{
+  color:#000;
+}
 
 #shanti-texts-toc li > a{
-  /*padding-right: 1.5rem;*/
   letter-spacing: 0.0175rem;
+  line-height: 1.32em;
+  width: 100%;
 }
 
 .admin-menu #shanti-texts-toc li > a{
   padding-right: 4.5rem;
-  width: 100%;
 }
 
 #shanti-texts-toc li.active > a{
@@ -304,7 +361,7 @@ display: block;
   border-radius: 0;
   opacity:.8;
   display: inline-block;
-  margin-right: .7rem;
+  margin-right: 1rem;
   -webkit-transform: rotate(45deg);
   -moz-transform: rotate(45deg);
   -ms-transform: rotate(45deg);
@@ -313,36 +370,84 @@ display: block;
 }
 
 .shanti-texts-section-title::before{
-  width: 1rem;
-  height: 1rem;
-  border: 5px double #999;
+  border: 8px double #999;
   position: relative;
-  top: -0.175rem;
-  left: .1rem;
+  top: .1rem;
   margin-left: .2rem;
 }
 
-#shanti-texts-toc a::before{
-  width: .7rem;
-  height: .7rem;
-  border: 3px double #454fa4;
+#shanti-texts-toc > ul > li a::before{
+  border: 4px double rgb(0,0,139);
+  position: relative;
+  top: -.1rem;
+  margin-left: -2rem;
+  margin-right: 1rem;
+}
+
+#shanti-texts-toc > ul > li > ul > li a::before{
   position: relative;
   top: -0.15rem;
   right: 0.2rem;
-  margin-left: .2rem;
+  margin-right:.6rem;
+  border-radius: 0;
+  border-width: .25rem;
+  border-color: rgb(0,0,139);
+  margin-left:-1.5rem;
+
+    border-radius: 0;
+    border-width: .1rem;
+    width: .7rem;
+    height: .7rem;
+}
+
+#shanti-texts-toc > ul > li > ul > li > ul > li a::before,
+#shanti-texts-toc > ul > li > ul > li > ul > li > ul > li a::before,
+#shanti-texts-toc > ul > li > ul > li > ul > li > ul > li > ul > li a::before,
+#shanti-texts-toc > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li a::before,
+#shanti-texts-toc > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li a::before{
+  border-radius: 50%;
+  width: .5rem;
+  height: .5rem;
+  opacity: .6;
+  background-color: rgb(0,0,139);
 }
 
 #shanti-texts-toc a:hover::before,
 #shanti-texts-toc li.active > a::before{
-  border-color: #8c48a1;
-  background-color: #454fa4 !important;
+  border-color: #df3d26;
+  background-color: #df3d26 !important;
 }
 #shanti-texts-toc a:active::before,
 #shanti-texts-toc li.active > a::before{
-  background-color:transparent;
+  border-color: rgb(0,0,139);
+  background-color:transparent !important;
 }
 
-
+.shanti-texts-section-title.text-level-3::before,
+.shanti-texts-section-title.text-level-4::before,
+.shanti-texts-section-title.text-level-5::before,
+.shanti-texts-section-title.text-level-6::before,
+.shanti-texts-section-title.text-level-7::before{
+  border-radius: 50%;
+  border-width: 5px;
+  border-color: #999;
+  top: -.07rem;
+  left: .3rem;
+  margin-right:  2.5rem;
+  margin-left: -6.2rem;
+}
+.shanti-texts-section-title.text-level-3::before{
+  margin-right: 3.3rem;
+  border-radius: 0;
+  margin-left: -6.5rem;
+}
+.shanti-texts-section-title.text-level-4::before,
+.shanti-texts-section-title.text-level-5::before,
+.shanti-texts-section-title.text-level-6::before,
+.shanti-texts-section-title.text-level-7::before{
+  margin-left: -4.9rem;
+  margin-right: 2.8rem;
+}
 
 
 
@@ -362,15 +467,6 @@ display: block;
   opacity: 0.35;
 }
 
-#shanti-texts-toc .shanti-texts-record-title .shanti-texts-section-controls a{
-  font-size: 70%;
-}
-
-#shanti-texts-toc .shanti-texts-section-controls a:first-of-type{
-  position: relative;
-  right: .1rem;
-}
-
 #shanti-texts-toc .shanti-texts-section-controls a:hover{
   opacity: 0.8;
   color: #454fa4;
@@ -379,6 +475,20 @@ display: block;
 #shanti-texts-toc .shanti-texts-section-controls a:active{
   opacity: 1;
   color: #454fa4;
+}
+
+#shanti-texts-toc .shanti-texts-record-title .shanti-texts-section-controls a{
+  font-size: 70%;
+}
+
+#shanti-texts-toc .shanti-texts-section-controls a:first-of-type{
+  position: relative;
+  right: 2.2rem;
+}
+
+#shanti-texts-toc > .shanti-texts-record-title .shanti-texts-section-controls a:first-of-type{
+  position: relative;
+  right: 0;
 }
 
 #shanti-texts-toc .shanti-texts-section-controls a .fa-plus{
@@ -566,6 +676,8 @@ display: block;
   color: #d0d0d0;
   -webkit-transition: all 50ms ease 0s;
   transition: all 50ms ease 0s;
+
+    display:none;
 }
 
 #shanti-texts-sidebar .fullview:hover{
@@ -595,11 +707,12 @@ display: block;
   text-transform: uppercase;
   color: #333;
   font-family: 'museo-sans-700', helvetica, sans-serif !important;
+    padding: .5rem;
   padding-right:0.1rem;
   font-size: .88em;
-  vertical-align: bottom;
-  white-space: nowrap;
-}
+  vertical-align: top;
+  white-space: normal;
+  line-height: 2.2em;
 }
 
 #shanti-texts-sidebar #shanti-texts-meta .shanti-texts-field-label::after{
@@ -638,20 +751,30 @@ display: block;
 }
 
 
+
+
+
+
+
+
+
+
+
 /** ----------------------
 * Tibetan Language (bo) */
 /* This adds letter-spacing within regular paragraph text for Tibetan. Should phase out use of <span lang="tib"> for <div lang="bo"> on sections */
 /*#shanti-texts-body .shanti-texts-section-content .tib,*/
 #shanti-texts-body div[lang="bo"] .shanti-texts-section-title,
 #shanti-texts-body div[lang="bo"] .shanti-texts-section-content{
-  letter-spacing: 0.085rem;
+  letter-spacing: 0.125rem;
   line-height: 2em;
   font-size: 1.44em;
   color: #111;
   font-family: Jomolhari,Jomolhari-ID,"Tibetan Machine Uni","TCRC Youtso Unicode","Tib-US Unicode", Kokonor, "Microsoft Himalaya",Arial;
 }
 #shanti-texts-body div[lang="bo"] .shanti-texts-section-title {
-  color:#111;
+  color:#555;
+  font-weight: bold;
   letter-spacing: 0.125rem;
 }
 #shanti-texts-body div[lang="bo"] .shanti-texts-section-content{
@@ -666,8 +789,8 @@ display: block;
 * Sidebar Navigation subheaders
 */
 #shanti-texts-toc a[lang="bo"]{
-  font-size: 1.38em;
-  letter-spacing: 0.075rem;
+  font-size: 1.5em;
+  letter-spacing: 0.085rem;
 }
 #shanti-texts-toc a[lang="bo"]::before{
   position: relative;
@@ -681,6 +804,17 @@ display: block;
   font-size: 1.38em;
   letter-spacing: 0.075rem;
 }
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -703,6 +837,11 @@ display: block;
       max-height: 62rem;
       position: relative;
       top: 56px;
+    }
+
+    #shanti-texts-sidebar #shanti-texts-meta .shanti-texts-field-label{
+      white-space:nowrap;
+      width:50%;
     }
 }
 
@@ -826,7 +965,6 @@ display: block;
 
 
 
-
 .nav-tabs.nav-justified>li{
   position: relative;
   top: -.4rem;
@@ -872,3 +1010,26 @@ display: block;
     padding: 0 !important;
   }
 }
+
+
+
+
+
+.shanti-texts-section-content:empty {
+  display:none;
+}
+
+.shanti-texts-section{
+
+}
+
+.shanti-texts-section.text-level-2 .shanti-texts-section-content:empty ~ div{
+  text-transform:uppercase;
+}
+
+
+
+
+
+
+

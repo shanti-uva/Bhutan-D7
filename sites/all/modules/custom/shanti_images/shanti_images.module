@@ -676,8 +676,10 @@ function shanti_images_get_license_title($license_url) {
          $ratios = array();
          // Add image info to each array
          foreach ($nimgs as $nimg) {
-             $urls[] = $nimg->getInfoURL();
-             $genurls[] = $nimg->getURL('__W__', '__H__', $rotation);
+             $url = $nimg->getInfoURL();
+             $urls[] = shanti_images_fix_prod_urls($url, $nimg->getIIIFName());
+             $genurl = $nimg->getURL('__W__', '__H__', $rotation);
+             $genurls[] = shanti_images_fix_prod_urls($genurl, $nimg->getIIIFName());
              $ratios[] = $nimg->getRatio();
          }
 
@@ -1468,4 +1470,14 @@ function shanti_images_get_valid_extensions($as_array=TRUE) {
 function shanti_images_get_image_object($id, $type='node') {
   $si = new ShantiImage('', $id); // Load existing record from node ID, siid is '' because filled in by table
   return $si;
+}
+
+
+function shanti_images_fix_prod_urls($url, $filenm) {
+    global $base_url;
+    $is_dev = (strstr($base_url, '.dd') || strstr($base_url, '-dev')) ? TRUE : FALSE;
+    if ($is_dev && preg_match('/shanti-image(-stage)?-\d+/', $filenm)) {
+        $url = str_replace('-test', '', $url);
+    }
+    return $url;
 }

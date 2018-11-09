@@ -1,7 +1,6 @@
 <!-- Banner Region or Banner Grid Region (Front page) -->
 <section class="banner-grid">
- <div class="grid-textbox-wrapper">	
-    <div class="container-fixed">            
+ <div class="grid-textbox-wrapper">	           
 	      <div class="grid-textbox">
 		      <div>
 						<?php 
@@ -9,7 +8,6 @@
 						?>
 		      </div>
 	      </div>
-    </div>
   </div> 
   <div class="grid-row tier1">
     <a href="#"><img src="/sites/all/themes/sarvaka_bhutan/images/thumbs/thumb1.jpg" width="108" height="75"></a>

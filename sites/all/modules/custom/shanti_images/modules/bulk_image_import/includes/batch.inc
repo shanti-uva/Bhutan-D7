@@ -52,14 +52,20 @@ function _bulk_image_import_link_image_to_node($task, $node, $xml, &$context, &$
   if (in_array($extension, array('RAF', 'NEF', 'raf', 'nef'))) {
     $filename = "$fname.jp2";
   }
-
   try {
     $file = bulk_image_import_download_box_file($auth, $filename);
   }
   catch (Exception $e) {
-    _bulk_image_import_task_handle_error($task, "Could not download Box file. Reason: " . $e->getMessage(), $node);
+    _bulk_image_import_task_handle_error($task, "Could not download Box file: $filename. Reason: " . $e->getMessage(), $node);
     throw($e);
   }
+  if (!$file) {
+    _bulk_image_import_task_handle_error($task, "Could not download Box file: $filename.", $node);
+    throw(new Exception("Could not download Box file"));
+  }
+  watchdog('shanti_images_bulk_image_import', 'Downloaded BOX file: @filename', array(
+    '@filename' => $file->filename
+  ), WATCHDOG_DEBUG);
   db_query('UPDATE bulk_image_import_task SET image_linked = 1 WHERE tid = :tid', array('tid' => $task['tid']));
   $siid = _shanti_images_create_record(
     $node->nid,

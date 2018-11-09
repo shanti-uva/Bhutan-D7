@@ -36,16 +36,18 @@
     <?php print render($title_suffix); ?>
 
     <?php if ($header): ?>
-    <div class="view-header">
-        
-        <?php if ($exposed): ?>
-        <div class="view-filters pull-left">
+        <div class="view-header">
+            <?php print $header; ?>
+
+        </div>
+    <?php endif; ?>
+
+    <?php if ($exposed): ?>
+        <div class="view-filters<?php if (empty($rows)) { print " empty"; } ?>">
             <?php print $exposed; ?>
         </div>
-        <?php endif; ?>
-        <?php print $header; ?>
-    </div>
     <?php endif; ?>
+
     
     <?php if ($attachment_before):
     ?>

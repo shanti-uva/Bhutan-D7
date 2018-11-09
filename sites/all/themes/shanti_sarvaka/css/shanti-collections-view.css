@@ -126,6 +126,7 @@
   font-family: 'Helvetica Neue',helvetica,arial,sans-serif;
   font-size:0.93em;
   letter-spacing: 0.0275rem;
+  padding-left: .5rem;
 }
 
 .collections-sidebar ul li{
@@ -153,7 +154,7 @@
   border-radius: 50%;
   background-clip: padding-box;
   margin-right: 0.5rem;
-  margin-left: -1.4rem;
+  margin-left: -2.2rem;
   position: relative;
   top: .05rem;
 }

@@ -528,7 +528,7 @@ object.flip_label {
 
 .extruder .input-section .input-group .glyphicon {
   position: relative;
-  top: .25rem;
+  top: .3rem;
 }
 /*
 .input-section .input-group .btn.btn-default .icon {

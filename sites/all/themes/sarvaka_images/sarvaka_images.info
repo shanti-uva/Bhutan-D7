@@ -28,12 +28,8 @@ regions[admin_footer]   = Admin Footer
 ;; Stylesheets
 ;;;;;;;;;;;;;;;;;;;;;
 stylesheets[all][] =  css/shanti-images-gallery.css
-
 stylesheets[all][] =  css/shanti-main-images.css
 stylesheets[all][] =  css/shanti-search-images.css
-stylesheets[all][] =  ../shanti_sarvaka/css/shanti-search-kmaps.css
-stylesheets[all][] =  ../shanti_sarvaka/css/shanti-search-faceted.css
-
 
 ;;;;;;;;;;;;;;;;;;;;;;
 ;;; Scripts

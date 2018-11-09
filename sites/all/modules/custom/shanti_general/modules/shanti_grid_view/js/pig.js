@@ -230,7 +230,7 @@
        * Default: 500
        * Description: Transition speed in milliseconds
        */
-      transitionSpeed: 500,
+      transitionSpeed: 10,
 
       /**
        * Type: Number

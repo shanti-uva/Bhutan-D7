@@ -322,3 +322,30 @@
 .node-type-shanti-image #search-flyout.extruder .flap:active .flapLabel{
   background: #000;
 }
+
+
+
+.node-type-shanti-image .btn-show-search-results{
+  background: #333;
+}
+
+.node-type-shanti-image .btn-show-search-results:hover{
+  background:#555;
+}
+
+.btn-show-search-results .icon::before{
+  color:#aaa;
+}
+
+.node-type-shanti-image .btn-show-search-results .badge{
+  background-color: transparent;
+  color: #c0c0c0;
+}
+
+.btn-show-search-results > span{
+  background:#000;
+}
+
+
+
+

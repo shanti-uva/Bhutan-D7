@@ -1,4 +1,4 @@
-/*! Shanti Kmaps Solr - v0.1.0 - 2018-10-24
+/*! Shanti Kmaps Solr - v0.1.0 - 2018-11-06
 * Copyright (c) 2018 ys2n; Licensed MIT */
 /*! Shanti Kmaps Solr - v0.1.0 - 2018-07-24
 * Copyright (c) 2018 ys2n; Licensed MIT */
@@ -736,7 +736,7 @@
         $.ajaxSettings.traditional = true;
         $.ajax({
           type: "GET",
-          cache: false,
+          cache: true,
           url: requestUrl,
           data: requestParams,
           dataType: "jsonp",
@@ -975,6 +975,8 @@
           if (xact.search(' ') && xact.charAt(0) != '"') {
               xact = '"' + xact + '"';
           }
+          // improve "exact matching" sub-strings
+          search = search.replace(/\ /g ,'\\ ');
           assetMatch = "title:" + xact + "^100" +
             " names_txt:" + xact + "^90" +
             " title:"+search+ "^10" +
@@ -1067,7 +1069,7 @@
         $.ajaxSettings.traditional = true;
         $.ajax({
           type: "GET",
-          cache: false,
+          cache: true,
           url: requestUrl,
           data: requestParams,
           dataType: "jsonp",
@@ -1425,7 +1427,6 @@
   $.fn.kmapsSolr = function (config, options) {
     return new KMapsSolr(config, options);
   };
-
 
   $.kmapsSolr = function (config, options) {
     return new KMapsSolr(config, options);

@@ -93,13 +93,15 @@ class shanti_grid_view_plugin_style extends views_plugin_style {
         '#default_value' => (!empty($this->options['iiif_options']['iiif_url_syntax'])) ? $this->options['iiif_options']['iiif_url_syntax'] : 'https://iiif-test.lib.virginia.edu/mandala/__FNAME__/full/__SIZE__/0/default.jpg',
         '#size' => 100,
     );
-    $form['iiif_options']['iiif_img_field'] = array(
-        '#type' => 'select',
-        '#title' => t('Field to use for Image'),
-        '#description' => t('Choose the field that in the view that is the image field'),
-        '#default_value' => $this->options['iiif_options']['iiif_img_field'],
-        '#options' => $options,
-    );
+    if ($type !== 'shanti_image') {
+        $form['iiif_options']['iiif_img_field'] = array(
+            '#type' => 'select',
+            '#title' => t('Field to use for Image'),
+            '#description' => t('Choose the field that in the view that is the image field'),
+            '#default_value' => $this->options['iiif_options']['iiif_img_field'],
+            '#options' => $options,
+        );
+    }
     $form['iiif_options']['iiif_tiny_size'] = array(
         '#type' => 'textfield',
         '#title' => t('Tiny Image Size'),
