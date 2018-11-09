@@ -46,9 +46,9 @@
   padding:0;
 }
 
-.no-sidebars article.main-col{
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
+.no-sidebars:not(.kmaps) article.main-col{
+  /*padding-left: 0.5rem;
+  padding-right: 0.5rem;*/
 }
 
 /*---------------------------------*/
@@ -864,7 +864,7 @@ body:after {
 
 /** The spinner for the popdown details **/
 .loading.details {
-    /*margin-left: 30%;*/
+    margin-left: 30%;
 }
 
 .ppd-details .loading {
@@ -886,6 +886,10 @@ body:after {
     .loading-container {
       position: relative;
       top: 27rem;
+    }
+
+    .loading.details {
+      /* margin-left: 35%; */
     }
 } 
 

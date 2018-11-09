@@ -109,16 +109,16 @@ label {
 
 mark {
   color: #333;
-  background: transparent;
+  background: rgba(255, 255, 0, 0.48);
   font-weight: bold;
   padding: 0;
 }
 
 blockquote{
-  padding: 5px 25px;
-  margin: 0 0 10px 20px;
+  padding: .5rem 2.5rem;
+  margin: 1rem 0 1rem 2rem;
   font-size: 1.06em;
-  border-left: 5px solid #ddd;
+  border-left: .5rem solid #ddd;
 }
 
 input.form-text,
@@ -299,6 +299,19 @@ a:hover,a:focus,a:active {
 .content-section img.pull-right {
   margin: 0.2rem 0.2rem 0.5rem 1.5rem !important;
   padding: 0.1rem !important;
+}
+
+.collections-content .img-thumbnail img {
+  height:130px !important;
+  margin: 0 1.4rem 1rem 0 !important;
+  background: #fff;
+  border-radius: .5rem !important;
+  border: 3px solid #ccc !important;
+  padding: .5rem;
+    border: 2px solid #ccc !important;
+    padding: .8rem;
+    box-shadow: 0 0 5px 1px #ccc inset;
+    border-radius: 0 !important;
 }
 
 .show-more a, 
@@ -490,7 +503,7 @@ div.contextual-links-wrapper{
   margin: 0;
   color: #333;
   height:42px;
-  line-height: 2.88em;
+  line-height: 2.82em;
 }
 
 .navbar-header .navbar-brand:hover,
@@ -509,10 +522,6 @@ div.contextual-links-wrapper{
   color: #505050;
   font-family: 'museo-sans-300', arial, sans-serif;
 }
-
-.kmaps.front .navbar-header .mandala {
-  font-size: 1.25em;
- } 
 
 .navbar-header .mandala em{
   display:none;
@@ -568,7 +577,7 @@ div.contextual-links-wrapper{
 
 .navbar-brand .shanticon-logo {
   position: relative;
-  top: 0.3rem;
+  top: 0.4rem;
   font-size: 1.62em;
   margin-right: 0.1rem;
   margin-left: 1.18rem;
@@ -641,9 +650,8 @@ div.contextual-links-wrapper{
   padding: 0;
 }
 
-
 .navbar-collapse .navbar-nav.navbar-right:last-child {
-  margin-right: 43px;
+  margin-right: 50px;
 }
 
 .navbar-default .navbar-nav>li {
@@ -862,7 +870,7 @@ div.contextual-links-wrapper{
 
 
 /*--- BEGIN collections panel ---*/
-.site-banner .collections {
+.collections {
   background: #222;
   margin: 0 0 .2rem 0;
   padding: 1rem 0 1.8rem 0.8rem;
@@ -872,11 +880,11 @@ div.contextual-links-wrapper{
   z-index: 300;
 }
 
-.site-banner .collections .row {
+.collections .row {
   margin: 0;
 }
 
-.site-banner .collections ul {
+.collections ul {
   text-align: center;
   list-style-type: none;
   max-width: 1050px;
@@ -884,7 +892,7 @@ div.contextual-links-wrapper{
   padding-left:0;
 }
 
-.site-banner .collections ul li {
+.collections ul li {
   margin: 0;
   float: left;
   line-height: 2.12em;
@@ -892,7 +900,7 @@ div.contextual-links-wrapper{
   width: 50%;
 }
 
-.site-banner .collections ul li a {
+.collections ul li a {
   color: #d0d0d0;
   text-decoration: none;
   letter-spacing: 0.08em;
@@ -903,21 +911,32 @@ div.contextual-links-wrapper{
   font-weight: normal;
   white-space: nowrap;
   text-transform: uppercase;
+  -webkit-transform: scale(1.1);
+          transform: scale(1.1);
+  -webkit-transition: .2s ease-in-out;
+          transition: .2s ease-in-out;
 }
 
-.site-banner .collections ul li a.disabled, .site-banner .collections ul li a.disabled:hover, .site-banner .collections ul li a.disabled:active, 
-.site-banner .collections ul li a.disabled .icon, .site-banner .collections ul li a.disabled:hover .icon {
+.collections ul li a.disabled, 
+.collections ul li a.disabled:hover, 
+.collections ul li a.disabled:active, 
+.collections ul li a.disabled .icon, 
+.collections ul li a.disabled:hover .icon {
   color: #707070;
   cursor: default;
 }
 
-.site-banner .collections ul li a:hover,
-.site-banner .collections ul li a:active {
+.collections ul li a:hover {
   text-decoration: none;
   color: #fff;
+  -webkit-transform: scale(1.125);
+          transform: scale(1.125);
 }
-
-.site-banner .collections ul .icon {
+.collections ul li a:active {
+  -webkit-transform: scale(1.1);
+          transform: scale(1.1);
+}
+.collections ul .icon {
   color: #aaa !important;
   margin-right: 8px;
   font-size: 1.88em;
@@ -925,32 +944,32 @@ div.contextual-links-wrapper{
   top: 0.4rem;
 }
 
-.site-banner .collections ul .icon.shanticon-visuals{
+.collections ul .icon.shanticon-visuals{
   top: 0.54rem;
 }
 
-.site-banner .collections ul .icon.shanticon-logo-shanti {
+.collections ul .icon.shanticon-logo-shanti {
   color: #f0f0f0;
 }
 
-.site-banner .collections ul li a:hover .icon::before{
+.collections ul li a:hover .icon::before{
   color: #e0e0e0;
 }
-.site-banner .collections ul li a:active .icon::before{
+.collections ul li a:active .icon::before{
   color: #fff;
 }
 
-.site-banner .collections ul .icon.shanticon-visuals::before {
+.collections ul .icon.shanticon-visuals::before {
   font-size: 120%;
   position: relative;
   left: -0.15rem;
   margin-right: -0.25rem;
 }
-.site-banner .collections ul .icon.shanticon-logo-shanti::before {
+.collections ul .icon.shanticon-logo-shanti::before {
   font-size: 110%;
 }
 
-.site-banner .collections h4 {
+.collections h4 {
   color: #eee;
   text-align: center;
   margin: 10px 0 18px;
@@ -958,7 +977,7 @@ div.contextual-links-wrapper{
   display: none;
 }
 
-.site-banner .collections .close {
+.collections .close {
   color: #ccc;
   background: transparent;
   background-image: none;
@@ -982,17 +1001,17 @@ div.contextual-links-wrapper{
   transition: color 200ms ease 0s;
 }
 
-.site-banner .collections .close:hover,
-.site-banner .collections .close:active {
+.collections .close:hover,
+.collections .close:active {
   filter: alpha(opacity=75);
   opacity: 0.75;
 }
 /* adjust icon fonts for consistency in Explore menu and elsewhere */
-.site-banner .collections .shanticon-visuals {
+.collections .shanticon-visuals {
   font-size: 110%;
 }
 
-.site-banner .collections .shanticon-images {
+.collections .shanticon-images {
   font-size: 90%;
 }
 /*--- END collections panel ---*/
@@ -1057,8 +1076,26 @@ div.contextual-links-wrapper{
   z-index: 15;
 }
 
+.page-title .pt-prefix{
+  display:none;
+}
+
+
+.front .pt-prefix,
+.home-carousel .pt-prefix,
+.page-collections-all .pt-prefix{
+  display:inline;
+}
+
+.texts.page-collections-all .pt-prefix,
+.images.page-collections-all .pt-prefix{
+  display:none;
+}
+
+
+
 .breadwrap {
-  margin: -0.2rem 0 0 1.8rem;
+  margin: -0.2rem 0 0 2.5rem;
   padding: 0;
   display: block;
   height: 1.18em;
@@ -1124,10 +1161,12 @@ div.contextual-links-wrapper{
   font-size: .82em;
   color: #fff;
   text-decoration: none;
-  height: 1.18em;
+  /*height: 1.18em;*/
   line-height: 1.32em;
   overflow: hidden;
   font-weight: normal;
+    font-size:0.93em;
+    line-height:1.12em;
 }
 
 .breadcrumb li a:hover,
@@ -1153,7 +1192,7 @@ div.contextual-links-wrapper{
 }*/
 
 .breadcrumb li:first-child a {
-  margin-right: 0.4rem;
+  margin-right: 0.7rem;
   font-size: 0.82em;
   line-height: 1.12em;
   color: #f5f5f5;
@@ -1283,9 +1322,9 @@ div.contextual-links-wrapper{
 
 .tabs.primary li a,
 .tabs.secondary li a {
-  background-color: #c0c0c0 !important;
+  background-color: #ccc !important;
   /*background-color: rgba(0,0,0,.2000) !important;*/
-  color: #111 !important;
+  color: #000 !important;
   font-size: 0.68em !important;
   line-height: 1.25em !important;
   height: 2.18em !important;
@@ -1339,6 +1378,11 @@ div.contextual-links-wrapper{
 }
 
 
+
+.nav-tabs>li>a{
+  font-family: 'museo-sans-500',helvetica,arial,sans-serif;
+}
+
 /** Vertical Tabs rulesets 
 * ---> Moved to shanti-admin-edit-forms.css 
 */
@@ -1353,10 +1397,9 @@ div.contextual-links-wrapper{
   background: #fff;
   border-right: none;
   font-size: 1.06em;
-  font-family: 'museo-sans-500',helvetica,arial,sans-serif;
   font-weight: bold;
-  -webkit-transition: background 0.25s ease 0s;
-  transition: background 0.25s ease 0s;
+  -webkit-transition: all 0.25s ease 0s;
+  transition: all 0.25s ease 0s;
 }
 
 .nav-tabs.nav-justified>li:hover:not(.active){
@@ -1440,8 +1483,8 @@ div.contextual-links-wrapper{
   border-top: 1px solid #fff;
   border-bottom: 1px solid #c0c0c0;
   font-size: 1.32em;
-      line-height: 3.32em;
-  line-height: 3em;
+  line-height: 3.32em;
+      line-height: 3em;
   height: 3.12em;
   font-family: 'droidserif',georgia,palatino,'Palatino Linotype',serif !important;
   font-weight: normal;
@@ -1735,7 +1778,7 @@ div.contextual-links-wrapper{
   left: 0;
   top: 0.1rem;
   margin-left: 0.8rem;
-  margin-right: 1rem;
+  margin-right: 1.25rem;
   font-size: 1rem;
   font-family: 'droidserif', georgia, palatino, 'Palatino Linotype', serif;
 }
@@ -1797,7 +1840,7 @@ div.contextual-links-wrapper{
 }
 
 .related-resources-popover .popover-title {
-  /*font-size: 1.32rem;*/
+  font-size: 1.32rem;
   padding: 12px 14px 0 !important;
   margin: 0 !important;
   border:none !important;
@@ -1805,6 +1848,7 @@ div.contextual-links-wrapper{
   background: transparent;
   border: none;
   color:#333;
+  font-weight:bold;
   text-transform:capitalize;
 }
 
@@ -2132,10 +2176,10 @@ div.contextual-links-wrapper{
 }
 
 .shanti-thumbnail-image img:active{
-  -webkit-transform: scale(1);
-  transform: scale(1);
-    /*-webkit-filter: blur(3px);
-            filter: blur(3px);*/
+  /*-webkit-transform: scale(1);
+  transform: scale(1);*/
+    -webkit-filter: blur(3px);
+            filter: blur(3px);
 }
 
 
@@ -2274,7 +2318,7 @@ div.contextual-links-wrapper{
 
 .shanti-thumbnail-link:hover,
 .shanti-thumbnail-link:active {
-  color: rgba(90,101,209,.9000);
+  color: #df3d26;
   box-shadow: none;
   text-decoration: none;
 }
@@ -3109,7 +3153,7 @@ div.block-shanti-carousel > h2 {
   top: .475rem;
   margin-right: .3rem;
   font-size: 1.38em;
-  color: #6f69ae;
+  color: #777;
 }
 
 .carousel .byline {
@@ -3613,6 +3657,8 @@ div#carousel-buttons {
   border:1px solid #888;
   display: none;
   text-align: center;
+
+    display:none !important; /* hiding since most pages are short enough not to need this, will add required */
 }
 
 .back-to-top:hover,
@@ -3642,6 +3688,8 @@ div#carousel-buttons {
   position: relative;
   top: .5rem;
 }
+
+
 
 
 /*-- filtered message after body tag to upgrade older browsers --*/
@@ -4505,15 +4553,17 @@ article.main-col {
 .collection-page article.main-col,
 .page-mycontent.images article.main-col,
 .page-mycontent.visuals article.main-col,
-.page-mycontent.audio-video article.main-col{
+.page-mycontent.audio-video article.main-col,
+.page-examples.visuals article.main-col{
   max-width:100% !important;
 }
 
-.texts.collection-page article.main-col,
+.texts.collection-page article.main-col{
+  max-width: 1250px !important;
+}
 .sources.collection-page article.main-col{
   max-width: 1050px !important;
 }
-
 
 /*
 .page-collections-all article.main-col{
@@ -4522,7 +4572,7 @@ article.main-col {
 }
 */
 .no-sidebars article.main-col{
-  padding-bottom:50px;
+  padding-bottom:50px !important;
 }
 
 article.main-col > div.region-content::after{
@@ -4895,6 +4945,10 @@ article.main-col > div.region-content::after{
     margin-right: .1rem;
     font-size: 1.25em;
   }
+
+  .nav-tabs.nav-justified>li.active::before{
+    display:none;
+  }
 }
 
 @media screen and (max-width: 599px) {
@@ -4904,7 +4958,7 @@ article.main-col > div.region-content::after{
     display:none;
   }
     
-  .site-banner .collections ul li {
+  .collections ul li {
     line-height: 3em;
   }
 
@@ -4936,11 +4990,11 @@ article.main-col > div.region-content::after{
 
 @media screen and (max-width: 499px) {
 
-  .site-banner .collections h4 {
+  .collections h4 {
     font-size: 1em;
   }
 
-  .site-banner .collections > nav > div {
+  .collections > nav > div {
     padding-right: 0;
     padding-left: 0;
   }
@@ -4964,7 +5018,7 @@ article.main-col > div.region-content::after{
 
 @media screen and (min-width: 500px) {
 
-  .site-banner .collections ul li {
+  .collections ul li {
     width: 40%;
     margin-left: 10%;
   }
@@ -4979,19 +5033,19 @@ article.main-col > div.region-content::after{
 
   .navbar-header .site-slogan {
     display: inline-block;
-    font-size: 1.25em;
+    font-size: 1.38em;
     line-height: 1.32em;
   }
   
-  .site-banner .collections ul li {
+  .collections ul li {
     width: 20%;
   }
 
-  .site-banner .collections ul li a.disabled, 
-  .site-banner .collections ul li a.disabled:hover,
-  .site-banner .collections ul li a.disabled:active,
-  .site-banner .collections ul li a.disabled .icon,  
-  .site-banner .collections ul li a.disabled:hover .icon {
+  .collections ul li a.disabled, 
+  .collections ul li a.disabled:hover,
+  .collections ul li a.disabled:active,
+  .collections ul li a.disabled .icon,  
+  .collections ul li a.disabled:hover .icon {
     color: #707070;
     cursor: default;
   }
@@ -5020,13 +5074,13 @@ article.main-col > div.region-content::after{
     display: inline-block;
   }
 
-  .site-banner .collections h4 {
+  .collections h4 {
     font-size: 1.06em;
     letter-spacing: 0.25em;
     margin-top: 8px !important;
   }
 
-  .site-banner .collections ul li {
+  .collections ul li {
     width: 15%;
     margin-left: 7%;
   }
@@ -5055,18 +5109,18 @@ article.main-col > div.region-content::after{
     margin-top: 0;
   }
 
-  .site-banner .collections h4 {
+  .collections h4 {
     font-size: 1.12em;
   }
 
-  .site-banner .collections ul li {
+  .collections ul li {
     width: 12%;
     margin-left: 7%;
   }
 
-  .site-banner .collections ul li a.disabled, 
-  .site-banner .collections ul li a.disabled:hover, .site-banner .collections ul li a.disabled:active, 
-  .site-banner .collections ul li a.disabled .icon, .site-banner .collections ul li a.disabled:hover .icon, .site-banner .collections ul li a.disabled:active .icon {
+  .collections ul li a.disabled, 
+  .collections ul li a.disabled:hover, .collections ul li a.disabled:active, 
+  .collections ul li a.disabled .icon, .collections ul li a.disabled:hover .icon, .collections ul li a.disabled:active .icon {
     color: #707070;
     cursor: default;
   }
@@ -5140,8 +5194,8 @@ article.main-col > div.region-content::after{
   margin-top: 1rem;
   background-color: #fff;
   min-height:auto;
-  border-left: 1px solid #e0e0e0;
-  border-top: 1px solid #e0e0e0;
+  border-left: 1px solid #ddd;
+  border-top: 1px solid #ddd;
 }
 /* hide carousel nav arrows underneath */
 .front .sidebar-second.sidebar-offcanvas  {
@@ -5326,7 +5380,7 @@ article.main-col > div.region-content::after{
 /*-------------------------*/
 @media screen and (max-width: 991px) {
 
-  /*.btn.btn-default.view-offcanvas-sidebar { display: inline-block !important; }*/
+  .kmaps.node-type-page .btn.btn-default.view-offcanvas-sidebar { display: none !important; }
 }
 
 @media screen and (max-width: 1170px) {

@@ -103,7 +103,7 @@
               <?php print $flexslider_markup; ?>
         </section>
         <!-- BEGIN Details Row -->
-        <aside class="image-detail">
+        <aside class="image-detail-wrapper">
           <!-- position title/info higher below the featured image -->
             <header class="image-title">
                 <h2><?php print $title; ?></h2>
@@ -172,7 +172,7 @@
                           </li>
                           <li class="dontsplit">
                               <span class="field-label"><?php print t('Original file:'); ?>&nbsp;</span>
-                              <span class="field-items">
+                              <span class="field-items" style="word-break:break-all">
                                   <?php
                                       print($original_filename);
                                   ?>

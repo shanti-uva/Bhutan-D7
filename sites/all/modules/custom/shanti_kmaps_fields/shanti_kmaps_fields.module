@@ -195,6 +195,8 @@ function shanti_kmaps_fields_reindexer_finished($success, $results, $operations)
 {
     // Not sure what to do here ...
     if ($success) {
+        $resp = _shanti_kmaps_fields_commit_solr_update();
+        watchdog('shanti kmaps fields', json_encode($resp));
         $message = $results['processed'] . ' of ' . $results['nid_count'] . ' nodes reindexed.';
         drupal_set_message($message);
     } else {
@@ -437,6 +439,7 @@ function _shanti_kmaps_fields_get_solr_doc($nid_list, $force=FALSE)
         # Note that we are losing info about the relation between the KMap term and the node
         $kmapids_strict = array(); // And this just the ones directly tagged
         $kmapids = array(); // This will include the ancestors
+        $kmapids_is = array(); // Special integer id's
         foreach ($fields as $field_name) {
             $terms = field_get_items('node', $node, $field_name);
             if ($terms) {
@@ -447,6 +450,22 @@ function _shanti_kmaps_fields_get_solr_doc($nid_list, $force=FALSE)
                 }
             }
         }
+
+        # translate the kmapids to integer values
+        foreach ($kmapids as $k) {
+          list($d,$uid) = explode('-', $k);
+          if ($d && $uid) {
+            if ($d == 'places') {
+              $di = 1;
+            } elseif ($d == 'subjects') {
+              $di = 2;
+            } elseif ($d == 'terms') {
+              $di = 3;
+            }
+            $kmapids_is[] = $uid * 100 + $di;  // e.g subjects-385 = 38502
+          }
+        }
+
         $user_name = ($node->uid == 0) ? t('Anonymous') : $node_wrapper->author->value()->name; // Biblio imported nodes without an associated user
         $tmp = array(
             'id' => $node->nid,
@@ -464,6 +483,7 @@ function _shanti_kmaps_fields_get_solr_doc($nid_list, $force=FALSE)
             'url_thumb' => url(str_replace('__NID__', $node->nid, variable_get('shanti_kmaps_fields_url_thumb__' . $node->type)), array('absolute' => TRUE)),
             'kmapid' => array_values(array_unique($kmapids)),
             'kmapid_strict' => $kmapids_strict,
+            'kmapid_is' => $kmapids_is,
         );
 
         if (isset($node_wrapper->$collection_field) && !empty($node_wrapper->$collection_field->value())) {
@@ -499,10 +519,14 @@ function _shanti_kmaps_fields_get_solr_doc($nid_list, $force=FALSE)
                 }
             }
         }
+        $tmp['mynode'] = $node;  // Add node to doc so it doesn't have to be reloaded in alter functions
         $doc[] = $tmp;
     }
-
     drupal_alter('kmaps_fields_solr_doc',$doc);
+    // Remove the node object from the solr doc before sending to SOLR
+    foreach($doc as &$adoc) {
+      unset($adoc['mynode']);
+    }
     return $doc;
 }
 
@@ -1113,9 +1137,11 @@ function _shanti_kmaps_fields_index_node($node) {
         // If the node is public, push solr doc for it
         if (shanti_general_is_public($node)) {
             _shanti_kmaps_fields_push_solr_doc($node->nid, TRUE);
+            return TRUE;
         } else {
             // If node is private, delete solr doc (for cases where public node is made private)
             _shanti_kmaps_fields_delete_solr_doc($node->nid);
+            return FALSE;
         }
     }
 }
@@ -1142,7 +1168,7 @@ function _shanti_kmaps_fields_update_solr_index($solrdoc, $debug = FALSE, $messa
     $opt_in = variable_get('shanti_kmaps_admin_server_solr_opt_in');
     if ($opt_in) {
         $solr_url = variable_get('shanti_kmaps_admin_server_solr');
-        $url = "$solr_url/update/json?commit=true";
+        $url = "$solr_url/update/json";  // removed "?commit=true" per Yuji's request (ndg, 10/3/2018)
         $headers = array('Content-type' => 'application/json; charset=utf-8', 'Content-Length' => strlen($solrdoc));
         $username = variable_get('shanti_kmaps_admin_solr_username');
         $password = variable_get('shanti_kmaps_admin_solr_password');
@@ -1178,6 +1204,28 @@ function _shanti_kmaps_fields_update_solr_index($solrdoc, $debug = FALSE, $messa
     }
     else {
         drupal_set_message("KMap data not published to SHANTI index, as requested.", 'status', FALSE);
+    }
+}
+
+function _shanti_kmaps_fields_commit_solr_update($debug = FALSE)
+{
+    $opt_in = variable_get('shanti_kmaps_admin_server_solr_opt_in');
+    if ($opt_in) {
+        $solr_url = variable_get('shanti_kmaps_admin_server_solr');
+        $url = "$solr_url/update?commit=true";
+        $headers = array('Content-type' => 'application/json; charset=utf-8', 'Content-Length' => 0);
+        $username = variable_get('shanti_kmaps_admin_solr_username');
+        $password = variable_get('shanti_kmaps_admin_solr_password');
+        if (!empty($username) && !empty($password)) {
+            $headers += array('Authorization' => 'Basic ' . base64_encode("$username:$password"));
+        }
+        $options = array(
+            'method' => 'POST',
+            'data' => '',
+            'headers' => $headers,
+        );
+        $resp = drupal_http_request($url, $options);
+        return $resp;
     }
 }
 
@@ -1727,16 +1775,16 @@ function shanti_kmaps_fields_get_kmaps_for_node($node = FALSE, $format='array') 
 
 /**
  * Makes a call to the currently set kmaps term index for a kmap of $domain with $id
- * 
+ *
  * @param $domain
  *     The kmaps domain, either 'subjects' or 'places'
  * @param $kid
  *     The numberic kmap id for the desired item within that domain
  * @param $trim_return
  *      A boolean added later to determine whether to return just a single solr doc, trimming out response nesting
- * 
+ *
  * @return
- *   As associative array with either the fully http response to the request 
+ *   As associative array with either the fully http response to the request
  *   or a sub set of that response trimmed down to just the associative array that represent the single solr doc
  */
 function _shanti_kmaps_fields_kmaps_get_info($domain, $id, $trim_return=FALSE)
@@ -1753,7 +1801,7 @@ function _shanti_kmaps_fields_kmaps_get_info($domain, $id, $trim_return=FALSE)
   // add option to just return a single found doc with info
   if ($trim_return && !empty($kmap_info['response']['docs'][0])) {
       $kmap_info = $kmap_info['response']['docs'][0];
-  } 
+  }
   return $kmap_info;
 }
 
@@ -1891,7 +1939,7 @@ function shanti_kmaps_fields_parse_raw($raw, $include_self = TRUE)
  * This is used to programmatically add a specific kmap item to a node that has a kmap field, because
  * when a node is save, shanti_kmaps_fields processes the "kmap_data" property into the
  * appropriate kmap field array
- * 
+ *
  * @param &$node
  *     A variable refering to the node itself. Because it is a reference variable nothing is return. The node itself is modified.
  * @param $field_name

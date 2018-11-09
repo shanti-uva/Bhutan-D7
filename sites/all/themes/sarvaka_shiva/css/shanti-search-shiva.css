@@ -7,10 +7,6 @@
 * ---------------------------------------------------
 * 
 */
-.view-section .nav-tabs>li{
-  width: 30%;
-}
-
 /**** Facet Blocks ****/
 div.block-facetapi:after {
   border-top: thin solid #a0a0a0;
@@ -74,14 +70,6 @@ ul.shivanode-info li div {
 
 
 /** Flyout and Search Styles **/
-    
-.input-section .input-group input.form-control{
-  margin-top:9px;
-}
-
-.extruder .text {
-  /*border: 1px solid #eee;*/
-}
 
 .extruder .views-exposed-form .views-exposed-widget{
   width:100%;
@@ -272,9 +260,6 @@ ul.shivanode-info li div {
 
 
 
-
-
-
 .view-section .tab-content{
   overflow-y:scroll;
 }
@@ -296,15 +281,11 @@ ul.shivanode-info li div {
 }
 
 
+
+
 .view-section .tab-content div{
   overflow-y:visible;
 }
-
-
-
-
-
-
 
 
 

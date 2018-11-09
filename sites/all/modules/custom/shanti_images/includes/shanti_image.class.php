@@ -63,7 +63,6 @@ class ShantiImage
                     'width' => $this->width,
                     'height' => $this->height,
                 );
-                watchdog('shanti image class', "updating table {$this->id} : {$this->nid}");
                 $this->updateTable($data);
             }
         }*/
@@ -269,7 +268,14 @@ class ShantiImage
      */
     function getInfoURL()
     {
-        $url = $this->server . $this->servpath . $this->getIIIFName() . '/' . 'info.json';
+        $iiifname = $this->getIIIFName();
+        $url = $this->server . $this->servpath . $iiifname . '/' . 'info.json';
+        // account for PROD images on DEV and Stage
+        if (preg_match('/(-dev)|(-stage)|(.dd)/', gethostname())) {
+            if (preg_match('/shanti-images-\d+/', $iiifname)) {
+                $url = str_replace('-test', '', $url);
+            }
+        }
         return $url;
     }
 

@@ -11,6 +11,7 @@ function biblio_long_fields_defaultconfig_features() {
   return array(
     'biblio_long_fields' => array(
       'field_default_fields' => 'field_default_fields',
+      'strongarm' => 'strongarm',
     ),
   );
 }
@@ -44,7 +45,9 @@ function biblio_long_fields_defaultconfig_field_default_fields() {
       ),
       'locked' => 0,
       'module' => 'text',
-      'settings' => array(),
+      'settings' => array(
+        'entity_translation_sync' => FALSE,
+      ),
       'translatable' => 0,
       'type' => 'text_long',
     ),
@@ -71,7 +74,7 @@ function biblio_long_fields_defaultconfig_field_default_fields() {
           'module' => 'text',
           'settings' => array(),
           'type' => 'text_default',
-          'weight' => 2,
+          'weight' => -5,
         ),
         'teaser' => array(
           'label' => 'above',
@@ -82,9 +85,10 @@ function biblio_long_fields_defaultconfig_field_default_fields() {
       ),
       'entity_type' => 'node',
       'field_name' => 'field_biblio_long_language',
-      'label' => 'Biblio Long Language',
+      'label' => 'Long Title Language',
       'required' => 0,
       'settings' => array(
+        'entity_translation_sync' => FALSE,
         'linkit' => array(
           'button_text' => 'Search',
           'enable' => 0,
@@ -128,7 +132,9 @@ function biblio_long_fields_defaultconfig_field_default_fields() {
       ),
       'locked' => 0,
       'module' => 'text',
-      'settings' => array(),
+      'settings' => array(
+        'entity_translation_sync' => FALSE,
+      ),
       'translatable' => 0,
       'type' => 'text_long',
     ),
@@ -155,7 +161,7 @@ function biblio_long_fields_defaultconfig_field_default_fields() {
           'module' => 'text',
           'settings' => array(),
           'type' => 'text_plain',
-          'weight' => 1,
+          'weight' => -25,
         ),
         'teaser' => array(
           'label' => 'above',
@@ -166,9 +172,10 @@ function biblio_long_fields_defaultconfig_field_default_fields() {
       ),
       'entity_type' => 'node',
       'field_name' => 'field_biblio_long_title',
-      'label' => 'Biblio Long Title',
+      'label' => 'Long Title',
       'required' => 0,
       'settings' => array(
+        'entity_translation_sync' => FALSE,
         'linkit' => array(
           'button_text' => 'Search',
           'enable' => 0,
@@ -206,6 +213,7 @@ function biblio_long_fields_defaultconfig_field_default_fields() {
       'locked' => 0,
       'module' => 'shanti_kmaps_fields',
       'settings' => array(
+        'entity_translation_sync' => FALSE,
         'kmap_domain' => 'places',
       ),
       'translatable' => 0,
@@ -229,7 +237,7 @@ function biblio_long_fields_defaultconfig_field_default_fields() {
           'module' => 'shanti_kmaps_fields',
           'settings' => array(),
           'type' => 'kmap_popover_formatter',
-          'weight' => 6,
+          'weight' => 4,
         ),
         'teaser' => array(
           'label' => 'above',
@@ -243,6 +251,7 @@ function biblio_long_fields_defaultconfig_field_default_fields() {
       'label' => 'Places',
       'required' => 0,
       'settings' => array(
+        'entity_translation_sync' => FALSE,
         'kmap_term_limit' => 100,
         'search_filters' => array(),
         'search_root_kmap_path' => NULL,
@@ -262,9 +271,25 @@ function biblio_long_fields_defaultconfig_field_default_fields() {
 
   // Translatables
   // Included for use with string extractors like potx.
-  t('Biblio Long Language');
-  t('Biblio Long Title');
+  t('Long Title');
+  t('Long Title Language');
   t('Places');
 
   return $fields;
+}
+
+/**
+ * Implements hook_defaultconfig_strongarm().
+ */
+function biblio_long_fields_defaultconfig_strongarm() {
+  $export = array();
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'biblio_rss_number_of_entries';
+  $strongarm->value = '10';
+  $export['biblio_rss_number_of_entries'] = $strongarm;
+
+  return $export;
 }

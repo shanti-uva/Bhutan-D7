@@ -1180,5 +1180,26 @@ function sources_views_form_biblio_node_form_alter(&$form, &$form_state, $form_i
     $required_fields['biblio_year']['#weight'] = 2;
     $required_fields['biblio_year']['#required'] = TRUE;
     array_push($form['biblio_tabs'], $required_fields);
+
+    $biblio_alt_titles_tab = array();
+    foreach ($form['biblio_tabs'] as $index => $tab) {
+      if (isset($tab['biblio_short_title'])) {
+        $biblio_alt_titles_tab = &$form['biblio_tabs'][$index];
+        break;
+      }
+    }
+    $long_title = $form['field_biblio_long_title'];
+    unset($form['field_biblio_long_title']);
+    $biblio_alt_titles_tab['field_biblio_long_title'] = $long_title;
+    $long_lang = $form['field_biblio_long_language'];
+    unset($form['field_biblio_long_language']);
+    $biblio_alt_titles_tab['field_biblio_long_language'] = $long_lang;
+
+    foreach ($form['biblio_tabs'] as $index => $tab) {
+      if (isset($tab['biblio_keywords'])) {
+        hide($form['biblio_tabs'][$index]);
+        break;
+      }
+    }
   }
 }

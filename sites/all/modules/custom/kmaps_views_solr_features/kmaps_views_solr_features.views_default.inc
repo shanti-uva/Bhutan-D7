@@ -244,6 +244,319 @@ function kmaps_views_solr_features_views_default_views() {
   $export['related_audio_video'] = $view;
 
   $view = new view();
+  $view->name = 'related_images';
+  $view->description = '';
+  $view->tag = 'default';
+  $view->base_table = 'kmaps_views_solr_images';
+  $view->human_name = 'Related Images';
+  $view->core = 7;
+  $view->api_version = '3.0';
+  $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
+
+  /* Display: Master */
+  $handler = $view->new_display('default', 'Master', 'default');
+  $handler->display->display_options['title'] = 'Related Images';
+  $handler->display->display_options['use_ajax'] = TRUE;
+  $handler->display->display_options['use_more_always'] = FALSE;
+  $handler->display->display_options['access']['type'] = 'none';
+  $handler->display->display_options['cache']['type'] = 'none';
+  $handler->display->display_options['query']['type'] = 'views_query';
+  $handler->display->display_options['exposed_form']['type'] = 'better_exposed_filters';
+  $handler->display->display_options['exposed_form']['options']['submit_button'] = '>';
+  $handler->display->display_options['exposed_form']['options']['autosubmit'] = TRUE;
+  $handler->display->display_options['exposed_form']['options']['bef'] = array(
+    'general' => array(
+      'input_required' => 0,
+      'text_input_required' => array(
+        'text_input_required' => array(
+          'value' => 'Select any filter and click on Apply to see results',
+          'format' => 'filtered_html',
+        ),
+      ),
+      'allow_secondary' => 0,
+      'secondary_label' => 'Advanced options',
+      'secondary_collapse_override' => '0',
+    ),
+    'sort' => array(
+      'bef_format' => 'default',
+      'advanced' => array(
+        'collapsible' => 0,
+        'collapsible_label' => 'Sort options',
+        'combine' => 1,
+        'combine_param' => 'sort_bef_combine',
+        'combine_rewrite' => '',
+        'reset' => 0,
+        'reset_label' => '',
+        'is_secondary' => 0,
+        'autosubmit' => 0,
+      ),
+    ),
+    'images_title' => array(
+      'bef_format' => 'default',
+      'more_options' => array(
+        'autosubmit' => 0,
+        'is_secondary' => 0,
+        'any_label' => '',
+        'bef_filter_description' => '',
+        'rewrite' => array(
+          'filter_rewrite_values' => '',
+        ),
+      ),
+    ),
+  );
+  $handler->display->display_options['pager']['type'] = 'pagerer';
+  $handler->display->display_options['pager']['options']['items_per_page'] = '100';
+  $handler->display->display_options['pager']['options']['offset'] = '0';
+  $handler->display->display_options['pager']['options']['id'] = '0';
+  $handler->display->display_options['pager']['options']['quantity'] = '9';
+  $handler->display->display_options['pager']['options']['preset'] = 'mandala_pager';
+  $handler->display->display_options['style_plugin'] = 'shanti_grid_view';
+  $handler->display->display_options['style_options']['iiif_view'] = 0;
+  $handler->display->display_options['style_options']['iiif_options'] = array(
+    'iiif_url_syntax' => 'https://iiif-test.lib.virginia.edu/mandala/__FNAME__/full/__SIZE__/0/default.jpg',
+    'iiif_img_field' => 'thumb',
+    'iiif_tiny_size' => '100',
+    'iiif_thumb_size' => '200',
+    'iiif_pd_size' => '500',
+    'iiif_full_size' => '1500',
+  );
+  $handler->display->display_options['style_options']['entity_type'] = 'data';
+  $handler->display->display_options['style_options']['node_type_info'] = array(
+    'thumbnail_image' => '0',
+    'large_image' => '0',
+    'xlarge_image' => '0',
+  );
+  $handler->display->display_options['style_options']['data_type_info'] = array(
+    'id' => 'images_id',
+    'filename' => 'images_filename',
+    'title' => 'images_title',
+    'thumbnail_image' => 'thumb',
+    'thumbnail_width' => 'thumb_width',
+    'thumbnail_height' => 'thumb_height',
+    'img_by_size_url' => 'https://iiif.lib.virginia.edu/mandala/__FNAME__/full/!__SIZE__,__SIZE__/0/default.jpg',
+    'ppd_info' => 'view',
+    'ppd_info_url' => '',
+    'ppd_info_func' => 'related_images_page_item_info',
+    'ppd_info_cache' => 'images_id|GVID
+images_title|GVTITLE
+creator|GVAUTH
+image_width|GVWIDTH
+image_height|GVHEIGHT
+created_date|GVDATE
+collection|GVCOLLECTION
+places|GVPLACES
+subjects|GVSUBJECTS
+images_desc|GVDESC',
+    'item_url' => 'html_url',
+  );
+  /* Header: Global: Result summary */
+  $handler->display->display_options['header']['result']['id'] = 'result';
+  $handler->display->display_options['header']['result']['table'] = 'views';
+  $handler->display->display_options['header']['result']['field'] = 'result';
+  /* Field: Images Group: Id */
+  $handler->display->display_options['fields']['images_id']['id'] = 'images_id';
+  $handler->display->display_options['fields']['images_id']['table'] = 'kmaps_views_solr_images';
+  $handler->display->display_options['fields']['images_id']['field'] = 'images_id';
+  /* Field: Images Group: Title */
+  $handler->display->display_options['fields']['images_title']['id'] = 'images_title';
+  $handler->display->display_options['fields']['images_title']['table'] = 'kmaps_views_solr_images';
+  $handler->display->display_options['fields']['images_title']['field'] = 'images_title';
+  /* Field: Images Group: IIIF Filename */
+  $handler->display->display_options['fields']['images_filename']['id'] = 'images_filename';
+  $handler->display->display_options['fields']['images_filename']['table'] = 'kmaps_views_solr_images';
+  $handler->display->display_options['fields']['images_filename']['field'] = 'images_filename';
+  /* Field: Images Group: Creator */
+  $handler->display->display_options['fields']['creator']['id'] = 'creator';
+  $handler->display->display_options['fields']['creator']['table'] = 'kmaps_views_solr_images';
+  $handler->display->display_options['fields']['creator']['field'] = 'creator';
+  /* Field: Images Group: Create Date */
+  $handler->display->display_options['fields']['created_date']['id'] = 'created_date';
+  $handler->display->display_options['fields']['created_date']['table'] = 'kmaps_views_solr_images';
+  $handler->display->display_options['fields']['created_date']['field'] = 'created_date';
+  /* Field: Images Group: Collection */
+  $handler->display->display_options['fields']['collection']['id'] = 'collection';
+  $handler->display->display_options['fields']['collection']['table'] = 'kmaps_views_solr_images';
+  $handler->display->display_options['fields']['collection']['field'] = 'collection';
+  /* Field: Images Group: Description */
+  $handler->display->display_options['fields']['images_desc']['id'] = 'images_desc';
+  $handler->display->display_options['fields']['images_desc']['table'] = 'kmaps_views_solr_images';
+  $handler->display->display_options['fields']['images_desc']['field'] = 'images_desc';
+  /* Field: Images Group: Thumb */
+  $handler->display->display_options['fields']['thumb']['id'] = 'thumb';
+  $handler->display->display_options['fields']['thumb']['table'] = 'kmaps_views_solr_images';
+  $handler->display->display_options['fields']['thumb']['field'] = 'thumb';
+  /* Field: Images Group: Thumb Height */
+  $handler->display->display_options['fields']['thumb_height']['id'] = 'thumb_height';
+  $handler->display->display_options['fields']['thumb_height']['table'] = 'kmaps_views_solr_images';
+  $handler->display->display_options['fields']['thumb_height']['field'] = 'thumb_height';
+  /* Field: Images Group: Thumb Width */
+  $handler->display->display_options['fields']['thumb_width']['id'] = 'thumb_width';
+  $handler->display->display_options['fields']['thumb_width']['table'] = 'kmaps_views_solr_images';
+  $handler->display->display_options['fields']['thumb_width']['field'] = 'thumb_width';
+  /* Field: Images Group: Image Height */
+  $handler->display->display_options['fields']['image_height']['id'] = 'image_height';
+  $handler->display->display_options['fields']['image_height']['table'] = 'kmaps_views_solr_images';
+  $handler->display->display_options['fields']['image_height']['field'] = 'image_height';
+  /* Field: Images Group: Image Width */
+  $handler->display->display_options['fields']['image_width']['id'] = 'image_width';
+  $handler->display->display_options['fields']['image_width']['table'] = 'kmaps_views_solr_images';
+  $handler->display->display_options['fields']['image_width']['field'] = 'image_width';
+  /* Field: Images Group: HTML Url */
+  $handler->display->display_options['fields']['html_url']['id'] = 'html_url';
+  $handler->display->display_options['fields']['html_url']['table'] = 'kmaps_views_solr_images';
+  $handler->display->display_options['fields']['html_url']['field'] = 'html_url';
+  $handler->display->display_options['fields']['html_url']['element_label_colon'] = FALSE;
+  /* Sort criterion: Images Group: Create Date */
+  $handler->display->display_options['sorts']['created_date']['id'] = 'created_date';
+  $handler->display->display_options['sorts']['created_date']['table'] = 'kmaps_views_solr_images';
+  $handler->display->display_options['sorts']['created_date']['field'] = 'created_date';
+  $handler->display->display_options['sorts']['created_date']['order'] = 'DESC';
+  $handler->display->display_options['sorts']['created_date']['exposed'] = TRUE;
+  $handler->display->display_options['sorts']['created_date']['expose']['label'] = 'Date';
+  /* Sort criterion: Images Group: Title */
+  $handler->display->display_options['sorts']['images_title']['id'] = 'images_title';
+  $handler->display->display_options['sorts']['images_title']['table'] = 'kmaps_views_solr_images';
+  $handler->display->display_options['sorts']['images_title']['field'] = 'images_title';
+  $handler->display->display_options['sorts']['images_title']['exposed'] = TRUE;
+  $handler->display->display_options['sorts']['images_title']['expose']['label'] = 'Title';
+  /* Filter criterion: Images Group: Title */
+  $handler->display->display_options['filters']['images_title']['id'] = 'images_title';
+  $handler->display->display_options['filters']['images_title']['table'] = 'kmaps_views_solr_images';
+  $handler->display->display_options['filters']['images_title']['field'] = 'images_title';
+  $handler->display->display_options['filters']['images_title']['operator'] = 'contains';
+  $handler->display->display_options['filters']['images_title']['exposed'] = TRUE;
+  $handler->display->display_options['filters']['images_title']['expose']['operator_id'] = 'images_title_op';
+  $handler->display->display_options['filters']['images_title']['expose']['operator'] = 'images_title_op';
+  $handler->display->display_options['filters']['images_title']['expose']['identifier'] = 'images_title';
+  $handler->display->display_options['filters']['images_title']['expose']['remember_roles'] = array(
+    2 => '2',
+    1 => 0,
+    3 => 0,
+  );
+
+  /* Display: Page */
+  $handler = $view->new_display('page', 'Page', 'page');
+  $handler->display->display_options['path'] = 'related-images';
+
+  /* Display: Block */
+  $handler = $view->new_display('block', 'Block', 'images_block');
+  $export['related_images'] = $view;
+
+  $view = new view();
+  $view->name = 'related_mms';
+  $view->description = '';
+  $view->tag = 'default';
+  $view->base_table = 'kmaps_views_solr_mms';
+  $view->human_name = 'Related MMS';
+  $view->core = 7;
+  $view->api_version = '3.0';
+  $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
+
+  /* Display: Master */
+  $handler = $view->new_display('default', 'Master', 'default');
+  $handler->display->display_options['title'] = 'Related MMS';
+  $handler->display->display_options['use_more_always'] = FALSE;
+  $handler->display->display_options['access']['type'] = 'none';
+  $handler->display->display_options['cache']['type'] = 'none';
+  $handler->display->display_options['query']['type'] = 'views_query';
+  $handler->display->display_options['exposed_form']['type'] = 'basic';
+  $handler->display->display_options['pager']['type'] = 'pagerer';
+  $handler->display->display_options['pager']['options']['items_per_page'] = '100';
+  $handler->display->display_options['pager']['options']['offset'] = '0';
+  $handler->display->display_options['pager']['options']['id'] = '0';
+  $handler->display->display_options['pager']['options']['quantity'] = '9';
+  $handler->display->display_options['pager']['options']['preset'] = 'mandala_pager';
+  $handler->display->display_options['style_plugin'] = 'shanti_grid_view';
+  $handler->display->display_options['style_options']['iiif_view'] = 0;
+  $handler->display->display_options['style_options']['iiif_options'] = array(
+    'iiif_url_syntax' => 'https://iiif-test.lib.virginia.edu/mandala/__FNAME__/full/__SIZE__/0/default.jpg',
+    'iiif_img_field' => '0',
+    'iiif_tiny_size' => '',
+    'iiif_thumb_size' => '',
+    'iiif_pd_size' => '',
+    'iiif_full_size' => '',
+  );
+  $handler->display->display_options['style_options']['entity_type'] = 'data';
+  $handler->display->display_options['style_options']['node_type_info'] = array(
+    'thumbnail_image' => '0',
+    'large_image' => '0',
+    'xlarge_image' => '0',
+  );
+  $handler->display->display_options['style_options']['data_type_info'] = array(
+    'id' => 'mms_id',
+    'title' => 'caption',
+    'thumbnail_image' => 'image',
+    'thumbnail_width' => 'image_dimension',
+    'thumbnail_height' => 'image_dimension',
+    'img_by_size_url' => '',
+    'ppd_info' => 'view',
+    'ppd_info_url' => '',
+    'ppd_info_func' => 'related_mms_page_item_info',
+    'ppd_info_cache' => 'mms_id|GVID
+caption|GVTITLE
+photographer|GVAUTH
+dimensions|GVWIDTH
+dimensions|GVHEIGHT
+taken_on|GVDATE
+locations|GVPLACES
+subjects|GVSUBJECTS
+description|GVDESC ',
+    'item_url' => 'http://mms.thlib.org/media_objects/__ID__',
+  );
+  /* Field: Broken/missing handler */
+  $handler->display->display_options['fields']['mms_id']['id'] = 'mms_id';
+  $handler->display->display_options['fields']['mms_id']['table'] = 'kmaps_views_solr_mms';
+  $handler->display->display_options['fields']['mms_id']['field'] = 'mms_id';
+  /* Field: Broken/missing handler */
+  $handler->display->display_options['fields']['caption']['id'] = 'caption';
+  $handler->display->display_options['fields']['caption']['table'] = 'kmaps_views_solr_mms';
+  $handler->display->display_options['fields']['caption']['field'] = 'caption';
+  $handler->display->display_options['fields']['caption']['element_label_colon'] = FALSE;
+  /* Field: Broken/missing handler */
+  $handler->display->display_options['fields']['description']['id'] = 'description';
+  $handler->display->display_options['fields']['description']['table'] = 'kmaps_views_solr_mms';
+  $handler->display->display_options['fields']['description']['field'] = 'description';
+  $handler->display->display_options['fields']['description']['element_label_colon'] = FALSE;
+  /* Field: Broken/missing handler */
+  $handler->display->display_options['fields']['image']['id'] = 'image';
+  $handler->display->display_options['fields']['image']['table'] = 'kmaps_views_solr_mms';
+  $handler->display->display_options['fields']['image']['field'] = 'image';
+  $handler->display->display_options['fields']['image']['element_label_colon'] = FALSE;
+  /* Field: Broken/missing handler */
+  $handler->display->display_options['fields']['image_dimension']['id'] = 'image_dimension';
+  $handler->display->display_options['fields']['image_dimension']['table'] = 'kmaps_views_solr_mms';
+  $handler->display->display_options['fields']['image_dimension']['field'] = 'image_dimension';
+  $handler->display->display_options['fields']['image_dimension']['element_label_colon'] = FALSE;
+  /* Field: Broken/missing handler */
+  $handler->display->display_options['fields']['image_url']['id'] = 'image_url';
+  $handler->display->display_options['fields']['image_url']['table'] = 'kmaps_views_solr_mms';
+  $handler->display->display_options['fields']['image_url']['field'] = 'image_url';
+  $handler->display->display_options['fields']['image_url']['element_label_colon'] = FALSE;
+  /* Field: Broken/missing handler */
+  $handler->display->display_options['fields']['photographer']['id'] = 'photographer';
+  $handler->display->display_options['fields']['photographer']['table'] = 'kmaps_views_solr_mms';
+  $handler->display->display_options['fields']['photographer']['field'] = 'photographer';
+  $handler->display->display_options['fields']['photographer']['element_label_colon'] = FALSE;
+  /* Field: Broken/missing handler */
+  $handler->display->display_options['fields']['taken_on']['id'] = 'taken_on';
+  $handler->display->display_options['fields']['taken_on']['table'] = 'kmaps_views_solr_mms';
+  $handler->display->display_options['fields']['taken_on']['field'] = 'taken_on';
+  $handler->display->display_options['fields']['taken_on']['element_label_colon'] = FALSE;
+  /* Field: Broken/missing handler */
+  $handler->display->display_options['fields']['locations']['id'] = 'locations';
+  $handler->display->display_options['fields']['locations']['table'] = 'kmaps_views_solr_mms';
+  $handler->display->display_options['fields']['locations']['field'] = 'locations';
+  $handler->display->display_options['fields']['locations']['element_label_colon'] = FALSE;
+
+  /* Display: Page */
+  $handler = $view->new_display('page', 'Page', 'page');
+  $handler->display->display_options['path'] = 'related-mms';
+
+  /* Display: Block */
+  $handler = $view->new_display('block', 'Block', 'block_1');
+  $export['related_mms'] = $view;
+
+  $view = new view();
   $view->name = 'related_sources';
   $view->description = '';
   $view->tag = 'default';
@@ -685,7 +998,7 @@ function kmaps_views_solr_features_views_default_views() {
   $handler->display->display_options['sorts']['created_date']['field'] = 'created_date';
   $handler->display->display_options['sorts']['created_date']['exposed'] = TRUE;
   $handler->display->display_options['sorts']['created_date']['expose']['label'] = 'Post date';
-  /* Filter criterion: Visuals Group: Asset SubType */
+  /* Filter criterion: Broken/missing handler */
   $handler->display->display_options['filters']['asset_subtype']['id'] = 'asset_subtype';
   $handler->display->display_options['filters']['asset_subtype']['table'] = 'kmaps_views_solr_visuals';
   $handler->display->display_options['filters']['asset_subtype']['field'] = 'asset_subtype';

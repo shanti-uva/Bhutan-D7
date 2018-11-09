@@ -926,50 +926,28 @@
 
       Drupal.ShantiSarvaka.sidebarFooterGravity = function () {
 
-        // NOTES:
-        // top-banner-white = 42
-        // top-banner-colored = 50
-        // admin-tabs = 25
-        // admin-menu = 30
-        // main-wrapper = includes top-banner-colored and admin tabs extends to top of default-footer
-        // default-footer = 50
-        // admin-footer = 140
-
         var height = $(window).height();
         var mainwrapper_minimum = (height) - 150;
         var mainwrapper_minimum_hastabs = (height) - 190;
         var mainwrapper_minimum_hasadminmenu = (height) - 180;
         var mainwrapper_minimum_hasadminfooter = (height) - 212;
-
         mainwrapper_minimum = parseInt(mainwrapper_minimum) + 'px';
         mainwrapper_minimum_hastabs = parseInt(mainwrapper_minimum_hastabs) + 'px';
         mainwrapper_minimum_hasadminmenu = parseInt(mainwrapper_minimum_hasadminmenu) + 'px';
         mainwrapper_minimum_hasadminfooter = parseInt(mainwrapper_minimum_hasadminfooter) + 'px';
-
-        $(".main-col").css('min-height', mainwrapper_minimum);
-        $(".has-tabs .main-col").css('min-height', mainwrapper_minimum_hastabs);
-        $(".admin-menu .main-col").css('min-height', mainwrapper_minimum_hasadminmenu);
-        $(".admin-menu.has-tabs .main-col").css('min-height', mainwrapper_minimum_hasadminfooter);
+        $("body:not(.bhutan) .main-col").css('min-height', mainwrapper_minimum);
+        $("body.has-tabs:not(.bhutan) .main-col").css('min-height', mainwrapper_minimum_hastabs);
+        $("body.admin-menu:not(.bhutan) .main-col").css('min-height', mainwrapper_minimum_hasadminmenu);
+        $("body.admin-menu.has-tabs:not(.bhutan) .main-col").css('min-height', mainwrapper_minimum_hasadminfooter);
 
         var sidebarsecond = $(".main-col").height() + 50;  // for sidebar height (only AV has this sidebar) - adds 20px to sidebar-second in AV height for top-margin/padding
-
-        // sidebar = parseInt(sidebar) + 'px';
         sidebarsecond = parseInt(sidebarsecond) + 'px';
-        // sidebarsecond_hastabs = parseInt(sidebarsecond_hastabs) + 'px';
-        // $(".sidebar-first").one().css('height',sidebar);
         $(".region-sidebar-second").css('height', sidebarsecond);
 
-
-        // Collections sidebar - temp fix
         var sidebarsecondeditcollection = $(".page-node-edit.node-type-collection .main-col").height() + 550;
         sidebarsecondeditcollection = parseInt(sidebarsecondeditcollection) + 'px';
-        $(".page-node-edit.node-type-collection  .region-sidebar-second").css('height', sidebarsecondeditcollection);
-        // $(".has-tabs .region-sidebar-second").css('height',sidebarsecond_hastabs)
-
+        $(".page-node-edit.node-type-collection .region-sidebar-second").css('height', sidebarsecondeditcollection);
       };
-
-      //$("#terms-intro-tabs,#terms-def-tabs-1,#terms-def-tabs-11,#terms-def-tabs-12,#terms-def-tabs-2").tabCollapse();
-
 
       $(window).bind('load resize orientationchange', function () {
         clearTimeout(this.id);

@@ -967,12 +967,13 @@ function shanti_kmaps_faceted_search_process_facets(&$facets, $node, $km_field) 
 
 function shanti_kmaps_faceted_search_form_alter(&$form, &$form_state, $form_id) {
     if ($form_id == 'search_block_form') {
-        $form['search_block_form']['#prefix'] = ' <label><span>Search: </span>Knowledge Maps</label>';
+        $form['search_block_form']['#prefix'] = ' <label><span>Search: </span>Mandala Collections</label>';
         $form['shanti_options'] = array(
           'mandalascope' => array(
               '#type' => 'radios',
               '#default_value' => 0,
 /*              '#options' => array(0 => t('Wingo'), 1 => t('Dingo'), 2 => t('Bingo')), */
+              '#options' => array(), // Added by ndg8f (10/9/18) otherwise fills log with warnings.
               '#attributes' => array('class' => array('shanti-options'))
           ),
         );

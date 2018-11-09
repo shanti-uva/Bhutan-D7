@@ -8,8 +8,23 @@ define('SUBJECTS_URL', 'http://subjects.kmaps.virginia.edu');
 define('PLACES_URL', 'http://places.kmaps.virginia.edu');
 
 function kmaps_explorer_init() {
+
     drupal_add_library('system', 'drupal.ajax');
+
     //variable_set('site_frontpage', 'frontpage');
+    // JS and CSS needed for grid view.
+    $cp = current_path();
+    if (module_exists('shanti_grid_view') && !path_is_admin($cp)) {
+      drupal_add_js(drupal_get_path('module', 'shanti_grid_view') . '/js/pig.js', array('group'=>JS_LIBRARY, 'weight'=>9980));
+      drupal_add_js(drupal_get_path('module', 'shanti_grid_view') . '/js/pig-shanti-ext.js', array('group'=>JS_LIBRARY, 'weight'=>9990));
+      drupal_add_js(drupal_get_path('module', 'shanti_grid_view') . '/js/jquery.actual.min.js', array('group'=>JS_LIBRARY, 'weight'=>9950));
+
+      // Add necessary CSS
+      drupal_add_css(drupal_get_path('module', 'shanti_grid_view') . '/css/shanti-pig-gallery.css');
+      drupal_add_css(drupal_get_path('module', 'shanti_grid_view') . '/css/photoswipe.css');
+      drupal_add_css(drupal_get_path('module', 'shanti_grid_view') . '/css/pswp-default-skin.css');
+    }
+
 }
 
 function kmaps_explorer_menu()
@@ -125,8 +140,8 @@ function kmaps_explorer_menu()
     $items['subjects/%/photos/%'] = array(
         'title' => 'Subjects',
         'description' => 'Creates a callback that shows photos in subjects via ajax',
-        'page callback' => 'kmaps_explorer_subjects_photos',
-        'page arguments' => array(3, 1),
+        'page callback' => 'kmaps_explorer_photos_universal',
+        'page arguments' => array(3, 1, 'subjects'),
         'access arguments' => TRUE,
         'access callback' => TRUE,
     );
@@ -143,8 +158,8 @@ function kmaps_explorer_menu()
     $items['places/%/photos/%'] = array(
         'title' => 'Places',
         'description' => 'Creates a callback that shows photos in places via ajax',
-        'page callback' => 'kmaps_explorer_places_photos',
-        'page arguments' => array(3, 1),
+        'page callback' => 'kmaps_explorer_photos_universal',
+        'page arguments' => array(3, 1, 'places'),
         'access arguments' => TRUE,
         'access callback' => TRUE,
     );
@@ -211,6 +226,25 @@ function kmaps_explorer_menu()
         'access arguments' => TRUE,
         'access callback' => TRUE,
     );
+
+    $items['subjects/%/image-node/%/%'] = array(
+        'title' => 'Subjects',
+        'description' => 'Creates a callback that shows individual image nodes',
+        'page callback' => 'kmaps_explorer_image_node', //using same function for both places and subjects.
+        'page arguments' => array(4, 1, 3, 'subjects'),
+        'access arguments' => TRUE,
+        'access callback' => TRUE,
+    );
+
+    $items['places/%/image-node/%/%'] = array(
+        'title' => 'Places',
+        'description' => 'Creates a callback that shows individual image nodes',
+        'page callback' => 'kmaps_explorer_image_node', //using same function for both places and subjects.
+        'page arguments' => array(4, 1, 3, 'places'),
+        'access arguments' => TRUE,
+        'access callback' => TRUE,
+    );
+
     $items['admin/config/content/kmaps_explorer'] = array(
         'title' => 'SHANTI KMAPS EXPLORER ADMIN',
         'description' => 'Specify settings to clear caches for the kmaps explorer module',
@@ -515,6 +549,14 @@ function kmaps_explorer_preprocess_html(&$vars) {
         //Add classes for styling
         $vars['classes_array'][] = 'kmaps-search-' . $asset;
     }
+
+    //Drupal initialization for pages not associated with search.
+    $data_shuffle = &drupal_static('kmaps_explorer_data');
+    if (isset($data_shuffle) && !empty($data_shuffle)) {
+        $asset = $data_shuffle['asset'];
+        //Add classes for styling
+        $vars['classes_array'][] = 'kmaps-' . $asset;
+    }
 }
 
 /**
@@ -536,6 +578,7 @@ function kmaps_explorer_preprocess_page(&$vars) {
         $vars['title'] = $title;
         $vars['icon'] = $asset;
         $vars['breadcrumb'] = '';
+        dpm($vars);
     }
 }
 
@@ -727,6 +770,7 @@ function kmaps_explorer_places_landing($type='', $page_num=1, $total_pages=1, $s
 function kmaps_explorer_subjects_overview($type = 'ajax', $id, $app) {
     //Drupal static initializations
     $data_shuffle = &drupal_static('kmaps_explorer_data');
+    $data_shuffle['asset'] = 'subjects';
 
     //css and js files to include in pages
     $path = drupal_get_path('module', 'kmaps_explorer');
@@ -765,6 +809,7 @@ function kmaps_explorer_subjects_overview($type = 'ajax', $id, $app) {
         $commands[] = ajax_command_html('.page-title span:last-child', $node_data->header);
         $commands[] = ajax_command_html('ol.breadcrumb', $breadcrumb);
         $commands[] = ajax_command_invoke('ol.breadcrumb', 'css', array('display', 'block'));
+        $commands[] = ajax_command_invoke('body', 'addClass', array('kmaps-' . $data_shuffle['asset']));
         $page = array('#type' => 'ajax', '#commands' => $commands);
 
         ajax_deliver($page);
@@ -804,6 +849,7 @@ function kmaps_explorer_print_subjects_names($obj) {
 function kmaps_explorer_places_overview($type = 'ajax', $id, $app) {
     //Drupal static initializations
     $data_shuffle = &drupal_static('kmaps_explorer_data');
+    $data_shuffle['asset'] = 'places';
 
     //css and js files to include in pages
     $path = drupal_get_path('module', 'kmaps_explorer');
@@ -898,6 +944,7 @@ function kmaps_explorer_places_overview($type = 'ajax', $id, $app) {
         $commands[] = ajax_command_html('.page-title span:last-child', $node_data->header);
         $commands[] = ajax_command_html('ol.breadcrumb', $breadcrumb);
         $commands[] = ajax_command_invoke('ol.breadcrumb', 'css', array('display', 'block'));
+        $commands[] = ajax_command_invoke('body', 'addClass', array('kmaps-' . $data_shuffle['asset']));
         $page = array('#type' => 'ajax', '#commands' => $commands);
 
         ajax_deliver($page);
@@ -1036,7 +1083,7 @@ function kmaps_explorer_setup_page($id, $app, $resource = '') {
         //TODO: Need to figure out which of these subjects to display and when.
         if ($solrValue->groupValue == "related_subjects" && $solrValue->doclist->numFound > 0) {
             $subjects_count += $solrValue->doclist->numFound;
-            if ($data_shuffle['subjects']['docs']) {
+            if (!empty($data_shuffle['subjects']['docs'])) {
                 $data_shuffle['subjects']['docs'] = array_merge($data_shuffle['subjects']['docs'], $solrValue->doclist->docs);
             } else {
                 $data_shuffle['subjects']['docs'] = $solrValue->doclist->docs;
@@ -1074,7 +1121,7 @@ function kmaps_explorer_setup_page($id, $app, $resource = '') {
         if ($solrValue->groupValue == "audio-video" && $solrValue->doclist->numFound > 0) {
             $video_count = $solrValue->doclist->numFound;
         }
-        if ($solrValue->groupValue == "picture" && $solrValue->doclist->numFound > 0) {
+        if ($solrValue->groupValue == "images" && $solrValue->doclist->numFound > 0) {
             $images_count = $solrValue->doclist->numFound;
             $data_shuffle['places_photos_count'] = $images_count;
         }
@@ -1109,7 +1156,7 @@ function kmaps_explorer_setup_page($id, $app, $resource = '') {
         $rel_pl_in_pl .= '&wt=json&indent=true&group=true&group.field=block_child_type&group.limit=0&fq=-related_kmaps_node_type:child';
 
         //Make calls to Solr for related subjects and places
-        $rel_pl_in_pl_data = save_to_cache('popovers_1', $app, $kid, $rel_pl_in_pl);
+        $rel_pl_in_pl_data = save_to_cache('popovers_1', $app, $id, $rel_pl_in_pl); // ndg8f was $kid here
         $rel_pl_in_pl_object = json_decode($rel_pl_in_pl_data);
 
         foreach ($rel_pl_in_pl_object->grouped->block_child_type->groups as $key => $group) {
@@ -1126,7 +1173,7 @@ function kmaps_explorer_setup_page($id, $app, $resource = '') {
         $rel_sj_in_sj .= '&wt=json&indent=true&group=true&group.field=block_child_type&group.limit=0&fq=-related_kmaps_node_type:child';
 
         //Make calls to Solr for related subjects and places
-        $rel_sj_in_sj_data = save_to_cache('popovers_1', $app, $kid, $rel_sj_in_sj);
+        $rel_sj_in_sj_data = save_to_cache('popovers_1', $app, $id, $rel_sj_in_sj); // ndg8f was $kid here
         $rel_sj_in_sj_object = json_decode($rel_sj_in_sj_data);
 
         foreach ($rel_sj_in_sj_object->grouped->block_child_type->groups as $key => $group) {
@@ -1166,8 +1213,10 @@ function kmaps_explorer_setup_page($id, $app, $resource = '') {
  * Function to create the ajax content for subjects in subjects
  */
 function kmaps_explorer_subjects_subjects($type = 'ajax', $id, $app) {
+    global $base_url;
     //Drupal static initializations
     $data_shuffle = &drupal_static('kmaps_explorer_data');
+    $data_shuffle['asset'] = 'subjects';
 
     $setup = kmaps_explorer_setup_page($id, $app, 'subjects');
 
@@ -1182,6 +1231,7 @@ function kmaps_explorer_subjects_subjects($type = 'ajax', $id, $app) {
     drupal_add_js(
         array(
             'kmaps_explorer' => array(
+                'base_url' => $base_url,
                 'title' => $title,
                 'domain' => 'subjects',
                 'featureId' => $id,
@@ -1205,6 +1255,7 @@ function kmaps_explorer_subjects_subjects($type = 'ajax', $id, $app) {
 
     if ($type == 'ajax') {
         $commands = array();
+        $commands[] = ajax_command_invoke('body', 'addClass', array('kmaps-' . $data_shuffle['asset']));
         $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . 'subjects/' . $id . '/subjects/nojs');
         $page = array('#type' => 'ajax', '#commands' => $commands);
 
@@ -1228,6 +1279,7 @@ function kmaps_explorer_subjects_subjects($type = 'ajax', $id, $app) {
 function kmaps_explorer_places_subjects($type = 'ajax', $id, $app) {
     //Drupal static initializations
     $data_shuffle = &drupal_static('kmaps_explorer_data');
+    $data_shuffle['asset'] = 'subjects';
 
     $setup = kmaps_explorer_setup_page($id, $app, 'subjects');
 
@@ -1244,6 +1296,7 @@ function kmaps_explorer_places_subjects($type = 'ajax', $id, $app) {
 
     if ($type == 'ajax') {
         $commands = array();
+        $commands[] = ajax_command_invoke('body', 'addClass', array('kmaps-' . $data_shuffle['asset']));
         $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . 'places/' . $id . '/subjects/nojs');
         $page = array('#type' => 'ajax', '#commands' => $commands);
 
@@ -1267,6 +1320,7 @@ function kmaps_explorer_places_subjects($type = 'ajax', $id, $app) {
 function kmaps_explorer_subjects_essays($type = 'ajax', $id, $app) {
     //Drupal static initializations
     $data_shuffle = &drupal_static('kmapS_explorer_data');
+    $data_shuffle['asset'] = 'texts';
 
     $setup = kmaps_explorer_setup_page($id, $app, 'texts');
 
@@ -1278,6 +1332,7 @@ function kmaps_explorer_subjects_essays($type = 'ajax', $id, $app) {
 
     if ($type == 'ajax') {
         $commands = array();
+        $commands[] = ajax_command_invoke('body', 'addClass', array('kmaps-' . $data_shuffle['asset']));
         $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . 'subjects/' . $id . '/texts/nojs');
         $page = array('#type' => 'ajax', '#commands' => $commands);
 
@@ -1301,6 +1356,7 @@ function kmaps_explorer_subjects_essays($type = 'ajax', $id, $app) {
 function kmaps_explorer_places_essays($type = 'ajax', $id, $app) {
     //Drupal static initializations
     $data_shuffle = &drupal_static('kmaps_explorer_data');
+    $data_shuffle['asset'] = 'texts';
 
     $setup = kmaps_explorer_setup_page($id, $app, 'texts');
 
@@ -1312,6 +1368,8 @@ function kmaps_explorer_places_essays($type = 'ajax', $id, $app) {
 
     if ($type == 'ajax') {
         $commands = array();
+        $commands[] = ajax_command_invoke('body', 'addClass', array('kmaps-' . $data_shuffle['asset']));
+        $commands[] = ajax_command_invoke('body', 'addClass', array('kmaps-' . $data_shuffle['asset']));
         $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . 'places/' . $id . '/texts/nojs');
         $page = array('#type' => 'ajax', '#commands' => $commands);
 
@@ -1335,6 +1393,7 @@ function kmaps_explorer_places_essays($type = 'ajax', $id, $app) {
 function kmaps_explorer_sources_universal($type = 'ajax', $id, $app) {
     //Drupal static initializations
     $data_shuffle = &drupal_static('kmaps_explorer_data');
+    $data_shuffle['asset'] = 'sources';
 
     $setup = kmaps_explorer_setup_page($id, $app, 'sources');
 
@@ -1346,6 +1405,7 @@ function kmaps_explorer_sources_universal($type = 'ajax', $id, $app) {
 
     if ($type == 'ajax') {
         $commands = array();
+        $commands[] = ajax_command_invoke('body', 'addClass', array('kmaps-' . $data_shuffle['asset']));
         $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . $app . '/' . $id . '/sources/nojs');
         $page = array('#type' => 'ajax', '#commands' => $commands);
 
@@ -1369,6 +1429,7 @@ function kmaps_explorer_sources_universal($type = 'ajax', $id, $app) {
 function kmaps_explorer_visuals_universal($type = 'ajax', $id, $app) {
     //Drupal static initializations
     $data_shuffle = &drupal_static('kmaps_explorer_data');
+    $data_shuffle['asset'] = 'visuals';
 
     $setup = kmaps_explorer_setup_page($id, $app, 'visuals');
 
@@ -1376,10 +1437,12 @@ function kmaps_explorer_visuals_universal($type = 'ajax', $id, $app) {
     $title = $data_shuffle['node_title'];
 
     $output = '<h4>' . 'Visuals Related to ' . $title . '</h4>';
+
     $output .= views_embed_view('related_visuals', 'visuals_block', $app, $id);
 
     if ($type == 'ajax') {
         $commands = array();
+        $commands[] = ajax_command_invoke('body', 'addClass', array('kmaps-' . $data_shuffle['asset']));
         $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . $app . '/' . $id . '/visuals/nojs');
         $page = array('#type' => 'ajax', '#commands' => $commands);
 
@@ -1428,6 +1491,7 @@ function call_solr_index($id, $app) {
 function kmaps_explorer_subjects_places($type = 'ajax', $id, $page_num = 1, $total_pages = 1, $subpage = FALSE) {
     //Drupal static initializations
     $data_shuffle = &drupal_static('kmaps_explorer_data');
+    $data_shuffle['asset'] = 'places';
 
     $setup = kmaps_explorer_setup_page($id, 'subjects', 'places');
     $subjectsObj = $data_shuffle['places'];
@@ -1480,6 +1544,7 @@ function kmaps_explorer_subjects_places($type = 'ajax', $id, $page_num = 1, $tot
 
     if ($type == 'ajax') {
         $commands = array();
+        $commands[] = ajax_command_invoke('body', 'addClass', array('kmaps-' . $data_shuffle['asset']));
         $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . 'subjects/' . $id . '/places/nojs/' . $page_num . '/' . $total_pages);
         $commands[] = ajax_command_append('#tab-main', $pagination);
         $page = array('#type' => 'ajax', '#commands' => $commands);
@@ -1506,8 +1571,10 @@ function kmaps_explorer_subjects_places($type = 'ajax', $id, $page_num = 1, $tot
  * Function to create the ajax content for the places in places
  */
 function kmaps_explorer_places_places($type = 'ajax', $id, $page_num = 1, $total_pages = 1, $subpage = FALSE) {
+    global $base_url;
     //Drupal static initializations
     $data_shuffle = &drupal_static('kmaps_explorer_data');
+    $data_shuffle['asset'] = 'places';
 
     $setup = kmaps_explorer_setup_page($id, 'places', 'places');
 
@@ -1520,6 +1587,7 @@ function kmaps_explorer_places_places($type = 'ajax', $id, $page_num = 1, $total
     drupal_add_js(
         array(
             'kmaps_explorer' => array(
+                'base_url' => $base_url,
                 'title' => $data_shuffle['node_title'],
                 'domain' => 'places',
                 'featureId' => $id,
@@ -1543,6 +1611,7 @@ function kmaps_explorer_places_places($type = 'ajax', $id, $page_num = 1, $total
 
     if ($type == 'ajax') {
         $commands = array();
+        $commands[] = ajax_command_invoke('body', 'addClass', array('kmaps-' . $data_shuffle['asset']));
         $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . 'places/' . $id . '/places/nojs');
         $page = array('#type' => 'ajax', '#commands' => $commands);
 
@@ -1661,12 +1730,17 @@ function kmaps_explore_pager_ajax($form, &$form_state)
     }
 }
 
+function kmaps_explorer_subjects_photos($type = 'ajax', $id) {
+  kmaps_explorer_photos_universal($type, $id, 'subjects');
+}
+
 /**
  * Function to create ajax content for photos in subjects
  */
-function kmaps_explorer_subjects_photos($type = 'ajax', $id, $page_num = 1, $total_pages = 1, $subpage = FALSE) {
+function kmaps_explorer_subjects_photos_old($type = 'ajax', $id, $page_num = 1, $total_pages = 1, $subpage = FALSE) {
   //Drupal static initializations
   $data_shuffle = &drupal_static('kmaps_explorer_data');
+  $data_shuffle['asset'] = 'images';
   $setup = kmaps_explorer_setup_page($id, 'subjects', 'photos');
 
   //css and js files to include for the image slider view
@@ -1739,6 +1813,7 @@ function kmaps_explorer_subjects_photos($type = 'ajax', $id, $page_num = 1, $tot
 
   if ($type == 'ajax') {
       $commands = array();
+      $commands[] = ajax_command_invoke('body', 'addClass', array('kmaps-' . $data_shuffle['asset']));
       $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . 'subjects/' . $id . '/photos/nojs/' . $page_num . '/' . $total_pages);
       $commands[] = ajax_command_append('#tab-main', $pagination);
       $page = array('#type' => 'ajax', '#commands' => $commands);
@@ -1766,6 +1841,10 @@ function kmaps_explorer_subjects_photos($type = 'ajax', $id, $page_num = 1, $tot
  */
 function kmaps_explorer_subjects_photos_node($id, $pid)
 {
+    //Drupal static initializations
+    $data_shuffle = &drupal_static('kmaps_explorer_data');
+    $data_shuffle['asset'] = 'images';
+
     $query = drupal_get_query_parameters();
     if (isset($query['mms'])) {
         $photosURL = 'http://mms.thlib.org/media_objects/' . $pid . '.json';
@@ -1808,12 +1887,51 @@ function kmaps_explorer_subjects_photos_node($id, $pid)
     return $content;
 }
 
+function kmaps_explorer_places_photos($type = 'ajax', $id) {
+  kmaps_explorer_photos_universal($type, $id, 'places');
+}
+
+/**
+ * Function to create the ajax content for visuals in places and subjects
+ */
+function kmaps_explorer_photos_universal($type = 'ajax', $id, $app='places') {
+  //Drupal static initializations
+  $data_shuffle = &drupal_static('kmaps_explorer_data');
+  $data_shuffle['asset'] = 'images';
+  $setup = kmaps_explorer_setup_page($id, $app, 'photos');
+
+  //Retrieve the title of the node
+  $title = $data_shuffle['node_title'];
+
+  $output = '<h4>' . 'Images Related to ' . $title . '</h4>';
+  $output .= views_embed_view('related_images', 'images_block', $app, $id);
+
+  if ($type === 'ajax') {
+    $commands = array();
+    $commands[] = ajax_command_invoke('body', 'addClass', array('kmaps-' . $data_shuffle['asset']));
+    $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . $app . '/' . $id . '/photos/nojs');
+    $page = array('#type' => 'ajax', '#commands' => $commands);
+    ajax_deliver($page);
+  } else {
+    $setup += array(
+      'active_content' => $output,
+      'ajax' => $type == 'ajax' ? TRUE : FALSE,
+      'photo' => TRUE,
+    );
+    $content = theme('kmaps_explorer_initial_template', $setup);
+
+    return $content;
+  }
+}
+
+
 /**
  * Function to create ajax content for photos in places
  */
-function kmaps_explorer_places_photos($type = 'ajax', $id, $page_num = 1, $total_pages = 1, $subpage = FALSE) {
+function kmaps_explorer_places_photos_old($type = 'ajax', $id, $page_num = 1, $total_pages = 1, $subpage = FALSE) {
     //Drupal static initializations
     $data_shuffle = &drupal_static('kmaps_explorer_data');
+    $data_shuffle['asset'] = 'images';
 
     $setup = kmaps_explorer_setup_page($id, 'places', 'photos');
 
@@ -1887,6 +2005,7 @@ function kmaps_explorer_places_photos($type = 'ajax', $id, $page_num = 1, $total
 
     if($type == 'ajax') {
         $commands = array();
+        $commands[] = ajax_command_invoke('body', 'addClass', array('kmaps-' . $data_shuffle['asset']));
         $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . 'places/' . $id . '/photos/nojs/' . $page_num . '/' . $total_pages);
         $commands[] = ajax_command_append('#tab-main', $pagination);
         $page = array('#type' => 'ajax', '#commands' => $commands);
@@ -1913,6 +2032,10 @@ function kmaps_explorer_places_photos($type = 'ajax', $id, $page_num = 1, $total
  * Function to show individual images in a separate page
  */
 function kmaps_explorer_places_photos_node($id, $pid) {
+    //Drupal static initializations
+    $data_shuffle = &drupal_static('kmaps_explorer_data');
+    $data_shuffle['asset'] = 'images';
+
     $query = drupal_get_query_parameters();
     if (isset($query['mms'])) {
         $photosURL = 'http://mms.thlib.org/media_objects/' . $pid . '.json';
@@ -1974,6 +2097,7 @@ function kmaps_explorer_places_photos_node($id, $pid) {
 function kmaps_explorer_subjects_audio_video($type = 'ajax', $id, $app, $page_num = 1, $total_pages = 1, $subpage = FALSE) {
     //Drupal static initializations
     $data_shuffle = &drupal_static('kmaps_explorer_data');
+    $data_shuffle['asset'] = 'audio-video';
 
     $setup = kmaps_explorer_setup_page($id, $app . 's', 'audio_video');
 
@@ -1983,6 +2107,7 @@ function kmaps_explorer_subjects_audio_video($type = 'ajax', $id, $app, $page_nu
 
     if ($type == 'ajax') {
         $commands = array();
+        $commands[] = ajax_command_invoke('body', 'addClass', array('kmaps-' . $data_shuffle['asset']));
         $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . $app . 's/' . $id . '/audio-video/nojs');
         $page = array('#type' => 'ajax', '#commands' => $commands);
 
@@ -2008,6 +2133,10 @@ function kmaps_explorer_subjects_audio_video($type = 'ajax', $id, $app, $page_nu
  * Function to create ajax content for audio-video individual node items
  */
 function kmaps_explorer_audio_video_node($type = 'ajax', $id, $avId, $app) {
+    //Drupal static initializations
+    $data_shuffle = &drupal_static('kmaps_explorer_data');
+    $data_shuffle['asset'] = 'audio-video';
+
     //URL for the asset individual object
     $asset = 'audio-video';
     $nodeURL = variable_get('shanti_kmaps_admin_server_solr', SHANTI_KMAPS_ADMIN_SERVER_SOLR);
@@ -2015,11 +2144,15 @@ function kmaps_explorer_audio_video_node($type = 'ajax', $id, $avId, $app) {
     $node_cache = save_to_cache('json', $asset, $avId, $nodeURL);
     $node_data = json_decode($node_cache);
     $node_data = $node_data->response->numFound > 0 ? $node_data->response->docs[0] : new stdClass();
+    $title = isset($node_data->title) ? $node_data->title[0] : '';
     $url = $node_data->url_html;
-    $output = '<iframe scrolling="no" height="3450" width="100%" frameBorder="0" src="' . $url . '?mbframe=on' . '" seamless ></iframe>';
+
+    $output = '<h4>' . $title . '</h4>';
+    $output .= '<iframe scrolling="no" height="3450" width="100%" frameBorder="0" src="' . $url . '?mbframe=on' . '" seamless ></iframe>';
 
     if ($type == 'ajax') {
         $commands = array();
+        $commands[] = ajax_command_invoke('body', 'addClass', array('kmaps-' . $data_shuffle['asset']));
         $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . $app . '/' . $id . '/audio-video-node/' . $avId . '/nojs');
         $commands[] = ajax_command_invoke('body', 'addClass', array('max-col-widths'));
         $page = array('#type' => 'ajax', '#commands' => $commands);
@@ -2039,7 +2172,7 @@ function kmaps_explorer_audio_video_node($type = 'ajax', $id, $avId, $app) {
             );
             $content = theme('kmaps_explorer_initial_template_no_sidebar', $setup);
         } else {
-            $setup = kmaps_explorer_setup_page($id, $app, 'audio_video');
+            $setup = kmaps_explorer_setup_page($id, $app . 's', 'audio_video');
             $setup += array(
                 'active_content' => $output,
                 'ajax' => $type == 'ajax' ? TRUE : FALSE,
@@ -2053,9 +2186,69 @@ function kmaps_explorer_audio_video_node($type = 'ajax', $id, $avId, $app) {
 }
 
 /**
+ * Function to create ajax content for images individual node items
+ */
+function kmaps_explorer_image_node($type = 'ajax', $id, $imgId, $app) {
+    //Drupal static initializations
+    $data_shuffle = &drupal_static('kmaps_explorer_data');
+    $data_shuffle['asset'] = 'images';
+
+    //URL for the asset individual object
+    $asset = 'images';
+    $nodeURL = variable_get('shanti_kmaps_admin_server_solr', SHANTI_KMAPS_ADMIN_SERVER_SOLR);
+    $nodeURL .= '/select?q=asset_type:' . $asset . '%20AND%20id:' . $imgId . '&wt=json';
+    $node_cache = save_to_cache('json', $asset, $imgId, $nodeURL);
+    $node_data = json_decode($node_cache);
+    $node_data = $node_data->response->numFound > 0 ? $node_data->response->docs[0] : new stdClass();
+    $url = $node_data->url_html;
+    $title = isset($node_data->title) ? $node_data->title[0] : '';
+
+    $output = '<h4>' . $title . '</h4>';
+    $output .= '<iframe scrolling="no" height="1800" width="100%" frameBorder="0" src="' . $url . '?mbframe=on' . '" seamless ></iframe>';
+
+    if ($type == 'ajax') {
+        $commands = array();
+        $commands[] = ajax_command_invoke('body', 'addClass', array('kmaps-' . $data_shuffle['asset']));
+        $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . $app . '/' . $id . '/image-node/' . $imgId . '/nojs');
+        $commands[] = ajax_command_invoke('body', 'addClass', array('max-col-widths'));
+        $page = array('#type' => 'ajax', '#commands' => $commands);
+
+        ajax_deliver($page);
+    } else {
+        if ($id == 0) {
+            //Drupal static initializations
+            $node_shuffle = &drupal_static('kmaps_explorer_asset_node');
+            //Store data for other uses in same session.
+            $node_shuffle['data'] = $node_data;
+            $setup = array(
+                'active_content' => $output,
+                'ajax' => $type == 'ajax' ? TRUE : FALSE,
+                'photo' => TRUE,
+                'type' => 'images',
+            );
+            $content = theme('kmaps_explorer_initial_template_no_sidebar', $setup);
+        } else {
+            $setup = kmaps_explorer_setup_page($id, $app, 'photos');
+            $setup += array(
+                'active_content' => $output,
+                'ajax' => $type == 'ajax' ? TRUE : FALSE,
+                'photo' => TRUE,
+            );
+            $content = theme('kmaps_explorer_initial_template', $setup);
+        }
+
+        return $content;
+    }
+}
+
+/**
  * Make call to get the ajax content and upload DOM.
  */
 function kmaps_explorer_sources_node_universal($type = 'ajax', $id, $sourceId, $app) {
+    //Drupal static initializations
+    $data_shuffle = &drupal_static('kmaps_explorer_data');
+    $data_shuffle['asset'] = 'sources';
+
     //URL for the asset individual object
     $asset = 'sources';
     $nodeURL = variable_get('shanti_kmaps_admin_server_solr', SHANTI_KMAPS_ADMIN_SERVER_SOLR);
@@ -2075,6 +2268,7 @@ function kmaps_explorer_sources_node_universal($type = 'ajax', $id, $sourceId, $
     ));
     if ($type == 'ajax') {
         $commands = array();
+        $commands[] = ajax_command_invoke('body', 'addClass', array('kmaps-' . $data_shuffle['asset']));
         $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . $app . '/' . $id . '/sources-node/' . $sourceId . '/nojs');
         $page = array('#type' => 'ajax', '#commands' => $commands);
 
@@ -2112,6 +2306,10 @@ function kmaps_explorer_sources_node_universal($type = 'ajax', $id, $sourceId, $
  * Make call to get the ajax content for visuals and upload DOM.
  */
 function kmaps_explorer_visuals_node_universal($type = 'ajax', $id, $visualsId, $app) {
+    //Drupal static initializations
+    $data_shuffle = &drupal_static('kmaps_explorer_data');
+    $data_shuffle['asset'] = 'visuals';
+
     //URL for the asset individual object
     $asset = 'visuals';
     $nodeURL = variable_get('shanti_kmaps_admin_server_solr', SHANTI_KMAPS_ADMIN_SERVER_SOLR);
@@ -2132,6 +2330,7 @@ function kmaps_explorer_visuals_node_universal($type = 'ajax', $id, $visualsId, 
 
     if ($type == 'ajax') {
         $commands = array();
+        $commands[] = ajax_command_invoke('body', 'addClass', array('kmaps-' . $data_shuffle['asset']));
         $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . $app . '/' . $id . '/visuals-node/' . $visualsId . '/nojs');
         $page = array('#type' => 'ajax', '#commands' => $commands);
 
@@ -2169,6 +2368,10 @@ function kmaps_explorer_visuals_node_universal($type = 'ajax', $id, $visualsId, 
  * Function to implement the ajax content for individual text nodes
  */
 function kmaps_explorer_each_text_node($type = 'ajax', $id, $tid, $app) {
+    //Drupal static initializations
+    $data_shuffle = &drupal_static('kmaps_explorer_data');
+    $data_shuffle['asset'] = 'texts';
+
     //URL for the asset individual object
     $asset = 'texts';
     $nodeURL = variable_get('shanti_kmaps_admin_server_solr', SHANTI_KMAPS_ADMIN_SERVER_SOLR);
@@ -2176,14 +2379,17 @@ function kmaps_explorer_each_text_node($type = 'ajax', $id, $tid, $app) {
     $node_cache = save_to_cache('json', $asset, $tid, $nodeURL);
     $node_data = json_decode($node_cache);
     $node_data = $node_data->response->numFound > 0 ? $node_data->response->docs[0] : new stdClass();
+    $title = isset($node_data->title) ? $node_data->title[0] : '';
     $url = $node_data->url_ajax;
 
-    $output = theme('kmaps_explorer_texts_individual_node', array(
+    $output = '<h4>' . $title . '</h4>';
+    $output .= theme('kmaps_explorer_texts_individual_node', array(
         'data' => $url,
     ));
 
     if ($type == 'ajax') {
         $commands = array();
+        $commands[] = ajax_command_invoke('body', 'addClass', array('kmaps-' . $data_shuffle['asset']));
         $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . $app . '/' . $id . '/text-node/' . $tid . '/nojs');
         $page = array('#type' => 'ajax', '#commands' => $commands);
 
@@ -2346,6 +2552,7 @@ function kmaps_explorer_transcripts_ui_js_alter(&$scripts)
  */
 function kmaps_explorer_retrieve_counts($app, $id)
 {
+    global $base_url;
     //Create the url for related assets for subjects and places
     if ($app == 'subjects') {
         $mURL = "{$base_url}/api/subject/mod/{$id}";

@@ -212,11 +212,10 @@ function sources_misc_config_views_default_views() {
   $handler->display->display_options['fields']['title']['label'] = '';
   $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
   $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
-  /* Sort criterion: Biblio: Author last name */
-  $handler->display->display_options['sorts']['lastname']['id'] = 'lastname';
-  $handler->display->display_options['sorts']['lastname']['table'] = 'biblio_contributor_data';
-  $handler->display->display_options['sorts']['lastname']['field'] = 'lastname';
-  $handler->display->display_options['sorts']['lastname']['rank'] = '0';
+  /* Sort criterion: Biblio: Sort Title */
+  $handler->display->display_options['sorts']['biblio_sort_title']['id'] = 'biblio_sort_title';
+  $handler->display->display_options['sorts']['biblio_sort_title']['table'] = 'biblio';
+  $handler->display->display_options['sorts']['biblio_sort_title']['field'] = 'biblio_sort_title';
   /* Sort criterion: Content: Post date */
   $handler->display->display_options['sorts']['created']['id'] = 'created';
   $handler->display->display_options['sorts']['created']['table'] = 'node';

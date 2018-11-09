@@ -102,10 +102,10 @@ if ($node->type == 'subcollection')
  	        <?php print render($content['body']); ?>
  	    </div>
 		<div>
-		    <h3>Items in this <?php echo $type; ?></h3>
+		    <!-- h3>Items in this <?php echo $type; ?></h3>
 		    <?php if ($type == 'collection'): ?>
 		        <p>The list below includes items from this Collection's Subcollections.</p>
-		    <?php endif; ?>
+		    <?php endif; ?>-->
 		    <?php if (!$collection_items_view): ?>
 		        <p>Please enter the view and display for the items view in the Collections Admin page.</p>
             <?php else: ?>

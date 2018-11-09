@@ -1,8 +1,9 @@
 <?php
 
 function bulk_image_import_make_box_request($url, $options, &$auth) {
-  $should_refresh = (($auth['expires_at'] - 90) - time()) <= 0;
+  $should_refresh = time() > $auth['expires_at'];
   if ($should_refresh) {
+    watchdog('shanti_images_bulk_image_import', 'Attempting to refresh BOX token: @refresh_token, @auth_token', array('@refresh_token' => $auth['refresh_token'], '@auth_token' => $auth['access_token'],), WATCHDOG_INFO);
     bulk_image_import_refresh_box_token($auth);
   }
   $options['headers']['Authorization'] = 'Bearer ' . $auth['access_token'];
@@ -22,22 +23,24 @@ function bulk_image_import_refresh_box_token(&$auth) {
     'headers' => array('Content-Type' => 'application/x-www-form-urlencoded'),
   );
   $response = drupal_http_request('https://www.box.com/api/oauth2/token', $options);
-  $data = drupal_json_decode($response->data);
+  $json_data = drupal_json_decode($response->data);
   if (empty($response->error)) {
-    $data['expires_at']  = time() + $data['expires_in'];
-    $auth = $data;
+    $json_data['expires_at']  = time() + $json_data['expires_in'];
+    $auth = $json_data;
+    watchdog('shanti_images_bulk_image_import', 'Successfully refreshed BOX token: @refresh_token, @auth_token', array('@refresh_token' => $auth['refresh_token'], '@auth_token' => $auth['access_token'],), WATCHDOG_INFO);
     return;
   } else {
-    watchdog('shanti_images_bulk_image_import', 'Error while refreshing token @refresh_token (@error): @error_description', array('@refresh_token' => $refresh_token, '@error' => $data['error'], '@error_description' => $data['error_description']), WATCHDOG_ERROR);
-    drupal_access_denied();
+    watchdog('shanti_images_bulk_image_import', 'Error while refreshing token @refresh_token (@error): @error_description', array('@refresh_token' => $auth['refresh_token'], '@error' => $json_data['error'], '@error_description' => $json_data['error_description']), WATCHDOG_ERROR);
+    throw new Exception($json_data['error']);
   }
 }
 
+/* No longer used
 function bulk_image_import_find_box_folder($catalog_name, &$context) {
-  $folder_id;
-  $access_token = $context['results']['auth']['access_token'];
+  $folder_id = NULL;
+  $auth = $context['results']['auth'];
   $folder_contents = bulk_image_import_fetch_folder_contents(
-    $access_token,
+    $auth,
     variable_get('box_root_folder_id')
   );
   $sub_folders = array_filter($folder_contents, function($entry) {
@@ -52,34 +55,41 @@ function bulk_image_import_find_box_folder($catalog_name, &$context) {
 
   $context['results']['folder_id'] = $folder_id;
 }
-
+*/
 
 // h/t: http://drupalsun.com/patrick/2013/08/22/drupal-7-how-programmatically-download-files-optionally-save-them-managed-files
-function bulk_image_import_download_box_file(&$auth, $filename, $folder_id) {
-  $file_id = bulk_image_import_find_box_file($auth, $filename, $folder_id);
+function bulk_image_import_download_box_file(&$auth, $filename) {
+  $file_id = bulk_image_import_find_box_file($auth, $filename);
 
   $url = 'https://api.box.com/2.0/files/' . $file_id. '/content';
   $options = array(
     'method' => 'GET',
-    'headers' => array(
-      'Authorization' => 'Bearer ' . $auth['access_token'],
-    ),
     'timeout' => 120,
   );
+  watchdog('shanti_images_bulk_image_import', 'Downloading BOX file', array(), WATCHDOG_DEBUG);
   $response = bulk_image_import_make_box_request($url, $options, $auth);
-  if($response->data == FALSE) {
-    drupal_set_message('Could download Box file for this import. Reason: ' . $response->status_message, 'error');
+  if(!$response->data && $response->redirect_url) {
+    $response = bulk_image_import_make_box_request($response->redirect_url, $options, $auth);
+  }
+  if(!$response->data) {
     throw new Exception($response->status_message);
   }
 
   $uri = 'temporary://' . $filename;
   $path = file_stream_wrapper_uri_normalize($uri);
-  $new_file = file_save_data($response->data, $path, FILE_EXISTS_REPLACE);
-  // TODO handle errors
-  return $new_file;
+  if(file_exists(drupal_realpath($path))) {
+    $existing = file_load_multiple(array(), array('uri' => $uri));
+    if(count($existing)) {
+      watchdog('shanti_images_bulk_image_import', 'File already exists, skipping save.', array(), WATCHDOG_DEBUG);
+      return reset($existing);
+    }
+  }
+  else {
+    return file_save_data($response->data, $path, FILE_EXISTS_REPLACE);
+  }
 }
 
-function bulk_image_import_find_box_file(&$auth, $filename, $folder_id) {
+function bulk_image_import_find_box_file(&$auth, $filename) {
   $access_token = $auth['access_token'];
   $url = url(
     'https://api.box.com/2.0/search',
@@ -94,9 +104,6 @@ function bulk_image_import_find_box_file(&$auth, $filename, $folder_id) {
   );
   $options = array(
     'method' => 'GET',
-    'headers' => array(
-      'Authorization' => 'Bearer ' . $access_token,
-    )
   );
   $response = bulk_image_import_make_box_request($url, $options, $auth);
 
@@ -117,19 +124,19 @@ function bulk_image_import_find_box_file(&$auth, $filename, $folder_id) {
   }
 }
 
-function bulk_image_import_fetch_folder_contents($access_token, $folder_id) {
+/* No longer used
+function bulk_image_import_fetch_folder_contents(&$auth, $folder_id) {
   $url = 'https://api.box.com/2.0/folders/' . $folder_id;
   $options = array(
     'method' => 'GET',
-    'headers' => array(
-      'Authorization' => 'Bearer ' . $access_token,
-    )
   );
+  watchdog('shanti_images_bulk_image_import', 'Fetching BOX folder contents', array(), WATCHDOG_DEBUG);
   $response = bulk_image_import_make_box_request($url, $options, $auth);
 
   $data = drupal_json_decode($response->data);
   return $data['item_collection']['entries'];
 }
+*/
 
 // h/t: https://projectricochet.com/blog/integrating-drupal-boxcom-api
 function bulk_image_import_handle_box_code($code) {
@@ -150,12 +157,8 @@ function bulk_image_import_handle_box_code($code) {
 
   $response = drupal_http_request('https://www.box.com/api/oauth2/token', $options);
   $data = drupal_json_decode($response->data);
-
   if (empty($response->error)) {
-    unset($data['restricted_to']);
-    $data['generated'] = time();
-    $data['username'] = $user->name;
-
+    $data['expires_at']  = time() + $data['expires_in'];
     return $data;
   } else {
 

@@ -1,0 +1,125 @@
+<?php
+
+
+function shanti_datasrc_test_menu() {
+  $items = array();
+  $items['shanti/data/item/%/size/%'] = array(
+    'title' => '',
+    'description' => 'Api path to return an image by size',
+    'page callback' => 'shanti_datasrc_img_by_size',
+    'page arguments' => array(3, 5),
+    'type' => MENU_CALLBACK,
+    'access arguments' => array('access content'),
+  );
+
+  $items['shanti/test/item/info/%'] = array(
+    'title' => '',
+    'description' => 'Api path to return information for the popdown',
+    'page callback' => 'shanti_datasrc_info_test',
+    'page arguments' => array(4),
+    'type' => MENU_CALLBACK,
+    'access arguments' => array('access content'),
+  );
+
+  $items['shanti/data/item/show/%'] = array(
+    'title' => '',
+    'description' => 'Api path to return information for the popdown',
+    'page callback' => 'shanti_datasrc_show_item',
+    'page arguments' => array(4),
+    'type' => MENU_CALLBACK,
+    'access arguments' => array('access content'),
+  );
+
+  return $items;
+}
+
+
+function shanti_datasrc_img_by_size($iid, $sz) {
+  $data = _shanti_datasrc_get_solr_rec($iid);
+  if (!empty($data['url_thumb'])) {
+    return $data['url_thumb'];
+  } else {
+    return "https://visuals.dd:8443/sites/visuals/files/shivanode/sngen-chart-column.png";
+  }
+}
+
+
+/**
+ * @param $iid
+ * fill in the template and return. Template fields are:
+ *
+ *
+ *       GVTYPE : e.g. "node", "file", "data
+ *       GVID : a unique numeric id, together with type this becomes the id, e.g. "node-1234"
+ *       GVTITLE : The title
+ *       GVAUTH : the markup for the author's name/link
+ *       GVSIZE : the size of the image
+ *       GVDATE : the date of the image
+ *       GVCOLLECTION : the name/link for the collection
+ *       GVPLACES : the markup for the kmaps place tags
+ *       GVSUBJECTS : the markup for the subjects tags
+ *       GVURL : the URL to the standalone page for this item (Ajax is not enabled)
+ *       GVDESC : the description for this item
+ *
+ * array("GVTYPE", "GVID", "GVTITLE", "GVAUTH", "GVSIZE", "GVDATE", "GVCOLLECTION", "GVPLACES", "GVSUBJECTS", "GVURL", "GVDESC")
+ *
+ * @return filled out template
+ *
+ */
+function shanti_datasrc_ppdinfo($iid) {
+  $tmpl = _shanti_grid_view_get_general_template();
+  $data = _shanti_datasrc_get_solr_rec($iid);
+  $tmpl = str_replace('GVTYPE', 'visuals', $tmpl);
+  if (!empty($data['asset_subtype'])) {
+    $tmpl = str_replace('GVSIZE', $data['asset_subtype'], $tmpl);
+  } else {
+    $tmpl = str_replace('<span class="sep"></span><div class="size">GVSIZE</div>', '', $tmpl);
+  }
+  $title =  (!empty($data['title'])) ? $data['title'][0] : "No Title Given.";
+  $tmpl = str_replace('GVTITLE', $title, $tmpl);
+  $tmpl = str_replace('GVDES', "bla da di blook. gible de took. smaf explirt nottium", $tmpl);
+  $link = '/shanti/data/item/show/' . $iid;
+  $tmpl = str_replace('GVULR', $link, $tmpl);
+  print $tmpl;
+}
+
+function shanti_datasrc_show_item($iid) {
+  $url = "https://mandala.dd:8443/places/0/visuals-node/{$iid}/nojs";
+  drupal_goto($url);
+}
+
+/***
+ * Test of the function call
+ * @param $iid
+ * @return bool|string
+ *
+ * array("GVID", "GVTITLE", "GVAUTH", "GVSUBTYPE", "GVWIDTH", "GVHEIGHT", "GVDATE", "GVCOLLECTION",
+"GVPLACES", "GVSUBJECTS", "GVDESC");
+ */
+function _shanti_datasrc_get_solr_rec($iid) {
+    $data = array($iid, 'Crazy Test Default Case: ' . $iid, 'New Experimenter 69', "timeline", "9990", "8888", "11-22-2003", "Yoodle!", "what place", "shate subject?", "Quia labore iaculis accumsan. Malesuada iure, risus quas fames quibusdam, duis wisi. Ultricies semper morbi repudiandae, eiusmod incididunt ac ullam.");
+    $html = shanti_grid_view_render_info($data);
+    return $html;
+}
+
+function shanti_datasrc_info_test($iid) {
+    if ($iid % 2 == 0) {
+        $iid = 2;
+    } elseif ($iid % 3 == 0 ) {
+        $iid = 1;
+    }elseif ($iid < 1200) {
+        $iid = 987;
+    } else {
+        $iid = 0;
+    }
+    $data = array(
+        1 => array("1", "A New Beginning", "Slovak Bosenia", "submarine", "10", "340", "12-5-1143", "A Massive Collection", "some place", "some thing", "Veritatis sodales odio, repellendus sem per habitasse inceptos pharetra aenean cupidatat praesent." ),
+        2 => array("34", "Duo Duao", "Maontag Horntaflitz", "subalto", "200", "3494", "6-8-1920", "Gather Round", "no where", "no thing", "Ad sodales laudantium pariatur dui. Ultrices ullamcorper dolorem aliquid nisi distinctio vulputate, labore odio netus. Tellus integer distinctio nec consectetuer."),
+        987 => array("987", "End to Beg", "Temirit Jefgrel", "subterranean", "3001", "4356", "9-12-2001", "Woah Wow!", "every where", "weveyer thing", "Aliquam lectus vel a, lobortis molestias, ex. Nemo rerum vivamus dictum facilisis, eu fringilla ac cumque laudantium maiores, reprehenderit senectus."),
+        0 => array('1234', 'Default case', 'Defaulterer', "subster", "0.1", "0.45", "9-13-2009", "Oops!", "what place", "shate subject?", "Quia labore iaculis accumsan. Malesuada iure, risus quas fames quibusdam, duis wisi. Ultricies semper morbi repudiandae, eiusmod incididunt ac ullam."),
+    );
+    if (empty($data[$iid])) { $iid = 0; }
+    $html = shanti_grid_view_render_info($data[$iid]);
+    print $html;
+}
+

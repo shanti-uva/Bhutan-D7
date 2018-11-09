@@ -2,7 +2,7 @@
 
 define('MMS_DEV', 'http://staging-mms.thlib.org/media_objects/'); // MMS dev is down. Use staging instead.
 define('MMS_PROD', 'http://mms.thlib.org/media_objects/');
-define('CONV_LIMIT', 1000);
+define('CONV_LIMIT', 5000);
 
 /**
  * Implement hook_menu
@@ -398,6 +398,7 @@ function shanti_mms_import_create_mms_node($mmssource, $mmsid, $mmspublish, $def
         $mmsdata = _shanti_mms_import_get_xml($mmsid, $mmssource, $defptgr);  // MMS XML data is more complete than JSON
         if ($mmsdata === false) {
             $fail_reason = "Could not retrieve XML data from MMS";
+            _shanti_images_remove_one_mmsid_from_list($mmsid, FALSE);
         } elseif ($mmsdata['type'] == 'Picture' && $mmsdata['resource_type_id'] == 2660) {
             // Create the Drupal node from the data retrieved.
             $node = shanti_mms_import_create_node($mmsdata, $mmspublish, $collid);
@@ -426,6 +427,7 @@ function shanti_mms_import_create_mms_node($mmssource, $mmsid, $mmspublish, $def
             }
         } else {
             $fail_reason = "Not an image";
+            _shanti_images_remove_one_mmsid_from_list($mmsid, FALSE);
         }
     } else {
         $siobj = _shanti_images_get_record($mmsid, 'mmsid');
@@ -831,13 +833,15 @@ function shanti_mms_import_create_node($data, $publish, $collid='', $admin_note=
         );
     }
 
+    unset($_SESSION['image_files_to_add']); // No files to upload because they are already there
+
     // Finally Save the node
     _shanti_mms_import_save_node($node);
-
-    unset($_SESSION['image_files_to_add']); // No files to upload because they are already there
     $siid = _shanti_images_create_record($node->nid, 0, $fn, $data['width'], $data['height']);
     $siobj = new ShantiImage($siid);
     $siobj->updateTable(array(  'mmsid' => $data['mmsid'],  ));
+
+    // Add i3ffiles to node for result output
     $node->i3ffiles = array($siobj->getIIIFName(TRUE));
     return $node;
 }

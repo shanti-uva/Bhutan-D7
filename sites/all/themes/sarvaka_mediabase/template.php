@@ -333,7 +333,8 @@ function sarvaka_mediabase_preprocess_node(&$vars) {
     }
     if ($mode == 'teaser' && is_string($creator) && strstr($creator, ',')) { $creator = substr($creator, 0, strpos($creator, ',')) . ' ...'; }
     $vars['creator'] = $creator;
-    $vars['user_link'] = l($uname, "user/$uid");
+
+    $vars['user_link'] = (user_is_logged_in()) ? l($uname, "user/$uid") : $uname;
 }
 
 /**

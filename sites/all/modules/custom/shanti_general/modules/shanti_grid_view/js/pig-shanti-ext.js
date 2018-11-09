@@ -67,6 +67,9 @@
           progressiveImage.title = image.title;  // added by ndg8f
           progressiveImage.nid = image.nid;    // added by ndg8f
           progressiveImage.rotation = image.rotation // added by ndg8f
+          progressiveImage.ppdimgurl = image.ppdimgurl // added by ndg8f. Used for popdown image when UrlForSize function can't be used
+          progressiveImage.lgimgurl = image.lgimgurl // added by ndg8f. Used for lightbox image when UrlForSize won't work
+          if (typeof(image.ppdpath) == 'string') { progressiveImage.ppdpath = image.ppdpath; } // Added by ndg8f for individual detail paths
           progressiveImages.push(progressiveImage);
         }.bind(this));
 
@@ -85,7 +88,7 @@
         
         // Activate image clicking to open popdown
         var images = _this.images;
-        for (n in images) {
+        for (var n in images) {
             var el = images[n].element;
             $(el).attr('id', 'spimg-' + n);  // add an unique ID to figure element
             $(el).attr('data-nid', _this.imageData[n].nid); // add a data attribute to figure elements with nid value
@@ -209,7 +212,7 @@
        return imglist;
    };
 
-    /**
+  /**
      *  Pig Popdown function called when an image is clicke it opens popdown.
      */
     Pig.prototype.openPopdown = function(el) {
@@ -237,8 +240,7 @@
                 return;
             }
         }
-        
-        
+
         // If popdown is not open or not on same row
         // Close any open popdown, shifting up (true) and then open a new one (callback)
         _this.closePopdown(true, function() {
@@ -257,13 +259,13 @@
                 'transform': 'translate3d(-' + parenttrans.xshift + 'px, 0px, 0)',
 			    'width': gridwidth + 'px',
             });
-            
+
             _this.loadPopdown(); // start loading info into popdown
             
             
             _this.popdown.css('transition' , 'height ' + _this.ppdSettings.speed + 'ms ' + _this.ppdSettings.easing);
             _this.popdown.css('height', _this.ppdSettings.height);
-           _this.shiftDown(myY); 
+            _this.shiftDown(myY);
            
             _this.ppdOpen = true;
             _this.closePopdownOnResize();
@@ -284,7 +286,11 @@
         $('.ppd-loading').show();
         // Load and center the image
         var img = $(_this.ppdSettings.imgSelector).eq(0);
-        var imgurl = _this.settings.urlForSize(_this.ppdImage.filename, _this.ppdSettings.imageSize, _this.ppdImage.rotation);
+        var imgfn = _this.ppdImage.filename;
+        if (typeof(_this.ppdImage.ppdimgurl) == 'string' && _this.ppdImage.ppdimgurl != '') {
+          imgfn = _this.ppdImage.ppdimgurl;
+        }
+        var imgurl = _this.settings.urlForSize(imgfn, _this.ppdSettings.imageSize, _this.ppdImage.rotation);
         img.unbind('load').on('load', function() {
             $(this).fadeIn();
             $('.ppd-loading.image').hide();
@@ -292,6 +298,9 @@
         
         // Get URL for info call and make ajax call to load in infoSelector div
         var url = _this.ppdSettings.infoURL;
+        if (typeof(_this.ppdImage.ppdpath) == 'string' && _this.ppdImage.ppdpath != '') {
+            url = _this.ppdImage.ppdpath.replace('__ID__', '__NID__');
+        }
         url = url.replace('__TYPE__', _this.settings.entityType).replace('__NID__', _this.ppdImage.nid);
         // Show loading animation for details (.loading.details) because on newly created nodes with lots of kmaps
         // the details can take a while to load the first time
@@ -300,7 +309,8 @@
             var href = _this.imageData[_this.ppdIndex].path;
             $('.ppd-details .links .view-btn').attr('href', href);
         });
-        
+
+
         // Add Swipe listener to the popdown inner div to move image previous or next
         var ppdinner = $('.ppd-expander-inner').get(0);
         if (ppdinner) { 
@@ -480,18 +490,16 @@
    * Overriding ProgressiveImage.prototype.load function
    * Mostly the same. Only code added at bottom
    */
+
   ProgressiveImage.prototype.load = function() {
     // Create a new image element, and insert it into the DOM. It doesn't
     // matter the order of the figure elements, because all positioning
     // is done using transforms.
-    this.existsOnPage = true;
+
     this._updateStyles();
     this.pig.container.appendChild(this.getElement());
+    this.existsOnPage = inview(this.getElement());
 
-    // We run the rest of the function in a 100ms setTimeout so that if the
-    // user is scrolling down the page very fast and hide() is called within
-    // 100ms of load(), the hide() function will set this.existsOnPage to false
-    // and we can exit.
     setTimeout(function() {
 
       // The image was hidden very quickly after being loaded, so don't bother
@@ -515,32 +523,72 @@
         }.bind(this);
 
         this.getElement().appendChild(this.thumbnail);
+        this.show();
       }
 
-      // Show full image
-      if (!this.fullImage) {
-        this.fullImage = new Image();
-        this.fullImage.src = this.pig.settings.urlForSize(this.filename, this.pig.settings.getImageSize(this.pig.lastWindowWidth), this.rotation);
-        this.fullImage.onload = function() {
+    }.bind(this), 1);
+  }; // End of ProgressiveImage Load
 
-          // We have to make sure fullImage still exists, we may have already been
-          // deallocated if the user scrolls too fast.
-          if (this.fullImage) {
-            this.fullImage.className += ' ' + this.classNames.loaded;
+
+  // Separating out show function so it can be called onscrolll from shanti-grid-view.js
+  // Allows pseudo progressive loading of gallery. All thumbs are loaded but full images are only loaded when in view
+  ProgressiveImage.prototype.show = function() {
+      // Show full image if it is in view
+      if (inview(this.getElement())) {
+          // Check to make sure full image isn't already there
+          if (!this.fullImage) {
+              this.fullImage = new Image();
+              var url = this.pig.settings.urlForSize(
+                  this.filename,
+                  this.pig.settings.getImageSize(this.pig.lastWindowWidth),
+                  this.rotation
+              );
+
+              // Account for prod images on non-prod servers
+              if (url.match(/shanti-image-\d+/)) {
+                  if (window.location.host.match(/(\.dd)|(-dev)|(-stage)/)) {
+                      url = url.replace('-test', '');
+                  }
+              }
+
+              this.fullImage.src = url;
+
+              this.fullImage.onload = function () {
+
+                  // We have to make sure fullImage still exists, we may have already been
+                  // deallocated if the user scrolls too fast.
+                  if (this.fullImage) {
+                      this.fullImage.className += ' ' + this.classNames.loaded;
+                  }
+              }.bind(this);
+
+              this.getElement().appendChild(this.fullImage);
+
+              // Add Footer  (code added by ndg8f)
+              this.footer = document.createElement('div');
+              this.footer.className = 'img-footer-overlay';
+              this.footer.style.display = 'none';
+              this.footer.innerHTML = this.title;
+              this.getElement().appendChild(this.footer);
           }
-        }.bind(this);
-
-        this.getElement().appendChild(this.fullImage);
-
-        // Add Footer  (code added by ndg8f)
-        this.footer = document.createElement('div');
-        this.footer.className = 'img-footer-overlay';
-        this.footer.style.display = 'none';
-        this.footer.innerHTML = this.title;
-        this.getElement().appendChild(this.footer);
       }
-    }.bind(this), 100);
-  }; // End of ProgressiveImage extension
+
+
+  };
+
+  // End of ProgressiveImage extension
+function inview(el) {
+    var wT = window.pageYOffset, wB = wT + window.innerHeight, cRect, pT, pB, p = 0;
+    cRect = el.getBoundingClientRect();
+    pT = wT + cRect.top;
+    pB = pT + cRect.height;
+    if (wT < pB && wB > pT) {
+        return true;
+    }
+
+    return false;
+}
+
 
 //********** HELPER FUNCTION *****************//
 // function to get which transform name

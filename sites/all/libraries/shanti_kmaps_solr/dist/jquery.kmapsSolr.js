@@ -1,4 +1,4 @@
-/*! Shanti Kmaps Solr - v0.1.0 - 2018-08-22
+/*! Shanti Kmaps Solr - v0.1.0 - 2018-10-24
 * Copyright (c) 2018 ys2n; Licensed MIT */
 /*! Shanti Kmaps Solr - v0.1.0 - 2018-07-24
 * Copyright (c) 2018 ys2n; Licensed MIT */
@@ -333,7 +333,10 @@
           console.log("Error restoring in-page search state. (" + err + ").  Discarding.");
           sessionStorage.setItem(stateStoreKey, JSON.stringify(defaultState));
         }
-      } else {
+      }
+
+
+      // else {
         // Look for defaultFilterState option
         if (options && typeof options.defaultFilterState !== "undefined") {
           if (typeof this.state === "undefined") {
@@ -346,7 +349,7 @@
             console.log("options.defaultFilterState: " + JSON.stringify(options.defaultFilterState));
           }
         }
-      }
+      // }
 
       this.settings = this.processConfig(config, options);
       this.settings.facetConfigList = this.assembleFacetConfigs();
@@ -433,7 +436,7 @@
           });
         });
       } catch (err) {
-        console.error("ERROR:" + JSON.stringify(err));
+        console.error("ERROR:" + err);
         deferred.reject(self);
       }
 
@@ -479,12 +482,13 @@
     showAssetTypes: function(asset_types) {
       if ($.isArray(asset_types)) {
 
-        if ($.inArray("images", asset_types) > -1) { asset_types.push("picture"); }
-        if ($.inArray("texts", asset_types) > -1){ asset_types.push("document"); }
-        if ($.inArray("audio-video", asset_types) > -1 ) { asset_types.push("video"); }
-        if ($.inArray("sources", asset_types) > -1 ) { asset_types.push("onlineresource"); }
-        if ($.inArray("all", asset_types) > -1 ) { asset_types.push("*"); }
+        // if ($.inArray("images", asset_types) > -1) { asset_types.push("picture"); }
+        // if ($.inArray("texts", asset_types) > -1){ asset_types.push("document"); }
+        // if ($.inArray("audio-video", asset_types) > -1 ) { asset_types.push("video"); }
+        // if ($.inArray("sources", asset_types) > -1 ) { asset_types.push("onlineresource"); }
+        if ($.inArray("all", asset_types) > -1 || asset_types.length === 0 ) { asset_types = [ "all","subjects","places","images","audio-video","texts","sources","visuals" ]; }
         asset_types = asset_types.join(" ");
+
       }
 
       return this.search({"showAssetTypes":asset_types});
@@ -574,21 +578,25 @@
 
       var showAssetTypes = searchparams.showAssetTypes;
 
-      if (DEBUG) { console.log(" showAssetTypes = " + JSON.stringify(showAssetTypes)); }
+      if (true) { console.log(" showAssetTypes = " + JSON.stringify(showAssetTypes)); }
 
       if ($.isArray(showAssetTypes)) {
         assetTypeList = showAssetTypes;
       } else if ( typeof showAssetTypes === "string" && showAssetTypes.length > 0 ) {
         assetTypeList = showAssetTypes.split(/\s+/);
-      } else if ( showAssetTypes === "" ){
-        assetTypeList = [];
+      } else if ( showAssetTypes === "" ) {
+        assetTypeList = [ "all","places", "subjects", "audio-video", "images", "sources", "texts", "visuals" ];
       }
-      if (DEBUG)  { console.error("assetTypeList = " + JSON.stringify(assetTypeList)); }
 
       if (assetTypeList !== null) {
         self.state.assetTypeList = assetTypeList;
         if (DEBUG) console.log("setting state.assetTypeList : " + JSON.stringify(assetTypeList) );
       }
+
+      if (!assetTypeList || assetTypeList === null || assetTypeList.length === 0 ) {
+        assetTypeList = [ "all","places", "subjects", "audio-video", "images", "sources", "texts", "visuals" ];
+      }
+      if (true)  { console.error("assetTypeList = " + JSON.stringify(assetTypeList)); }
 
       // get the current search string and override any
       if ($.type(searchparams.searchString) === "string") {
@@ -699,7 +707,7 @@
 
       // Add configure fq's to fqlist.
 
-      fqlist_full.push("-tree:terms");
+      fqlist_full.push("-tree:(terms picture document video)");
       if(cf.kmapFilterQuery && cf.kmapFilterQuery.length > 0) {
         for (var i = 0; i < cf.kmapFilterQuery.length; i++) {
           if (DEBUG) { console.log("pushing \"" + cf.kmapFilterQuery[i] + "\" onto fqlist..."); }
@@ -973,12 +981,12 @@
             " caption:"+search +
             " summary:"+ search +
             " names_txt:"+ search +"^9" ;
-          kmapsMatch = "{!join from=uid fromIndex=" + cf.termIndex + " to=kmapid score=none v=$kmapsMatch}";
+          kmapsMatch = "{!join from=uid_i to=kmapid_is score=none v=$kmapsMatch}";
           var qSearch = fqhash.searchString;
           if (search.search(' ') > -1 && search.charAt(0) != '"') {
               qSearch = fqhash.searchString.split(':')[0] + ':"' + search + '"';
           }
-          kmapsMatchQuery = qSearch + " OR " + "name_bod_tibt:\"" + fqhash.searchString.split(':')[1] + "\"";
+          kmapsMatchQuery = qSearch + " OR " + "name_tibt:\"" + fqhash.searchString.split(':')[1] + "\"";
         }
       }
 
@@ -1003,7 +1011,7 @@
 
       var assetQueryClause = (assetMatch)?"( " + assetMatch + " ) OR (" + kmapsMatch + ")": "*:*";
       var fqlist_full = [ assetTypeFilter ];
-      fqlist_full.push ("-asset_type:terms");
+      fqlist_full.push ("-asset_type:(terms picture document video)");
       if(cf.assetFilterQuery && cf.assetFilterQuery.length > 0) {
         for (var i = 0; i < cf.assetFilterQuery.length; i++) {
           if (DEBUG) { console.log("pushing assset query \"" + cf.assetFilterQuery[i] + "\" onto fqlist..."); }
@@ -1200,13 +1208,14 @@
                 // do some value mapping
 
                 if (value === "picture") {
-                  value = "images";
-                } else if (value === "video") {
-                  value = "audio-video";
+                  value = null;
+                } else
+                  if (value === "video") {
+                  value = null;
                 } else if (value === "document") {
-                  value = "texts";
+                  value = null;
                 } else if (value === "onlineresource") {
-                  value = "sources";
+                  value = null;
                 } else if (value === "__NONE__" ) {
                   if (DEBUG) console.log("ignoring count " + value);
                   value = null; // let's ignore these types for now

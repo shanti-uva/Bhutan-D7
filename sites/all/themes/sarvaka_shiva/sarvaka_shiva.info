@@ -15,6 +15,7 @@ regions[header]         = Top Bar Header
 regions[banner]         = Color Strip Banner
 regions[content]        = Content
 regions[search_flyout]  = Search Fly Out
+regions[search_results]  = Search Results
 regions[sidebar_first]  = Primary Sidebar
 regions[sidebar_second] = Secondary Sidebar
 regions[highlighted]    = Highlighted
@@ -30,6 +31,8 @@ regions[admin_footer]   = Admin Footer
 
 stylesheets[all][] =  css/shanti-main-shiva.css
 stylesheets[all][] =  css/shanti-search-shiva.css
+stylesheets[all][] =  ../shanti_sarvaka/css/shanti-search-kmaps.css
+stylesheets[all][] =  ../shanti_sarvaka/css/shanti-search-faceted.css
 
 ;;;;;;;;;;;;;;;;;;;;;;
 ;;; Scripts
@@ -38,11 +41,11 @@ scripts[] = js/shanti-main-shiva.js
 scripts[] = js/shanti-search-shiva.js
 
 ;;;;;;;;;;;;;;;;;;;;;
-;; Theme Settings   
+;; Theme Settings
 ;;;;;;;;;;;;;;;;;;;;;
 ;
 ; These theme settings can be changed in the admin interface as well.
 ; Furthermore, base color is primarily determined in CSS
 ;
-settings[shanti_sarvaka_base_color] = '#558e3c' 
+settings[shanti_sarvaka_base_color] = '#558e3c'
 settings[shanti_sarvaka_icon_class] = 'visuals'

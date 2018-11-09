@@ -60,6 +60,8 @@ function shanti_collections_add_collection_block() {
     return $block;
 }
 
+/***********   UTILITY FUNCTIONS ******************/
+
 /**
  * Get a node's collection
  */
@@ -164,9 +166,15 @@ function shanti_collections_get_parent_collection($subcoll) {
 }
 
 /**
- * Return the count of number of items in a collection
+ * Return the count of number of items in a collection or return a list of nids for items in the collection
+ *
+ * @param $coll : the collection node or node id
+ * @param $return : "count" to return a number or "nids" to return a list of node ids
+ * @param $sort : the sort parameters node "field name:order" (asc = default, desc), e.g. 'title:desc' or 'created'
+ *
+ * @return the count of nodes or the list of node ids
  */
-function shanti_collections_get_items_in_collection($coll = FALSE, $return = "count")
+function shanti_collections_get_items_in_collection($coll = FALSE, $return = "count", $sort = 'created', $include_subs = TRUE)
 {
   $nids = array();
   if (is_numeric($coll)) {
@@ -175,7 +183,11 @@ function shanti_collections_get_items_in_collection($coll = FALSE, $return = "co
   if ($coll) {
     // Get all collection and subcollection nids invovled
     $nids[] = $coll->nid;
-    $nids = array_merge($nids, shanti_collections_get_subcollections($coll));
+
+    if ($include_subs) {
+        $nids = array_merge($nids, shanti_collections_get_subcollections($coll));
+    }
+
     /**
      * Sample Query:
      *      select count(etid) from og_membership where entity_type='node' and field_name='field_og_collection_ref' and gid in (3,1721,1725,1769,2228,2258,3498,3939,4836,4835,1760,1748,1841);
@@ -183,12 +195,23 @@ function shanti_collections_get_items_in_collection($coll = FALSE, $return = "co
      */
     $query = db_select('og_membership', 'ogm');
     $query->join('node', 'n', 'n.nid = ogm.etid');
-    $result = $query->fields('ogm', array('etid'))
+    $query->fields('ogm', array('etid'))
       ->condition('n.status', 1)
       ->condition('ogm.entity_type', 'node')
       ->condition('ogm.field_name', 'field_og_collection_ref')
-      ->condition('ogm.gid', $nids, 'IN')
-      ->execute();
+      ->condition('ogm.gid', $nids, 'IN');
+
+    // Add sort params if there
+    if (!empty($sort)) {
+        $pts = explode(':', $sort);
+        $fieldnm = $pts[0];
+        $order = (count($pts) > 1) ? $pts[1] : 'asc';
+        $query->fields('n', array($fieldnm));
+        $query->orderBy("n.". $fieldnm, $order);
+    }
+
+    // Perform the query and get and return results
+    $result = $query->execute();
     $nids = $result->fetchCol();
 
     if ($return == "nids") {
@@ -198,6 +221,9 @@ function shanti_collections_get_items_in_collection($coll = FALSE, $return = "co
   return count($nids);
 }
 
+/***************** END UTILITY FUNCTIONS ********************/
+
+/***************** Hook Alters *************************/
 /**
  * Implements hook_form_alter for group nodes to add an "Add Members" link to the node edit form
  */
@@ -243,5 +269,90 @@ function shanti_collections_field_widget_form_alter(&$element, &$form_state, $co
         if (!empty($element['#options']) && is_array($element['#options']["Subcollection"])) {
             asort($element['#options']["Subcollection"]);
         }
+    }
+}
+
+
+/**
+ * Alter the OG batch process called when group visibility is changed If kmaps fields is enabled
+ * Go through and adjust kmasset index based on group visibility change
+ *
+ */
+
+function shanti_collections_batch_alter(&$batch) {
+    // If there are kmaps fields
+    if (module_exists('shanti_kmaps_fields')) {
+        // If the site setting has opted into indexing in kmassets index
+        $opt_in = variable_get('shanti_kmaps_admin_server_solr_opt_in');
+        // if the active batch is from OG group
+        // TODO: This matches on the batch title because there is no other ID. Is there a better way?
+        $active_batch = &$batch['sets'][0];
+        // If this stops working, check to see if og_access.module function og_access_handle_group_privacy_change()
+        // to see if title has changed
+        if ($opt_in && $active_batch['title'] === t('Handle group privacy change')) {
+            // Get Coll ID from OG batch object
+            $collid = (!empty($active_batch['operations'][0][1][1])) ? $active_batch['operations'][0][1][1] : 'couldn\'t find coll id';
+            if (is_numeric($collid)) {
+                $coll = node_load($collid);
+                // Get collection items but not subcollection items because
+                // Subcollection item visibility is determined by the subcollection itself.
+                $coll_items = shanti_collections_get_items_in_collection($coll, 'nids', 'created', FALSE);
+                $scbatch = array(
+                    'title' => t('Updating Solr Asset Index'),
+                    'operations' => array(
+                        array('shanti_collections_coll_items_access_update', array($coll_items)),
+                    ),
+                    'finished' => 'shanti_collections_coll_items_access_update_finished',
+                    'progress_message' => t('Processed @current_index out of @max.'),
+                    'error_message' => t('An error was encountered updating solr asset index'),
+                );
+                batch_set($scbatch);
+            }
+        }
+    }
+}
+
+/**
+ * Batch function to adjust solr index for individual nodes based on collection visibility change
+ * @param $items
+ * @param $access
+ * @param $context
+ */
+function shanti_collections_coll_items_access_update($items, &$context) {
+    // Set up the sandbox
+    if (!isset($context['sandbox']['progress'])) {
+        $context['sandbox']['progress'] = 0;
+        $context['sandbox']['current_index'] = 0;
+        $context['sandbox']['max'] = count($items);
+        $context['results']= array('indexed' => 0, 'unindexed' => 0);
+    }
+    $limit = 100; // Do 100 nodes at a time
+    $nids = array_slice($items, $context['sandbox']['current_index'], $limit);
+    $item_nodes = node_load_multiple($nids);
+    foreach($item_nodes as $node) {
+        // For each node use the shanti_kmaps function to index based on its setting
+        $res = _shanti_kmaps_fields_index_node($node);
+        if ($res) {
+            $context['results']['indexed']++;
+        } else {
+            $context['results']['unindexed']++;
+        }
+        $context['sandbox']['current_index']++;
+        $context['sandbox']['progress']++;
+    }
+
+    if ($context['sandbox']['progress'] < $context['sandbox']['max']) {
+        $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
+    }
+}
+
+function shanti_collections_coll_items_access_update_finished($success, $results, $operations) {
+    _shanti_kmaps_fields_commit_solr_update();  // in case some records have been sent regardless
+    if ($success) {
+        $indct = $results['indexed'];
+        $unind = $results['unindexed'];
+        drupal_set_message("Successfully updated Solr Asset Index. $indct nodes indexed. $unind nodes removed.");
+    } else {
+        drupal_set_message("Could not update the Solr Asset Index upon collection change", 'warning');
     }
 }

@@ -1,17 +1,6 @@
 
-/** Flyout and Search Styles (From Visuals) **/
-    
-.input-section .input-group input.form-control{
-  margin-top:9px;
-}
 
-.extruder .text {
-  /*border: 1px solid #eee;*/
-}
 
-.extruder .region-search-flyout{
-  position: relative;
-}
 
 .extruder .views-exposed-form .views-exposed-widget{
   width:100%;
@@ -203,21 +192,12 @@
     overflow: hidden;
 }
 
-.input-section{
-	padding-top:0;
-}
+
+
+
 
 .input-section .form-type-textfield{
 	margin-top:0;
-}
-
-.input-section .advanced-view{
-	margin-top: -3.25rem;
-	padding-left: 0.5rem;
-}
-
-.input-section .advanced-view .form-group{
-	border-top:none;
 }
 
 .input-section .input-group .btn.btn-default{
@@ -230,25 +210,14 @@
 }
 
 
-/* no idea why these settings are needed since the markup appears the same as sarvaka */
-.input-section .shanticon-magnify{
-	position: absolute;
-	left: 2.55rem;
-	top: 2.45rem;
-}
+
 
 .input-section div.contextual-links-wrapper{
 	position: absolute;
 	top: 0.2rem;
 }
 
-.input-section .advanced-view{
-	margin-top: -3.5rem;
-}
 
-.input-section .advanced-view .form-group{
-	margin: 0.7rem
-}
 
 /** Search Page Results  **/
     
@@ -304,4 +273,52 @@
 .view-shanti-images-search .search-details .hit-excerpt {
     padding-top: 2px;
     clear: both;
+}
+
+
+
+
+
+
+
+/** 
+*  -------------------------------
+*  --- Flyout and Search Styles
+*  -------------------------------
+**/
+#search-flyout.extruder .region-search-flyout{
+  position: relative;
+}
+/* this adjust for the page wrapper that has the bootstrap side padding removed */
+.node-type-shanti-image #search-flyout.extruder{
+    right: 1.5rem !important;
+}
+
+
+.node-type-shanti-image #search-flyout.extruder .flap{
+  background-color: #333;
+}
+.node-type-shanti-image #search-flyout.extruder .flap:hover{
+  background-color: #555;
+}
+.node-type-shanti-image #search-flyout.extruder.isOpened .flap{
+  background-color: #fff;
+}
+.node-type-shanti-image #search-flyout.extruder.isOpened .flap .flapLabel,
+.node-type-shanti-image #search-flyout.extruder.isOpened .flap .flapLabel:hover{
+  background-color: #000;
+}
+.node-type-shanti-image #search-flyout.extruder .flap>span .icon{
+  opacity:.7;
+}
+.node-type-shanti-image #search-flyout.extruder .flap:hover>span .icon{
+  opacity:.9;
+}
+.node-type-shanti-image #search-flyout.extruder.isOpened .flap>span .icon{
+  opacity:1;
+}
+.node-type-shanti-image #search-flyout.extruder .flap .flapLabel,
+.node-type-shanti-image #search-flyout.extruder .flap:hover .flapLabel,
+.node-type-shanti-image #search-flyout.extruder .flap:active .flapLabel{
+  background: #000;
 }

@@ -117,10 +117,10 @@
              </div>
             
         </div> <!-- end body-wrap -->
-
+      
         <div class="footer-wrap">
             <div class="shanti-field-content"><a href="<?php if (isset($coll->url)) {print $coll->url; } else { print "#";}; ?>" 
-                class="shanti-thumbnail-link"><?php if (isset($coll->title)) {print $coll->title; }  ?></a>
+                class="shanti-humbnail-link"><?php if (isset($coll->title)) {print $coll->title; }  ?></a>
             </div>
         </div> <!-- end footer -->
     </div> <!-- end shanti-thumbnail-info -->

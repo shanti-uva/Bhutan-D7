@@ -34,7 +34,7 @@ function biblio_long_fields_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 12,
+        'weight' => 6,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -45,9 +45,10 @@ function biblio_long_fields_field_default_field_instances() {
     ),
     'entity_type' => 'node',
     'field_name' => 'field_biblio_language',
-    'label' => 'Biblio Language',
+    'label' => 'Content Language',
     'required' => 0,
     'settings' => array(
+      'entity_translation_sync' => FALSE,
       'user_register_form' => FALSE,
     ),
     'widget' => array(
@@ -85,7 +86,7 @@ function biblio_long_fields_field_default_field_instances() {
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
-        'weight' => 2,
+        'weight' => -5,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -96,9 +97,10 @@ function biblio_long_fields_field_default_field_instances() {
     ),
     'entity_type' => 'node',
     'field_name' => 'field_biblio_long_language',
-    'label' => 'Biblio Long Language',
+    'label' => 'Long Title Language',
     'required' => 0,
     'settings' => array(
+      'entity_translation_sync' => FALSE,
       'linkit' => array(
         'button_text' => 'Search',
         'enable' => 0,
@@ -142,7 +144,7 @@ function biblio_long_fields_field_default_field_instances() {
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_plain',
-        'weight' => 1,
+        'weight' => -25,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -153,9 +155,10 @@ function biblio_long_fields_field_default_field_instances() {
     ),
     'entity_type' => 'node',
     'field_name' => 'field_biblio_long_title',
-    'label' => 'Biblio Long Title',
+    'label' => 'Long Title',
     'required' => 0,
     'settings' => array(
+      'entity_translation_sync' => FALSE,
       'linkit' => array(
         'button_text' => 'Search',
         'enable' => 0,
@@ -194,7 +197,7 @@ function biblio_long_fields_field_default_field_instances() {
         'module' => 'shanti_kmaps_fields',
         'settings' => array(),
         'type' => 'kmap_popover_formatter',
-        'weight' => 6,
+        'weight' => 4,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -208,6 +211,7 @@ function biblio_long_fields_field_default_field_instances() {
     'label' => 'Places',
     'required' => 0,
     'settings' => array(
+      'entity_translation_sync' => FALSE,
       'kmap_term_limit' => 100,
       'search_filters' => array(),
       'search_root_kmap_path' => NULL,
@@ -226,9 +230,9 @@ function biblio_long_fields_field_default_field_instances() {
 
   // Translatables
   // Included for use with string extractors like potx.
-  t('Biblio Language');
-  t('Biblio Long Language');
-  t('Biblio Long Title');
+  t('Content Language');
+  t('Long Title');
+  t('Long Title Language');
   t('Places');
 
   return $field_instances;

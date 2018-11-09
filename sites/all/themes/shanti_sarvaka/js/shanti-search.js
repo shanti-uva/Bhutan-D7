@@ -39,7 +39,7 @@ Drupal.behaviors.sarvakaMbextruder = {
 			    // top-right close button, visible for small mobile screens only - currently set to display on all but kmaps which has it's own script for rendering of the button
 				$('body:not(.kmaps) #search-flyout .text').append( '<span id="btn-collapse-flyout" class="icon shanticon-arrow-end-right btn-collapse-flyout" type="button" aria-label="Close Search Flyout"></span>' );
 				// Search Results and Flyout Width Integration --------------------
-				$('#btn-collapse-flyout').click(function() { 
+				$('#btn-collapse-flyout').click(function() {
 					$('#search-flyout').closeMbExtruder();
 					// this is only for kmaps search currently
 					$('#faceted-search-results').toggleClass('search-flyout-open search-flyout-collapsed');
@@ -54,7 +54,11 @@ Drupal.behaviors.sarvakaMbextruder = {
 			    });
 			}
 		    // Bind event listener
-		    $('.extruder-content').resize(Drupal.ShantiSarvaka.checkWidth);
+		    $('.extruder-content').resize(function() {
+            Drupal.attachBehaviors('#faceted-search-results');
+            Drupal.ShantiSarvaka.checkWidth();
+          }
+        );
 		    // Add identifier
 		    // $(".extruder-content").attr("aria-label","Search Panel");
 		    } catch (e) {
@@ -87,13 +91,13 @@ Drupal.behaviors.sarvakaMbextruder = {
 			}
 		});
 
-		$("#search-flyout .flap").click( function () {
-			if ($("#search-flyout").hasClass("isOpened")) {
-					$(".btn-show-search-results").hide();
-				} else {
-	                $(".btn-show-search-results").show();
-            }
-		});
+//		$("#search-flyout .flap").click( function () {
+//			if ($("#search-flyout").hasClass("isOpened")) {
+//					$(".btn-show-search-results").hide();
+//				} else {
+//	                $(".btn-show-search-results").show();
+//            }
+//		});
 
 	    $("#search-flyout .flap").hover(
 	      function () {

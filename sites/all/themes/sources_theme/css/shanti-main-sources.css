@@ -67,10 +67,10 @@
   border-color: #6f69ae;
   background-color: #6f69ae !important;
 }
-
+/*
 .ui-resizable-handle.ui-resizable-w,
 .ui-resizable-handle.ui-resizable-w:hover,
-.ui-resizable-handle.ui-resizable-w:active { border-color: #645F9D transparent transparent transparent; }
+.ui-resizable-handle.ui-resizable-w:active { border-color: #645F9D transparent transparent transparent; } */
 
 @media screen and (min-width: 500px) {
   .navbar-header .site-slogan{ color: #6f69ae !important; } /* Darker shade for banner site-slogan text */
@@ -92,32 +92,53 @@
 
 
 
-/* override system.menus.css #36 */
-article.main-col li a.active{
-  color: rgb(0, 0, 139);
-}
 
-
-.page-home article.main-col > .region.region-content{
-  max-width: 400px;
-}
-
-
-.library-dropdown, .breadcrumb-child-container{ width: 380px; }
-
+/* former breadcrumb dropodwn menu */
 .library-dropdown{ display:none; }
 
+.biblio-current-filters{ background-color: transparent; }
 
 
+/* page layouts */
+article.main-col{
+  max-width: 950px !important;
+}
+
+.front article.main-col{
+  max-width: 1050px !important;
+}
+
+/* override system.menus.css #36 */
+article.main-col li a.active{
+  /*color: rgb(0, 0, 139);*/
+}
+
+.page-sources-search .view-empty {
+  padding: 35px 24px 8px 24px;
+}
 
 .node-type-collection .content-section{
   padding-bottom: 7rem;
 }
 
-.page-sources-search .tab-pane.main-col > div.region-content{
-  max-width: 1050px !important;
-  margin: 0 auto;
+/* Bibio lists Author and Collection's links */
+.page-sources-search .views-field-biblio-authors li a,
+.page-sources-search .views-field-field-zotero-tags li a,
+.page-sources-search .views-field-field-zotero-collections a{ 
+  font-style: italic; 
+  font-size: 1em; 
+  color: rgb(0,0,139);
+  font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
 }
+.page-sources-search .views-field-biblio-authors li a{
+  font-size: .93em;
+  color:#111;
+}
+
+
+
+
+
 
 /* testing white background */
 .page-sources-search div#block-system-main.block.block-system,
@@ -161,31 +182,40 @@ article.main-col li a.active{
  *     Home Page styles added by ndg8f (2017-03-04)
  *     can't just use body.front because when sort filters are chosen and parameters added the "front" class is taken off <body> but "page-home" remains
  */
-.page-home.page-sources-search #block-shanti-carousel-shanti-carousel-block-1 {
+.front #block-shanti-carousel-shanti-carousel-block-1 {
     padding-bottom: 20px;
 }
 
-.page-home.page-sources-search #block-views-exp-biblio-search-api-allpage {
-    width: 45%;
+.front #block-views-exp-biblio-search-api-allpage {
+    width: 38%;
     margin-left: 0px;
     float: left;
 }
 
-.page-home.page-sources-search .views-exposed-widget.views-widget-filter-search_api_views_fulltext label {
+.front .views-widget-filter-search_api_views_fulltext input{
+  max-width: 18rem;
+  margin-left: 1rem;
+}
+
+.front .views-exposed-widget.views-widget-filter-search_api_views_fulltext label {
     display: none;
 }
 
-.page-home.page-sources-search #block-views-exp-biblio-search-api-allpage .views-exposed-form .views-exposed-widget .form-submit {
+.front #block-views-exp-biblio-search-api-allpage .views-exposed-form .views-exposed-widget{
+    padding: .5em 0 0 0;
+}
+
+.front #block-views-exp-biblio-search-api-allpage .views-exposed-form .views-exposed-widget .form-submit {
     margin-top: 0;
     padding: .3rem 1.5rem .1rem;
 }
 
-.page-home.page-sources-search #views-exposed-form-biblio-search-api-allpage{
+.front #views-exposed-form-biblio-search-api-allpage{
   position: relative;
   top: -0.5rem;
 }
 
-.page-home .carousel-title .shanticon-stack:before{
+.front .carousel-title .shanticon-stack:before{
   content: '\e632';
 }
 
@@ -193,15 +223,15 @@ article.main-col li a.active{
 
 
 
-.page-home.page-sources-search #block-sources-views-custom-sort-filter {
+.front #block-sources-views-custom-sort-filter {
     height: 3em;
-    padding: 0 2.4rem 0.8rem 4.2rem;
-    width: 55%;
+    padding: 0 1.4rem 0.8rem 0;
+    width: 60%;
     clear: none;
     float: right;
 }
 
-.page-home.page-sources-search #block-system-main {
+.front #block-system-main {
     clear: both;
 }
 
@@ -440,7 +470,7 @@ article.main-col li a.active{
 }
 
 .node-type-biblio .content .source-full .source-field-authors {
-    padding: 0 0 2rem 3.25rem;
+    padding: 0 0 2rem 1.7rem;
 }
 
 .page-sources-search .views-field-biblio-authors ul,
@@ -484,7 +514,14 @@ article.main-col li a.active{
 }
 
 .page-sources-search .title-link-container a{
-  font-weight:bold;
+  letter-spacing: 0.0075rem;
+  color: #000;
+  font-size: 1.12em;
+  font-family: 'Helvetica Neue',helvetica,arial,sans-serif;
+}
+
+.front.page-sources-search .title-link-container a{
+  font-size:1.06em;
 }
 
 .page-sources-search .title-link-container > .shanticon-sources{
@@ -577,7 +614,6 @@ article.main-col li a.active{
   position: relative;
   font-family: 'FontAwesome';
   font-size: 1.5rem;
-  color: #645F9D !important;
   margin-right: 0rem;
   margin-left: -2.25rem;
   background: #fff;
@@ -625,10 +661,6 @@ article.main-col li a.active{
 .page-sources-search:not(.page-sources-search-biblio) .views-label-field-zotero-tags,
 .page-sources-search:not(.page-sources-search-biblio) .views-field-field-zotero-collections > strong{
   display:none;
-}
-
-.page-sources-search .views-field-field-zotero-collections a{
-  font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
 }
 
 .page-sources-search-biblio .views-label.views-field-biblio-url a{
@@ -785,17 +817,6 @@ article.main-col li a.active{
   float: left;
 }
 
-/* Bibio lists Author and Collection's links */
-.page-sources-search .views-field-biblio-authors li a,
-.page-sources-search .views-field-field-zotero-tags li a{ font-style:italic; padding: 0 .15rem; font-size: 1em; font-family: 'Helvetica Neue', helvetica, arial, sans-serif;}
-
-.page-sources-search .views-field-biblio-authors li a{
-  font-size: .93em;
-}
-
-.page-sources-search .view-empty {
-  padding: 35px 24px 8px 24px;
-}
 
 
 
@@ -879,6 +900,7 @@ article.main-col li a.active{
     font-weight: bold;
     text-transform: uppercase;
     font-family: 'museo-sans-500', helvetica, arial, sans-serif;
+    font-size:90%;
 }
 
 .node-type-biblio .field-name-field-kmap-subjects.field-label-above .field-label,
@@ -957,8 +979,8 @@ article.main-col li a.active{
 
 #block-sources-views-custom-sort-filter .select-wrapper,
 #block-sources-views-custom-sort-filter .select-wrapper select {
-  width: 197px;
-  margin-left: 1px;
+  width: 18rem;
+  margin-left: .1rem;
   left: 0;
 }
 
@@ -1024,7 +1046,7 @@ article.main-col li a.active{
 }
 
 .detail-level-container {
-  width: 20rem;
+  width: 17rem;
   margin-bottom: 0.5rem;
 }
 

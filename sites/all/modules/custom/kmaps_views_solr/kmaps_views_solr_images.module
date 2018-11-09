@@ -1,0 +1,37 @@
+<?php
+/**
+ * Implementation of hook_views_api().
+ */
+function kmaps_views_solr_images_views_api() {
+  return array(
+    'api' => 3,
+    'path' => drupal_get_path('module', 'kmaps_views_solr_images'),
+    'template path' => drupal_get_path('module', 'kmaps_views_solr_images') . '/templates', // template path assigned in views plugin alter
+  );
+}
+
+/** 
+ * Implementation of hook_form_alter
+ */
+function kmaps_views_solr_images_form_alter(&$form, &$form_state, $form_id){
+  if($form_id == "views_exposed_form"){
+    if (isset($form['images_title'])) {
+      $form['images_title']['#attributes'] = array(
+        'placeholder' => array(t('Enter Search...')),
+        'size' => 15
+      );
+    }
+  }
+}
+
+/**
+ * Implements hook_views_plugins_alter().
+ */
+/*
+function kmaps_views_solr_images_views_plugins_alter(&$plugins) {
+  if (module_exists('shanti_grid_view')) {
+    $plugins['style']['shanti_grid_view']['theme'] = 'views-view--related-images';
+    $plugins['style']['shanti_grid_view']['theme path'] = drupal_get_path('module', 'kmaps_views_solr') . '/templates';
+  }
+}
+*/

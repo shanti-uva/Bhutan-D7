@@ -90,7 +90,7 @@
 }
 
 .shanti-filters .control-box-cell-pager {
-  padding: 0;
+  padding: 0 2rem 0 0;
   margin: 0;
 }
 
@@ -161,6 +161,10 @@ article .shanti-filters table.pagerer {
 @media screen and (min-width: 992px) {
   body.html:not(.page-admin) .shanti-filters {
     height: 3.25em;
+  }
+
+  .view-related-images .shanti-filters {
+    height: auto !important;
   }
 
   .front .shanti-filters .control-box-cell-pager table.pagerer {

@@ -1,6 +1,5 @@
 <div class="wrap-all">
-    <span class="sr-only"><a href=".main-content">Skip to main content</a> <a
-                href="#kmaps-search">Skip to search</a></span>
+    <span class="sr-only"><a href=".main-content">Skip to main content</a><a href="#kmaps-search">Skip to search</a></span>
 
     <?php print render($page['header']); ?>
 
@@ -19,15 +18,15 @@
                     <div>
                         <header role="banner">
                             <h1 class="page-title"><span
-                                        class="icon shanticon-<?php print $variables['icon_class']; ?>"></span><span
-                                        class="page-title-text">
-                <?php
-                if (!empty($variables['default_title']) && !empty($variables['prefix_default_title'])) {
-                    print ($title == '') ? $variables['default_title'] : $variables['default_title'] . ': ' . $title;
-                } else {
-                    print ($title == '') ? $variables['default_title'] : $title;
-                }
-                ?></span>
+                                        class="icon shanticon-<?php print $variables['icon_class']; ?>"></span>
+                                <span class="page-title-text">
+                                    <?php if (!empty($variables['default_title']) && !empty($variables['prefix_default_title'])) {
+                                        print ($title == '') ? $variables['default_title'] : $variables['default_title'] . ': ' . $title;
+                                    } else {
+                                        print ($title == '') ? $variables['default_title'] : $title;
+                                    }
+                                    ?>
+                                </span>
                             </h1>
                         </header>
                         <nav class="breadwrap" style="display:none;">
@@ -96,8 +95,7 @@
 
             <a href="#" class="back-to-top" role="button" aria-label="Back to Top of Page"><span class="icon fa"></span></a>
         </article>
-
-        <!-- Search Flyout Test -->
+        <!-- Search Flyout -->
         <?php if (!empty($page['search_flyout'])): ?>
             <div id="search-flyout" class="region extruder right" role="search" style="display: none;">
                 <?php print render($page['search_flyout']); ?>
@@ -109,7 +107,6 @@
                      style="display:none;" aria-expanded="false" aria-label="Search Results Sliding Panel">
                 <!-- INSERT RESULTS TEMPLATE DATA -->
             </section>
-            <!-- END faceted search results -->
         <?php endif; ?>
 
     </main> <!-- End Main Content -->

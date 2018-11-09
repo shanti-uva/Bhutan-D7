@@ -8,9 +8,10 @@
 *
 */
 
-/* BEGIN (Places) colors */
+/* BEGIN THEME COLORS - Places */
 .page-places .titlearea,
 .page-places .breadcrumb .icon,
+.page-places .carousel-control,
 .page-places .fixed-action-button a,
 .page-places .bx-controls-direction a,
 .page-places .nav-tabs.nav-justified>li.active>a,
@@ -19,7 +20,8 @@
   background: #3297f7 !important;
 }
 
-.front-list .place span.fa-plus,
+.page-places .front-list .place span.fa-plus,
+.page-places .front-list .shanticon-places::before,
 .page-places .view-section .fancytree-container .glyphicon,
 .page-places .view-section .fancytree-container .fancytree-node:hover > .glyphicon,
 .page-places .view-section .fancytree-container .fancytree-node:active > .glyphicon,
@@ -61,7 +63,7 @@
 }
 
 .page-places #sidebar-first .nav-pills li.active {
-  border-color: #3297f7 !important; /* Darker shade of red for shadow blend */
+  border-color: #3297f7 !important; /* darker shade */
 }
 
 .page-places .view-section .nav-tabs>li.active>a,
@@ -70,19 +72,6 @@
   border-top-color: #3297f7 !important;
 }
 
-.page-places .texts-list li:hover::before{
-  /*background: #4ca6fb !important;*/
-}
-
-@media screen and (min-width: 500px) {
-  .page-places .navbar-header .site-slogan{ color:#3676b2 !important; } /* Darker shade for banner site-slogan text */
-  .page-places .navbar-brand:hover .site-slogan{ color: #555 !important; } 
-  .page-places .navbar-header:active .site-slogan{ color:#3676b2 !important; } 
-}
-
-@media screen and (min-width: 768px) {
-  .nav-tabs.nav-justified>li.active::before{color: #3297f7 !important; }
-}
 
 .page-places ::-moz-selection {background: #B35904 !important;}
 .page-places ::selection{background: #B35904 !important;}
@@ -90,12 +79,11 @@
 
 
 
-/**
-* BEGIN (Subjects) colors
-*/
+/* BEGIN THEME COLORS - Subjects */
 .page-subjects .titlearea,
 .page-subjects .carousel-control,
 .page-subjects .breadcrumb .icon,
+.page-subjects .carousel-control,
 .page-subjects .fixed-action-button a,
 .page-subjects .bx-controls-direction a,
 .page-subjects .nav-tabs.nav-justified>li.active>a,
@@ -104,23 +92,17 @@
   background: #cc4c39 !important;
 }
 
-.front-list .place span.fa-plus
+.page-subjects .front-list .shanticon-places::before,
+.page-subjects .front-list .place span.fa-plus,
 .page-subjects .view-section .fancytree-container .glyphicon,
 .page-subjects .view-section .fancytree-container .fancytree-node:hover > .glyphicon,
 .page-subjects .view-section .fancytree-container .fancytree-node:active > .glyphicon,
 .page-subjects .view-section .fancytree-node.fancytree-active > .glyphicon,
 .page-subjects .view-section .fancytree-node.fancytree-selected > .glyphicon,
 .page-subjects .carousel-feature-slides li.active div a::before,
-/*.page-subjects .input-section a.toggle-link,
-.page-subjects .input-section a.toggle-link:hover,
-.page-subjects .input-section .toggle-link .icon::before,
-.page-subjects .input-section .toggle-link:hover .icon::before,*/
 .page-subjects .input-section .selectpicker .caret::before,
 .page-subjects .bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a .check-mark,
 .page-subjects .bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a:active .check-mark,
-/*.page-subjects .view-section .nav-tabs>li.active>a,
-.page-subjects .view-section .nav-tabs>li.active>a:hover,
-.page-subjects .view-section .nav-tabs>li.active>a:active,*/
 .page-subjects .kmaps-sources-summary ul.summary-list > li span.icon.shanticon-essays {
   color: #cc4c39 !important;
 }
@@ -151,87 +133,20 @@
   border-top-color: #cc4c39 !important;
 }
 
-.page-subjects .texts-list li:hover::before{
-  /*background: #cc4c39 !important;*/
-}
 
-.page-subjects .ui-resizable-handle.ui-resizable-w,
-.page-subjects .ui-resizable-handle.ui-resizable-w:hover,
-.page-subjects .ui-resizable-handle.ui-resizable-w:active { /*border-color: #cc4c39 transparent transparent transparent; */ }
 
-@media screen and (min-width: 500px) {
-  .page-subjects .navbar-header .site-slogan{ color:#b24231 !important; } /* Darker shade for banner site-slogan text */
-  .page-subjects .navbar-brand:hover .site-slogan{ color: #555 !important; } 
-  .page-subjects .navbar-header:active .site-slogan{ color:#b24231 !important; } 
-}
 
-@media screen and (min-width: 768px) {
 
-  .page-subjects .nav-tabs.nav-justified>li.active::before{
-    color: #cc4c39 !important;
-  }
-}
+
+
+
 
 .page-subjects ::-moz-selection { background: #2A974B !important;}
 .page-subjects ::selection { background: #2A974B !important;}
 
-.page-places .shanti-thumbnail-image .icon,
-.page-subjects .shanti-thumbnail-image .icon{
+.shanti-thumbnail-image .icon{
   background-color: #8e752e !important;
 }
-
-/* BEGIN Mandala Homepage colors */
-.front.home-carousel .ui-resizable-handle.ui-resizable-nw:active { background-color: #4d59ca !important; }
-
-
-/* custom theme color change under Search Flyout Tabs Places - Subjects */
-.front .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-2>a,
-.front .view-section .shanti-kmaps-faceted-search-kmaps-2 .fancytree-container .glyphicon,
-.front .view-section .shanti-kmaps-faceted-search-kmaps-2 .fancytree-container .fancytree-node:hover > .glyphicon, 
-.front .view-section .shanti-kmaps-faceted-search-kmaps-2 .fancytree-container .fancytree-node:active > .glyphicon, 
-.front .view-section .shanti-kmaps-faceted-search-kmaps-2 .fancytree-node.fancytree-active > .glyphicon,
-.page-places .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-2>a,
-.page-places .view-section .shanti-kmaps-faceted-search-kmaps-2 .fancytree-container .glyphicon,
-.page-places .view-section .shanti-kmaps-faceted-search-kmaps-2 .fancytree-container .fancytree-node:hover > .glyphicon, 
-.page-places .view-section .shanti-kmaps-faceted-search-kmaps-2 .fancytree-container .fancytree-node:active > .glyphicon, 
-.page-places .view-section .shanti-kmaps-faceted-search-kmaps-2 .fancytree-node.fancytree-active > .glyphicon{
-  color: #cc4c39 !important;
-}
-.front .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-1>a,
-.front .view-section .shanti-kmaps-faceted-search-kmaps-1 .fancytree-container .glyphicon,
-.front .view-section .shanti-kmaps-faceted-search-kmaps-1 .fancytree-container .fancytree-node:hover > .glyphicon, 
-.front .view-section .shanti-kmaps-faceted-search-kmaps-1 .fancytree-container .fancytree-node:active > .glyphicon, 
-.front .view-section .shanti-kmaps-faceted-search-kmaps-1 .fancytree-node.fancytree-active > .glyphicon,
-.page-subjects .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-1>a,
-.page-subjects .view-section .shanti-kmaps-faceted-search-kmaps-1 .fancytree-container .glyphicon,
-.page-subjects .view-section .shanti-kmaps-faceted-search-kmaps-1 .fancytree-container .fancytree-node:hover > .glyphicon, 
-.page-subjects .view-section .shanti-kmaps-faceted-search-kmaps-1 .fancytree-container .fancytree-node:active > .glyphicon, 
-.page-subjects .view-section .shanti-kmaps-faceted-search-kmaps-1 .fancytree-node.fancytree-active > .glyphicon{
-  color: #49a0f2 !important;
-}
-.front .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-1>a,
-.page-subjects .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-1>a{
-  border-top-color: #49a0f2 !important;
-}
-.front .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-2>a,
-.page-places .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-2>a{
-  border-top-color: #cc4c39 !important;
-}
-.front .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-facets>a,
-.page-places .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-facets>a,
-.page-subjects .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-facets>a{
-  color: #4d59ca !important;
-}
-.front .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-facets>a,
-.page-subjects .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-facets>a,
-.page-places .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-facets>a{
-  border-top-color: #4d59ca !important;
-}
-
-.front .ui-resizable-handle.ui-resizable-w,
-.front .ui-resizable-handle.ui-resizable-w:hover,
-.front .ui-resizable-handle.ui-resizable-w:active { /*border-color: #4d59ca transparent transparent transparent;*/ }
-
 
 
 
@@ -247,56 +162,75 @@
     font-size: 1.25rem !important;
 }
 
-/** Change color for individual assets node pages */
-.page-visuals .titlearea,
-.page-visuals .breadcrumb .icon,
-.page-visuals .fixed-action-button a,
-.page-visuals .bx-controls-direction a,
-.page-visuals .nav-tabs.nav-justified>li.active>a,
-.page-visuals .nav-tabs.nav-justified>li.active>a:focus,
-.page-visuals .nav-tabs.nav-justified>li.active>a:hover {
-  background: #558e3c !important;
+
+
+
+/* Image block View Styles */
+.view-related-images .views-exposed-form .form-item label {
+  display: none;
 }
 
-.page-audio-video .titlearea,
-.page-audio-video .breadcrumb .icon,
-.page-audio-video .fixed-action-button a,
-.page-audio-video .bx-controls-direction a,
-.page-audio-video .nav-tabs.nav-justified>li.active>a,
-.page-audio-video .nav-tabs.nav-justified>li.active>a:focus,
-.page-audio-video .nav-tabs.nav-justified>li.active>a:hover {
-  background: #31acb6 !important;
+
+/* fixes whole page layout in Drupal admin theme called Seven */
+.page-admin #page{
+  margin:0 !important;
 }
 
-.page-sources .titlearea,
-.page-sources .breadcrumb .icon,
-.page-sources .fixed-action-button a,
-.page-sources .bx-controls-direction a,
-.page-sources .nav-tabs.nav-justified>li.active>a,
-.page-sources .nav-tabs.nav-justified>li.active>a:focus,
-.page-sources .nav-tabs.nav-justified>li.active>a:hover {
-  background: #6f69ae !important;
+
+
+
+
+
+.kmaps:not(.home-carousel) article.main-col{
+  padding-bottom:80px !important;
 }
 
-.page-texts .titlearea,
-.page-texts .breadcrumb .icon,
-.page-texts .fixed-action-button a,
-.page-texts .bx-controls-direction a,
-.page-texts .nav-tabs.nav-justified>li.active>a,
-.page-texts .nav-tabs.nav-justified>li.active>a:focus,
-.page-texts .nav-tabs.nav-justified>li.active>a:hover {
-  background: #8c48a1 !important;
+
+
+
+
+/* - also in bhutan */
+.sidebar-first .nav-pills > li .ajax-progress {
+  position: absolute;
+  right: 0.1rem;
+  top: 0.1rem;
 }
 
-.page-images .titlearea,
-.page-images .breadcrumb .icon,
-.page-images .fixed-action-button a,
-.page-images .bx-controls-direction a,
-.page-images .nav-tabs.nav-justified>li.active>a,
-.page-images .nav-tabs.nav-justified>li.active>a:focus,
-.page-images .nav-tabs.nav-justified>li.active>a:hover {
-  background: #b5953b !important;
+
+
+
+
+
+
+@media screen and (min-width: 500px) {
+    
+    .kmaps-photos .main-wrapper {
+      min-height: 710px;
+    }
+
+    .page-places .navbar-header .site-slogan{ color:#3676b2 !important; } /* darker shade */
+    .page-places .navbar-brand:hover .site-slogan{ color: #555 !important; } 
+    .page-places .navbar-header:active .site-slogan{ color:#3676b2 !important; } 
+
+    .page-subjects .navbar-header .site-slogan{ color:#b24231 !important; } /* Darker shade for banner site-slogan text */
+    .page-subjects .navbar-brand:hover .site-slogan{ color: #555 !important; } 
+    .page-subjects .navbar-header:active .site-slogan{ color:#b24231 !important; } 
 }
+
+@media screen and (min-width: 768px) {
+
+    .nav-tabs.nav-justified>li.active::before{color: #3297f7 !important; }
+
+    .page-subjects .nav-tabs.nav-justified>li.active::before{color: #cc4c39 !important; }
+}
+
+
+
+
+
+
+
+
 /**
 *
 * END - KMAPS/css/shanti-main-kmaps.css

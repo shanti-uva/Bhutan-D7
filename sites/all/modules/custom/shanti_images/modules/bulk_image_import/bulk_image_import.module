@@ -58,14 +58,17 @@ function bulk_image_import_form_submit($form, &$form_state) {
       array_push($task_ids, $tid);
     }
   }
+
   $operations = array();
-  foreach($task_ids as $tid) {
-    array_push($operations, array('bulk_image_import_process_task', array($tid,)));
+  foreach(array_chunk($task_ids, 3) as $tids) {
+    array_push($operations, array(
+      'bulk_image_import_process_group',
+      array($tids, $form_state['input']['allow_duplicates'])
+    ));
   }
   array_unshift(
     $operations,
-    array('bulk_image_import_set_context', array($box_auth, $group, $collection, )),
-    array('bulk_image_import_find_box_folder', array($catalog,))
+    array('bulk_image_import_set_context', array($box_auth, $group, $collection, ))
   );
   $batch = array(
     'operations' => $operations,
@@ -144,7 +147,7 @@ function bulk_image_import_form($form, &$form_state) {
   );
 
   $box_access_data;
-  $box_auth_code;
+  $box_auth_code = '';
   if(strpos($_SERVER['HTTP_REFERER'], 'https://app.box.com/api/oauth2/authorize') !== FALSE) {
     $box_auth_code = $params['code'];
     if(isset($box_auth_code)) {
@@ -182,7 +185,12 @@ function bulk_image_import_form($form, &$form_state) {
     '#description' => t('If you would like to import into a Collection or Subcollection select that Collection from the list below.'),
     '#default_value' => 0,
   );
-
+  $form['metadata']['allow_duplicates'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Allow Duplicate Records?'),
+    '#description' => t('If an import fails for some reason, you may want to run it again without creating duplicate records. Leaving this option unchecked will run the import and attempt to repair any Nodes that were not imported correctly.'),
+    '#default_value' => TRUE,
+  );
   $form['metadata']['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Import'),
@@ -208,6 +216,15 @@ function bulk_image_import_page_alter() {
       'redirect_uri' => $base_url . BOX_OAUTH_REDIRECT_URI,
     ),
   ), array('type' => 'setting'));
+}
+
+function bulk_image_import_permission() {
+  return array(
+    'access bulk_image_import' => array(
+      'title' => t('Administer Bulk Image Import'),
+      'description' => t('Perform administration tasks for Bulk Image Import.'),
+    ),
+  );
 }
 
 

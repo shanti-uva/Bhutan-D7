@@ -232,7 +232,6 @@ function explore_menu_update_callback($form, $form_state) {
 
 function  explore_menu_update_links($domain = 'prod') {
 
-
     // Remove current explore menu links
     $mn = 'shanti-explore-menu';
     $linktree = menu_tree_all_data($mn);
@@ -325,3 +324,4 @@ function explore_menu_update_from_env()
   $msg = _explore_menu_update_helper($env);
   drupal_set_message($msg);
 }
+

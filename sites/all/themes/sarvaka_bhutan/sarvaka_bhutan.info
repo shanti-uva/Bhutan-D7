@@ -32,16 +32,15 @@ stylesheets[all][] =  css/normalize.css
 stylesheets[all][] =  css/bhutan-main.css
 stylesheets[all][] =  css/bhutan-search.css
 stylesheets[all][] =  fonts/shanticon/css/style.css
-stylesheets[all][] =  css/grayscale.css
-stylesheets[all][] =  css/banner-colors.css
+; stylesheets[all][] =  css/banner-colors.css
   
 ;;;;;;;;;;;;;;;;;;;;;;
 ;;; Scripts
 ;;;;;;;;;;;;;;;;;;;;;;
-;scripts[] = js/modernizr.custom.js
-scripts[] = js/grayscale.js
+; scripts[] = js/modernizr.custom.js
 scripts[] = js/imagesloaded.pkgd.min.js
 scripts[] = js/jquery.columnizer.min.js
+scripts[] = js/grayscale.js
 scripts[] = js/bhutan-main.js
 scripts[] = js/bhutan-search.js
 

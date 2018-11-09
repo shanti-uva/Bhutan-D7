@@ -39,11 +39,11 @@
 .nav-tabs.nav-justified>li.active {
   border-top-color: #b5953b !important;
 }
-
+/*
 .ui-resizable-handle.ui-resizable-w,
 .ui-resizable-handle.ui-resizable-w:hover { border-color: #b5953b transparent transparent transparent; }
-.ui-resizable-handle.ui-resizable-w:active { border-color: transparent; /* reset */ }
-
+.ui-resizable-handle.ui-resizable-w:active { border-color: transparent; ---- reset --- }
+*/
 @media screen and (min-width: 500px) {
   .navbar-header .site-slogan{ color: #92782f !important; } /* Darker shade for banner site-slogan text */
   .navbar-brand:hover .site-slogan{ color: #555 !important; } 
@@ -212,6 +212,15 @@
 
 .view-collections.shanti-gallery .view-content .shanti-thumbnail-field.shanti-field-body {
     display: none;
+}
+
+.page-mycontent-collections .views-exposed-form .views-exposed-widget {
+  padding: 0em 0em .3em 0em;
+  margin: -6px 0 0 -30px;
+}
+
+.page-mycontent-collections .views-exposed-form .views-exposed-widget input {
+  width: 200px;
 }
 
 /** Pig grid drop down styles specific to images site **/
@@ -392,8 +401,6 @@
 .node-image-descriptions.node-teaser .contextual-links-wrapper {
     display: none;
 }
-
-
 
 /* testing optional loader */
 .pswp__preloader,

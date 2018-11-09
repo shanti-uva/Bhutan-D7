@@ -94,6 +94,8 @@ class kmaps_views_solr_visuals_plugin_query extends views_plugin_query {
       $row->creator = $doc->node_user;
       $row->asset_subtype = $doc->asset_subtype;
       $row->thumb = $doc->url_thumb;
+      $row->thumb_width = $doc->url_thumb_width;
+      $row->thumb_height = $doc->url_thumb_height;
       $row->ajax_url = $doc->url_ajax;
 
       $view->result[] = $row;

@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Universal Faceted Search feature.
+ */
+
+include_once 'universal_faceted_search.features.inc';

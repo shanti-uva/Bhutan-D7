@@ -14,6 +14,7 @@ class shanti_grid_view_plugin_style extends views_plugin_style {
      function option_definition() {
         $options = parent::option_definition();
         $options['view_subtitle'] = array('default' => '');
+
         $options['iiif_view'] = array('default' => FALSE);
         $options['iiif_options']['iiif_url_syntax'] = array('default' => '');
         $options['iiif_options']['iiif_tiny_size'] = array('default' => '');
@@ -21,10 +22,31 @@ class shanti_grid_view_plugin_style extends views_plugin_style {
         $options['iiif_options']['iiif_pd_size'] = array('default' => '');
         $options['iiif_options']['iiif_full_size'] = array('default' => '');
         $options['iiif_options']['iiif_img_field'] = array('default' => '');
+
         $options['entity_type'] = array('default' => 'file');
+
         $options['node_type_info']['thumbnail_image'] = array('default' => '');
         $options['node_type_info']['large_image'] = array('default' => '');
         $options['node_type_info']['xlarge_image'] = array('default' => '');
+
+        $options['data_type_info']['id'] = array('default' => '');
+        $options['data_type_info']['title'] = array('default' => '');
+        $options['data_type_info']['thumbnail_image'] = array('default' => '');
+        $options['data_type_info']['thumbnail_width'] = array('default' => '');
+        $options['data_type_info']['thumbnail_height'] = array('default' => '');
+        $options['data_type_info']['img_by_size_url'] = array('default' => '');
+        $options['data_type_info']['ppd_info'] = array('default' => 'url');
+        $options['data_type_info']['ppd_info_url'] = array('default' => '');
+        $options['data_type_info']['ppd_info_func'] = array('default' => '');
+        $options['data_type_info']['ppd_info_cache'] = array('default' => '');
+        $options['data_type_info']['item_url'] = array('default' => '');
+
+        /*$options['data_type_info']['title'] = array('default' => '');
+        $options['data_type_info']['type'] = array('default' => '');
+        $options['data_type_info']['creator'] = array('default' => '');
+        $options['data_type_info']['collection'] = array('default' => '');
+        $options['data_type_info']['description'] = array('default' => '');
+        */
         return $options; 
     }
  
@@ -35,7 +57,7 @@ class shanti_grid_view_plugin_style extends views_plugin_style {
     $view = $this->view;
     $type = $view->base_table;
     $view->execute(); // need to execute the view to get list of fields ???? TODO: Check this
-    $options = array();
+    $options = array(0 => "-- None --");
     foreach ($view->field as $fid => $field) {
         $options[$fid] = (!empty($field->options['label'] )) ? "$fid ({$field->options['label']})" : $fid;
     }
@@ -49,7 +71,7 @@ class shanti_grid_view_plugin_style extends views_plugin_style {
     $form['iiif_view'] = array(
         '#type' => 'checkbox',
         '#title' => t('IIIF View'),
-        '#description' => t('Check this box if you are using a IIIF server to display the images of the grid'),
+        '#description' => t('Check this box if this site is an images site that uses a IIIF server to display the images of the grid'),
         '#default_value' => $this->options['iiif_view'],
     );
     // IIIF Options
@@ -108,13 +130,14 @@ class shanti_grid_view_plugin_style extends views_plugin_style {
     );
     
     // Non IIIF Options
-    $entity_type = ($type == 'file_managed') ? 'file' : 'node';
+    // File types can be file_managed or file_unmanaged
+    $entity_type = _shanti_grid_view_get_item_type($type);
     $form['entity_type'] = array(
          '#type' => 'select',
           '#title' => t('Type of Entity Listed in View'),
-          '#description' => t('Entity type being shown in this view: File or Node'),
+          '#description' => t('Entity type being shown in this view: File, Node, or Data (detected automatically)'),
           '#default_value' => $entity_type,   
-          '#options' => drupal_map_assoc(array('file', 'node')),
+          '#options' => drupal_map_assoc(array('file', 'node', 'data')),
           '#disabled' => TRUE, 
           '#states' => array(
               'visible' => array(
@@ -181,5 +204,186 @@ class shanti_grid_view_plugin_style extends views_plugin_style {
               ),
         ),
     );
-  } 
+
+    // Data Source Type
+    $form['data_type_info'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Data Source Selectors'),
+      '#description' => t('Select the fields to be used for information for a custom data source:'),
+      '#states' => array(
+        'visible' => array(
+          'input[name="style_options[iiif_view]"]' => array('checked' => FALSE),
+          'select[name="style_options[entity_type]"]' => array('value' => 'data'),
+        ),
+      ),
+    );
+
+    $form['data_type_info']['id'] = array(
+      '#type' => 'select',
+      '#title' => t('Item ID'),
+      '#description' => t('Select the field to use as for the ID of the item'),
+      '#default_value' => $this->options['data_type_info']['id'],
+      '#options' => $options,
+      '#states' => array(
+        'visible' => array(
+          'input[name="style_options[iiif_view]"]' => array('checked' => FALSE),
+        ),
+      ),
+    );
+
+    $form['data_type_info']['filename'] = array(
+      '#type' => 'select',
+      '#title' => t('IIIF Filename'),
+      '#description' => t('Select the field the IIIF file name if this view is of IIIF images'),
+      '#default_value' => $this->options['data_type_info']['filename'],
+      '#options' => $options,
+      '#states' => array(
+        'visible' => array(
+          'input[name="style_options[iiif_view]"]' => array('checked' => FALSE),
+        ),
+      ),
+    );
+
+    $form['data_type_info']['title'] = array(
+      '#type' => 'select',
+      '#title' => t('Item Title'),
+      '#description' => t('Select the field to use as for the title of the item'),
+      '#default_value' => $this->options['data_type_info']['title'],
+      '#options' => $options,
+      '#states' => array(
+        'visible' => array(
+          'input[name="style_options[iiif_view]"]' => array('checked' => FALSE),
+        ),
+      ),
+    );
+
+    $form['data_type_info']['thumbnail_image'] = array(
+      '#type' => 'select',
+      '#title' => t('Thumbnail Image'),
+      '#description' => t('Select the image field to use as the thumbnail in the grid'),
+      '#default_value' => $this->options['data_type_info']['thumbnail_image'],
+      '#options' => $options,
+      '#states' => array(
+        'visible' => array(
+          'input[name="style_options[iiif_view]"]' => array('checked' => FALSE),
+        ),
+      ),
+    );
+
+
+    $form['data_type_info']['thumbnail_width'] = array(
+      '#type' => 'select',
+      '#title' => t('Thumbnail Width'),
+      '#description' => t('Select the image field to use as the thumbnail width'),
+      '#default_value' => $this->options['data_type_info']['thumbnail_width'],
+      '#options' => $options,
+      '#states' => array(
+        'visible' => array(
+          'input[name="style_options[iiif_view]"]' => array('checked' => FALSE),
+        ),
+      ),
+    );
+
+
+    $form['data_type_info']['thumbnail_height'] = array(
+      '#type' => 'select',
+      '#title' => t('Thumbnail Height'),
+      '#description' => t('Select the image field to use as the thumbnail in the grid'),
+      '#default_value' => $this->options['data_type_info']['thumbnail_height'],
+      '#options' => $options,
+      '#states' => array(
+        'visible' => array(
+          'input[name="style_options[iiif_view]"]' => array('checked' => FALSE),
+        ),
+      ),
+    );
+
+    $form['data_type_info']['img_by_size_url'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Image URL Syntax'),
+      '#description' => t('Enter the syntax for the image by size url. Use __ID__ for resource id and __SIZE__ for the size parameter.'),
+      '#default_value' => $this->options['data_type_info']['img_by_size_url'],
+      '#size' => 100,
+    );
+
+    $form['data_type_info']['ppd_info'] = array(
+      '#type' => 'select',
+      '#title' => t('Item Info Source'),
+      '#description' => t('Choose the method for retrieving information about a single item:'),
+      '#default_value' => $this->options['data_type_info']['ppd_info'],
+      '#options' => array(
+          'url' => t("By URL Syntax"),
+          'function' => t("By Implementing a Function"),
+          'view' => t("By Cached View Results"),
+      ),
+    );
+
+      $form['data_type_info']['ppd_info_url'] = array(
+          '#type' => 'textfield',
+          '#title' => t('Item Info URL Syntax'),
+          '#description' => t('Enter the URL to retrieve the details about an item. Use __ID__ for item’s id. <br/>
+                                This URL must return an HTML div with the information marked up.'),
+          '#default_value' => $this->options['data_type_info']['ppd_info_url'],
+          '#size' => 100,
+          '#states' => array(
+              'visible' => array(
+                  'select[name="style_options[data_type_info][ppd_info]"]' => array('value' => 'url'),
+              ),
+          ),
+          '#prefix' =>'<div style="margin-left: 24px">',
+          '#suffix' => '</div>',
+      );
+
+      $form['data_type_info']['ppd_info_func'] = array(
+          '#type' => 'textfield',
+          '#title' => t('Item Info Function'),
+          '#description' => t('Enter the name of the function used to retrieve details about an item. Leave blank for default function name. 
+                               The items ID will be passed as the first parameter. This URL must return an HTML div with the information marked up.'),
+          '#default_value' => (!empty($this->options['data_type_info']['ppd_info_func'])) ? $this->options['data_type_info']['ppd_info_func'] :
+                    $view->name . '_' .$view->current_display . '_item_info',
+          '#size' => 100,
+          '#states' => array(
+              'visible' => array(
+                  'select[name="style_options[data_type_info][ppd_info]"]' => array('value' => 'function'),
+              ),
+          ),
+          '#prefix' =>'<div style="margin-left: 24px">',
+          '#suffix' => '</div>',
+      );
+
+      $form['data_type_info']['ppd_info_cache'] = array(
+          '#type' => 'textarea',
+          '#title' =>  t('Map of Fields'),
+          '#description' => t('Map field names in view to placeholder strings in template, one per line, in the format {field name}|{placeholder string}. Strings are:  
+                                GVID, GVTITLE, GVAUTH, GVSUBTYPE, GVWIDTH, GVHEIGHT, GVDATE, GVCOLLECTION, GVPLACES, GVSUBJECTS, GVDESC 
+                                (Any undefined placeholder strings will be replaced with an empty string.)'),
+          '#default_value' => $this->options['data_type_info']['ppd_info_cache'],
+          '#states' => array(
+              'visible' => array(
+                  'select[name="style_options[data_type_info][ppd_info]"]' => array('value' => 'view'),
+              ),
+          ),
+          '#row' => 20,
+          '#prefix' =>'<div style="margin-left: 24px">',
+          '#suffix' => '</div>',
+      );
+
+    $form['data_type_info']['item_url'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Resource Page URL Syntax'),
+      '#description' => t('Enter the syntax for url to show a resource item by id. Use __ID__ for resource id. Or enter the name of the view field. If __ID__ is not present, will assume it is name of field.'),
+      '#default_value' => $this->options['data_type_info']['item_url'],
+      '#size' => 100,
+    );
+  }
+
+  /**
+   * Handle the submitted options form
+   *
+   * @param $form
+   * @param $form_state
+  public function options_submit(&$form, &$form_state) {
+
+  }
+   */
 }

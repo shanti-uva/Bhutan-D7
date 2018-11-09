@@ -17,7 +17,7 @@
         attach: function (context, settings) {
             var admin = settings.shanti_kmaps_admin;
             var kmfset = settings.shanti_kmaps_facets;
-            if (context == document) {
+            if (context == document && !$('body').hasClass('page-admin')) {
                 // Process each tree
                 $('.kmapfacettree').each(function() {
                     // Create the Settings values
@@ -109,7 +109,7 @@
      */
      Drupal.behaviors.shanti_kmaps_facets_tree_events = {
         attach: function (context, settings) {
-            if (context == document) {
+            if (context == document && !$('body').hasClass('page-admin')) {
                 // When BS Tab is activated
                 $('.km-facet-tab').on('show.bs.tab', function (e) {
                     var div = $(this).children('a').eq(0).attr('href') + " .kmapfacettree"; // find the tree div

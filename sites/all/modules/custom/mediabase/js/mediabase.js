@@ -223,7 +223,7 @@
                     '.page-node-add-video .field-name-field-video #edit-field-video-und-0-button,' +
                     ' .page-node-add-video .field-name-field-video .media-field-description.video').hide();
             }
-            
+
             // Disable submit forms once something is submitted
            $('#video-node-form, #audio-node-form').submit(function()  { $('#edit-submit').prop('disabled',true);});
            
@@ -237,7 +237,7 @@
                            par.append('<p class="lenlim small">A summary can be a maximum of 750 characters long.</p>');
                  }
             });
-            if (context != document) {
+            if (context !== document) {
                 // When uploader is used to add media, change body class to av-has-media
                 if ($("body.page-node").hasClass('av-no-media')) {
                     if (typeof(context[0]) == 'object' && 'id' in context[0] && context[0]['id'] =="kaltura-uploader-form") {

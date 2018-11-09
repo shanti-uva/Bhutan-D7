@@ -29,7 +29,9 @@ regions[admin_footer]   = Admin Footer
 ;;;;;;;;;;;;;;;;;;;;;
 
 stylesheets[all][] =  css/shanti-main-mediabase.css
-stylesheets[all][] =  css/shanti-search-mediabase.css
+stylesheets[all][] =  css/shanti-search-mediabase.css\
+stylesheets[all][] =  ../shanti_sarvaka/css/shanti-search-kmaps.css
+stylesheets[all][] =  ../shanti_sarvaka/css/shanti-search-faceted.css
 stylesheets[all][] =  css/shanti-av-transcript.css
 stylesheets[all][] =  css/mediabase-edit-form.css
 
@@ -46,6 +48,6 @@ scripts[] = js/shanti-search-mediabase.js
 ; These theme settings can be changed in the admin interface as well.
 ; Furthermore, base color is primarily determined in CSS
 ;
-;settings[shanti_sarvaka_base_color] = '#2db6b4' 
+;settings[shanti_sarvaka_base_color] = '#31acb6' 
 settings[shanti_sarvaka_icon_class] = 'audio-video'
 settings[shanti_sarvaka_site_body_tag] = 'mediabase'

@@ -63,6 +63,7 @@ function _shanti_images_process_image_files($node) {
  * @return bool|mixed
  */
 function _shanti_images_get_node_by_filename($i3fid) {
+    // TODO: Replace following line with just a sql query
     $dbrec = _shanti_images_get_record($i3fid, 'i3fid');
     if ($dbrec) {
         $node = node_load($dbrec->nid);
@@ -155,6 +156,7 @@ function _shanti_images_expunge_image_file($node) {
 function _shanti_images_get_node_image($nid) {
     if (is_object($nid)) { $nid = $nid->nid; }
     $record = _shanti_images_get_record($nid, 'nid');
+    // TODO: Check if the following can be removed without consequence, since it is in the class itself
     if (!empty($record) && is_object($record) && isset($record->siid)) {
         $imgObj = new ShantiImage($record->siid, $nid);
         if (!empty($record->i3fid)) {
@@ -290,28 +292,58 @@ function _shanti_images_remove_callback($form, $form_state) {
 function _shanti_images_remove_iiif_image($inm) {
     if (empty($inm)) { return; }
     $deleteurl = variable_get('shanti_images_delete_url', FALSE);
+    if (substr($inm, -4) != '.jp2') { $inm .= '.jp2'; } // Needs to have .jp2 extension on the name
+
     if ($deleteurl) {
-        if (substr($inm, -4) != '.jp2') { $inm .= '.jp2'; } // Needs to have .jp2 extension on the name
-        $deleteurl = str_replace('__FILE__', $inm, $deleteurl);
-        // watchdog('shanit images remove delete url', $deleteurl);
-        $res = @file_get_contents($deleteurl);
-        if ($res === FALSE) {
-            drupal_set_message(t('Unable to contact IIIF server to delete image'), 'warning');
-        } else {
-            $res = json_decode($res);
-            if (strstr($res->msg, ' not ') && $inm != '.jp2') {
-                watchdog('shanti_images', t('No image, @inm, found on IIIF server to delete.', array('@inm' => $inm)));
+        if (_shanti_images_can_delete($deleteurl, $inm)) {
+            $deleteurl = str_replace('__FILE__', $inm, $deleteurl);
+            // watchdog('shanit images remove delete url', $deleteurl);
+            $res = @file_get_contents($deleteurl);
+            if ($res === FALSE) {
+                drupal_set_message(t('Unable to contact IIIF server to delete image'), 'warning');
             } else {
-                //watchdog('shanti_images', t('Image @inm deleted from IIIF server', array('@inm' => $inm)));
-                $dbrec = _shanti_images_get_record($inm, 'i3fid');
-                if (!empty($dbrec) && isset($dbrec->siid)) {
-                    _shanti_images_delete_record($dbrec->siid);
+                $res = json_decode($res);
+                if (strstr($res->msg, ' not ') && $inm != '.jp2') {
+                    watchdog('shanti_images', t('No image, @inm, found on IIIF server to delete.', array('@inm' => $inm)));
+                } else {
+                    //watchdog('shanti_images', t('Image @inm deleted from IIIF server', array('@inm' => $inm)));
+                    $dbrec = _shanti_images_get_record($inm, 'i3fid');
+                    if (!empty($dbrec) && isset($dbrec->siid)) {
+                        _shanti_images_delete_record($dbrec->siid);
+                    }
                 }
             }
+        } else {
+            drupal_set_message(t("The IIIF image @inm was not deleted from the IIIF production server, because you are on a non-production site. " .
+                "<br/>The local Drupal record however has been deleted.",
+                array('@inm' => $inm)), 'warning');
+            watchdog('shanti_images', "Not allowing to delete production IIIF image ($inm) from non-production site ($base_url).");
         }
     } else {
         drupal_set_message(t('No url for IIIF server set. Cannot delete iiif image.'), 'warning', FALSE);
     }
+}
+
+/**
+ * Function to prevent staging from deleting images on production since they use the same server
+ *
+ * @param $deleteurl
+ * @param $inm
+ *
+ * @return boolean whether to allow delete or not
+ */
+function _shanti_images_can_delete($deleteurl, $inm) {
+    if (strstr($deleteurl, 'fupload.lib.virginia.edu')) {
+        // if the image is a production image it won't have -dev or -stage in the name
+        if (preg_match('/shanti-image-\d+\.jp2/', $inm)) {
+            global $base_url;
+            // if the base url of the site is not the prod images site, then do not allow
+            if ($base_url != 'https://images.shanti.virginia.edu') {
+                return FALSE;
+            }
+        }
+    }
+    return TRUE;
 }
 
 /**

@@ -5,19 +5,19 @@ package = Shanti
 version = 2.0-alpha
 
 dependencies[] = libraries (>=2.1)
-dependencies[] = shanti_kmaps_solr
 dependencies[] = fancytree
+dependencies[] = shanti_kmaps_solr
 dependencies[] = ajaxsolr
 dependencies[] = shanti_kmaps_admin
 ; dependencies[] = shanti_kmaps_fields  ; uncomment if actually required
 
 configure = admin/config/user-interface/shanti_kmaps_faceted_search
 
-scripts[]   =  js/shanti_kmaps_faceted_search.js
 scripts[]   =  js/custom-ajax.js
 scripts[]   =  js/jquery.justifiedGallery.js
 scripts[]   =  js/lz-string.min.js
 scripts[]   =  js/jquery.getUrlParam.js
+scripts[]   =  js/shanti_kmaps_faceted_search.js
 
 stylesheets[all][] = css/shanti_kmaps_faceted_search.css
 stylesheets[all][] = css/justified-gallery.css

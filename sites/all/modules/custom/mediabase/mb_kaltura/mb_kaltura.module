@@ -146,7 +146,6 @@ function _mb_kaltura_add_audio_thumb($node)
 
 function mb_kaltura_form_alter(&$form, &$form_state, $form_id)
 {
-  drupal_add_js(drupal_get_path('module', 'mb_kaltura') . '/js/keepalive.js');
 
   switch ($form_id) {
     case 'node_delete_confirm':
@@ -165,11 +164,13 @@ function mb_kaltura_form_alter(&$form, &$form_state, $form_id)
       break;
 
     case 'video_node_form':
-      $form['field_video']['und'][0]['settings']['#type'] = 'hidden'; // Hide the custom settings for each display format
-      //dpm($form, 'video form');
+      drupal_add_js(drupal_get_path('module', 'mb_kaltura') . '/js/keepalive.js');
+      // Hide the custom settings for each display format
+      $form['field_video']['und'][0]['settings']['#access'] = FALSE;
       break;
 
     case 'audio_node_form':
+      drupal_add_js(drupal_get_path('module', 'mb_kaltura') . '/js/keepalive.js');
       $field_name = "field_" . $form['type']['#value'];
       if (isset($form[$field_name][LANGUAGE_NONE])) {
         unset($form[$field_name][LANGUAGE_NONE][0]['meta_edit']); // Remove the Edit Metadata link completely
@@ -522,6 +523,32 @@ function mb_kaltura_delete_caption_asset($caption_id)
   } catch (Exception $ex) {
     return mb_kaltura_message('An error connecting to the media server prevented these subtitles from being removed from the media', FALSE);
   }
+}
+
+/**
+ * Function to use kaltura module functions to remove an media item from a node.
+ *
+ * @param $node - the node to remove an item from
+ *
+ * @throws
+ */
+function mb_kaltura_delete_node_entry($node) {
+    $nkid = mb_kaltura_get_entryid($node);
+    kaltura_entry_delete($nkid);
+    $fld = 'field_' . $node->type;
+    $lang = $node->language;
+    $node->{$fld}[$lang] = array();
+    if (!empty($node->{$fld}[LANGUAGE_NONE])) {
+        $node->{$fld}[LANGUAGE_NONE] = array();
+    }
+    try {
+        node_save($node);
+    } catch (Exception $e) {
+        // exception is printed to log by node_save
+        drupal_set_message(t('There was a problem deleting the kaltura entry from the node: @nid ', array(
+            '@nid' => $node->nid,
+            )), 'warning');
+    }
 }
 
 /**

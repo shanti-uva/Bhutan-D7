@@ -88,7 +88,7 @@ function shiva_views_new_views_default_views() {
     'shivanode' => 'shivanode',
   );
   $handler->display->display_options['filters']['type']['group'] = 1;
-  /* Filter criterion: Indexed Node: Node access information */
+  /* Filter criterion: Broken/missing handler */
   $handler->display->display_options['filters']['search_api_access_node']['id'] = 'search_api_access_node';
   $handler->display->display_options['filters']['search_api_access_node']['table'] = 'search_api_index_default_node_index';
   $handler->display->display_options['filters']['search_api_access_node']['field'] = 'search_api_access_node';
@@ -317,7 +317,7 @@ function shiva_views_new_views_default_views() {
   $handler->display->display_options['fields']['nid']['element_default_classes'] = FALSE;
   $handler->display->display_options['fields']['nid']['separator'] = '';
   $handler->display->display_options['fields']['nid']['link_to_entity'] = 0;
-  /* Field: Indexed Node: Thumbnail */
+  /* Field: Indexed Node: Image */
   $handler->display->display_options['fields']['field_image']['id'] = 'field_image';
   $handler->display->display_options['fields']['field_image']['table'] = 'search_api_index_default_node_index';
   $handler->display->display_options['fields']['field_image']['field'] = 'field_image';
