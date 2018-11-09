@@ -183,15 +183,15 @@ function _sarvaka_images_get_main_flexslider($node) {
     $url = $si->getURL($mainwidth, '', $rotation); // _shanti_images_build_IIIFURL($fnm, $mainwidth, '', $rotation);
 
     // use prod server when on DEV but looking for images on prod
-    $is_dev = (strstr($base_url, '.dd') || strstr($base_url, '-dev')) ? TRUE : FALSE;
-    if ($is_dev && preg_match('/shanti-image(-stage)?-\d+/', $si->getIIIFName())) {
-        $url = str_replace('-test', '', $url);
-    }
+    $url = _fix_prod_urls_on_dev($url, $si->getIIIFName());
 
     $prevlink = '<li><span class="fa fa-spinner fa-spin" style="display:none;"></span><img src="#prev" style="display:none;" /></li>';
     $nextlink = '<li><span class="fa fa-spinner fa-spin" style="display:none;"></span><img src="#next"  style="display:none;"/></li>';
-    $main_image = '<ul class="slides">' . $prevlink . '<li><div data-href="' . $url . '" class="progressive replace"><img src="'
-                        . $blururl . '" class="preview"/></div></li>' . $nextlink . '</ul>';
+    $main_image = '<ul class="slides">' . $prevlink . '<li><div data-href="' . $url . '" class="shantimg main"><img src="'
+                        . $url . '" /></div></li>' . $nextlink . '</ul>';
+
+    // was $main_image = '<ul class="slides">' . $prevlink . '<li><div data-href="' . $url . '" class="progressive replace"><img src="'
+  //                        . $blururl . '" class="preview"/></div></li>' . $nextlink . '</ul>';
 
     $action_icons = _sarvaka_images_get_action_links($node);
     $action_icons = str_replace('__MYURL__', $url, $action_icons);
@@ -407,15 +407,16 @@ function sarvaka_images_preprocess_ext_class_scheme(&$vars) {
  */
 function sarvaka_images_preprocess_views_view(&$vars) {
     $view = $vars['view']; // Get the view
-    //dpm($view, 'view');
     if (isset($view->name)) {
-        if ($view->name == 'shanti_images_gallery' || $view->name == 'collection_shanti_images') {
+        if ($view->name == 'shanti_images_gallery' || $view->name == 'all_image_gallery' || $view->name == 'collection_shanti_images') {
             // Set Caching to Zero so new images show up right away
            // drupal_add_http_header('Cache-Control', 'public, max-age=0');
             // Add genurls for image gallery
             $genurls = array();
             $infourls = array();
             $ratios = array();
+            //dpm($view->result[0], 'first row in template views pp');
+            $dit = FALSE;
             foreach ($view->result as $n => $item) {
                 if (!empty($item->field_field_image)) {
                     $json = $item->field_field_image[0]['rendered']['#markup'];
@@ -423,8 +424,14 @@ function sarvaka_images_preprocess_views_view(&$vars) {
                     if (!empty($iteminfo['filename'])) {
                         // general URLs with width & height place holders
                         $fnm = $iteminfo['filename'];
-                        $genurls[] = _shanti_images_build_IIIFURL($fnm, '__W__', '__H__');
-                        $infourls[] = _shanti_images_build_InfoURL($fnm);  // URLs for the IIIF info from the IIIF server for each image. Used by IIIF viewers
+                        // Get General URL with placeholders for width and height
+                        $gnurl = _shanti_images_build_IIIFURL($fnm, '__W__', '__H__');
+                        $gnurl = _fix_prod_urls_on_dev($gnurl, $fnm);
+                        $genurls[] = $gnurl;
+                        // URLs for the IIIF info from the IIIF server for each image. Used by IIIF viewers
+                        $infurl = _shanti_images_build_InfoURL($fnm);
+                        $infurl = _fix_prod_urls_on_dev($infurl, $fnm);
+                        $infourls[] = $infurl;
                         $ratios[] = $iteminfo['aspectRatio']; //_shanti_images_get_ratio($fnm, 'i3fid');
                     } else {
                         $json = json_encode($item);
@@ -432,6 +439,24 @@ function sarvaka_images_preprocess_views_view(&$vars) {
                             watchdog('sarvaka_images', 'Shanti image without json: @json', array('@json' => $json));
                         }
                     }
+                } elseif (!empty($item->shanti_images_i3fid)) {
+                    $fnm = $item->shanti_images_i3fid;
+                    // TODO: adjust urls for Prod images on Dev etc.
+                    $gnurl = _shanti_images_build_IIIFURL($fnm, '__W__', '__H__');
+                    $gnurl = _fix_prod_urls_on_dev($gnurl, $fnm);
+                    $genurls[] = $gnurl;
+                    // URLs for the IIIF info from the IIIF server for each image. Used by IIIF viewers
+                    $infurl = _shanti_images_build_InfoURL($fnm);
+                    $infurl = _fix_prod_urls_on_dev($infurl, $fnm);
+                    $infourls[] = $infurl;
+                    $width = $item->shanti_images_width;
+                    $height = $item->shanti_images_height;
+                    if (is_numeric($width) && is_numeric($height) && $height > 0) {
+                        $ratio = $width / $height;
+                    } else {
+                        $ratio = 0;
+                    }
+                    $ratios[] = $ratio; //_shanti_images_get_ratio($fnm, 'i3fid');
                 } else {
                     // Node has no image!
                     // Add empty string to arrays as placeholders, since they are keyed on image index in grid
@@ -813,4 +838,12 @@ function _get_items_in_collection($coll=FALSE, $return="count") {
     return $nids;
  }
 
+ function _fix_prod_urls_on_dev($url, $filenm) {
+     global $base_url;
+     $is_dev = (strstr($base_url, '.dd') || strstr($base_url, '-dev')) ? TRUE : FALSE;
+     if ($is_dev && preg_match('/shanti-image(-stage)?-\d+/', $filenm)) {
+         $url = str_replace('-test', '', $url);
+     }
+     return $url;
+ }
  /*** THEMING ***/

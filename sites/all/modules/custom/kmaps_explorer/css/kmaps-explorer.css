@@ -26,11 +26,11 @@
 }
 
 body:not(.front) .content-section.col-md-9,
-body:not(.home-carousel) .content-section.col-md-9 { width: 99%; padding-left:10px; padding-right:15px; padding-top:1.2rem;}
+body:not(.home-carousel) .content-section.col-md-9 { width: 100%; padding-left:1rem; padding-right:1.5rem; padding-top:1.2rem;}
 
 @media screen and (min-width: 992px) {
   body:not(.front) .content-section.col-md-9,
-  body:not(.home-carousel) .content-section.col-md-9 { padding-left:210px; padding-right:0; }
+  body:not(.home-carousel) .content-section.col-md-9 { padding-left:21.5rem; padding-right:0; }
 
   body.kmaps-texts:not(.front) .content-section.col-md-9,
   body.kmaps-texts:not(.home-carousel) .content-section.col-md-9{
@@ -45,8 +45,8 @@ body:not(.home-carousel) .content-section.col-md-9 { width: 99%; padding-left:10
 .no-sidebars article.main-col{ padding-bottom:0 !important; }
 
 .tab-content.container-fluid{
-  padding-left:15px;
-  padding-right:15px;
+  padding-left:1.5rem;
+  padding-right:1.5rem;
 }
 
 /* this removes the 2nd breadcrumb  (ex., Places: Earth) */
@@ -171,22 +171,23 @@ article table.pagerer:last-child{
   max-width: 1000px;
 }
 
+.kmaps-overview .overview-top-collection h4{
+  margin-bottom:1rem !important;
+}
+
 .resource-overview-image {
   margin: .5rem 0 0;
   float:left;
 }
 
 .resource-overview-image img{
-  height:130px !important;
+  height: 130px !important;
   margin: 0 1.4rem 1rem 0 !important;
   background-color: #fff;
-  border-radius: .5rem !important;
-  border: 3px solid #ccc !important;
-  padding: .5rem;
-    border: 2px solid #ddd !important;
-    padding: .8rem;
-    box-shadow: 0 0 5px 1px #eee inset;
-    border-radius: 0 !important;
+  border-radius: .3rem !important;
+  border: 1px solid #ccc !important;
+  padding: .8rem;
+  box-shadow: 0 0 5px 1px #ccc inset;
 }
 
 .feature-type-wrapper{
@@ -757,6 +758,10 @@ h6.sources-title {
   width: 100%;
 }
 
+.content-section .front-list a{
+  color:#000;
+}
+
 .front-list .place {
   border-bottom: 2px solid #8c7553;
   border-bottom: 2px solid rgba(140, 117, 83, 0.16);
@@ -831,6 +836,11 @@ h6.sources-title {
   font-size: 1em;
   font-weight: normal;
   letter-spacing: 0.065rem;
+}
+
+.front-list .place-title strong{
+  font-weight:500;
+  font-weight:normal;
 }
 
 .front-list .place-title-wrapper{
@@ -1095,7 +1105,7 @@ h6.sources-title {
 }
 
 .sidebar-first {
-  max-width: 200px; /* 10px wider than for mobile */
+  max-width: 205px; /* 10px wider than for mobile */
   padding-left: 0 !important;
   padding-right: 0 !important;
   padding-top: 0;
@@ -1116,7 +1126,7 @@ h6.sources-title {
   border-left: 10px solid transparent;
   margin: 0;
   padding: 0;
-  font-size: 1.12em;
+  font-size: 1em;
   /*line-height: 3em;
   height: 3em;*/
   position: relative;
@@ -1128,10 +1138,10 @@ h6.sources-title {
 .sidebar-first .nav-pills > li > a {
   display: block;
   padding: 0 0 0 1.2rem;
-  font-size: .82em;
+  font-size: .88em;
   color: #555;
-  line-height: 4.4em;
-  height: 4em;
+  line-height: 4em;
+  height: 3.7em;
   border: none;
   border-radius: 0;
   border-bottom: 1px solid #e0e0e0;
@@ -1181,11 +1191,13 @@ h6.sources-title {
 .sidebar-first .nav-pills > li > a .icon:before {
   position: relative;
   top: 0;
-  font-size: 2rem;
+  font-size: 1.85rem;
 }
-
+.sidebar-first .nav-pills > li > a .icon.shanticon-images:before {
+  font-size: 90%;
+}
 .sidebar-first .nav-pills > li.visuals > a .icon:before {
-  font-size: 2rem;
+  font-size: 2.1rem;
 }
 
 .sidebar-first .nav-pills > li .ajax-progress {
@@ -1323,11 +1335,11 @@ h6.sources-title {
   .sidebar-first .nav-pills > li {
     font-size: 1em;
     line-height: 1em;
-    height: 3em;
+    height: 3.235em;
   }
   .sidebar-first .nav-pills > li > a {
-    line-height: 4.5em;
-    height: 4em;
+    /*line-height: 4.5em;
+    height: 4em;*/
   }
   .sidebar-first .nav-pills > li.active:first-child > a {
     margin-top: 0;
@@ -2056,6 +2068,10 @@ ul.collapsibleList.split > li.split > .collapsibleListOpen.split {
   display:none;
 }
 
+    .page-subjects.kmaps-places .content-section.col-xs-12 h4 {
+      margin-bottom: 1.5rem;
+    }
+
 .kmaps-list-columns h6{
   font-size: 1em;
   border-top: 8px double #eee;
@@ -2160,6 +2176,7 @@ ul.collapsibleList.split > li.split > .collapsibleListOpen.split {
   font-weight: bold;
   color: #555;
   text-transform: capitalize;
+  line-height: 1.38em;
 }
 .kmaps-list-columns ul li div:hover{
   border-color:#777;
@@ -2187,11 +2204,6 @@ ul.collapsibleList.split > li.split > .collapsibleListOpen.split {
   }
     .kmaps-list-columns .collapsibleList h6:hover .glyphicon{
       opacity:1;
-    }
-
-
-    .page-subjects.kmaps-places .content-section.col-xs-12 h4 {
-      margin-bottom: 2rem;
     }
 
 .kmaps-list-columns .popover-kmaps{

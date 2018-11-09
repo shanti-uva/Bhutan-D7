@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * shanti_image_views.features.inc

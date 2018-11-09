@@ -14,6 +14,16 @@ function bulk_image_import_schema() {
         'type' => 'text',
         'size' => 'big',
       ),
+      'meta_data' => array(
+        'description' => 'The POSTed metadata from the image import.',
+        'type' => 'text',
+        'size' => 'big',
+      ),
+      'filename' => array(
+        'description' => 'The filename for this import.',
+        'type' => 'varchar',
+        'length' => '128',
+      ),
       'catalog' => array(
         'description' => 'The catalog name for this import.',
         'type' => 'varchar',

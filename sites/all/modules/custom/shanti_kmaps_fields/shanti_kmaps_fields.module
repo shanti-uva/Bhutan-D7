@@ -1627,6 +1627,9 @@ function shanti_kmaps_fields_get_popover_array($domain, $kid, $entity_type = FAL
         // Get all counts (terms and assets) by using Mandala API URL (new way)
         $external_links = shanti_kmaps_fields_get_all_counts_by_kmapid($domain, $kid);
         foreach ($external_links as $atype => $ainfo) {
+            if (strtolower($atype) == 'images') {
+                $ainfo['href'] = str_replace('/images/', '/photos/', $ainfo['href']);
+            }
             $links["Related " . ucfirst($atype) . " ({$ainfo['count']})"] = array('icon' => $atype, 'href' => $ainfo['href'], 'external' => TRUE);
         }
         $popover_array = array(

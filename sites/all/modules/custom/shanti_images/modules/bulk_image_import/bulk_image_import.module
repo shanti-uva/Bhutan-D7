@@ -2,6 +2,7 @@
 
 include 'includes/box.inc';
 include 'includes/parser.php';
+include 'includes/api.inc';
 
 define('BOX_OAUTH_REDIRECT_URI', '/admin/content/bulk_image_import/import');
 
@@ -259,6 +260,12 @@ function bulk_image_import_menu() {
     'page arguments' => array(3,),
     'access arguments' => array('access bulk_image_import'),
    );
+
+  $items['admin/content/bulk_image_import/api'] = array(
+    'page callback' => 'bulk_image_import_api',
+    'type' => MENU_CALLBACK,
+    'access arguments' => array('access bulk_image_import'),
+  );
 
   return $items;
 }

@@ -359,20 +359,54 @@ function shanti_grid_view_views_pre_render(&$view) {
             $settings['url_for_size'] = variable_get('shanti_images_view_url','https://iiif.lib.virginia.edu') .
                   $view->style_options['iiif_options']['iiif_url_syntax'];
 
-
             // Create imgdata array from view results
             $imgdata = array();
-            $imgfield = 'field_' . $view->style_options['iiif_options']['iiif_img_field'];
-            foreach ($view->result as $rn => &$item) {
-                $n = 0;
-                $data = json_decode($item->{$imgfield}[$n]['rendered']['#markup']); // decode json object to add more fields
-                $lgimg = str_replace('__FNAME__', $data->filename, $settings['url_for_size']);
-                $lgimg = str_replace('__SIZE__','1500', $lgimg);
-                if ($is_dev && preg_match('/shanti-image(-stage)?-\d+/', $data->filename)) {
-                    $lgimg = str_replace('-test', '', $lgimg);
+
+            /**
+             * "filename":"' . $rec->i3fid . '","title":' . json_encode($entity->title) .
+            ',"aspectRatio":' . $ratio . ',"rotation":"' . $rotation . '","nid":"' . $eid . '","path":"'
+             */
+
+            if ($view->base_table == 'shanti_images') {
+                $ct = 0;
+                foreach ($view->result as $rn => &$item) {
+                    $data = new stdClass();
+                    $data->nid = $item->node_shanti_images_nid;
+                    $data->title = $item->node_shanti_images_title;
+                    $data->filename = $item->shanti_images_i3fid;
+                    $width = $item->shanti_images_width;
+                    $height = $item->shanti_images_height;
+                    if (is_numeric($width) && is_numeric($height) && $height > 0) {
+                        $data->aspectRatio = $width / $height;
+                    } else {
+                        $data->aspectRatio = 1;
+                    }
+                    if (isset($item->field_field_image_rotation[0])) {
+                        $data->rotation = $item->field_field_image_rotation[0]['raw']['value'];
+                    } else {
+                        $data->rotation = 0;
+                    }
+                    $lgurl = str_replace('__FNAME__', $data->filename, str_replace('__SIZE__', '1500', $settings['url_for_size']));
+                    if ($is_dev && preg_match('/shanti-image(-stage)?-\d+/', $data->filename)) {
+                        $lgurl = str_replace('-test', '', $lgurl);
+                    }
+                    $data->lgimgurl = $lgurl;
+                    $data->path = $base_path . drupal_get_path_alias('node/' . $data->nid);
+                    $imgdata[] = $data;
                 }
-                $data->lgimgurl = $lgimg;
-                $imgdata[] = $data;
+            } else {
+                $imgfield = 'field_' . $view->style_options['iiif_options']['iiif_img_field'];
+                foreach ($view->result as $rn => &$item) {
+                    $n = 0;
+                    $data = json_decode($item->{$imgfield}[$n]['rendered']['#markup']); // decode json object to add more fields
+                    $lgimg = str_replace('__FNAME__', $data->filename, $settings['url_for_size']);
+                    $lgimg = str_replace('__SIZE__', '1500', $lgimg);
+                    if ($is_dev && preg_match('/shanti-image(-stage)?-\d+/', $data->filename)) {
+                        $lgimg = str_replace('-test', '', $lgimg);
+                    }
+                    $data->lgimgurl = $lgimg;
+                    $imgdata[] = $data;
+                }
             }
 
             $settings['imgdata'] = $imgdata;
@@ -468,7 +502,6 @@ function shanti_grid_view_views_pre_render(&$view) {
             $settings['url_for_size'] = $url4sz;
 
             $ct = 0;
-
             foreach ($view->result as $rn => &$item) {
               $ct++;
               $imgobj = new stdClass();
