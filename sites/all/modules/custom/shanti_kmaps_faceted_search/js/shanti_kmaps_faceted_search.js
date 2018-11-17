@@ -1009,6 +1009,14 @@
                             console.error ("saving " + JSON.stringify(viewMode));
                             $.cookie('search-results-view-mode', JSON.stringify(viewMode));
                           }
+
+                          // Let's force viewMode for certain types
+                          viewMode['places'] = 'list';
+                          viewMode['subjects'] = 'list';
+                          viewMode['all'] = 'list';
+                          viewMode['texts'] = 'list';
+                          viewMode['sources'] = 'list';
+
                           console.dir(viewMode);
 
                           // We use the first item in the array
@@ -1027,8 +1035,10 @@
 
                           console.error("CURRENT: " + current);
 
-                          if (current === "subjects" || current === "places" || current === "texts" || current === "sources") {
-                            hbcontext.no_gallery = "no_gallery";
+                          if (current === "all" || current === "subjects" || current === "places" || current === "texts" || current === "sources") {
+                            hbcontext.no_gallery = true;
+                          } else {
+                            hbcontext.no_gallery = false;
                           }
 
                           if (current === "audio-video") {
@@ -1047,17 +1057,6 @@
 
                           // TODO: ys2n: this should be configurable
                           $('#faceted-search-results').html(markup);
-
-                          now = Date.now();
-                          console.error("elapsed E: " + Number(now - last) );
-                          last = now;
-
-                          // apply the justified gallery script
-                          $('#search-results-gallery.images-gallery').justifiedGallery({
-                            rowHeight : 110,
-                            lastRow : 'nojustify',
-                            margins : 3,
-                          });
 
                           now = Date.now();
                           console.error("elapsed E1: " + Number(now - last) );
@@ -1176,9 +1175,6 @@
                           console.error("elapsed F: " + Number(now - last) );
                           last = now;
 
-                          //  IS THIS OR NECESSARY?
-                          // $('#faceted-search-results').trigger("searchUpdate");
-
                           //  kludge logic for seeing if the search has been updated:
                           var stateChange = false;
                           var newState = JSON.stringify(Drupal.settings.kmapsSolr.getState());
@@ -1206,6 +1202,19 @@
                           now = Date.now();
                           console.error("elapsed G: " + Number(now - last) );
                           last = now;
+
+                          // apply the justified gallery script
+                          $('#search-results-gallery.justified-gallery').justifiedGallery({
+                            waitThumbnailsLoad:false,
+                            rowHeight : 110,
+                            lastRow : 'nojustify',
+                            margins : 3,
+                          });
+
+                          now = Date.now();
+                          console.error("elapsed H: " + Number(now - last) );
+                          last = now;
+
 
                         } // end if (search_main_template)
                       }, // end updateHandler

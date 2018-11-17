@@ -1,7 +1,7 @@
 (function ($) {
 	Drupal.behaviors.shantiGridView = {
 	    attach: function (context, settings) {
-            if ($("#ppg-grid").length > 0) {
+            if ($("#ppg-grid").length > 0 && typeof(settings.shanti_grid_view) !== 'undefined') {
               // Reset pig is set in kmaps_views_solr.js to reset the pig grid after ajax load
               if (settings.shanti_grid_view.resetpig === true) {
                 settings.shanti_grid_view.mypig = '';
@@ -15,8 +15,7 @@
                   settings.shanti_grid_view.imgdata = settings.shanti_grid_view.imgdata.slice(0, datalen);
                 }
               }
-
-              if (typeof(Drupal.settings.shanti_grid_view.mypig) !== "object") {
+              if (typeof(Drupal.settings.shanti_grid_view.mypig) !== "object" ) {
                   Drupal.settings.shanti_grid_view.mypig = new Pig(Drupal.settings.shanti_grid_view.imgdata, {
                     containerId: 'ppg-grid',
                     entityType: Drupal.settings.shanti_grid_view.entity_type,
@@ -40,23 +39,29 @@
                     },
                     getImageSize: function (lastWindowWidth) {
                       if (lastWindowWidth <= 640)
-                        return 170;
+                        return 140;
                       else if (lastWindowWidth <= 1920)
-                        return 180;
-                      return 180;
+                        return 160;
+                      return 200;
                     },
                     getMinAspectRatio: function (lastWindowWidth) {
-                      if (lastWindowWidth <= 640)
+                      if (lastWindowWidth <= 400)
+                        return 2;
+                      else if (lastWindowWidth <= 640)
                         return 3;
                       else if (lastWindowWidth <= 800)
                         return 4;
-                      else if (lastWindowWidth <= 1280)
+                      else if (lastWindowWidth <= 1100)
                         return 6;
-                      else if (lastWindowWidth <= 1600)
+                      else if (lastWindowWidth <= 1400)
                         return 8;
-                      else if (lastWindowWidth <= 1920)
-                        return 11;
-                      return 12;
+                      else if (lastWindowWidth <= 1600)
+                        return 10;
+                      else if (lastWindowWidth <= 1800)
+                        return 12;
+                      else if (lastWindowWidth <= 2000)
+                        return 14;
+                      return 13;
                     },
                   }).enable().activatePopdown();
 
@@ -107,33 +112,6 @@
                     window.lastpigload = yoff;  // remember this Y offset
                 }
             });
-
-            /* Load rest of thumbnails not in view */
-              /*  This slows down the loading still because it doesn't happen outside the load somehow
-            $(document).ready(setTimeout(function() {
-                var ct = 0;
-                $.each(Drupal.settings.shanti_grid_view.mypig.images,
-                    function() {
-                        if (this.element.childElementCount === 0) {
-                            this.thumbnail = new Image();
-                            this.thumbnail.src = this.pig.settings.urlForSize(this.filename, this.pig.settings.thumbnailSize, this.rotation);
-                            this.thumbnail.className = this.classNames.thumbnail;
-                            this.thumbnail.onload = function() {
-
-                                // We have to make sure thumbnail still exists, we may have already been
-                                // deallocated if the user scrolls too fast.
-                                if (this.thumbnail) {
-                                    this.thumbnail.className += ' ' + this.classNames.loaded;
-                                }
-                            }.bind(this);
-
-                            this.getElement().appendChild(this.thumbnail);
-                            this.show();
-                        }
-                    });
-            }, 5000));
-            */
-
 
             // Enable mouseover overlays on images in grid
             $(document).on('mouseover', 'img.pig-loaded', function () {

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * shanti_image_views.views_default.inc
@@ -9,6 +10,220 @@
  */
 function shanti_image_views_views_default_views() {
   $export = array();
+
+  $view = new view();
+  $view->name = 'all_image_gallery';
+  $view->description = '';
+  $view->tag = 'default';
+  $view->base_table = 'shanti_images';
+  $view->human_name = 'Shanti All Image Gallery';
+  $view->core = 7;
+  $view->api_version = '3.0';
+  $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
+
+  /* Display: Master */
+  $handler = $view->new_display('default', 'Master', 'default');
+  $handler->display->display_options['title'] = 'All Image Gallery';
+  $handler->display->display_options['use_ajax'] = TRUE;
+  $handler->display->display_options['use_more_always'] = FALSE;
+  $handler->display->display_options['access']['type'] = 'none';
+  $handler->display->display_options['cache']['type'] = 'none';
+  $handler->display->display_options['query']['type'] = 'views_query';
+  $handler->display->display_options['exposed_form']['type'] = 'better_exposed_filters';
+  $handler->display->display_options['exposed_form']['options']['autosubmit'] = TRUE;
+  $handler->display->display_options['exposed_form']['options']['bef'] = array(
+    'general' => array(
+      'input_required' => 0,
+      'text_input_required' => array(
+        'text_input_required' => array(
+          'value' => 'Select any filter and click on Apply to see results',
+          'format' => 'filtered_html',
+        ),
+      ),
+      'allow_secondary' => 0,
+      'secondary_label' => 'Advanced options',
+      'secondary_collapse_override' => '0',
+    ),
+    'sort' => array(
+      'bef_format' => 'default',
+      'advanced' => array(
+        'collapsible' => 0,
+        'collapsible_label' => 'Sort options',
+        'combine' => 1,
+        'combine_param' => 'sort_bef_combine',
+        'combine_rewrite' => '',
+        'reset' => 0,
+        'reset_label' => '',
+        'is_secondary' => 0,
+        'autosubmit' => 0,
+      ),
+    ),
+    'title' => array(
+      'bef_format' => 'default',
+      'more_options' => array(
+        'autosubmit' => 0,
+        'is_secondary' => 0,
+        'any_label' => '',
+        'bef_filter_description' => '',
+        'tokens' => array(
+          'available' => array(
+            0 => 'global_types',
+          ),
+        ),
+        'rewrite' => array(
+          'filter_rewrite_values' => '',
+        ),
+      ),
+    ),
+  );
+  $handler->display->display_options['pager']['type'] = 'pagerer';
+  $handler->display->display_options['pager']['options']['items_per_page'] = '100';
+  $handler->display->display_options['pager']['options']['offset'] = '0';
+  $handler->display->display_options['pager']['options']['id'] = '0';
+  $handler->display->display_options['pager']['options']['quantity'] = '9';
+  $handler->display->display_options['pager']['options']['preset'] = 'pagerer_core';
+  $handler->display->display_options['style_plugin'] = 'shanti_grid_view';
+  $handler->display->display_options['style_options']['iiif_view'] = 1;
+  $handler->display->display_options['style_options']['iiif_options'] = array(
+    'iiif_url_syntax' => '/mandala/__FNAME__/full/!__SIZE__,/0/default.jpg',
+    'iiif_img_field' => '0',
+    'iiif_tiny_size' => '20',
+    'iiif_thumb_size' => '150',
+    'iiif_pd_size' => '800',
+    'iiif_full_size' => '1500',
+  );
+  $handler->display->display_options['style_options']['entity_type'] = 'data';
+  $handler->display->display_options['style_options']['node_type_info'] = array(
+    'thumbnail_image' => '0',
+    'large_image' => '0',
+    'xlarge_image' => '0',
+  );
+  $handler->display->display_options['style_options']['data_type_info'] = array(
+    'id' => '0',
+    'filename' => '0',
+    'title' => '0',
+    'thumbnail_image' => '0',
+    'thumbnail_width' => '0',
+    'thumbnail_height' => '0',
+    'img_by_size_url' => '',
+    'ppd_info' => 'url',
+    'ppd_info_url' => '',
+    'ppd_info_func' => 'all_image_gallery_page_item_info',
+    'ppd_info_cache' => '',
+    'item_url' => '',
+  );
+  /* Header: Global: Result summary */
+  $handler->display->display_options['header']['result']['id'] = 'result';
+  $handler->display->display_options['header']['result']['table'] = 'views';
+  $handler->display->display_options['header']['result']['field'] = 'result';
+  /* Relationship: Shanti Images: Node ID */
+  $handler->display->display_options['relationships']['nid']['id'] = 'nid';
+  $handler->display->display_options['relationships']['nid']['table'] = 'shanti_images';
+  $handler->display->display_options['relationships']['nid']['field'] = 'nid';
+  /* Field: Shanti Images: Shanti Images ID */
+  $handler->display->display_options['fields']['siid']['id'] = 'siid';
+  $handler->display->display_options['fields']['siid']['table'] = 'shanti_images';
+  $handler->display->display_options['fields']['siid']['field'] = 'siid';
+  /* Field: Shanti Images: Node ID */
+  $handler->display->display_options['fields']['nid']['id'] = 'nid';
+  $handler->display->display_options['fields']['nid']['table'] = 'shanti_images';
+  $handler->display->display_options['fields']['nid']['field'] = 'nid';
+  $handler->display->display_options['fields']['nid']['label'] = '';
+  $handler->display->display_options['fields']['nid']['element_label_colon'] = FALSE;
+  /* Field: Content: Title */
+  $handler->display->display_options['fields']['title']['id'] = 'title';
+  $handler->display->display_options['fields']['title']['table'] = 'node';
+  $handler->display->display_options['fields']['title']['field'] = 'title';
+  $handler->display->display_options['fields']['title']['relationship'] = 'nid';
+  $handler->display->display_options['fields']['title']['label'] = '';
+  $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['title']['link_to_node'] = FALSE;
+  /* Field: Shanti Images: Shanti Images IIIF Name */
+  $handler->display->display_options['fields']['i3fid']['id'] = 'i3fid';
+  $handler->display->display_options['fields']['i3fid']['table'] = 'shanti_images';
+  $handler->display->display_options['fields']['i3fid']['field'] = 'i3fid';
+  $handler->display->display_options['fields']['i3fid']['label'] = '';
+  $handler->display->display_options['fields']['i3fid']['element_label_colon'] = FALSE;
+  /* Field: Shanti Images: Width */
+  $handler->display->display_options['fields']['width']['id'] = 'width';
+  $handler->display->display_options['fields']['width']['table'] = 'shanti_images';
+  $handler->display->display_options['fields']['width']['field'] = 'width';
+  $handler->display->display_options['fields']['width']['label'] = '';
+  $handler->display->display_options['fields']['width']['element_label_colon'] = FALSE;
+  /* Field: Shanti Images: Height */
+  $handler->display->display_options['fields']['height']['id'] = 'height';
+  $handler->display->display_options['fields']['height']['table'] = 'shanti_images';
+  $handler->display->display_options['fields']['height']['field'] = 'height';
+  $handler->display->display_options['fields']['height']['label'] = '';
+  $handler->display->display_options['fields']['height']['element_label_colon'] = FALSE;
+  /* Field: Content: Image Rotation */
+  $handler->display->display_options['fields']['field_image_rotation']['id'] = 'field_image_rotation';
+  $handler->display->display_options['fields']['field_image_rotation']['table'] = 'field_data_field_image_rotation';
+  $handler->display->display_options['fields']['field_image_rotation']['field'] = 'field_image_rotation';
+  $handler->display->display_options['fields']['field_image_rotation']['relationship'] = 'nid';
+  $handler->display->display_options['fields']['field_image_rotation']['label'] = '';
+  $handler->display->display_options['fields']['field_image_rotation']['element_label_colon'] = FALSE;
+  /* Sort criterion: Content: Post date */
+  $handler->display->display_options['sorts']['created']['id'] = 'created';
+  $handler->display->display_options['sorts']['created']['table'] = 'node';
+  $handler->display->display_options['sorts']['created']['field'] = 'created';
+  $handler->display->display_options['sorts']['created']['relationship'] = 'nid';
+  $handler->display->display_options['sorts']['created']['order'] = 'DESC';
+  $handler->display->display_options['sorts']['created']['exposed'] = TRUE;
+  $handler->display->display_options['sorts']['created']['expose']['label'] = 'Post date';
+  /* Sort criterion: Content: Title */
+  $handler->display->display_options['sorts']['title']['id'] = 'title';
+  $handler->display->display_options['sorts']['title']['table'] = 'node';
+  $handler->display->display_options['sorts']['title']['field'] = 'title';
+  $handler->display->display_options['sorts']['title']['relationship'] = 'nid';
+  $handler->display->display_options['sorts']['title']['exposed'] = TRUE;
+  $handler->display->display_options['sorts']['title']['expose']['label'] = 'Title';
+  /* Filter criterion: Content: Title */
+  $handler->display->display_options['filters']['title']['id'] = 'title';
+  $handler->display->display_options['filters']['title']['table'] = 'node';
+  $handler->display->display_options['filters']['title']['field'] = 'title';
+  $handler->display->display_options['filters']['title']['relationship'] = 'nid';
+  $handler->display->display_options['filters']['title']['operator'] = 'contains';
+  $handler->display->display_options['filters']['title']['exposed'] = TRUE;
+  $handler->display->display_options['filters']['title']['expose']['operator_id'] = 'title_op';
+  $handler->display->display_options['filters']['title']['expose']['operator'] = 'title_op';
+  $handler->display->display_options['filters']['title']['expose']['identifier'] = 'title';
+  $handler->display->display_options['filters']['title']['expose']['remember_roles'] = array(
+    2 => '2',
+    1 => 0,
+    3 => 0,
+    6 => 0,
+  );
+
+  /* Display: Page */
+  $handler = $view->new_display('page', 'Page', 'page');
+  $handler->display->display_options['path'] = 'gallery';
+
+  /* Display: Collection Content pane */
+  $handler = $view->new_display('panel_pane', 'Collection Content pane', 'collection_pane');
+  $handler->display->display_options['defaults']['relationships'] = FALSE;
+  /* Relationship: Shanti Images: Node ID */
+  $handler->display->display_options['relationships']['nid']['id'] = 'nid';
+  $handler->display->display_options['relationships']['nid']['table'] = 'shanti_images';
+  $handler->display->display_options['relationships']['nid']['field'] = 'nid';
+  /* Relationship: OG membership: Group Node from OG membership */
+  $handler->display->display_options['relationships']['og_membership_related_node_group']['id'] = 'og_membership_related_node_group';
+  $handler->display->display_options['relationships']['og_membership_related_node_group']['table'] = 'og_membership';
+  $handler->display->display_options['relationships']['og_membership_related_node_group']['field'] = 'og_membership_related_node_group';
+  $handler->display->display_options['relationships']['og_membership_related_node_group']['relationship'] = 'nid';
+  $handler->display->display_options['defaults']['arguments'] = FALSE;
+  /* Contextual filter: Field: Collection (field_og_collection_ref) */
+  $handler->display->display_options['arguments']['field_og_collection_ref_target_id']['id'] = 'field_og_collection_ref_target_id';
+  $handler->display->display_options['arguments']['field_og_collection_ref_target_id']['table'] = 'og_membership';
+  $handler->display->display_options['arguments']['field_og_collection_ref_target_id']['field'] = 'field_og_collection_ref_target_id';
+  $handler->display->display_options['arguments']['field_og_collection_ref_target_id']['relationship'] = 'nid';
+  $handler->display->display_options['arguments']['field_og_collection_ref_target_id']['default_action'] = 'default';
+  $handler->display->display_options['arguments']['field_og_collection_ref_target_id']['default_argument_type'] = 'node';
+  $handler->display->display_options['arguments']['field_og_collection_ref_target_id']['summary']['number_of_records'] = '0';
+  $handler->display->display_options['arguments']['field_og_collection_ref_target_id']['summary']['format'] = 'default_summary';
+  $handler->display->display_options['arguments']['field_og_collection_ref_target_id']['summary_options']['items_per_page'] = '25';
+  $handler->display->display_options['arguments']['field_og_collection_ref_target_id']['break_phrase'] = TRUE;
+  $export['all_image_gallery'] = $view;
 
   $view = new view();
   $view->name = 'classification_schemes';
@@ -635,11 +850,11 @@ function shanti_image_views_views_default_views() {
   $handler->display->display_options['header']['result']['table'] = 'views';
   $handler->display->display_options['header']['result']['field'] = 'result';
   $handler->display->display_options['header']['result']['content'] = '<div class="result-sum">Displaying @start - @end of @total</div>';
-  /* Relationship: Shanti Images: Shanti Images Node ID */
+  /* Relationship: Shanti Images: Node ID */
   $handler->display->display_options['relationships']['nid']['id'] = 'nid';
   $handler->display->display_options['relationships']['nid']['table'] = 'shanti_images';
   $handler->display->display_options['relationships']['nid']['field'] = 'nid';
-  /* Relationship: Shanti Images: Shanti Images User ID */
+  /* Relationship: Broken/missing handler */
   $handler->display->display_options['relationships']['uid']['id'] = 'uid';
   $handler->display->display_options['relationships']['uid']['table'] = 'shanti_images';
   $handler->display->display_options['relationships']['uid']['field'] = 'uid';
@@ -1071,8 +1286,8 @@ function shanti_image_views_views_default_views() {
     6 => 0,
   );
 
-  /* Display: All Image Gallery */
-  $handler = $view->new_display('page', 'All Image Gallery', 'page');
+  /* Display: All Image Gallery (Old) */
+  $handler = $view->new_display('page', 'All Image Gallery (Old)', 'page');
   $handler->display->display_options['defaults']['title'] = FALSE;
   $handler->display->display_options['title'] = 'Images';
   $handler->display->display_options['defaults']['style_plugin'] = FALSE;
@@ -1083,7 +1298,7 @@ function shanti_image_views_views_default_views() {
     'iiif_img_field' => 'field_image',
     'iiif_tiny_size' => '20',
     'iiif_thumb_size' => '135',
-    'iiif_pd_size' => '450',
+    'iiif_pd_size' => '800',
     'iiif_full_size' => '1200',
   );
   $handler->display->display_options['style_options']['entity_type'] = 'node';
@@ -1091,6 +1306,20 @@ function shanti_image_views_views_default_views() {
     'thumbnail_image' => 'field_image',
     'large_image' => 'title',
     'xlarge_image' => 'title',
+  );
+  $handler->display->display_options['style_options']['data_type_info'] = array(
+    'id' => '0',
+    'filename' => '0',
+    'title' => '0',
+    'thumbnail_image' => '0',
+    'thumbnail_width' => '0',
+    'thumbnail_height' => '0',
+    'img_by_size_url' => '',
+    'ppd_info' => 'url',
+    'ppd_info_url' => '',
+    'ppd_info_func' => 'shanti_images_gallery_page_item_info',
+    'ppd_info_cache' => '',
+    'item_url' => '',
   );
   $handler->display->display_options['defaults']['style_options'] = FALSE;
   $handler->display->display_options['defaults']['row_plugin'] = FALSE;
@@ -1119,7 +1348,7 @@ function shanti_image_views_views_default_views() {
     'single_image' => 0,
   );
   $handler->display->display_options['fields']['field_image']['delta_offset'] = '0';
-  $handler->display->display_options['path'] = 'gallery';
+  $handler->display->display_options['path'] = 'gallery-old';
   $export['shanti_images_gallery'] = $view;
 
   return $export;

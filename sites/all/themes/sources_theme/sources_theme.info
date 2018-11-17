@@ -30,8 +30,6 @@ regions[admin_footer]   = Admin Footer
 
 stylesheets[all][] =  css/shanti-main-sources.css
 stylesheets[all][] =  css/shanti-search-sources.css
-stylesheets[all][] =  ../shanti_sarvaka/css/shanti-search-kmaps.css
-stylesheets[all][] =  ../shanti_sarvaka/css/shanti-search-faceted.css
 
 ; stylesheets[all][] =  css/sources-theme.css
 ; stylesheets[all][] =  css/sources-theme-search-bibliography.css

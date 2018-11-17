@@ -1,116 +1,149 @@
 (function ($) {
+
     Drupal.behaviors.shantiImagesGeneral = {
         attach: function (context, settings) {
-            if(context == document) {
-                
-                // Call image page init if it is an image page
-                if ($('body').hasClass('node-type-shanti-image') && !$('body').hasClass('.page-node-edit')) { shanti_images_pages_init(settings); }
-                // Activate Bootstrap Popovers
-                if(typeof($('[data-toggle="popover"]').popover) == "function") {    
-                    $('[data-toggle="popover"]').popover();
-                }
-                
-                // Add target=_blank to not in-house links
-                $('.shanti-long-text a, .shanti-image-description a').each(function() {
-                    var href = $(this).attr('href');
-                    if (href.charAt(0) != '#' && ~href.indexOf('http')) {
-                        if (!~(href.indexOf('shanti.virginia'))) {
-                            $(this).attr('target', '_blank');
-                        }
-                    }
-                });
-                
-                // Trimmed Desc more links
-                $('.shanti-long-text .trimmed .morelink').click(function(e) {
-                    e.preventDefault();
-                    var parent = $(this).parents('.trimmed').eq(0);
-                    parent.find('.trimmed-text').hide();
-                    parent.find('.full-text').slideDown(800).css('display', 'inline');
-                    return false;
-                });
-                $('.shanti-long-text .trimmed .lesslink').click(function(e) {
-                    e.preventDefault();
-                    var parent = $(this).parents('.trimmed').eq(0);
-                    parent.find('.full-text').slideUp();
-                    parent.find('.trimmed-text').show();
-                    return false;
-                });
+          if (context == document) {
 
-
-                // Perform JS for Image Node Pages
-                if ($('body').is('.node-type-shanti-image, .page-gallery, .collection-page')) {
-                    // Load Photoswipe components for image pages
-                    $('body').append('<div id="pswpdiv" style="display: none;"></div>');
-                    // adding animated horizontal preloader
-                    $('.pswp__preloader').prepend('<span class="loading-horizontal"></span>');
-                    var path = Drupal.settings.basePath + 'sites/all/themes/sarvaka_images/js/contrib/';
-                    // Load the template
-                    var templurl = path + 'photoswipe-template.html';
-                    $('#pswpdiv').load(templurl, function() {
-                        // Load pswp JS sequentially
-                        var scripturl = path + 'photoswipe.js';
-                        $.getScript(scripturl, function() {
-                            var scripturl = path + 'photoswipe-ui-default.js';
-                            $.getScript(scripturl, function() {
-                                // Enable pswp link click
-                                $(document).on('click', '.pswp-link', function() {
-                                    $('#pswpdiv').show(); 
-                                    openPhotoswipe(); 
-                                });
-                            });
-                        });
-                    });
-                    
-                    // Enable Key Events for images page
-                    document.addEventListener('keydown', function(e) {
-                        switch (e.key) {
-                            // Previous Image
-                            case "ArrowLeft":
-                                if (typeof(document.sliderGoTo) == 'function') {
-                                    document.sliderGoTo('prev');
-                                }
-                                break;
-                                
-                            // Next Image
-                            case "ArrowRight":
-                                if (typeof(document.sliderGoTo) == 'function') {
-                                    document.sliderGoTo('next');
-                                }
-                               break;
-                               
-                           // Back
-                           case "Escape":
-                               window.location.pathname= $('.backarrow a').attr('href');
-                               break;
-                       }
-                   });
-                }
-
-                
-                // Add destination to create link when not logged in
-                if ($("body").is(".not-logged-in")) {
-                    var lnk = $('a[href="/saml_login"]:contains("Create")');
-                    var href = lnk.attr('href');
-                    href += '?destination=node/add/shanti-image';
-                    lnk.attr('href', href);
-                }
-
-                // Deal with fssolo with no carousel. Add attribute to image-detail so title can be adjusted
-                if ($('#fsslider').hasClass('fssolo')) {
-                    $('aside.image-detail-wrapper').addClass('nocarousel');
-                }
-
-                /*
-                setTimeout(function() {
-                    var biurl = Drupal.settings.shanti_sarvaka.broken_image_icon_url;
-                    $('#ppg-grid img').not(".pig-loaded").each(function () {
-                        $(this).attr('data-orig', $(this).attr('src'))
-                        $(this).attr('src', biurl);
-                        if ($(this).hasClass('pig-thumbnail')) { $(this).hide(); }
-                    });
-                }, 10000);
-                */
+            // Call image page init if it is an image page
+            if ($('body').hasClass('node-type-shanti-image') && !$('body').hasClass('.page-node-edit')) {
+              shanti_images_pages_init(settings);
             }
+
+            // Activate Bootstrap Popovers
+            if (typeof($('[data-toggle="popover"]').popover) == "function") {
+              $('[data-toggle="popover"]').popover();
+            }
+
+            // Add target=_blank to not in-house links
+            $('.shanti-long-text a, .shanti-image-description a').each(function () {
+              var href = $(this).attr('href');
+              if (href.charAt(0) != '#' && ~href.indexOf('http')) {
+                if (!~(href.indexOf('shanti.virginia'))) {
+                  $(this).attr('target', '_blank');
+                }
+              }
+            });
+
+            // Trimmed Desc more links
+            $('.shanti-long-text .trimmed .morelink').click(function (e) {
+              e.preventDefault();
+              var parent = $(this).parents('.trimmed').eq(0);
+              parent.find('.trimmed-text').hide();
+              parent.find('.full-text').slideDown(800).css('display', 'inline');
+              return false;
+            });
+            $('.shanti-long-text .trimmed .lesslink').click(function (e) {
+              e.preventDefault();
+              var parent = $(this).parents('.trimmed').eq(0);
+              parent.find('.full-text').slideUp();
+              parent.find('.trimmed-text').show();
+              return false;
+            });
+
+
+            // Perform JS for Image Node Pages
+            if ($('body').is('.node-type-shanti-image, .page-gallery, .view-all-image-gallery, .collection-page')) {
+
+              // Load Photoswipe components for image pages
+              $('body').append('<div id="pswpdiv" style="display: none;"></div>');
+              // adding animated horizontal preloader
+              $('.pswp__preloader').prepend('<span class="loading-horizontal"></span>');
+              var path = Drupal.settings.basePath + 'sites/all/themes/sarvaka_images/js/contrib/';
+              // Load the template
+              var templurl = path + 'photoswipe-template.html';
+              $('#pswpdiv').load(templurl, function () {
+                // Load pswp JS sequentially
+                var scripturl = path + 'photoswipe.js';
+                $.getScript(scripturl, function () {
+                  var scripturl = path + 'photoswipe-ui-default.js';
+                  $.getScript(scripturl, function () {
+                    // Enable pswp link click
+                    $(document).on('click', '.pswp-link', function () {
+                      $('#pswpdiv').show();
+                      openPhotoswipe();
+                    });
+                  });
+                });
+              });
+
+              // Enable Key Events for images page
+              document.addEventListener('keydown', function (e) {
+                switch (e.key) {
+                    // Previous Image
+                  case "ArrowLeft":
+                    if (typeof(document.sliderGoTo) == 'function') {
+                      document.sliderGoTo('prev');
+                    }
+                    break;
+
+                    // Next Image
+                  case "ArrowRight":
+                    if (typeof(document.sliderGoTo) == 'function') {
+                      document.sliderGoTo('next');
+                    }
+                    break;
+
+                    // Back
+                  case "Escape":
+                    window.location.pathname = $('.backarrow a').attr('href');
+                    break;
+                }
+              });
+            }
+
+
+            // Add destination to create link when not logged in
+            if ($("body").is(".not-logged-in")) {
+              var lnk = $('a[href="/saml_login"]:contains("Create")');
+              var href = lnk.attr('href');
+              href += '?destination=node/add/shanti-image';
+              lnk.attr('href', href);
+            }
+
+            // Deal with fssolo with no carousel. Add attribute to image-detail so title can be adjusted
+            if ($('#fsslider').hasClass('fssolo')) {
+              $('aside.image-detail-wrapper').addClass('nocarousel');
+            }
+
+            /*
+            setTimeout(function() {
+                var biurl = Drupal.settings.shanti_sarvaka.broken_image_icon_url;
+                $('#ppg-grid img').not(".pig-loaded").each(function () {
+                    $(this).attr('data-orig', $(this).attr('src'))
+                    $(this).attr('src', biurl);
+                    if ($(this).hasClass('pig-thumbnail')) { $(this).hide(); }
+                });
+            }, 10000);
+            */
+
+            // Ajax listener to reset pig on BEF form controls & pager submission
+            $(document).ajaxStart(function(e) {
+
+              var trigger = $(e.target.activeElement);
+              if (trigger.attr('id') == 'edit-title') {
+                  resetPig();
+              } else if (trigger.hasClass('selectpicker')) {
+                  resetPig();
+              } else if (trigger.parents('.pagerer').length > 1) {
+                  resetPig();
+              }
+            });
+
+          }  // end of context document
+
+          $('ul.pager a').click(function() {
+            resetPig();
+          });
+
+          function resetPig() {
+            if (typeof( Drupal.settings.shanti_grid_view) === 'object') {
+              Drupal.settings.shanti_grid_view.resetpig = true;
+              Drupal.settings.shanti_grid_view.imgdata = [];
+              /*Drupal.settings.shanti_images.genurls = [];
+              Drupal.settings.shanti_images.imgratios = [];
+              Drupal.settings.shanti_images.infourls = [];*/
+            }
+          }
         }
     };
 
@@ -274,6 +307,8 @@
         // Lower image title until carousel is loaded
         $('header.image-title').css('top', '-70px');
 
+        shanti_images_page_load_carousel(settings);  // See below
+        /*
         // Initialize the Mutation Observer to place on the main image div to observe when that image is loaded
         // When it's class goes from "progressive preview" to "progressive" then the main image is loaded and we can load the carousel
         var divobserver = new MutationObserver(function(mutations) {
@@ -283,17 +318,18 @@
                     var attributeValue = $(mutation.target).prop(mutation.attributeName);
                     // When the class gets changed to just "progressive"...
                     if (attributeValue === "progressive") {
-                        shanti_images_page_load_carousel(settings);  // See below
+                      shanti_images_page_load_carousel(settings);  // See below
                     }
                 }
             });
         });
 
         // Add the Observer to the Main Progressive Image Div
-        $div = $('div.progressive');
+        $div = $('#fsslider div.progressive');
         divobserver.observe($div[0], {
             attributes: true
         });
+        */
 
         /*
           // If current image in carousel is first or last, hide the corresponding arrow

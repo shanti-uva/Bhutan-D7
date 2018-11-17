@@ -154,7 +154,7 @@
   top: .45rem;
   left: .125rem;
   font-size: 1.62em;
-  color: #fff;
+  color: #ddd;
   /*filter: alpha(opacity=82);
   opacity: .82;*/
 }
@@ -429,7 +429,12 @@
   display:none; /* TEMPORARILY HIDING - best to do in script */
 }
 
-
+.justified-gallery > a, 
+.justified-gallery > div, 
+.justified-gallery > figure{
+  opacity:.5;
+  background-color: #fff;
+}
 
 
 
@@ -636,7 +641,7 @@
 
 .main-wrapper ul.pager li>a:hover,
 .main-wrapper ul.pager li>a:active{
-  box-shadow: 0 0 1px 1px rgba(255, 255, 255, .5);
+  box-shadow: 0 0 1px 1px rgba(50,50,50, .3);
 }
 
 /**

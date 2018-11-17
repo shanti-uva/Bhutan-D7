@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * shanti_image_type.field_group.inc
@@ -21,22 +22,21 @@ function shanti_image_type_field_group_info() {
   $field_group->parent_name = 'group_technical';
   $field_group->data = array(
     'label' => 'Additional Info',
-    'weight' => '19',
+    'weight' => '18',
     'children' => array(
-      0 => 'field_capture_date',
-      1 => 'field_iso_speed_rating',
+      0 => 'field_altitude',
+      1 => 'field_aperture',
       2 => 'field_exposure_bias',
-      3 => 'field_aperture',
-      4 => 'field_metering_mode',
-      5 => 'field_light_source',
-      6 => 'field_flash_settings',
-      7 => 'field_focal_length',
-      8 => 'field_sensing_method',
-      9 => 'field_lens',
+      3 => 'field_focal_length',
+      4 => 'field_iso_speed_rating',
+      5 => 'field_latitude',
+      6 => 'field_lens',
+      7 => 'field_light_source',
+      8 => 'field_longitude',
+      9 => 'field_metering_mode',
       10 => 'field_noise_reduction',
-      11 => 'field_latitude',
-      12 => 'field_longitude',
-      13 => 'field_altitude',
+      11 => 'field_sensing_method',
+      12 => 'field_flash_settings',
     ),
     'format_type' => 'fieldset',
     'format_settings' => array(
@@ -94,7 +94,7 @@ function shanti_image_type_field_group_info() {
   $field_group->parent_name = 'group_image_form_pgs';
   $field_group->data = array(
     'label' => 'Copyright Information',
-    'weight' => '8',
+    'weight' => '7',
     'children' => array(
       0 => 'field_copyright_date',
       1 => 'field_copyright_holder',
@@ -273,7 +273,8 @@ function shanti_image_type_field_group_info() {
       1 => 'group_copyright',
       2 => 'group_image_info',
       3 => 'group_images',
-      4 => 'group_technical',
+      4 => 'group_sponsorship',
+      5 => 'group_technical',
     ),
     'format_type' => 'tabs',
     'format_settings' => array(
@@ -540,17 +541,17 @@ function shanti_image_type_field_group_info() {
   $field_group->entity_type = 'node';
   $field_group->bundle = 'shanti_image';
   $field_group->mode = 'form';
-  $field_group->parent_name = '';
+  $field_group->parent_name = 'group_image_form_pgs';
   $field_group->data = array(
     'label' => 'Sponsorship and Notes',
-    'weight' => '1',
+    'weight' => '8',
     'children' => array(
-      0 => 'field_organization_name',
-      1 => 'field_project_name',
-      2 => 'field_sponsor_name',
-      3 => 'field_spot_feature',
-      4 => 'field_general_note',
-      5 => 'field_private_note',
+      0 => 'field_general_note',
+      1 => 'field_organization_name',
+      2 => 'field_private_note',
+      3 => 'field_project_name',
+      4 => 'field_sponsor_name',
+      5 => 'field_spot_feature',
     ),
     'format_type' => 'fieldset',
     'format_settings' => array(

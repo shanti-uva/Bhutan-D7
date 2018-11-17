@@ -59,9 +59,6 @@
 ::-moz-selection { background: #35397E !important; }
 ::selection { background: #35397E !important; }
 
-.shanti-thumbnail .footer-wrap{
-  background: #8e752e; /* testing custom version */
-}
 
 /*
  *  END Sarvaka subtheme colors 
@@ -132,31 +129,43 @@
   padding-top: 10px;
 }
 
-.front .view-shanti-images-gallery .view-header{
+.view-all-image-gallery .view-header, .view-collections .view-header {
   float: left;
   margin-top: 1rem;
 }
 
-.front .view-filters {
+.view-all-image-gallery .view-filters, .view-collections .view-filters {
     float: left;
 }
 
-.front .view-filters .views-widget-filter-title {
+.view-all-image-gallery .views-widget-filter-title, .view-collections .views-widget-filter-title {
     margin-left: 12px;
 }
 
-.front .form-type-select.form-item-sort-by label,
-.front .form-type-select.form-item-sort-order label {
+.view-all-image-gallery .form-type-select label {
     display: none !important;
 }
 
-.front .views-exposed-widget.views-reset-button button#edit-reset {
+.view-all-image-gallery .views-exposed-widget.views-reset-button button#edit-reset {
     margin-top: 2px;
     height: 24px;
     padding: 0 0 0 3px;
     width: 6rem;
 
       display:none;
+}
+
+.view-collections .view-header, .view-collections .view-filters, .view-collections .view-filters + .pagerer {
+  margin-top: -30px;
+}
+
+.view-collections .view-filters {
+  margin-left: 275px;
+  margin-top: -35px;
+}
+
+.view-collections .view-filters.empty {
+  margin-top: 0px;
 }
 
 .page-title .icon::before{
@@ -258,6 +267,14 @@
     font-size: 80%;
 }
 
+/**
+* Node Pages
+**/
+/* Hide the header "Items in this (sub)collection" */
+.node-collection .collections-content > div > h3,
+.node-subcollection .collections-content > div > h3 {
+  display: none;
+}
 
 /**
 *  Modal Descriptions

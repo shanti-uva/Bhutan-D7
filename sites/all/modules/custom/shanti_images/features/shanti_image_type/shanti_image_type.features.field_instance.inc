@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * shanti_image_type.features.field_instance.inc
@@ -1056,7 +1057,7 @@ function shanti_image_type_field_default_field_instances() {
       'module' => 'number',
       'settings' => array(),
       'type' => 'number',
-      'weight' => 28,
+      'weight' => 27,
     ),
   );
 
@@ -1292,7 +1293,7 @@ function shanti_image_type_field_default_field_instances() {
         'year_range' => '-3:+3',
       ),
       'type' => 'date_text',
-      'weight' => 93,
+      'weight' => 97,
     ),
   );
 
@@ -1370,7 +1371,7 @@ function shanti_image_type_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 91,
+      'weight' => 96,
     ),
   );
 
@@ -1448,7 +1449,7 @@ function shanti_image_type_field_default_field_instances() {
         'rows' => 5,
       ),
       'type' => 'text_textarea',
-      'weight' => 94,
+      'weight' => 98,
     ),
   );
 
@@ -1631,7 +1632,7 @@ function shanti_image_type_field_default_field_instances() {
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
-        'weight' => 35,
+        'weight' => 51,
       ),
       'full' => array(
         'label' => 'above',
@@ -1673,7 +1674,7 @@ function shanti_image_type_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 21,
+      'weight' => 28,
     ),
   );
 
@@ -1737,7 +1738,7 @@ function shanti_image_type_field_default_field_instances() {
       'module' => 'number',
       'settings' => array(),
       'type' => 'number',
-      'weight' => 22,
+      'weight' => 21,
     ),
   );
 
@@ -2447,7 +2448,7 @@ Please note the uploaded image will be converted and saved in a more compact for
         'rows' => 5,
       ),
       'type' => 'text_textarea',
-      'weight' => 17,
+      'weight' => 16,
     ),
   );
 
@@ -2525,7 +2526,7 @@ Please note the uploaded image will be converted and saved in a more compact for
         'rows' => 5,
       ),
       'type' => 'text_textarea',
-      'weight' => 16,
+      'weight' => 15,
     ),
   );
 
@@ -3085,7 +3086,7 @@ Please note the uploaded image will be converted and saved in a more compact for
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 26,
+      'weight' => 25,
     ),
   );
 
@@ -3143,7 +3144,7 @@ Please note the uploaded image will be converted and saved in a more compact for
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 24,
+      'weight' => 23,
     ),
   );
 
@@ -3353,7 +3354,7 @@ Please note the uploaded image will be converted and saved in a more compact for
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 27,
+      'weight' => 26,
     ),
   );
 
@@ -3466,7 +3467,7 @@ Please note the uploaded image will be converted and saved in a more compact for
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_buttons',
-      'weight' => 25,
+      'weight' => 24,
     ),
   );
 
@@ -4107,7 +4108,7 @@ Please note the uploaded image will be converted and saved in a more compact for
         'rows' => 5,
       ),
       'type' => 'text_textarea',
-      'weight' => 95,
+      'weight' => 99,
     ),
   );
 
@@ -4165,7 +4166,7 @@ Please note the uploaded image will be converted and saved in a more compact for
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 23,
+      'weight' => 22,
     ),
   );
 
@@ -4442,7 +4443,7 @@ Please note the uploaded image will be converted and saved in a more compact for
         'rows' => 5,
       ),
       'type' => 'text_textarea',
-      'weight' => 18,
+      'weight' => 17,
     ),
   );
 

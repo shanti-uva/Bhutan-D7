@@ -30,8 +30,6 @@ regions[admin_footer]   = Admin Footer
 
 stylesheets[all][] =  css/shanti-carousel-kmaps.css
 stylesheets[all][] =  css/shanti-main-kmaps.css
-; stylesheets[all][] =  css/shanti-search-kmaps.css
-stylesheets[all][] =  ../shanti_sarvaka/css/shanti-search-faceted.css
 stylesheets[all][] =  css/shanti-mandala-homepage-kmaps.css
 
 ;;;;;;;;;;;;;;;;;;;;;;

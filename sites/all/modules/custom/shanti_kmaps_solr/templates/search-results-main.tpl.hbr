@@ -78,7 +78,9 @@
         <!-- BUTTONS: Gallery and List buttons -->
         <div>
           <span class="icon shanticon-list listview results-list-asset-view-mode btn-results-list {{list_mode_selected}}" role="button" aria-label="Select List View" data-view-mode="list"></span>
-          <span class="icon shanticon-grid listview results-list-asset-view-mode btn-results-gallery {{gallery_mode_selected}} {{no_gallery}}" role="button" aria-label="Select Gallery View" data-view-mode="gallery"></span>
+          {{#unless no_gallery}}
+            <span class="icon shanticon-grid listview results-list-asset-view-mode btn-results-gallery {{gallery_mode_selected}}" role="button" aria-label="Select Gallery View" data-view-mode="gallery"></span>
+          {{/unless}}
         </div>
 
         <!-- PAGING -->
@@ -161,7 +163,9 @@
         <!-- BUTTONS: Gallery and List buttons -->
         <div>
           <span class="icon shanticon-list listview results-list-asset-view-mode btn-results-list {{list_mode_selected}}" role="button" aria-label="Select List View" data-view-mode="list"></span>
-          <span class="icon shanticon-grid listview results-list-asset-view-mode btn-results-gallery {{gallery_mode_selected}} {{no_gallery}}" role="button" aria-label="Select Gallery View" data-view-mode="gallery"></span>
+          {{#unless no_gallery}}
+            <span class="icon shanticon-grid listview results-list-asset-view-mode btn-results-gallery {{gallery_mode_selected}} " role="button" aria-label="Select Gallery View" data-view-mode="gallery"></span>
+          {{/unless}}
         </div>
 
         <!-- PAGING -->

@@ -23,28 +23,6 @@
   display:none;
 }
 
-.input-section .input-group .btn.btn-default {
-  font-size: 1.65rem;
-}
-
-.input-section .input-group .glyphicon-chevron-right:before {
-  font-size: 1.5rem;
-  position: relative;
-  right: 0.1rem;
-  top: 0.05rem;
-}
-
-.input-section .input-group .input-group-btn{
-  position: absolute;
-  top: 1.925rem;
-  right: .1rem;
-}
-
-.input-section .input-group .form-control{
-  margin-top:1.2rem;
-  height: 2.4em;
-}
-
 .input-section label.flyout-search-label{
   color: #444;
   font-size: 0.93em;
@@ -57,13 +35,6 @@
   text-transform: uppercase;
   padding-right: 0.3rem;
   font-weight:bold;
-}
-
-.logged-in .input-section .shanticon-magnify,
-.not-logged-in .input-section .shanticon-magnify{
-  position: absolute;
-  top: 3.6rem;
-  left: 3.5rem;
 }
 
 .input-section .form-item-search-block-form{
@@ -145,7 +116,7 @@
 /**
 * SOLR Results
 */
-
+/*
 .mb-solr-results .head .label {
   color: #333;
   text-transform: uppercase;
@@ -175,7 +146,7 @@
   margin: 1.2rem;
   font-size: 0.9em;
 }
-/** No Results Header **/
+
 .view-media-by-kmap .view-empty h3 {
   font-style: italic;
 }
@@ -201,7 +172,7 @@
   font-size: 1em;
 }
 
-
+*/
 
 
 
@@ -220,7 +191,7 @@
 * KMaps Search Flyout
 * -----------------------------------------------
 */
-
+/*
 .extruder .input-section .input-group .form-control,
 .extruder .input-section .form-item-search-block-form{
   margin: 0;
@@ -287,7 +258,6 @@
 .view-wrap .kmaps-tt-header:first-of-type{
   height: 35px !important;
   color:transparent;
-  /* padding-top: 1rem; */
 }
 
 .view-section .tab-content .tab-pane.listview{
@@ -298,37 +268,12 @@
   padding-top:1rem;
 }
 
-/* custom left-edge padding for Subjects Tab - since Places has Earth node that sets up an imbalance */
 .view-section .tab-content .shanti-kmaps-faceted-search-kmaps-2.tab-pane.treeview{
   padding-left:.75rem
 }
 
 
 
-
-/*
-.view-section .nav-tabs>li.listview{
-  width: 38%;
-}
-
-.view-section .nav-tabs>li.treeview{
-  width: 75%;
-  max-width: 170px;
-}
-
-.view-section .nav-tabs>li.listview.active > a{
-  background-color: #eee;
-  font-size: 0.88em;
-}
-
-.view-section .nav-tabs>li{
-  width:23%;
-}
-
-.view-section .nav-tabs>li.shanti-kmaps-faceted-search-kmaps-2{
-  width:27%;
-}
-*/
 
 
 .input-section .search-group {
@@ -348,6 +293,6 @@
   padding: 0.5rem 0;
 }
 
-
+*/
 
 

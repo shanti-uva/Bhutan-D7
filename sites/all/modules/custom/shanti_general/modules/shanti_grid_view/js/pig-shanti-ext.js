@@ -21,7 +21,7 @@
  */
 
 (function($) {
-   
+
     // Extending Pig Object
     Pig.prototype._getOnScroll = function() {  return function() {}; }; // disable infinite scrolling but call initPopdown()
     /**
@@ -93,12 +93,10 @@
             $(el).attr('id', 'spimg-' + n);  // add an unique ID to figure element
             $(el).attr('data-nid', _this.imageData[n].nid); // add a data attribute to figure elements with nid value
             $(el).attr('data-path', _this.imageData[n].path); // add a data attribute to figure elements with nid value
-            //console.log(el, _this.imageData[n]);
+
             $(el).unbind('click').click(function(e) {
                 var pig = Drupal.settings.shanti_grid_view.mypig;
-                //console.log($(e.target).get(0).tagName, e);
                 if (pig.ppdImage.element != this) {
-                    //console.log('opening');
                     pig.openPopdown(this);
                     $(el).addClass('selected');
                 } else if ($(e.target).get(0).tagName == 'IMG' && !$(e.target).parents('.ppd-fullimg').length) {
@@ -109,15 +107,19 @@
         // Use view setting for popdown image size
         _this.ppdSettings.imageSize = Drupal.settings.shanti_grid_view.popdown_image_size;
         // Activate popdown nav arrows and close
-        $(document).on('click', '.prev.ppd-nav-arrow', function() {
+
+
+        $(document).off('click', '.prev.ppd-nav-arrow').on('click', '.prev.ppd-nav-arrow', function() {
             _this.gotoImage('prev');
         });
-        $(document).on('click', '.next.ppd-nav-arrow', function() {
+
+        $(document).off('click', '.next.ppd-nav-arrow').on('click', '.next.ppd-nav-arrow', function() {
             _this.gotoImage('next');
         });
 
         // Activate popdown close button
-        $(document).on('click', '.ppd-close', function() {
+
+        $(document).off('click', '.ppd-close').on('click', '.ppd-close', function() {
             _this.closePopdown(true, function() {
                 _this.ppdIndex = false;
                 _this.ppdImage = false;
@@ -220,12 +222,12 @@
         $(el).addClass('ppd-expanded').siblings().removeClass('ppd-expanded');
         _this.ppdIndex = $(el).prevAll('figure').length; // Get index of this figure element
         var clickedImage = _this.images[_this.ppdIndex];  // get progressive image object for this figure element
-       
+
         // if the popdown is already open on same row
         if (_this.ppdOpen) {
             _this.popdown.clicked = false; // used to detect if swipe/touch action is in progress
             // If it's in the same row, just load its info into the already open popdown and return
-            if (clickedImage.style.translateY == _this.ppdImage.style.translateY) {
+            if (clickedImage.style.translateY === _this.ppdImage.style.translateY) {
                 _this.ppdImage = clickedImage;
                 $(_this.ppdSettings.imgSelector).attr('src', '');
                 $(_this.ppdSettings.infoSelector).html('<div class="ppd-loading details" style="display: block;"></div>');
@@ -249,29 +251,29 @@
             $('.ppd-expanded').removeClass('ppd-expanded'); // Open the popdown after previous one is closed
             $(el).addClass('ppd-expanded'); // add expanded class
             var myY = _this.ppdImage.style.translateY;   // get its Y translation value
-            
+
             _this.popdown = $(el).append(_this.ppdSettings.template).children().last().css('height', 0); // Add popdown template to element and show it.
-           
+
             var parenttrans = parseMatrixValue($(el).css('transform')); // position and open the popdown
             var gridwidth = $('#' + _this.settings.containerId).width();
-            
+
             _this.popdown.css({
-                'transform': 'translate3d(-' + parenttrans.xshift + 'px, 0px, 0)',
-			    'width': gridwidth + 'px',
+              'transform': 'translate3d(-' + parenttrans.xshift + 'px, 0px, 0)',
+              'width': gridwidth + 'px',
             });
 
             _this.loadPopdown(); // start loading info into popdown
-            
-            
-            _this.popdown.css('transition' , 'height ' + _this.ppdSettings.speed + 'ms ' + _this.ppdSettings.easing);
+
+
+            _this.popdown.css('transition', 'height ' + _this.ppdSettings.speed + 'ms ' + _this.ppdSettings.easing);
             _this.popdown.css('height', _this.ppdSettings.height);
             _this.shiftDown(myY);
-           
+
             _this.ppdOpen = true;
             _this.closePopdownOnResize();
-            
-           setTimeout(function() {
-                _this.scrollToView();
+
+            setTimeout(function () {
+              _this.scrollToView();
             }, 400);
         });
 
@@ -370,21 +372,20 @@
      */
     Pig.prototype.closePopdown = function(doShift, callback) {
         var _this = this;
-        if (typeof(_this.popdown) == "object") {
-            if (doShift) {  _this.shiftUp(); } 
+        if (typeof(_this.popdown) === "object") {
+            if (doShift) {  _this.shiftUp(); }
             /*_this.popdown.css('transition' , 'height ' + _this.ppdSettings.speed + 'ms ' + _this.ppdSettings.easing);
                         .css('height', 0);*/
             _this.popdown.slideUp(_this.ppdSettings.speed,
                                     function() {
                                         var pig = Drupal.settings.shanti_grid_view.mypig;
-                                        if (typeof(pig.popdown && pig.popdown.remove) == 'function') {
+                                        if (typeof(pig.popdown && pig.popdown.remove) === 'function') {
                                             pig.popdown.remove();
                                         }
                                         $('.ppd-expanded').removeClass('ppd-expanded');
                                         pig.ppdOpen = false;
                                         pig.popdown = false;
                                         pig.ppdImage = false;
-                                        //console.log('pig after close', pig);
                                         if (typeof(callback) === 'function') {
                                             callback();
                                         }
@@ -443,6 +444,7 @@
         var shfdir = (direction == 'up') ? -1 : 1,
               shftamt = _this.ppdSettings.height * shfdir,
                transnm = getSupportedTransformProperty();
+
          $.each(shiftimgs, function(index, item) {
                 var mytpv = item.style[transnm];
                 var mtch = mytpv.match(/, (\d+\.?\d*)px,/); // middle value is Y
@@ -498,7 +500,7 @@
 
     this._updateStyles();
     this.pig.container.appendChild(this.getElement());
-    this.existsOnPage = inview(this.getElement());
+    this.existsOnPage = true; //inview(this.getElement());
 
     setTimeout(function() {
 

@@ -566,7 +566,7 @@ font-weight: normal;
     position: relative !important;
     top: 0 !important;
     left: 0 !important;
-    margin: 8px auto 0;
+    margin: 0 auto;
     vertical-align: middle;
     box-shadow: 0 0 2.5rem #111;
     border: 1px solid #555 !important;

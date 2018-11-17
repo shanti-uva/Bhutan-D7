@@ -734,7 +734,7 @@
         $.ajaxSettings.traditional = true;
         $.ajax({
           type: "GET",
-          cache: false,
+          cache: true,
           url: requestUrl,
           data: requestParams,
           dataType: "jsonp",
@@ -973,6 +973,8 @@
           if (xact.search(' ') && xact.charAt(0) != '"') {
               xact = '"' + xact + '"';
           }
+          // improve "exact matching" sub-strings
+          search = search.replace(/\ /g ,'\\ ');
           assetMatch = "title:" + xact + "^100" +
             " names_txt:" + xact + "^90" +
             " title:"+search+ "^10" +
@@ -1065,7 +1067,7 @@
         $.ajaxSettings.traditional = true;
         $.ajax({
           type: "GET",
-          cache: false,
+          cache: true,
           url: requestUrl,
           data: requestParams,
           dataType: "jsonp",
@@ -1423,7 +1425,6 @@
   $.fn.kmapsSolr = function (config, options) {
     return new KMapsSolr(config, options);
   };
-
 
   $.kmapsSolr = function (config, options) {
     return new KMapsSolr(config, options);

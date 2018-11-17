@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * shanti_image_type.views_default.inc
@@ -95,7 +96,7 @@ function shanti_image_type_views_default_views() {
     'iiif_img_field' => 'field_image',
     'iiif_tiny_size' => '20',
     'iiif_thumb_size' => '165',
-    'iiif_pd_size' => '450',
+    'iiif_pd_size' => '800',
     'iiif_full_size' => '1200',
   );
   $handler->display->display_options['style_options']['entity_type'] = 'node';
@@ -103,6 +104,20 @@ function shanti_image_type_views_default_views() {
     'thumbnail_image' => 'title',
     'large_image' => 'title',
     'xlarge_image' => 'title',
+  );
+  $handler->display->display_options['style_options']['data_type_info'] = array(
+    'id' => '0',
+    'filename' => '0',
+    'title' => '0',
+    'thumbnail_image' => '0',
+    'thumbnail_width' => '0',
+    'thumbnail_height' => '0',
+    'img_by_size_url' => '',
+    'ppd_info' => 'url',
+    'ppd_info_url' => '',
+    'ppd_info_func' => 'collection_shanti_images_collection_content_pane_item_info',
+    'ppd_info_cache' => '',
+    'item_url' => '',
   );
   $handler->display->display_options['defaults']['style_options'] = FALSE;
   $handler->display->display_options['defaults']['row_plugin'] = FALSE;

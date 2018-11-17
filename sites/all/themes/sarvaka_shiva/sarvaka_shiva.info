@@ -31,8 +31,6 @@ regions[admin_footer]   = Admin Footer
 
 stylesheets[all][] =  css/shanti-main-shiva.css
 stylesheets[all][] =  css/shanti-search-shiva.css
-stylesheets[all][] =  ../shanti_sarvaka/css/shanti-search-kmaps.css
-stylesheets[all][] =  ../shanti_sarvaka/css/shanti-search-faceted.css
 
 ;;;;;;;;;;;;;;;;;;;;;;
 ;;; Scripts

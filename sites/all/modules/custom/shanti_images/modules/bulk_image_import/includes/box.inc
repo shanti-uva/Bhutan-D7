@@ -66,7 +66,9 @@ function bulk_image_import_download_box_file(&$auth, $filename) {
     'method' => 'GET',
     'timeout' => 120,
   );
-  watchdog('shanti_images_bulk_image_import', 'Downloading BOX file', array(), WATCHDOG_DEBUG);
+  watchdog('shanti_images_bulk_image_import', 'Downloading BOX file: @filename', array(
+    '@filename' => $filename
+  ), WATCHDOG_DEBUG);
   $response = bulk_image_import_make_box_request($url, $options, $auth);
   if(!$response->data && $response->redirect_url) {
     $response = bulk_image_import_make_box_request($response->redirect_url, $options, $auth);
