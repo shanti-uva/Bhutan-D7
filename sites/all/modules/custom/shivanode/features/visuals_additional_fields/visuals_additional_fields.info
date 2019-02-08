@@ -1,0 +1,15 @@
+name = Visuals Additional Fields
+description = Additional fields for visuals
+core = 7.x
+package = Visuals
+version = 7.x-1.1
+dependencies[] = entityreference
+dependencies[] = features
+dependencies[] = og
+dependencies[] = shanti_collections
+dependencies[] = shanti_kmaps_fields
+features[features_api][] = api:2
+features[field_base][] = field_language_kmap
+features[field_instance][] = node-shivanode-field_language_kmap
+features[field_instance][] = node-shivanode-field_og_collection_ref
+project path = sites/all/modules/custom/shivanode/features

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * biblio_long_fields.strongarm.inc

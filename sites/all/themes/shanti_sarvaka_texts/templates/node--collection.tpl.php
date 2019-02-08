@@ -87,6 +87,7 @@ $collection_items_view  = shanti_collections_admin_get_collection_items_view($no
 $og_parent_field        = variable_get('shanti_collections_admin_collection_parent_field');
 $og_parent_id           = $node->nid;
 
+
 if ($node->type == 'subcollection')
 {
     $og_parent_id = $node->{$og_parent_field}['und'][0]['target_id'];
@@ -102,10 +103,10 @@ if ($node->type == 'subcollection')
  	        <?php print render($content['body']); ?>
  	    </div>
 		<div>
-		    <!-- h3>Items in this <?php echo $type; ?></h3>
+		    <h3>Texts in this <?php echo $type; ?></h3>
 		    <?php if ($type == 'collection'): ?>
-		        <p>The list below includes items from this Collection's Subcollections.</p>
-		    <?php endif; ?>-->
+		        <p>The list below includes texts from this Collection’s Subcollections.</p>
+		    <?php endif; ?>
 		    <?php if (!$collection_items_view): ?>
 		        <p>Please enter the view and display for the items view in the Collections Admin page.</p>
             <?php else: ?>
@@ -118,7 +119,7 @@ if ($node->type == 'subcollection')
 
         <!-- Content creation buttons -->
 		<?php foreach($ctypes as $ctype => $use): ?>
-    		<?php if ($use && user_access("create $ctype content") && (og_is_member('node', $node->nid) || user_access("edit any $ctype content"))):?>
+    		<?php if ($use && og_user_access('node', $node->nid, "create $ctype content")):?>
            <?php
                 $ctype_label = $ctype;
                 if ($ctype == 'book') $ctype_label = 'text';
@@ -134,17 +135,42 @@ if ($node->type == 'subcollection')
             <a type="button" class="btn btn-primary" href="/node/add/subcollection?<?php echo $og_parent_field;?>=<?php echo $node->nid;?>&amp;destination=node/<?php echo $node->nid;?>">Add Subcollection</a>
             <?php endif; ?>
 
+            <?php if (user_access('convert shanti_collections') && count(shanti_collections_get_subcollections($node)) == 0): ?>
+                <div class="coll-convert-link">
+                    <a type="button" class="btn btn-primary" href="/shanti_collections_admin/convert/collection/<?php echo $node->nid; ?>">
+                        Convert to Subcollection</a>
+                </div>
+            <?php endif; ?>
+
     		<h4>Subcollections</h4>
     		<?php print views_embed_view('collections','panel_pane_1',$node->nid); ?>
 
 		<?php else: ?>
 
+            <?php if (user_access('convert shanti_collections')): ?>
+                <div class="coll-convert-link">
+                    <a type="button" class="btn btn-primary" href="/shanti_collections_admin/convert/collection/<?php echo $node->nid; ?>">
+                        Convert to Collection</a>
+                </div>
+            <?php endif; ?>
+
             <h4>Parent Collection</h4>
     		<div>
-    		<?php
-    		$content[$og_parent_field][0];
-    		print render($content[$og_parent_field]);
-    		?>
+                <?php
+                if (empty($content[$og_parent_field]) && isset($node->parent_coll_title)) {
+                    print '<div class="field field-name-field-og-parent-collection-ref field-type-entityreference field-label-hidden">
+ 	                    <div class="field-items">
+   	                    <div class="field-item even">
+   	                        <a name="parentcoll" title="' . t('This collection is private') . '">' .
+                        $node->parent_coll_title .
+                        '</a>
+                              </div>
+                           </div>
+                   </div>';
+                } else {
+                    print render($content[$og_parent_field]);
+                }
+                ?>
     		</div>
 
         <?php endif; ?>
@@ -153,8 +179,12 @@ if ($node->type == 'subcollection')
         <h4>Owner</h4>
         <?php
             $og_owner = user_load($node->uid);
-            $og_owner_url = url('user/'.$node->uid);
-            print "<a href='$og_owner_url'>{$og_owner->name}</a>";
+            if (user_is_anonymous()) {
+                print "<a class='disabled'>{$og_owner->name}</a>";
+            } else {
+                $og_owner_url = url('user/' . $node->uid);
+                print "<a href='$og_owner_url'>{$og_owner->name}</a>";
+            }
         ?>
 
         <h4>Visibility</h4>
@@ -180,6 +210,27 @@ if ($node->type == 'subcollection')
             'group_members' => $group_members,
             'has_inherited_group_members' => $has_inherited_group_members,
             )); ?>
+        <?php endif; ?>
+
+        <!-- Kmaps -->
+        <?php if (!empty($content['field_language_kmap'])): ?>
+        <h4>Languages</h4>
+        <?php print render($content['field_language_kmap']); ?>
+
+        <?php endif; ?>
+
+        <!-- Kmaps -->
+        <?php if (!empty($content['field_kmap_places'])): ?>
+            <h4>Places</h4>
+            <?php print render($content['field_kmap_places']); ?>
+
+        <?php endif; ?>
+
+        <!-- Kmaps -->
+        <?php if (!empty($content['field_kmap_term'])): ?>
+            <h4>Subjects</h4>
+            <?php print render($content['field_kmap_term']); ?>
+
         <?php endif; ?>
 	</div>
 </div>

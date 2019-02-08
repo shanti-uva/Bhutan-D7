@@ -729,7 +729,12 @@ function mb_solr_kmaps_fields_solr_doc_alter(&$solrdoc) {
                }
            }
        }
-       
+
+       // Get Language from Kmap field
+       if (!empty($node->field_language_kmap[LANGUAGE_NONE][0])) {
+           $sdoc['node_lang'] = $node->field_language_kmap[LANGUAGE_NONE][0]['header'];
+       }
+
        // Do Date Created
        if (isset($ew->field_pbcore_instantiation)) {
            $pi = $ew->field_pbcore_instantiation->value();

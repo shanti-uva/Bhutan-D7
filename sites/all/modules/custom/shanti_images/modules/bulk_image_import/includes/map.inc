@@ -32,7 +32,8 @@ function bulk_image_import_map_xml_to_node($xml) {
   $node_wrapper->field_image_capture_device->set(_bulk_image_import_clean_field($xml->MetaDataFields->Model));
   $node_wrapper->field_copyright_holder->set(_bulk_image_import_clean_field($xml->AnnotationFields->Copyright));
   $node_wrapper->field_rights_notes->set(array(_bulk_image_import_clean_field($xml->AnnotationFields->Rights),));
-  $orientation_code = _bulk_image_import_clean_field($xml->MediaProperties->ViewRotation);
+  /* IIIF flips images right-side-up for us
+  $orientation_code = (int) _bulk_image_import_clean_field($xml->MediaProperties->ViewRotation);
   switch($orientation_code) {
   case 1:
     $node_wrapper->field_image_rotation->set(0);
@@ -47,6 +48,7 @@ function bulk_image_import_map_xml_to_node($xml) {
     $node_wrapper->field_image_rotation->set(270);
     break;
   }
+  */
   $node_wrapper->field_iso_speed_rating->set((integer)_bulk_image_import_clean_field($xml->MetaDataFields->ISOSpeedRating));
   $node_wrapper->field_exposure_bias->set(_bulk_image_import_clean_field($xml->MetaDataFields->ExposureBias));
   $node_wrapper->field_aperture->set(_bulk_image_import_clean_field($xml->MetaDataFields->Aperture));
@@ -131,8 +133,7 @@ function bulk_image_import_map_xml_to_node($xml) {
   return $node;
 }
 
-
-function bulk_image_import_map_meta_to_node($meta) {
+function bulk_image_import_map_meta_to_node(&$meta) {
   $node = new stdClass();
   $node->title = _bulk_image_import_clean_field($meta['Title']);
   $node->type = 'shanti_image';
@@ -144,20 +145,26 @@ function bulk_image_import_map_meta_to_node($meta) {
   $node_wrapper->field_image_capture_device->set(_bulk_image_import_clean_field($meta['Model']));
   $node_wrapper->field_copyright_holder->set(_bulk_image_import_clean_field($meta['Copyright']));
   $node_wrapper->field_rights_notes->set(array(_bulk_image_import_clean_field($meta['Rights']),));
-  $orientation_code = $meta['ViewRotation'];
+  $orientation_code = (integer) $meta['ViewRotation'];
+  $rotation = 0;
   switch($orientation_code) {
   case 1:
-    $node_wrapper->field_image_rotation->set(0);
+    $rotation = 0;
     break;
   case 3:
-    $node_wrapper->field_image_rotation->set(180);
+    $rotation = 180;
     break;
   case 6:
-    $node_wrapper->field_image_rotation->set(90);
+    $rotation = 90;
     break;
   case 8:
-    $node_wrapper->field_image_rotation->set(270);
+    $rotation = 270;
     break;
+  }
+  if(($rotation / 90) % 2) {
+    $h = $meta['Height'];
+    $meta['Height'] = $meta['Width'];
+    $meta['Width'] = $h;
   }
   $node_wrapper->field_iso_speed_rating->set((integer)_bulk_image_import_clean_field($meta['ISOSpeedRating']));
   $node_wrapper->field_exposure_bias->set(_bulk_image_import_clean_field($meta['ExposureBias']));

@@ -21,11 +21,21 @@
 
 .page-node-add .content-section a,
 .page-node-edit .content-section a {
-  font-family: 'museo-sans-500', helvetica, arial, sans-serif;
+  /*font-family: 'museo-sans-500', helvetica, arial, sans-serif;
+    font-family: source-sans-pro,'Helvetica Neue',helvetica,arial,sans-serif;
+    font-weight:400;*/
 }
 
 .twitter-typeahead .kmaps-tt-input{
   padding-left: 3rem;
+}
+
+.tib .twitter-typeahead .kmaps-tt-input,
+.tib .twitter-typeahead .kmaps-tt-hint,
+.tib .twitter-typeahead .kmaps-tt-menu .kmaps-term
+{
+  font-size: 125%;
+  padding-top: 0;
 }
 
 .sticky-table.field-multiple-table{
@@ -40,6 +50,11 @@
 
 .sticky-table tr .form-item{
   min-height: 3.5rem;
+}
+
+.sticky-table tr input.form-text, 
+.sticky-table tr input.form-control{
+  margin: 1rem 1rem 0.5rem 0;
 }
 
 .sticky-table .form-autocomplete{
@@ -124,7 +139,7 @@
 /* powerful, careful */
 .page-node-add .main-content .fieldset-wrapper .form-item,
 .page-node-edit .main-content .fieldset-wrapper .form-item{
-  margin:0;
+  /* margin:0; ---- removed jan 3, 2018 mf8yk */
 }
 
 /* My Stuff Account Collections page - 50% columns for drop-select */
@@ -173,8 +188,9 @@
   color: #222;
 }
 
-
-
+.form-wrapper.field-name-field-transcript .description{
+  margin-top: 1rem;
+}
 
 
 
@@ -239,7 +255,6 @@ html.js .form-autocomplete {
 tr.region-title td {
   color: #555;
   padding-top: 0.5em;
-  font-family: 'museo-sans-500',helvetica,arial,sans-serif;
 }
 
 #edit-filters-order {
@@ -347,15 +362,15 @@ font-size: 1.12em;
 }
 .kmap-tree-picker label span,
 .kmap-typeahead-picker label span{
-  text-transform: uppercase;
-  font-weight: bold;
+  text-transform: capitalize;
+  font-weight: 400;
 }
 
 /* Keyword w/(x) cancel buttons */
 .selected-kmap{
   color: #333;
   font-size: 0.93em;
-  font-family: 'museo-sans-500', helvetica, arial, sans-serif;
+    font-weight:400;
   border: none;
   padding: 0 0 0 0.4rem;
   background-color: transparent;
@@ -406,7 +421,11 @@ font-size: 1.12em;
   position: absolute;
   left: 44rem;
   top: 2.8rem;
+
+    display:none !important;
 }
+
+
 
 
 
@@ -418,14 +437,20 @@ font-size: 1.12em;
   color: #999;
   font-size: 1em;
 }
-
-.kmap-typeahead-picker .shanticon-magnify{
+.page-node-edit .kmap-typeahead-picker .shanticon-magnify{
   position: absolute;
-  top: 2.95rem;
+  top: 3rem;
+  left: 1rem;
 }
+    .page-node-edit.audio-video .kmap-typeahead-picker .shanticon-magnify{
+      position: absolute;
+      left: 2rem;
+      top:2.9rem;
+    }
+    .page-node-edit.sources .kmap-typeahead-picker .shanticon-magnify,
+    .page-node-edit.audio-video .kmap-typeahead-picker .shanticon-magnify{
 
-
-
+    }
 
 
 .kmap-search-button,
@@ -436,7 +461,6 @@ font-size: 1.12em;
   padding: 0.7rem 1.5rem 0.5rem;
   border-radius: .3rem;
   border: 1px solid #777;
-  font-family: 'museo-sans-500', helvetica, sans-serif;
   font-size: 0.93em;
   margin-left: 0.5rem;
   position: relative;
@@ -500,7 +524,6 @@ font-size: 1.12em;
   line-height: 1.75em;
 }
 
-
 /**
 * ----------------------
 * END: KMAPS Type-Ahead
@@ -519,7 +542,7 @@ font-size: 1.12em;
 * add more row fields 
 */
 .btn.field-add-more-submit {
-  font-size: 0.82em;
+  font-size: 0.75em;
   padding: .1em 1.5em .3em;
 
   float: right;
@@ -531,7 +554,7 @@ font-size: 1.12em;
   content: '+';
   font-size: 2em;
   position: relative;
-  top: 0.2rem;
+  top: 0.35rem;
   left: -0.6rem;
 }
 
@@ -631,8 +654,7 @@ table.views-table thead a > img{
 .view-my-content .vbo-views-form fieldset#edit-select legend {
   color: #555;
   font-size: 80%;
-  font-family: 'museo-sans-700',helvetica,arial,sans-serif;
-  font-weight: normal;
+  font-weight: 600;
   text-transform: uppercase;
   border: none;
   padding: 12px 0px 0px;
@@ -694,12 +716,12 @@ table.views-table thead a > img{
   min-width: 7.5rem;
   font-size: 0.88em;
   text-transform: capitalize;
-  font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
 }
 .views-table tr td.views-field-name,
 .views-table tr td.views-field-title {
   font-size: 0.93em;
   font-weight: bold;
+    font-weight:600;
   max-width: 30rem;
 }
 
@@ -819,6 +841,12 @@ table.field-multiple-table .field-widget-text-textarea{ padding-top:1rem; }
 .text-format-wrapper .form-item{
   margin-bottom: 0.5rem;
 }
+
+.filter-help .form-item.form-type-select label,
+.text-format-wrapper .form-item.form-type-textarea label{
+  font-size: .82em;
+}
+
 /**  
 *** END Textarea Edit block ***/
 
@@ -893,15 +921,11 @@ button#edit-delete:hover{
 .media-widget a{ 
   text-transform: uppercase;
   letter-spacing: 0.1rem;
-  /*position: relative;
-  bottom: 40px;*/
   background-color: #5b68ce;
   color: #fff;
   display: inline-block;
   padding: 0.7rem 1.2rem 0.3rem;
   border-radius: .3rem;
-  font-family: 'museo-sans-500', helvetica, sans-serif;
-  font-weight:normal;
   font-size: 0.82em;
 }
 .media-widget a.button:hover,
@@ -976,6 +1000,7 @@ button#edit-delete:hover{
 
 
 /***** BEGIN Vertical Tabs *****/
+
 .vertical-tabs {
   margin-top: 0;
   background: #fdfdfd;
@@ -994,8 +1019,7 @@ button#edit-delete:hover{
 .vertical-tab-button.selected a {
   border-bottom: none;
   outline: none !important;
-  font-family: 'museo-sans-700',helvetica,arial,sans-serif;
-  font-weight: bold;
+  font-weight:600;
 }
 
 .vertical-tab-button a:hover,
@@ -1025,37 +1049,34 @@ button#edit-delete:hover{
 
 .vertical-tabs-panes.vertical-tabs-processed {
   padding:1rem 1.5rem;
-  /* border-top: 1px solid #ddd; */
- /* border-bottom:1px solid #fff; */
 }
 
 
 /* Selector target UL.vertical-tabs-list */
-.vertical-tabs ul.vertical-tabs-list .selected strong {
+.vertical-tabs-list li a > strong{
+  font-weight:400;
+  font-size: 1.12em;
+}
+.vertical-tabs-list .selected strong {
   color: inherit;
 }
-
-.vertical-tabs ul.vertical-tabs-list li a:hover strong {
+.vertical-tabs-list li a:hover strong {
   text-decoration: none;
+}
+.vertical-tabs-list li.selected {
+  border-right: 1px solid  transparent;
+  background: #fdfdfd;
+}
+.vertical-tabs-list li.selected:hover{
+  background: #fff;
 }
 
 .vertical-tab-container .nav-tabs>li {
   border-right: 1px solid  #ddd;
 }
-
-.vertical-tabs ul.vertical-tabs-list li.selected {
-  border-right: 1px solid  transparent;
-  background: #fdfdfd;
-}
-
-.vertical-tabs ul.vertical-tabs-list li.selected:hover{
-  background: #fff;
-}
-
 .vertical-tab-container .nav-tabs>li>a {
   border: none !important;
 }
-
 .vertical-tab-container .nav-tabs>li>a:hover {
   border: none !important;
 }
@@ -1123,8 +1144,7 @@ button#edit-delete:hover{
 
 .page-node-add .content-section .vertical-tabs-pane table thead th,
 .page-node-add .content-section .vertical-tabs-pane table thead a{
-  font-family: 'Helvetica Neue',helvetica,arial,sans-serif;
-  font-weight:normal;
+
 }
 /**
 *** END vertical tabs ***/
@@ -1226,8 +1246,6 @@ div.ctools-modal-content .modal-header{
 
 div.ctools-modal-content .modal-title{
   font-size: 150%;
-  font-weight: normal;
-  font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
   text-shadow: 0 0 5px #888;
 }
 
@@ -1237,7 +1255,6 @@ div.ctools-modal-content a.close{
   top: -3rem;
   font-size: 0.5em;
   text-shadow: 0 0 3px #888;
-  font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
   filter: alpha(opacity=75);
   opacity: 0.75;
   margin:0;
@@ -1288,7 +1305,8 @@ div.ctools-modal-content .form-item label{
 }
 
 .modal-content .ctools-close-modal{
-  font-family: 'museo-sans-700', helvetica, sans-serif;
+    font-weight:600;
+    letter-spacing:normal;
   margin-left: 3rem;
 }
 
@@ -1313,7 +1331,6 @@ div.ctools-modal-content .form-item label{
 }
 
 .modal-content .progress .message{
-  font-family: 'Helvetica Neue',helvetica,arial,sans-serif;
 }
 /**
 *** END modal ***/
@@ -1605,11 +1622,13 @@ html body.admin-menu {
 }
 
 */
-.field-name-field-places-kmap .kmaps-tt-menu .kmaps-tt-suggestion::before,
-.field-name-field-location .kmaps-tt-menu .kmaps-tt-suggestion::before{
-  /*display:none;*/
-}
 
+.field-name-field-places-kmap .kmap-filter{
+    width: 44%;
+    min-width: 35rem;
+    display: inline-grid;
+    padding-right: 2rem;
+}
 
 
 
@@ -1622,21 +1641,32 @@ html body.admin-menu {
 .kmaps-place-results-header{
   border-bottom: 1px solid #ddd;
   background-color: #f8f8f8;
+  white-space:nowrap;
 }
 .kmaps-place-results-header .kmaps-place-name{
   border-right: 1px solid #ddd;
   display: inline-block;
   padding: 0.2rem 1rem 0 1.5rem;
-  max-width: 20rem;
+  max-width: 22rem;
   width: 45%;
 }
 .kmaps-place-results-header .kmaps-feature-type{
+  border-right: 1px solid #ddd;
+  display: inline-block;
+  padding: 0 1rem;
+  max-width: 60rem;
+  width: 60%;
+  white-space: nowrap;
+}
+
+.kmaps-place-results-header .kmaps-id{
   display: inline-block;
   padding: 0 1rem;
   max-width: 9rem;
-  width: 40%;
+  width: 20%;
   white-space: nowrap;
 }
+
 /* begin: search results rows */
 .kmaps-place-result{
   background: white;
@@ -1660,25 +1690,56 @@ html body.admin-menu {
   color:grey;
 }
 .kmaps-place-result .kmaps-feature-type{
-  padding-left: 1rem;
+  display: inline-block;
+  width: 60%;
+  max-width: 60rem;
+/*
+  display: inline-block;
+    width: 15%;
+    max-width: 20rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    */
 }
+
 .kmaps-place-result.kmaps-tt-selected{
   margin-left:1rem;
 }
+
+.kmaps-subject-result {
+  background: white;
+  border-bottom: 1px solid #eee;
+}
+
+.kmaps-subject-result .kmaps-term {
+  display: inline-block;
+  max-width: 60%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-height: 20px;
+}
+
+.kmaps-subject-result .kmaps-id {
+  display:inline-block;
+  float: right;
+  font-size:0.8em;
+}
+
 .kmaps-tt-dataset-places{
   overflow-x: hidden;
   overflow-y: auto;
 }
-.kmap-typeahead-picker .kmaps-tt-header:first-of-type{
-  margin-bottom: 0;
-}
+
 .kmaps-tt-suggestion:hover:not(.kmaps-tt-selected):not(.kmaps-tt-zero-facet){
   color: #000;
   background-color: #eee !important;
 }
+
 .kmaps-tt-suggestion{
   margin-left:0;
 }
+
 .kmaps-tt-menu .kmaps-tt-suggestion::before{
   display: inline-block;
   float: left;
@@ -1691,6 +1752,7 @@ html body.admin-menu {
 .kmaps-tt-dataset-places .kmaps-tt-selectable .kmaps-place-name{
   padding-left: -1rem;
 }
+
 
 .kmaps-tt-dataset-places .kmaps-tt-selectable.kmaps-tt-suggestion::before{
   margin-left:1.5rem;
@@ -1718,6 +1780,20 @@ html body.admin-menu {
 .field-name-field-agent-role.field-widget-options-select{
   margin-top:1rem;
 }
+
+
+
+
+
+
+
+
+.vertical-tabs fieldset.vertical-tabs-pane{
+  text-transform: capitalize;
+}
+
+
+
 /**
 * ----------------------
 * END - Edit Form CSS

@@ -192,6 +192,20 @@
             //Function to make kmaps relationship tree
             if ($(".relation_tree_container")) {
                 $(".relation_tree_container", context).once("relationship_container", function() {
+
+                    //Function for Summary tab in Places
+                    var relatedSolrUtils = kmapsSolrUtils.init({
+                        termIndex: Drupal.settings.kmaps_explorer.termIndex,
+                        assetIndex: Drupal.settings.kmaps_explorer.assetIndex,
+                        featureId: Drupal.settings.kmaps_explorer.solrId_featureId,
+                        //featureId: Drupal.settings.kmaps_explorer.domain + "-" + Drupal.settings.kmaps_explorer.featureId, //Your featureId will have the format APP-ID(eg. subjects-20, places-637)
+                        domain: Drupal.settings.kmaps_explorer.domain, //Use the apps name [places|subjects|terms]
+                        perspective: Drupal.settings.kmaps_explorer.perspective,
+                        mandalaURL: Drupal.settings.kmaps_explorer.base_url + "/%%APP%%/%%ID%%/%%REL%%/nojs",
+                        featuresPath: Drupal.settings.kmaps_explorer.featuresPath,
+                        tree: Drupal.settings.kmaps_explorer.domain
+                    });
+
                     $(".relation_tree_container").kmapsRelationsTree({
                         domain: Drupal.settings.kmaps_explorer.domain, //[places, subjects, sources, etc.]
                         featureId: Drupal.settings.kmaps_explorer.featureId, //Feature fid of the active node
@@ -200,23 +214,13 @@
                         perspective: Drupal.settings.kmaps_explorer.perspective,
                         tree: Drupal.settings.kmaps_explorer.tree, //[places,subjects,sources, etc.]
                         termIndex: Drupal.settings.kmaps_explorer.termIndex,
-                        seedTree: {
-                            descendants: true, //Show descendants
-                            directAncestors: false //Show only direct A
-                        },
-                        displayPopup: true,
-                        mandalaURL: Drupal.settings.kmaps_explorer.base_url + "/%%APP%%/%%ID%%/%%REL%%/nojs"
-                    });
-
-                    //Function for Summary tab in Places
-                    var relatedSolrUtils = kmapsSolrUtils.init({
-                        termIndex: Drupal.settings.kmaps_explorer.termIndex,
-                        assetIndex: Drupal.settings.kmaps_explorer.assetIndex,
-                        featureId: Drupal.settings.kmaps_explorer.domain + "-" + Drupal.settings.kmaps_explorer.featureId, //Your featureId will have the format APP-ID(eg. subjects-20, places-637)
-                        domain: Drupal.settings.kmaps_explorer.domain, //Use the apps name [places|subjects|terms]
-                        perspective: Drupal.settings.kmaps_explorer.perspective,
+                        descendants: true,
+                        directAncestors: Drupal.settings.kmaps_explorer.direct_ancestors,
+                        displayPopup: false,
                         mandalaURL: Drupal.settings.kmaps_explorer.base_url + "/%%APP%%/%%ID%%/%%REL%%/nojs",
-                        tree: Drupal.settings.kmaps_explorer.domain
+                        solrUtils: relatedSolrUtils,
+                        view: "roman.scholar",
+                        sortBy: "position_i+ASC"
                     });
 
                     var summaryLoaded = false;

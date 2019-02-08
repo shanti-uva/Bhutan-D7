@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * shanti_texts_features.field_group.inc
@@ -52,6 +53,7 @@ function shanti_texts_features_field_group_info() {
     'children' => array(
       0 => 'field_book_content',
       1 => 'field_dc_lang_code',
+      2 => 'field_language_kmap',
     ),
     'format_type' => 'tab',
     'format_settings' => array(
@@ -76,7 +78,7 @@ function shanti_texts_features_field_group_info() {
   $field_group->parent_name = '';
   $field_group->data = array(
     'label' => 'Catalog Data',
-    'weight' => '3',
+    'weight' => '4',
     'children' => array(
       0 => 'field_book_author',
       1 => 'field_book_date',
@@ -115,7 +117,7 @@ function shanti_texts_features_field_group_info() {
   $field_group->parent_name = '';
   $field_group->data = array(
     'label' => 'Collection',
-    'weight' => '4',
+    'weight' => '5',
     'children' => array(
       0 => 'field_og_collection_ref',
       1 => 'group_content_access',
@@ -143,7 +145,7 @@ function shanti_texts_features_field_group_info() {
   $field_group->parent_name = '';
   $field_group->data = array(
     'label' => 'KMap Terms',
-    'weight' => '2',
+    'weight' => '3',
     'children' => array(
       0 => 'field_kmap_places',
       1 => 'field_kmap_term',

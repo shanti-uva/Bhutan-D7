@@ -104,7 +104,7 @@ article.main-col{
   max-width: 950px !important;
 }
 
-.front article.main-col{
+.page-home article.main-col{
   max-width: 1050px !important;
 }
 
@@ -128,15 +128,17 @@ article.main-col li a.active{
   font-style: italic; 
   font-size: 1em; 
   color: rgb(0,0,139);
-  font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
 }
 .page-sources-search .views-field-biblio-authors li a{
-  font-size: .93em;
+  font-size: .75em;
   color:#111;
+  letter-spacing: 0.0275rem;
 }
 
 
-
+.biblio-separator-bar{
+  padding: 0.8em 0.5em 0.5em 1.5rem;
+}
 
 
 
@@ -146,7 +148,7 @@ article.main-col li a.active{
 .node-type-biblio .content .source-full {
   float: none;
   background: #fff;
-  box-shadow: inset 0 0 5px #999;
+  box-shadow: inset 0 0 0.5rem 0.05rem rgba(0, 0, 0, 0.35);
   border-radius: 2px;
   padding-top: 2rem;
   padding-bottom: 5.5rem;
@@ -182,48 +184,49 @@ article.main-col li a.active{
  *     Home Page styles added by ndg8f (2017-03-04)
  *     can't just use body.front because when sort filters are chosen and parameters added the "front" class is taken off <body> but "page-home" remains
  */
-.front #block-shanti-carousel-shanti-carousel-block-1 {
+.page-home #block-shanti-carousel-shanti-carousel-block-1 {
     padding-bottom: 20px;
 }
 
-.front #block-views-exp-biblio-search-api-allpage {
+.page-home #block-views-exp-biblio-search-api-allpage {
     width: 38%;
     margin-left: 0px;
     float: left;
 }
 
-.front .views-widget-filter-search_api_views_fulltext input{
+.page-home .views-widget-filter-search_api_views_fulltext input{
   max-width: 18rem;
   margin-left: 1rem;
 }
 
-.front .views-exposed-widget.views-widget-filter-search_api_views_fulltext label {
+.page-home .views-exposed-widget.views-widget-filter-search_api_views_fulltext label {
     display: none;
 }
 
-.front #block-views-exp-biblio-search-api-allpage .views-exposed-form .views-exposed-widget{
+.page-home #block-views-exp-biblio-search-api-allpage .views-exposed-form .views-exposed-widget{
     padding: .5em 0 0 0;
 }
 
-.front #block-views-exp-biblio-search-api-allpage .views-exposed-form .views-exposed-widget .form-submit {
+.page-home #block-views-exp-biblio-search-api-allpage .views-exposed-form .views-exposed-widget .form-submit {
     margin-top: 0;
     padding: .3rem 1.5rem .1rem;
 }
 
-.front #views-exposed-form-biblio-search-api-allpage{
+.page-home #views-exposed-form-biblio-search-api-allpage{
   position: relative;
   top: -0.5rem;
 }
 
-.front .carousel-title .shanticon-stack:before{
+.page-home .carousel-title .shanticon-stack:before{
   content: '\e632';
+      color: #6e65cc;
 }
 
 
 
 
 
-.front #block-sources-views-custom-sort-filter {
+.page-home #block-sources-views-custom-sort-filter {
     height: 3em;
     padding: 0 1.4rem 0.8rem 0;
     width: 60%;
@@ -231,7 +234,7 @@ article.main-col li a.active{
     float: right;
 }
 
-.front #block-system-main {
+.page-home #block-system-main {
     clear: both;
 }
 
@@ -300,7 +303,11 @@ article.main-col li a.active{
 
 .node-biblio-form .vertical-tabs-panes{
   padding: 0;
-  padding: 1rem 0 0 1rem;
+}
+
+/* Hide old language field in biblio edit form */
+.node-biblio-form div#edit-field-biblio-language {
+  display: none;
 }
 
 #biblio-contributors-wrapper .sticky-table .biblio-contributor-category  .form-item{
@@ -413,6 +420,15 @@ article.main-col li a.active{
 
 
 
+.page-sources-search .view-biblio-search-api .views-row {
+  padding: 0.5rem 0 0.75rem 3rem;
+  margin: 0 2rem 0 0;
+  border-top: 1px solid #fff;
+  border-bottom: 1px solid #eee;
+  position: relative;
+  overflow: visible;
+}
+
 
 
 
@@ -436,7 +452,7 @@ article.main-col li a.active{
 
 .page-sources-search .main-content .content-section .view-content,
 .page-sources-search .main-content .content-section .view-empty {
-  padding: 0 1.2rem 2rem;
+  padding: 0 1.2rem 2rem 3rem;
 
   display: block;
   width: 100%;
@@ -455,9 +471,15 @@ article.main-col li a.active{
 
 .page-sources-search .views-field-biblio-authors,
 .node-type-biblio .content .source-full .source-field-authors {
-  font-size: 1em;
+  font-size: 1.32em;
   overflow: visible;
-  padding: .5rem .5rem 1rem 4.85rem;
+  padding: .5rem .5rem 0 4.85rem;
+  float:left;
+}
+
+.node-type-biblio .content .source-full .source-field-authors{
+  font-size: 1.18em;
+  float:none;
 }
 
 .page-sources-search .views-field-biblio-authors:empty{
@@ -470,7 +492,9 @@ article.main-col li a.active{
 }
 
 .node-type-biblio .content .source-full .source-field-authors {
-    padding: 0 0 2rem 1.7rem;
+  padding: 0 0 3rem 1.5rem;
+  margin-bottom: 2rem;
+  margin-right: 1rem;
 }
 
 .page-sources-search .views-field-biblio-authors ul,
@@ -493,14 +517,14 @@ article.main-col li a.active{
   width: 16px;
   height: 16px;
   display: inline-block;
-  position: relative;
-  bottom: 0.05rem;
-  right: 0.45rem;
-  font-family: 'shanticon';
-  font-size: 1.5rem;
-  color: #8982d7;
-  float: left;
-  margin-left: -1.6rem;
+    position: relative;
+      top: 0.1rem;
+    font-family: 'shanticon';
+    font-size: 1.56rem;
+    color: #6e65cc;
+    float: left;
+    margin-left: -2rem;
+    margin-right: 1rem;
 }
 
 .page-sources-search .views-field-biblio-authors ul:empty{
@@ -514,13 +538,15 @@ article.main-col li a.active{
 }
 
 .page-sources-search .title-link-container a{
-  color: #000;
-  font-size: 1.12em;
-  font-family: 'Helvetica Neue',helvetica,arial,sans-serif;
+  color: #222;
+  font-size: 1.25em;
+  font-family: 'EB Garamond',serif;
+  font-weight: 500;
+  line-height: 1.18em;
 }
 
-.front.page-sources-search .title-link-container a{
-  font-size:1.06em;
+.page-sources-search.not-front .title-link-container a{
+  font-size: 1.32em;
 }
 
 .page-sources-search .title-link-container > .shanticon-sources{
@@ -529,7 +555,7 @@ article.main-col li a.active{
 
 .page-sources-search .title-link-container .shanticon-sources::before{
   font-size: 1.5em;
-  color: #6f69ae;
+  color: #6e65cc;
   margin-right: .8rem;
   position: relative;
   top: .4rem;
@@ -567,16 +593,18 @@ article.main-col li a.active{
   transform: rotate(45deg);
   display: inline-block;
   */
-  content: "\e625";
-  display: inline-block;
-  position: relative;
-  bottom: 0.25rem;
-  font-family: 'shanticon';
-  font-size: 1.68rem;
-  float: left;
-  margin-left: -2.15rem;
-  margin-right:.5rem;
-  color: #8982d7;
+    content: "\e600";
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    position: relative;
+    bottom: -0.15rem;
+    right: 0.65rem;
+    font-family: 'shanticon';
+    font-size: 1.5rem;
+    color: #6e65cc;
+    float: left;
+    margin-left: -1.25rem;
 }
 
 
@@ -603,6 +631,10 @@ article.main-col li a.active{
   float: left;
   margin-bottom: 1rem;
   margin-top: 1rem;
+  font-family: 'EB Garamond',serif;
+    font-size: 1.32em;
+    color: #000;
+    line-height: 1.5;
 }
 
 .page-sources-search .views-field-biblio-abst-e .field-content:not(:empty)::before{
@@ -612,7 +644,8 @@ article.main-col li a.active{
   display: inline-block;
   position: relative;
   font-family: 'FontAwesome';
-  font-size: 1.5rem;
+  font-size: 1.68rem;
+  color: #6e65cc;
   margin-right: 0rem;
   margin-left: -2.25rem;
   background: #fff;
@@ -621,11 +654,8 @@ article.main-col li a.active{
 .page-sources-search .views-field-field-zotero-tags{
   /* font-style: italic; */
   letter-spacing: 0.025rem;
-  border-top: 2px dashed #eee;
-  padding-top: .5rem;
-  padding-right: 1rem;
-  padding-left: 0rem;
-  padding-bottom: 1rem;
+  /*border-top: 2px dashed #eee;*/
+  padding:.1rem 1rem .1rem 0;
   margin-left: 3rem;
   margin-right: 1.3rem;
 }
@@ -647,7 +677,7 @@ article.main-col li a.active{
   margin-right: .7rem;
   float: left;
   top: -0.2rem;
-  margin-left: -2.2rem;
+  margin-left: -2.3rem;
   font-style: normal;
 }
 
@@ -699,34 +729,9 @@ article.main-col li a.active{
   color: rgb(0, 0, 139);
 }
 
-/*.page-sources-search .view-biblio-search-api .views-field-title,*/
-.node-type-biblio .content .source-full .source-field-title {
-  display: block;
-  color: #555;
-  font-weight: bold;
-  line-height: 1.32em;
-  font-size: 1.32em;
-  font-family: 'Palatino', 'Palatino Linotype', 'Palatino LT STD', 'Book Antiqua', Georgia, serif;
-}
 
-.node-type-biblio .content .source-full .source-field-title {
-    padding-left: .5rem;
-    padding-bottom: .7rem;
-    border-bottom: 2px solid #eee;
-}
 
-.page-sources-search .view-biblio-search-api .views-row {
-  padding: 0.5rem 0 0.75rem 1rem;
-  margin: 0 4rem 0 0;
-  border-top: 1px solid #fff;
-  border-bottom: 1px solid #ccc;
-  position: relative;
-  overflow: visible;
-}
 
-.node-type-biblio .content .source-full {
-    padding: 3rem 2.5rem 6rem;
-}
 
 /** Featured image on node full page **/
 .node-type-biblio .content .source-full .field-name-field-featured-image {
@@ -753,7 +758,7 @@ article.main-col li a.active{
 }
 
 .page-sources-search .views-row .fa-plus{
-  font-size: 2rem;
+  font-size: 1.5rem;
   border-radius: 50%;
   color: #6f69ae;
   filter: alpha(opacity=50);
@@ -761,8 +766,9 @@ article.main-col li a.active{
   cursor: pointer;
   display: inline-block;
   position: absolute;
-  top: 0.1rem;
-  right: -4.25rem;
+  top: 0.6rem;
+  /*right: -4.25rem;*/
+  left: -1rem;
   z-index: 1;
   padding: 0.5rem 0.8rem;
   background: #fff;
@@ -857,7 +863,6 @@ article.main-col li a.active{
 
 .node-type-biblio .field-name-field-zotero-collections .field-label-span {
     color: #505050;
-    font-family: Arial;
     font-size: 1.32em;
 }
 
@@ -882,33 +887,74 @@ article.main-col li a.active{
 .node-type-biblio .field-name-field-kmaps-places.field-label-above {
     margin-top: 20px;
     margin-bottom: 5px;
-
 }
 
+
+
+
+
+
+
+
+.node-type-biblio .content .source-full {
+    padding: 4rem 4rem 6rem;
+}
+/*.page-sources-search .view-biblio-search-api .views-field-title,*/
+.node-type-biblio .content .source-full .source-field-title {
+    display: block;
+    color: #444;
+    font-weight: 500;
+    line-height: 1.3;
+    font-size: 1.5em;
+    font-family: 'EB Garamond',serif;
+    padding-left: 1.5rem;
+}
 /* Biblio node page (added) */
 .node-type-biblio  .source-full .source-field,
 .node-type-biblio  .source-full .field-type-shanti-kmaps-fields-default {
     /**clear: both; - removing for featured image */
-    margin: 1rem 0 0 1.4rem;
+    margin: .5rem 0 0 1.4rem;
 }
+
+.node-type-biblio .source-full .source-field{
+    font-size: 1.25em;
+    color: #000;
+    letter-spacing: 0.0275rem;
+    font-family: 'EB Garamond',serif;
+    line-height:1.56em;
+}
+
+.node-type-biblio .source-full .source-field.source-field-zotero a{
+  font-style:italic;
+  font-family: 'Open Sans','Segoe UI',Tahoma,sans-serif;
+  font-size: .75em;
+}
+
+
+.node-type-biblio .content .source-full .source-field-title-2{
+    font-family: 'Open Sans','Segoe UI',Tahoma,sans-serif;
+    font-weight: 400;
+    color: #000;
+    letter-spacing: .0575rem;
+    border-top: 2px solid #eee;
+    padding-top: 1rem;
+    margin-right: 1rem;
+}    
 
 /* For authors see style for .page-sources-search .views-field-biblio-authors around line 440 */
-
 .node-type-biblio .source-full .source-field .field-label {
-    color: #444;
-    font-weight: bold;
+    color: #000;
+    font-weight: 400;
     text-transform: uppercase;
-    font-family: 'museo-sans-500', helvetica, arial, sans-serif;
-    font-size:90%;
+    font-size: .68em;
+    font-family: 'Open Sans','Segoe UI',Tahoma,sans-serif;
+    margin-right: 0.5rem;
+    letter-spacing: 0.0475rem;
 }
-
 .node-type-biblio .field-name-field-kmap-subjects.field-label-above .field-label,
 .node-type-biblio .field-name-field-kmaps-places.field-label-above .field-label {
     color: #505050;
     font-size: 1.32em;
-    letter-spacing: 0.015rem;
-    font-weight: normal;
-    font-family: 'Helvetica Neue',helvetica,arial,sans-serif;
 }
 
 
@@ -921,7 +967,7 @@ article.main-col li a.active{
 #block-sources-views-custom-sort-filter .bootstrap-select.select-wrapper label {
   display: block;
   padding: .5rem 0 0.2rem 1.5rem;
-  font-weight: bold;
+  font-weight: 400;
   color: #555;
   background: #f0f0f0;
   margin:0.2rem 0;
@@ -962,12 +1008,10 @@ article.main-col li a.active{
 }
 
 #block-sources-views-custom-sort-filter .content .left-side h1 {
-  font-family: 'museo-sans-900', helvetica, arial, sans-serif;
   text-transform: uppercase;
   color: #333;
   margin: 0;
   font-size: 2.30em;
-  letter-spacing: 5px;
 }
 
 #block-sources-views-custom-sort-filter .content .right-side {
@@ -990,7 +1034,6 @@ article.main-col li a.active{
 #block-sources-views-custom-sort-filter .select-wrapper select option,
 #block-sources-views-custom-sort-filter .select-wrapper select optgroup {
   font-size: 0.938em;
-  font-family: 'museo-sans-500', helvetica,arial, sans-serif;
 }
 
 #block-sources-views-custom-sort-filter .select-wrapper  .holder {
@@ -1055,15 +1098,12 @@ article.main-col li a.active{
   margin-right: 1rem;
   font-size: 1.06em;
   color: #555;
-  letter-spacing: 0.09rem;
-  font-family: 'museo-sans-500',helvetica,arial,sans-serif;
 }
 
 .detail-level-container ul {
   list-style: none;
   padding: 0;
   overflow: hidden;
-  /*float: right;*/
   margin: 0;
   border-radius: 3px;
   -webkit-border-radius: 3px;
@@ -1268,7 +1308,7 @@ a#long-detail.active {
 }
 
 .view-biblio-list a {
-  font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
+
 }
 
 .views-field-citation span.biblio-title-mla {
@@ -1279,7 +1319,7 @@ a#long-detail.active {
 }
 /* authors */
 .views-field-citation span.field-content {
-  font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
+
 }
 .views-field-citation i,
 .views-field-citation em {
@@ -1308,6 +1348,62 @@ a#long-detail.active {
 }
 
 
+.page-node-edit .node-biblio-form a.btn-warning{
+  box-shadow: none;
+  color: #606060;
+  letter-spacing: .05em;
+  background:#fff;
+  border:1px solid #ddd !important;
+}
+.page-node-edit .node-biblio-form a.btn-warning:hover{
+  background: #888;
+  box-shadow: none;
+  border-color: #888;
+  color: #fff;
+  text-shadow: 0 0 1px #444;
+}
+
+
+
+
+
+
+@media screen and (max-width: 991px) {
+
+    .control-box-cell-pager.col-xs-6{
+      float:right;
+    }
+    .control-box-cell-header.col-xs-12{
+      width:33%;
+    }
+
+    .control-box-cell-filters.col-xs-12{
+      display:none;
+    }
+}
+
+@media screen and (max-width: 675px) {
+
+    .block-sources-views .right-side > div{
+      float:right;
+    }
+
+    .control-box-cell-pager.col-xs-6{
+      width:100%;
+    }
+
+    .control-box-cell-header.col-xs-12{
+      width:33%;
+      position: relative;
+      bottom: 1rem;
+    }
+}
+
+@media screen and (max-width: 450px) {
+
+
+
+}
 
 
 

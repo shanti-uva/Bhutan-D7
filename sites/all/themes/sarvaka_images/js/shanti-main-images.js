@@ -284,7 +284,9 @@
                 slide.next().find('img').hide();
                 href = slide.next().find('a').attr('href');
             }
-            window.location.href = href;
+            if (typeof(href) === 'string' && href !== '' && href !== 'undefined') {
+                window.location.href = href;
+            }
         };
         if ($('#fsslider').length > 0) {
           // Initiate faux slider for image (this creates the forward/backward arrows)
@@ -304,42 +306,17 @@
           });
         }
 
+        // Hide nav arrows until the carousel is loaded
+        $('#fsslider a.flex-prev, #fsslider a.flex-next').addClass('hidden');
+
         // Lower image title until carousel is loaded
         $('header.image-title').css('top', '-70px');
 
-        shanti_images_page_load_carousel(settings);  // See below
-        /*
-        // Initialize the Mutation Observer to place on the main image div to observe when that image is loaded
-        // When it's class goes from "progressive preview" to "progressive" then the main image is loaded and we can load the carousel
-        var divobserver = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {
-                // Look for the attribute class (initially this is "progressive preview")
-                if (mutation.attributeName === "class") {
-                    var attributeValue = $(mutation.target).prop(mutation.attributeName);
-                    // When the class gets changed to just "progressive"...
-                    if (attributeValue === "progressive") {
-                      shanti_images_page_load_carousel(settings);  // See below
-                    }
-                }
-            });
-        });
+        // Load carousel after 1 second
+        setTimeout(function() {
+            shanti_images_page_load_carousel(settings);  // See below
+        }, 1);
 
-        // Add the Observer to the Main Progressive Image Div
-        $div = $('#fsslider div.progressive');
-        divobserver.observe($div[0], {
-            attributes: true
-        });
-        */
-
-        /*
-          // If current image in carousel is first or last, hide the corresponding arrow
-          if ($('.flex-active-slide').prev('li').length == 0) {
-              $('.flex-nav-prev').hide();
-          }
-          if ($('.flex-active-slide').next('li').length == 0) {
-              $('.flex-nav-next').hide();
-          }
-         */
 
           $('.flexslider a:not(.flex-nav-prev > a)').click(function() {
             $('.preloading-horizontal,.image-preloading-text').css('display','block');
@@ -369,6 +346,9 @@
            $('#fscarousel-placeholder').replaceWith(carousel);
            $('#fscaroload').remove(); // remove placeholder
 
+           // If the carousel is empty (i.e. node has no collection), just return
+           if ( $('#fscarousel').hasClass('nodata')) {  return; }
+
            // Initialize carousel
            $('#fscarousel').flexslider({
                animation: "slide",
@@ -380,99 +360,32 @@
                move: 3
            });
 
-           var slider = $('#fscarousel').data('flexslider');
-           slider.flexAnimate(3, false, true, false);
+           // Reveal nav arrows around main picture once carousel is loaded
+           $('#fsslider a.flex-prev, #fsslider a.flex-next').removeClass('hidden');
+
+           // Move the current (active) thumb to the middle (ish)
+           var actind = $('#fscarousel ul.slides li.flex-active-slide').prevAll('li').length;
+           if (actind > 9) {
+               actind = Math.ceil(actind / 3) - 2;
+               if (actind > 0) {
+                   $('#fscarousel').data('flexslider').flexAnimate(actind, false, true, false);
+               }
+           }
 
            // Readjust header title with carousel loaded
-           $('header.image-title').css('top', '-160px');
+           var numslides = $('#fscarousel ul.slides li').length;
+           if (numslides > 0) {
+               $('header.image-title').css('top', '-160px');
+           }
 
-           // Set up ajax loading of further slides
-           settings.shanti_images.carousel_coll = $('#fscarousel').data('collid');
-           settings.shanti_images.carousel_start = $('#fscarousel').data('start');
+           if ($('#fscarousel .slides li.flex-active-slide').is(":last-child")) {
+               $('#fsslider a.flex-next').addClass('hidden');
+           } else if ($('#fscarousel .slides li.flex-active-slide').is(":first-child")) {
+               $('#fsslider a.flex-prev').addClass('hidden');
+           }
 
-           // Watch for hovering on first to show Prev arrow to initial ajax loading of more slides
-           $('#fscarousel .slides').on('hover', 'li:first-child', function() {
-               $('#fscarousel .flex-prev').removeClass('flex-disabled');
-           });
-
-           // Watch for hovering on first to show Prev arrow to initial ajax loading of more slides
-           $('#fscarousel .slides').on('hover', 'li:last-child', function() {
-               if (!$('#fscarousel .flex-next').hasClass('loaded')) {
-                   $('#fscarousel .flex-next').removeClass('flex-disabled');
-               }
-           });
-
-           // Load more slides if at the beginning
-           $('#fscarousel').on('mouseup', '.flex-prev', function(e) {
-               var slider = $('#fscarousel').data('flexslider');
-               if (slider.currentSlide === 1 && !settings.shanti_images.loading_slides ) {
-                   e.stopImmediatePropagation();
-                   settings.shanti_images.loading_slides = true;
-                   var num_to_load = 30;
-                   var collid = settings.shanti_images.carousel_coll;
-                   var start = settings.shanti_images.carousel_start - num_to_load;
-                   settings.shanti_images.carousel_start = start;
-                   $.ajax({
-                       url: '/api/carouseldata/slides/' + collid + '/' + start + '/' + num_to_load,
-                       success: function(data) {
-                           var slider = $('#fscarousel').data('flexslider');
-                           var slides = $(data);
-                           var slen = slides.length;
-                           // add slides in reverse order to front of carousel
-                           for (var n=slen-1; n>-1; n--) {
-                               var slide = slides.eq(n);
-                               slider.addSlide(slide, 0);
-                           }
-
-                           slider.currentSlide = 0;
-                           slider.flexAnimate(10, false, true, false);
-
-                           setTimeout(function() {
-                               settings.shanti_images.loading_slides = false;
-                           }, 500);
-                       }
-                   });
-               }
-           });
-
-           $('#fscarousel').on('mouseup', '.flex-next', function(e) {
-               var slider = $('#fscarousel').data('flexslider');
-               if (slider.currentSlide >= (slider.pagingCount - 2) && !settings.shanti_images.loading_slides ) {
-                   e.stopImmediatePropagation();
-                   settings.shanti_images.loading_slides = true;
-                   var num_to_load = 30;
-                   var slides_per_page = 3;
-                   var collid = settings.shanti_images.carousel_coll;
-                   var start = settings.shanti_images.carousel_start + slider.count;
-                   settings.shanti_images.carousel_start = start;
-                   $.ajax({
-                       url: '/api/carouseldata/slides/' + collid + '/' + start + '/' + num_to_load,
-                       success: function(data) {
-                           if (data === 'END') {
-                               $('#fscarousel .flex-next').addClass('flex-disabled loaded');
-                               settings.shanti_images.loading_slides = false;
-                               return;
-                           }
-                           var slider = $('#fscarousel').data('flexslider');
-                           var slides = $(data);
-                           var slen = slides.length;
-                           var addind = slider.count - 1;
-                           // add slides in reverse order to front of carousel
-                           for (var n=0; n<slen; n++) {
-                               var slide = slides.eq(n);
-                               slider.addSlide(slide, addind + n);
-                           }
-                           var newslide = Math.floor(slider.count / slides_per_page) - Math.floor(num_to_load / slides_per_page) - 1;
-                           slider.flexAnimate(newslide, false, true, false);
-
-                           setTimeout(function() {
-                               settings.shanti_images.loading_slides = false;
-                           }, 500);
-                       }
-                   });
-               }
-           });
        });
+
    }
           
    /**
@@ -566,6 +479,7 @@
                 h: Math.floor(pswidth / ratio),
             },
         ]; // end of items
+        
         var options = {
             index: 0 // start at first slide
         };

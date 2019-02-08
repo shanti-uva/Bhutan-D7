@@ -4,14 +4,21 @@ Drupal.behaviors.shantiTexts = {
     attach: function (context, settings) {
 
         $('.shanti-texts-section-title').on('inview', function(event, isInView) {
-            nid = $(this).parent().attr('id')
-            toc_id = nid.replace('shanti-texts','shanti-texts-toc')
+            console.log($(this).text() + ": " + isInView);
+            nid = $(this).parent().attr('id');
+            toc_id = nid.replace('shanti-texts','shanti-texts-toc');
             if (isInView) {
-                $('#shanti-texts-toc li a').css("font-weight","normal");
-                $('#'+toc_id).css("font-weight","bold");
+                $('.solo').removeClass('toc-selected solo');
+                $('#'+toc_id).addClass('toc-selected');
                 $("#shanti-texts-sidebar .tab-content").scrollTo('#'+toc_id,10,{easing:'swing',margin:true,offset:-130}); /* speed was 500, testing now 10 */
             } else {
+                if ($('.toc-selected').length == 1) {
+                    $('#'+toc_id).addClass('solo');
+                } else {
+                    $('#' + toc_id).removeClass('toc-selected');
+                }
             }
+            $(window).trigger('checkInView');
         });
 
         var kwic_n = Drupal.settings.shantiTexts.kwic_n;

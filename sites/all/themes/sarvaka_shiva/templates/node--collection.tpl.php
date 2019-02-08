@@ -101,9 +101,9 @@ if ($node->type == 'subcollection') {
  	        <?php print render($content['body']); ?>
  	    </div>
 		<div>
-		    <h3>Items in this <?php echo $type; ?></h3>
+		    <h3>Visuals in this <?php echo $type; ?></h3>
 		    <?php if ($type == 'collection'):?>
-		    <p>The list below includes items from this Collection's Subcollections.</p>
+		    <p>The list below includes visuals from this Collection’s Subcollections.</p>
 		    <?php endif; ?>
 		    <?php
 		    if (!$collection_items_view) {
@@ -119,7 +119,7 @@ if ($node->type == 'subcollection') {
 
 		<!-- Content creation buttons -->
 		<?php foreach($ctypes as $ctype => $use): ?>
-		<?php if ($use && user_access("create $ctype content") && (og_is_member('node', $node->nid) || user_access("edit any $ctype content"))):?>
+ 		<?php if ($use && og_user_access('node', $node->nid, "create $ctype content")):?>
         <a class="btn btn-primary" href="/node/add/<?php echo $ctype;?>?<?php echo $og_field;?>=<?php echo $node->nid;?>">Add <?php echo $ctype;?></a>
 		<?php endif;?>
 		<?php  endforeach;?>
@@ -163,10 +163,21 @@ if ($node->type == 'subcollection') {
 		<?php else: ?>
 		<h4>Parent Collection</h4>
 		<div>
-		<?php
-		$content[$og_parent_field][0];
-		print render($content[$og_parent_field]);
-		?>
+            <?php
+            if (empty($content[$og_parent_field]) && isset($node->parent_coll_title)) {
+                print '<div class="field field-name-field-og-parent-collection-ref field-type-entityreference field-label-hidden">
+ 	                    <div class="field-items">
+   	                    <div class="field-item even">
+                                <a name="parentcoll" title="' . t('This collection is private') . '">' .
+                                    $node->parent_coll_title .
+                                '</a>
+                              </div>
+                           </div>
+                   </div>';
+            } else {
+                print render($content[$og_parent_field]);
+            }
+            ?>
 		</div>
 		<?php endif; ?>
 

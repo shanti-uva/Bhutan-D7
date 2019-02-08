@@ -1,0 +1,18 @@
+diff --git a/docroot/sites/all/modules/contrib/file_entity/file_entity.file.inc b/docroot/sites/all/modules/contrib/file_entity/file_entity.file.inc
+index f7dc3b700..86f555a59 100644
+--- a/docroot/sites/all/modules/contrib/file_entity/file_entity.file.inc
++++ b/docroot/sites/all/modules/contrib/file_entity/file_entity.file.inc
+@@ -110,9 +110,12 @@ function file_entity_file_update($file) {
+     // If the file has changed dimensions or a new file has been uploaded,
+     // update any image field reference to this file and flush image style
+     // derivatives.
++    if (gettype($file->metadata) == 'string') {
++      $file->metadata = array();
++    }
+     $file->metadata += array('width' => NULL, 'height' => NULL);
+     if (gettype($file->original->metadata) == 'string') {
+-        $file->original->metadata = array();
++      $file->original->metadata = array();
+     }
+     $file->original->metadata += array('width' => NULL, 'height' => NULL);
+     if ($file->filesize != $file->original->filesize || $file->metadata['width'] != $file->original->metadata['width'] || $file->metadata['height'] != $file->original->metadata['height']) {

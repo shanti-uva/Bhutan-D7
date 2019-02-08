@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * shanti_texts_features.file_default_displays.inc

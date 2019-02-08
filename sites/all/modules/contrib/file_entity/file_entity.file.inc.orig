@@ -111,9 +111,6 @@ function file_entity_file_update($file) {
     // update any image field reference to this file and flush image style
     // derivatives.
     $file->metadata += array('width' => NULL, 'height' => NULL);
-    if (gettype($file->original->metadata) == 'string') {
-        $file->original->metadata = array();
-    }
     $file->original->metadata += array('width' => NULL, 'height' => NULL);
     if ($file->filesize != $file->original->filesize || $file->metadata['width'] != $file->original->metadata['width'] || $file->metadata['height'] != $file->original->metadata['height']) {
       _file_entity_update_image_field_dimensions($file);

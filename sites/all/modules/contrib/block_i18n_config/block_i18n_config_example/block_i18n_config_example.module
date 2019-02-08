@@ -1,0 +1,130 @@
+<?php
+
+
+/**
+ * Implements hook_block_info().
+ */
+function block_i18n_config_example_block_info() {
+	return array(
+    'block_i18n_config_example_block' => array(
+  			'info' => 'Block I18n Config Example Block',
+  			'cache' => DRUPAL_NO_CACHE,
+    ),
+  );
+}
+
+/**
+ * Implements hook_block_i18n_config_info().
+ */
+function block_i18n_config_example_block_i18n_config_info() {
+  return array(
+    'block_i18n_config_example_block_textfield1' => array(
+      'module' => 'block_i18n_config_example',
+      'blocks' => array('block_i18n_config_example_block'),
+      'property parents' => array('block_i18n_config_example_block_textfield1'),
+      'property getter' => 'block_i18n_config_example_block_property_getter1',
+      'info' => array(
+        'title' => t('Some textfield 1!'),
+      ),
+    ),
+    'block_i18n_config_example_block_textfield2' => array(
+      'module' => 'block_i18n_config_example',
+      'blocks' => array('block_i18n_config_example_block'),
+      'property getter' => 'block_i18n_config_example_block_property_getter2',
+      'property parents' => array('parent1', 'parent3'),
+      'info' => array(
+        'title' => t('Some textfield 2!'),
+      ),
+    ),
+    'block_i18n_config_example_body' => array(
+      'module' => 'block_i18n_config_example',
+      'blocks' => array('block_i18n_config_example_block'),
+      'property getter' => 'block_i18n_config_example_block_property_getter3',
+      'property parents' => array('block_i18n_config_example_body'),
+      'info' => array(
+        'title' => t('Some textarea!'),
+        'format' => 'block_i18n_config_example_body_format',
+      ),
+    ),
+  );
+}
+
+
+function block_i18n_config_example_block_property_getter1($property, $delta) {
+  return variable_get('block_i18n_config_example_block_textfield1', 'test');
+}
+
+function block_i18n_config_example_block_property_getter2($property, $delta) {
+  return variable_get('block_i18n_config_example_block_textfield2', 'test');
+}
+
+function block_i18n_config_example_block_property_getter3($property, $delta) {
+  return variable_get('block_i18n_config_example_body', 'test');
+}
+
+/**
+ * Implements hook_block_configure().
+ */
+function block_i18n_config_example_block_configure($delta) {
+
+  $form = array();
+
+  if ($delta === 'block_i18n_config_example_block') {
+    $form['block_i18n_config_example_block_textfield1'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Some example textfield 1'),
+        '#default_value' => variable_get('block_i18n_config_example_block_textfield1'),
+    );
+    $form['block_i18n_config_example_block_textfield2'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Some example textfield 2'),
+        '#parents' => array('parent1', 'parent3'),
+        '#default_value' => variable_get('block_i18n_config_example_block_textfield2'),
+    );
+    $form['block_i18n_config_example_body']['block_i18n_config_example_body'] = array(
+      '#type' => 'text_format',
+      '#title' => t('Block body'),
+      '#default_value' => variable_get('block_i18n_config_example_body') ? variable_get('block_i18n_config_example_body')['value'] : '',
+      '#format' => 'full_html',
+      '#rows' => 15,
+      '#description' => t('The content of the block as shown to the user.'),
+      '#required' => TRUE,
+    );
+  }
+
+  return $form;
+}
+
+/**
+ * Implements hook_block_save().
+ */
+function block_i18n_config_example_block_save($delta = '', $edit = array(), $number_limit = array()) {
+  if ($delta == 'block_i18n_config_example_block') {
+    variable_set('block_i18n_config_example_block_textfield1', $edit['block_i18n_config_example_block_textfield1']);
+    variable_set('block_i18n_config_example_block_textfield2', $edit['parent1']['parent3']);
+    variable_set('block_i18n_config_example_body', $edit['block_i18n_config_example_body']);
+  }
+}
+
+
+/**
+ * Implements hook_block_view().
+ */
+function block_i18n_config_example_block_view($delta = '') {
+  $block = array();
+
+  if ($delta == 'block_i18n_config_example_block') {
+    $content = array(
+      block_i18n_config_get_property('block_i18n_config_example_block_textfield1', $delta),
+      block_i18n_config_get_property('block_i18n_config_example_block_textfield2', $delta),
+      block_i18n_config_get_property('block_i18n_config_example_body', $delta),
+    );
+    $block = array(
+        'subject' => t('Block I18n Test Block'),
+        'content' =>  implode(' | ', $content),
+    );
+    return $block;
+  }
+
+  return $block;
+}

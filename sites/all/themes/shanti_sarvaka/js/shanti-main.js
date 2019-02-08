@@ -986,30 +986,10 @@ Drupal.behaviors.shantiSarvakaBrokenImages = {
                         repurl = videoimgurl;
                     }
                   }
+                  var oldsrc = $(this).attr('src');
+                  $(this).attr('data-origimg', oldsrc);
                   $(this).attr('src', repurl);
               });
-
-
-              // Iterate through images already added to DOM
-              $('img').delay(1500).each(function() {
-                  if (!this.complete || typeof this.naturalWidth == "undefined" || this.naturalWidth == 0) {
-                      var repurl = url;
-                      if ($(this).parents('.shanti-thumbnail.collection').length > 0) {
-                          repurl = collimgurl;
-                      } else if ($(this).parents('.shanti-thumbnail.audio').length > 0) {
-                          repurl = audioimgurl;
-                      } else if ($(this).parents('.shanti-thumbnail.video').length > 0) {
-                          repurl = videoimgurl;
-                      } else {
-                          $(this).addClass('img-responsive img-generic');
-                      }
-
-                    }
-                    var currurl = $(this).attr('src');
-                    $(this).attr('src', repurl);
-                    $(this).attr('data-orig', currurl);
-
-                });
             }
         }
       }

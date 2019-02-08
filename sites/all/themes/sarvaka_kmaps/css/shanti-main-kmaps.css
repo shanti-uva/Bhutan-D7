@@ -20,7 +20,6 @@
   background: #3297f7 !important;
 }
 
-.page-places .front-list .place span.fa-plus,
 .page-places .front-list .shanticon-places::before,
 .page-places .view-section .fancytree-container .glyphicon,
 .page-places .view-section .fancytree-container .fancytree-node:hover > .glyphicon,
@@ -93,7 +92,6 @@
 }
 
 .page-subjects .front-list .shanticon-places::before,
-.page-subjects .front-list .place span.fa-plus,
 .page-subjects .view-section .fancytree-container .glyphicon,
 .page-subjects .view-section .fancytree-container .fancytree-node:hover > .glyphicon,
 .page-subjects .view-section .fancytree-container .fancytree-node:active > .glyphicon,

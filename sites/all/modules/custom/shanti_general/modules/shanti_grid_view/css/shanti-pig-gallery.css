@@ -33,7 +33,7 @@
 .pig-figure .img-footer-overlay {
     background-color: #222;  
     font-size: 0.88em;
-    font-family: 'Helvetica Neue',helvetica, arial, sans-serif;
+    font-family:'Open Sans','Segoe UI',Tahoma,sans-serif;
     position: absolute;
     bottom: 0;
     padding: .25rem .5rem;
@@ -241,7 +241,6 @@
     font-size: 1.12em;
     line-height:1.44em;
     letter-spacing:0.0275rem;
-    font-weight: bold;
 }
 
 .ppd-expander .ppd-details-inner > h2::before{
@@ -289,7 +288,7 @@ font-weight: normal;
 .ppd-expander .ppd-details .specs {
     display: block;
     float: none;
-    padding-left: .8rem;
+    padding-left: 3.2rem;
     padding-bottom:.5rem;
     color: #ccc;
     font-size: .88em;
@@ -307,9 +306,10 @@ font-weight: normal;
 }
 
 .ppd-expander .ppd-details .links {
-    float: right;
-    margin-bottom:0;
-    padding-left:0;
+    float: left;
+    margin-bottom: 0;
+    padding-left: 3rem;
+    padding-top: 1rem;
 }
 
 .ppd-expander .ppd-details .specs *,  
@@ -374,22 +374,21 @@ font-weight: normal;
 
 .ppd-details .desc.more-links{
   float: right;
-  margin-right: 2rem;
-  font-weight: bold;
 }
 
 
 .ppd-expander .ppd-details .links .btn-sm{
-  background: #333;
-  border: 1px solid #555 !important;
-  color: #ddd;
-  border-radius: .25em;
-  background-clip: padding-box;
-  box-shadow:none;
-  font-size: 0.75em;
-  float:right;
-  padding: .5rem 1.2rem .2rem 1.4rem;
-  margin: 1.5rem 1rem 0.5rem 0.75rem;
+    background: #333;
+    border: 1px solid #888 !important;
+    color: #eee;
+    border-radius: .25em;
+    background-clip: padding-box;
+    box-shadow: none;
+    font-weight: 400;
+    letter-spacing: 0.275rem;
+    float: left;
+      padding: .4rem 1.8rem .4rem 2rem;
+    margin: 2.5rem 1rem 0.5rem 3rem;
 }
 .ppd-expander .ppd-details .links .btn-sm:hover{
   background-color:#000;
@@ -404,10 +403,25 @@ font-weight: normal;
 }
 
 
-
-
-
-
+.ppd-expander .ppd-details .links .btn-sm::after {
+    font-size: 1.5em;
+    font-family: 'FontAwesome';
+    content: '\f101';
+    position: relative;
+    top: 0.175rem;
+    left: .7rem;
+    font-style: normal;
+    opacity: .6;
+    -webkit-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+}
+.ppd-expander .ppd-details .links:hover .btn-sm::after{
+    opacity:1;
+    left: 1rem;
+}
+.ppd-expander .ppd-details .links:active .btn-sm::after{
+    left: .6rem;
+}
 
 
 /*---------------------------------*/
@@ -418,6 +432,7 @@ font-weight: normal;
   background: #ddd;
   position: relative;
   top: 0.25rem;
+  left: .2rem;
 }
 
 .ppd-details-inner .kmaps .popover-link-tip{

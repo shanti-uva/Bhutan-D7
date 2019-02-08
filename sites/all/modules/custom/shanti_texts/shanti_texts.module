@@ -232,6 +232,25 @@ function shanti_texts_form_alter(&$form, &$form_state, $form_id) {
     }
 }
 
+
+/**
+ * Implements hook_kmaps_fields_solr_doc_alter to change the doc sent to the solr KM asset index.
+ *   Called from _shanti_kmaps_fields_get_solr_doc in shanti_kmaps_fields.module line 483
+ *   Goes through entity references assigned in the Solr index field mapping on the Shanti Image content type page
+ *   Turns NIDs into text strings for agents and descriptions
+ **/
+function shanti_texts_kmaps_fields_solr_doc_alter(&$solrdoc)
+{
+    foreach ($solrdoc as $m => &$sdoc) {
+        $node = node_load($sdoc['id']);
+        // Get Language from Kmap field
+        if (!empty($node->field_language_kmap[LANGUAGE_NONE][0])) {
+            $sdoc['node_lang'] = $node->field_language_kmap[LANGUAGE_NONE][0]['header'];
+        }
+    }
+}
+
+
 function shanti_texts_node_insert($node)
 {
     if ($node->type == 'book')
@@ -301,6 +320,49 @@ function shanti_texts_node_delete($node)
 	}
 
 
+}
+
+/**
+ * Special function to count number of BOOK items in a collection in texts.
+ * The Book modules saves both nooks and pages as nodes, determine which are books
+ * by querying the book table and finding which nids equal the bid.
+ *
+ * Used in All Collection and My Collection views PHP field
+ *
+ * @param $coll
+ * @param string $retval
+ * @return array|int
+ */
+function shanti_texts_get_collection_items($coll, $retval='count') {
+    $books = array();
+    try {
+        $pgids = shanti_collections_get_items_in_collection($coll, 'nids');
+        $q = db_select('book', 'bk')->fields('bk', array('nid'))
+            ->where('nid=bid')->condition('bk.nid', $pgids, 'IN')->execute();
+        $results = $q->fetchAll();
+        foreach ($results as $res) {
+            $books[] = $res->nid;
+        }
+    } catch (Exception $e) { }
+
+    if ($retval == 'count') {
+        return count($books);
+    } else {
+        return $books;
+    }
+}
+
+function shanti_texts_user_view($account, $view_mode, $langcode) {
+    if (module_exists('realname') && !empty($account->content['realname']['#title'])) {
+        $account->content['realname']['#title'] = t("Full Name");
+        if (!empty($account->content['realname'][0]['#markup'])) {
+            $mu = $account->content['realname'][0]['#markup'];
+            if (strstr($mu, 'class="active"></a>')) {
+                $mu = str_replace('active"></a>', 'active">' . $account->name . '</a> <small>(Edit profile to add first and last name.)</small>', $mu);
+                $account->content['realname'][0]['#markup'] = $mu;
+            }
+        }
+    }
 }
 
 function shanti_texts_get_lang_code($nid)

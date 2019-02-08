@@ -292,6 +292,8 @@
 /* this adjust for the page wrapper that has the bootstrap side padding removed */
 .node-type-shanti-image #search-flyout.extruder{
     right: 1.5rem !important;
+    filter: alpha(opacity=95);
+    opacity:.95;
 }
 
 
@@ -324,28 +326,39 @@
 }
 
 
-
 .node-type-shanti-image .btn-show-search-results{
   background: #333;
 }
-
 .node-type-shanti-image .btn-show-search-results:hover{
   background:#555;
 }
-
 .btn-show-search-results .icon::before{
   color:#aaa;
 }
-
 .node-type-shanti-image .btn-show-search-results .badge{
   background-color: transparent;
   color: #c0c0c0;
 }
-
 .btn-show-search-results > span{
   background:#000;
 }
 
 
+.node-type-shanti-image .extruder.isOpened .btn-show-search-results{
+  background: #fff;
+}
+.node-type-shanti-image .extruder.isOpened .btn-show-search-results:hover{
+  background:#555;
+}
+.node-type-shanti-image .extruder.isOpened .btn-show-search-results .icon::before{
+  color:#ddd;
+}
+.node-type-shanti-image .extruder.isOpened .btn-show-search-results .badge{
+  background-color: #fff;
+  color: #000;
+}
+.node-type-shanti-image .extruder.isOpened .btn-show-search-results > span{
+  background:#111;
+}
 
 

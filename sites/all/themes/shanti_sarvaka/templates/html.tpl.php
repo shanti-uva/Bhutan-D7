@@ -49,6 +49,7 @@
 <head> <!-- head had attribute: profile="<?php print $grddl_profile; ?>" -->
   <?php print $head; ?>
   <title><?php print $head_title; ?></title>
+  <link href="https://fonts.googleapis.com/css?family=EB+Garamond:400,400i,500|Open+Sans:400,400i,600&amp;subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext" rel="stylesheet">
   <?php print $styles; ?>
   <?php print $modernizer; ?>
 </head>

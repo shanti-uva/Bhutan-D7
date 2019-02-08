@@ -146,8 +146,9 @@ function sources_theme_biblio_long($variables) {
 
   // Publication Year
   $output .= '<div class="source-field source-field-biblio-year">
-                            <span class="field-label label-biblio-year-1">' . t('Publication Year') . ': </span>
-                            <span class="field-content">' . $node->biblio_year . "</span>  </div>\n";
+                        <span class="field-label label-biblio-year-1">' . t('Publication Year') . ': </span>
+                        <span class="field-content">' . (($node->biblio_year != '0') ? $node->biblio_year : 'n/a') . "</span>  </div>\n";
+
 
   // Publication Info
   if (!empty($node->biblio_publisher)) {

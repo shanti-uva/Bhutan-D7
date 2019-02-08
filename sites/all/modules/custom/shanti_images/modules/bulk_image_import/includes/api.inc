@@ -12,7 +12,7 @@ function bulk_image_import_api_get() {
       drupal_json_output($item);
       drupal_exit();
     }
-    drupal_json_output();
+    drupal_json_output(array());
     drupal_exit();
   }
   else {
@@ -59,11 +59,12 @@ function bulk_image_import_api_post() {
   );
   $res = shanti_images_upload_iiif($node->nid, $file->fid, $siid);
   if (!$res) {
-    _bulk_image_import_task_handle_error($task, "Could not convert Box file", $node);
-    return drupal_json_output(array(
+    _bulk_image_import_task_handle_error($task, "Could not convert Box file", $node, TRUE);
+    drupal_json_output(array(
       'success'=> 0,
       'message'=> t('Import failed for ').$meta['Title'].'.'
     ));
+    drupal_exit();
   }
   else {
     db_query('UPDATE bulk_image_import_task SET image_linked = 1 WHERE tid = :tid', array('tid' => $tid));

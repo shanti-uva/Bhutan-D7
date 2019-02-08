@@ -3,7 +3,17 @@
  * @file
  * Shanti General Module began as a feature. This is blank except for auxiliary or Shanti general functions
  */
- 
+
+ /********************  Node Functions **********************/
+ /**
+  * Hook node submit
+  */
+ function shanti_general_node_submit($node, $form, &$form_state) {
+    // Trim leading and following spaces from titles for better alphabeticization.
+    $title = trim($form_state['values']['title']); // First do a regular trim
+    $node->title = trim( $title, "\xC2\xA0\n" ); // Then trim off nbsp etc. in unicode.
+ }
+
  /**
   * Enable form edit cancel button when there are editor conflicts.
   */
@@ -33,41 +43,7 @@
      } 
  }
 
- /**
-  * i18n Functions (Should these ultimately go to a standalon shanti-i18n module?)
-  */
-
-/**
- * Utility function to get the language name from its code, if that language is enabled
- *
- * @param $code
- * @return bool
- */
-function shanti_general_get_lang_name($code) {
-    $ll = language_list();
-    if (isset($ll[$code])) {
-     return $ll[$code]->name;
-    }
-    return FALSE;
-}
-
-/**
- * Utility function to get a language's i18n code from its name (as found in the language list record)
- * Only works if the language is enabled
- *
- * @param $name
- * @return bool|int|string
- */
-function shanti_general_get_lang_code($name) {
-    $ll = language_list();
-    foreach($ll as $lc => $lobj) {
-        if ($lobj->name == $name) {
-            return $lc;
-        }
-    }
-    return FALSE;
-}
-
+ /*******************  Utility Functions ****************************/
 /**
  * Utility function to determine if a node is public
  */
@@ -135,4 +111,38 @@ function shanti_do_solr_query($url, $as_array=FALSE) {
   $data = shanti_file_get_contents($url);
   $jdata = json_decode($data, $as_array);
   return $jdata;
+}
+
+/*****************   i18n Functions   ******************/
+/** (Should these ultimately go to a standalon shanti-i18n module?) **/
+
+/**
+ * Utility function to get the language name from its code, if that language is enabled
+ *
+ * @param $code
+ * @return bool
+ */
+function shanti_general_get_lang_name($code) {
+    $ll = language_list();
+    if (isset($ll[$code])) {
+        return $ll[$code]->name;
+    }
+    return FALSE;
+}
+
+/**
+ * Utility function to get a language's i18n code from its name (as found in the language list record)
+ * Only works if the language is enabled
+ *
+ * @param $name
+ * @return bool|int|string
+ */
+function shanti_general_get_lang_code($name) {
+    $ll = language_list();
+    foreach($ll as $lc => $lobj) {
+        if ($lobj->name == $name) {
+            return $lc;
+        }
+    }
+    return FALSE;
 }

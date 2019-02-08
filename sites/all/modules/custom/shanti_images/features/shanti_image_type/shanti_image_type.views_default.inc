@@ -170,7 +170,7 @@ function shanti_image_type_views_default_views() {
   $handler->display->display_options['style_plugin'] = 'shanti_grid_view';
   $handler->display->display_options['style_options']['iiif_view'] = 1;
   $handler->display->display_options['style_options']['iiif_options'] = array(
-    'iiif_url_syntax' => '/mandala/__FNAME__/full/!__SIZE__,__SIZE__/0/default.jpg',
+    'iiif_url_syntax' => '__FNAME__/full/!__SIZE__,__SIZE__/0/default.jpg',
     'iiif_img_field' => 'field_image',
     'iiif_tiny_size' => '50',
     'iiif_thumb_size' => '150',
@@ -182,6 +182,20 @@ function shanti_image_type_views_default_views() {
     'thumbnail_image' => 'field_image',
     'large_image' => 'field_image',
     'xlarge_image' => 'field_image',
+  );
+  $handler->display->display_options['style_options']['data_type_info'] = array(
+    'id' => '0',
+    'filename' => '0',
+    'title' => '0',
+    'thumbnail_image' => '0',
+    'thumbnail_width' => '0',
+    'thumbnail_height' => '0',
+    'img_by_size_url' => '',
+    'ppd_info' => 'url',
+    'ppd_info_url' => '',
+    'ppd_info_func' => 'my_content_page_item_info',
+    'ppd_info_cache' => '',
+    'item_url' => '',
   );
   /* Header: Global: Text area */
   $handler->display->display_options['header']['area']['id'] = 'area';
@@ -242,7 +256,7 @@ function shanti_image_type_views_default_views() {
 
   /* Display: My Images Page */
   $handler = $view->new_display('page', 'My Images Page', 'page');
-  $handler->display->display_options['path'] = 'mycontent/images';
+  $handler->display->display_options['path'] = 'mycontent/images-old';
   $handler->display->display_options['menu']['type'] = 'normal';
   $handler->display->display_options['menu']['title'] = 'My Images';
   $handler->display->display_options['menu']['weight'] = '10';

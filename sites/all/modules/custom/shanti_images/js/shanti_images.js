@@ -92,10 +92,71 @@
     };
     
     /**
-     * Uncheck "Show end date" in new edit form
+     * Behaviors for Shanti Image Edit Form
      */
     Drupal.behaviors.shanti_images_edit_form = {
         attach: function (context, settings) {
+            // Confirm before field deletes. Uses Bootbox.
+            if ($('body').hasClass('page-node-edit')) {
+                var spinner = '<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>';
+                $('.btn-delete.ajax-processed').each(function () {
+                    var btnid = $(this).attr('id');  // Get the button id
+                    var inputval = $(this).prevAll('.field-type-text').find('input').val();
+                    // Add a beforeserialize function to potentially interrupt AJAX call
+                    Drupal.ajax[btnid].beforeSerialize = function () {
+                        // If the button has the class "confirm-return" it is returning already from confirmation. Do not show dialog
+                        if (!$('#' + btnid).hasClass('action-confirmed')) {
+                            // Otherwise, use bootbox to show the dialog
+                            bootbox.trigid = btnid; // Save current button id with bootbox to access in callback
+                            // Get the value of the preceding input box for confirm dialog
+                            var btnnm = btnid.replace('edit-field', '').replace('en', '')
+                                .replace('und', '').replace('remove-button', '');
+                            btnnm = btnnm.replace(/\-/g, ' ');
+                            // Create confirm message
+                            var btnval = (inputval) ? '= “' + inputval + '”' : '';
+                            var msg = "Are you sure you want to remove this item: " + btnnm + btnval + "?";
+                            // Call bootbox confirm
+                            bootbox.confirm({
+                                message: msg,
+                                buttons: {
+                                    confirm: {
+                                        label: 'Yes',
+                                        className: 'btn btn-primary btbx-confirm'
+                                    },
+                                    cancel: {
+                                        label: 'No',
+                                        className: 'btn btn-primary btbx-cancel'
+                                    }
+                                },
+                                // The callback is the key function. Bootbox returns prior to the answer here.
+                                // So use the call back to set a special class on the button and retrigger
+                                callback: function (result) {
+                                    bootbox.hideAll(); // Hide the dialog box upon any button click
+                                    if (result == true) {  // if confirmed ...
+                                        // Get the current button ID and reset bootstrap variable
+                                        var btnid = '#' + bootbox.trigid;
+                                        bootbox.trigid = false;
+                                        // Add class to
+                                        $(btnid).addClass('action-confirmed');
+                                        $(btnid).trigger('mousedown');
+                                    }
+                                }
+                            });
+                        }
+                        // Only proceed with ajax if the button has the "action-confirmed" class
+                        if ($('#' + btnid).hasClass('action-confirmed')) {
+                            // Hide the trashcan icon and replace with a spinner
+                            $('#' + btnid).find('span.shanticon-trash').hide();
+                            $('#' + btnid).prepend(spinner);
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    };
+                });
+            }
+
+            // Uncheck "Show end date" in new edit form
             setTimeout(function() {
                 $('#edit-field-image-agents-und-form label[for=edit-field-image-agents-und-form-field-agent-dates-und-0-show-todate] > div.checked').each(function() { $(this).parent().click(); });
             }, 400);
@@ -197,7 +258,7 @@
     };
 
   /**
-   * Behavior to adjist image urls on DEV when the image is on prod
+   * Behavior to adjust image urls on DEV when the image is on prod
    * @type {{attach: Drupal.behaviors.shanti_images_dev_adjust.attach}}
    */
   Drupal.behaviors.shanti_images_dev_adjust = {

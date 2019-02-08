@@ -26,12 +26,6 @@
 
 .carousel-indicators li:hover,
 .carousel-indicators li.active{ border-color: #8c48a1; }
-/*
-.ui-resizable-handle.ui-resizable-w,
-.ui-resizable-handle.ui-resizable-w:hover,
-.ui-resizable-handle.ui-resizable-w:active { border-color: #8c48a1 transparent transparent transparent; }
-*/
-
 
 @media screen and (max-width: 768px) {
     
@@ -58,9 +52,6 @@
   }
 }
 
-
-
-
 @media screen and (min-width: 500px) {
   .navbar-header .site-slogan{ color:#8c48a1 !important; } 
   .navbar-brand:hover .site-slogan{ color: #555 !important; } 
@@ -73,14 +64,19 @@
   }
 }
 
-
-
 ::-moz-selection { background: #E6F066 !important; color: #333 !important;}
 ::selection { background: #E6F066 !important; color: #333 !important;}
+/* END theme colors */
 
-/* END colors */
 
 
+
+
+
+.carousel{
+    box-shadow: 0 0 8px #ccc;
+    border: 1px solid #ccc;
+}
 
 .page-home .carousel-title .shanticon-stack:before{
   content: '\e637';
@@ -110,6 +106,8 @@ body:not(.front) article.main-col{
   max-width: 1400px !important;
 }
 
+
+
 .page-mycontent article.main-col,
 .node-type-collection article.main-col,
 .node-type-subcollection article.main-col,
@@ -122,6 +120,13 @@ body:not(.front) article.main-col{
   max-width: 1150px !important;
 }
 
+
+.page-node-edit.no-sidebars .main-content article.main-col{
+  max-width:1200px !important;
+}
+
+
+
 .shanti-text .content-section {
   padding-top: 0;
 }
@@ -132,15 +137,16 @@ body:not(.front) article.main-col{
 
 #autocomplete {
   background-color: #d3d3d3;
-  font-family: 'museo-sans-500',helvetica,arial,sans-serif;
   padding: 2px;
   z-index: 500 !important;
   margin-top: 25px;
 }
 
 .front #block-system-main .front-overview p {
-  padding:2rem 2rem 0;
-  line-height: 1.62em;
+    padding: 2rem 2rem 0;
+    line-height: 1.5em;
+    font-size: .93em;
+    font-style: italic;
 }
 
 .view-all-texts-control-box-row{ /* on collections page */
@@ -168,10 +174,10 @@ body:not(.front) article.main-col{
 }
 
 .view-all-texts-control-box-cell-header .view-result-count-info {
-  font-family: 'museo-sans-500',Helvetica,Arial,sans-serif;
-  font-size: 0.88em;
-  margin: 1rem 0 0 2.5rem;
+  font-size: 0.93em;
+  margin: 1.32rem 0 0 2.5rem;
   text-transform: capitalize;
+  white-space:nowrap;
 }
 
 .view-all-texts-control-box-cell-filters > form{
@@ -229,7 +235,7 @@ body:not(.front) article.main-col{
 }
 
 .views-field{
-  font-size: 0.93em;
+  font-size: 0.88em;
 }
 
 .views-row {
@@ -245,40 +251,67 @@ body:not(.front) article.main-col{
   position: relative;
 }
 
+.view-text-collections .views-row,
+.view-text-collections-by-users .views-row {
+  height: 123px;
+}
+
+.view-text-collections .views-field-type,
+.view-text-collections-by-users .views-field-type {
+  float: left;
+  padding-top: 3px;
+}
+
+.view-text-collections .views-field-php,
+.view-text-collections-by-users .views-field-php {
+  padding-top: 3px;
+}
+
+.view-text-collections .views-field-body,
+.view-text-collections-by-users .views-field-body {
+  clear: both;
+}
+
+.view-text-collections .views-field-field-og-parent-collection-ref {
+  clear: both;
+  margin-top: -5px;
+}
+
 .views-row .views-field.empty::before{
   content:'';
   color:transparent;
 }
 
 .views-field-title h3 {
-  font-size: 1.06em;
-  font-weight: bold;
+  font-size: 1.38em;
+  font-weight: 500;
   line-height: 1.12em;
   margin: 0;
   width: 100%;
-  padding: .4rem 2.2rem 0.1rem .5rem;
+  padding: .2rem 0 0.1rem .5rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  color: rgb(0, 0, 171);
+  color: rgb(0, 0, 139);
   filter: alpha(opacity=80);
-  opacity:0.80;
-  /*font-family: 'droidserif', georgia, palatino, 'Palatino Linotype', serif;*/
+  opacity:0.8;
+  font-family: 'EB Garamond',serif;
 }
 
 .views-field-title h3:hover{
   filter: alpha(opacity=100);
   opacity: 1;
+  color: #df3d26;
 }
 
 .views-field-title h3 .icon {
   color: #fff;
-  font-size: 1.5em;
+  font-size: 1.12em;
   position: absolute;
   right: 0;
   top: 0;
-  width: 3.1rem;
-  height: 3.1rem;
+  width: 3.3rem;
+  height: 3.3rem;
   background: #8856a3;
       text-align: center;
 }
@@ -299,53 +332,55 @@ body:not(.front) article.main-col{
 }
 
 .views-field-field-book-author{
-position: relative;
-top: .5rem;
-padding-left: 1rem;
-font-style: normal;
-font-family: "Helvetica Neue", helvetica, arial, sans-serif;
-color: #333;
-width: auto;
-white-space: nowrap;
-text-overflow: ellipsis;
-overflow: hidden;
-display: block;
+  position: relative;
+  top: .5rem;
+  padding-left: 1rem;
+  color: #333;
+  width: auto;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: block;
 }
 
 .views-field-field-book-author::before{
-content: '\e600';
-font-family: 'shanticon';
-speak: none;
-font-style: normal;
-font-weight: normal;
-font-variant: normal;
-text-transform: none;
-line-height: 1;
-color: #764b8e;
-filter: alpha(opacity=90);
-opacity: .9;
-margin-right: .4rem;
-font-size: 1.24em;
-position: relative;
-top: 0.15rem;
-left: 0.15rem;
+  content: '\e600';
+  font-family: 'shanticon';
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  color: #764b8e;
+  filter: alpha(opacity=90);
+  opacity: .9;
+  margin-right: .4rem;
+  font-size: 1.24em;
+  position: relative;
+  top: 0.15rem;
+  left: 0.15rem;
 }
 
 .views-field.views-field-nothing,
 .views-field.views-field-title-1,
 .views-field-field-og-collection-ref {
-  font-family: "Helvetica Neue", helvetica, arial, sans-serif;
   padding-left: 1.15rem;
+  font-size: .88em;
+  font-weight: 400;
+  font-style: italic;
 }
 
 .views-field.views-field-title{
-  padding-right:0;
   border-bottom: 1px solid #ccc;
-  padding: 0 .5rem .5rem;
+  padding: 0 .5rem .25rem;
+  margin: 0 3.2rem 0 .3rem;
+    margin: 0 2rem 0 0;
 }
 
 .views-field.views-field-title-1 a::before,
-.views-field-field-og-collection-ref a::before{
+.views-field-field-og-collection-ref a::before,
+.views-field-field-og-parent-collection-ref a::before{
   content: "\e634";
   font-family: 'shanticon';
   speak: none;
@@ -378,11 +413,11 @@ left: 0.15rem;
 
 .views-field-field-dc-date-original-year,
 .views-field-field-dc-date-publication-year {
-  font-size: 1em;
+  font-size: .88em;
   color: #333;
   margin: 0;
   position: absolute;
-  top: 5.8rem;
+  top: 5.9rem;
   left: 1.6rem;
 }
 
@@ -397,10 +432,10 @@ left: 0.15rem;
   line-height: 1;
   color: #764b8e;
   margin-right: .5rem;
-  font-size: 1.06em;
+  font-size: 1.12em;
   position: relative;
   top: 0.1rem;
-  left: 0.05rem;
+  left: 0.07rem;
 }
 
 
@@ -472,8 +507,38 @@ left: 0.15rem;
   margin: 0.5rem 0 0.25rem 0;
 }
 
+/* User Page Styles */
+.page-user .profile .field-name-realname {
+  margin-bottom: 8px;
+}
 
+.page-user .profile h3 {
+  display: none;
+}
 
+.page-user .profile dt, .page-user .profile dd {
+  display: inline;
+}
+
+.page-user .profile dl > dt {
+  color: #333;
+  font-weight: normal;
+  text-transform: uppercase;
+}
+
+.page-user .profile dl {
+  margin: 0 0 8px 0;
+  color: black;
+}
+
+.page-user .profile dt:after { content: ':'; }
+
+.page-user .profile .field-name-og-user-node1 {
+  margin-bottom: 8px;
+}
+.page-user .profile .field-name-og-user-node1 .field-item {
+  margin-left: 24px;
+}
 
 /*-----------------*/
 /* BEGIN max-width */
@@ -533,7 +598,7 @@ left: 0.15rem;
 @media (min-width: 600px) {
 
   .view-all-texts-control-box-cell-header .view-result-count-info{
-    font-size:1em;
+    font-size: .88em;
   }
 }
 
@@ -581,6 +646,23 @@ left: 0.15rem;
 
 
 
+
+
+.kmap-typeahead-picker .shanticon-magnify{
+  position: absolute;
+  top: 2.7rem;
+}
+
+.page-node-edit .page-node-edit.no-sidebars .tab-pane.main-col{
+  max-width:1150px !important;
+}
+
+.page-node-edit .node-book-form input#edit-title{
+  max-width: 88rem;
+}
+
+
+
 /* CKEDITOR */
 
 .cke_widget_wrapper.cke_widget_block {
@@ -605,3 +687,33 @@ left: 0.15rem;
 .page-collections .views-field.views-field-title{
   margin-bottom:.5rem;
 }
+
+
+
+
+
+.page-node-edit .panel.panel-default .panel-heading h6{
+  height: 72px;
+}
+
+
+.page-node-edit .kmap-filter-box button{
+  display:none;
+}
+
+.page-node-edit .kmap-typeahead-picker .shanticon-magnify{
+  position: absolute;
+  top: 2.75rem;
+}
+
+.vertical-tabs .panel-default .panel-body{
+  border:none;
+}
+
+.vertical-tabs .book-outline-form .form-item{
+      margin-top: 1.5rem;
+}
+
+
+
+

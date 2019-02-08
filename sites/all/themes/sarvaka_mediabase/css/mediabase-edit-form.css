@@ -48,7 +48,15 @@
 }
 
 
+.page-node-add-collection .panel.panel-default .panel-heading h6{
+    height: 72px;
+}
 
+.page-node-add-collection .kmap-typeahead-picker .shanticon-magnify{
+    position: absolute;
+    left: 2rem;
+    top: 2.9rem;
+}
 
 
 .mb-av-form{
@@ -195,6 +203,9 @@ input.form-inline {
 	font-size: 0.88em;
 	margin-left: 1.5rem;
 	margin-top: .75rem;
+
+      display: block;
+    margin-bottom: 0;
 }
 
 .form-type-textfield label.flyout-search-label { display:none; }
@@ -349,10 +360,9 @@ form .field-multiple-table td.field-multiple-drag a.tabledrag-handle { padding-r
   position: relative;
   left: 0;
   top: -0.6rem;
-  font-family: helvetica, arial, sans-serif;
   height: 40px;
   font-size: 1.4rem;
-  font-weight: bold;
+  font-weight: 600;
 }
 /*.page-node-add .mb-av-form .kaltura_field_thumb { display: none; } */
 .page-node-add .mb-av-form .kaltura_field_thumb::after{ content: ''; }
@@ -466,7 +476,7 @@ table.sticky-table td ul li {
 table.sticky-table a {
   border-bottom-width: 1px;
   white-space: nowrap;
-  /*font-weight: bold;*/
+  font-weight: 400;
 }
 
 
@@ -551,11 +561,8 @@ table.sticky-table a {
 }
 
 .field-name-field-location .kmap-search-header p span{
-  font-family: 'museo-sans-500',helvetica,arial,sans-serif;
-  font-style: normal;
-  font-size: 1.06em;
-  font-weight: bold;
-  letter-spacing: -0.07rem;
+  font-size: 1.12em;
+  color: #000;
 }
 
 .form-type-textfield.form-item-field-subject-search-term{
@@ -577,7 +584,7 @@ div#node_audio_form_group_details > .panel-body > div {
 }
 
 div#edit-group-audience > div.form-item > label {
-	font-family: 'museo-sans-700',Helvetica,Arial,sans-serif;
+  font-weight:600;
 	font-size: 100%;
 	text-transform: uppercase;
 	color: #555;
@@ -593,7 +600,8 @@ div#edit-group-audience > div.form-item > div.collection-details-audience {
 
 
 .field-type-shanti-kmaps-fields-default .kmap-typeahead-picker {
-  margin-top: 0rem;
+  margin-top: 1rem;
+  padding-left: 1rem;
 }
 
 .field-widget-kmap-typeahead-picker .field-type-taxonomy-term-reference > label {
@@ -601,7 +609,7 @@ div#edit-group-audience > div.form-item > div.collection-details-audience {
 	padding-bottom: 6px;
 	margin-bottom: 12px;
 	width: 99%;
-	font-family: 'museo-sans-700',Helvetica,Arial,sans-serif;
+  font-weight: 600;
 	text-transform: uppercase;
 	color: #555;
 }
@@ -626,51 +634,64 @@ div#edit-group-audience > div.form-item > div.collection-details-audience {
 .field-name-field-location .kmap-filter{
   clear:none;
   float: left;
-  padding-top: 0;
-  margin-top:1rem;
-  width: 49%;
+  width: 47%;
   padding-bottom: 0.5rem;
+      margin-top: 1rem;
 }
 
-.field-name-field-location .kmap-filter:nth-of-type(2){
-  margin-right:1%;
-  margin-bottom: 1rem;
+.field-name-field-location .panel-body .kmap-filter[data-search-filter="feature_type"]{
+  width: 53%;
+  padding-left: 3%;
+  padding-right: 3%;
 }
 
-.field-name-field-location .kmap-filter:nth-of-type(3){
-  border-left: 1px solid #ddd;
-  margin-left:1%;
-  margin-bottom: 1rem;
-  padding-left: 2%;
-}
-.field-name-field-location .kmap-typeahead-picker .selected-kmap{
-  background-color: #f0f0f0;
+.field-name-field-location .kmap-filter[data-search-filter="associated_subject"]{
+  padding-left: 1rem;
 }
 
-.field-name-field-location .kmap-filter:nth-of-type(3) label{
+.field-name-field-location .kmap-filter[data-search-filter="associated_subject"] label{
   text-transform: capitalize;
   font-weight: normal;
 }
 
-
 .field-name-field-location .kmap-result-box{
-  background: #eee;
   float: left;
   width: 100%;
-  padding-left: 4rem;
-  padding-bottom: 1rem;
-  border: 1px solid #ddd;
-  border-width: 0 2px 2px;
   position: relative;
-  left: 0;
+  left: 2rem;
 }
-.field-name-field-location .kmap-typeahead-picker{
-  border: 1px solid #ddd;
-  border-width: 3px 2px 0px;
-  border-top-color: #ccc;
-  background: #eee;
-  padding: 1.3rem 2rem 0.2rem;
+
+.field-name-field-location .kmap-typeahead-picker .selected-kmap{
+  background-color: #f0f0f0;
 }
+
+
+
+
+
+
+@media (max-width:768px) {
+
+    .field-name-field-location .kmap-filter[data-search-filter="associated_subject"]{
+        width: 100%;
+        padding-left: 1rem;
+    }
+
+    .field-name-field-location .panel-body .kmap-filter[data-search-filter="feature_type"]{
+        width: 100%;
+        padding-left: 1rem;
+        margin-top:0;
+        padding-right: 0;
+    }
+
+    .field-name-field-location .kmap-typeahead-picker .shanticon-magnify{
+        position: absolute;
+        top: 2.85rem;
+        left: 2rem;
+    }
+}
+
+
 
 
 
@@ -738,8 +759,8 @@ div#edit-group-audience > div.form-item > div.collection-details-audience {
 
 .field-name-field-location .kmap-typeahead-picker .shanticon-magnify{
   position: absolute;
-  top: 4.2rem;
-  left: 3rem;
+    top: 2.9rem;
+    left: 2rem;
 }
 
 
@@ -1071,7 +1092,8 @@ input#field_transcript_value.text-full.form-control.form-inline{
 
 .field-widget-text-textfield.form-wrapper input.form-text.form-control {
     max-width:70% !important;
-    margin-top: 12px;
+    margin-top: .1rem;
+    /*margin-top: 12px;*/
 }
 
 .field-widget-text-textfield.form-wrapper input.form-text.form-control[placeholder="Enter Title"]{ max-width:100% !important; }
@@ -1086,6 +1108,10 @@ div.field-type-field-collection tr.draggable td div[class*="field-type-"] {
 	float: left;
 	border: none;
 	margin-right:1.5rem;
+}
+
+div.field-type-field-collection tr.draggable td div[class*="field-type-datetime"] {
+  width: 100%;
 }
 
 div.field-type-field-collection tr.draggable td div.field-name-field-title{
@@ -1196,6 +1222,7 @@ table.sticky-table .filter-guidelines ul li{
 
 .group-technical .field-widget-text-textfield.form-wrapper input.form-text.form-control{
 	max-width: 94% !important;
+      margin-top: 0;
 }
 
 .group-technical .field-type-text.field-name-field-extension-authority .form-control{
@@ -1252,23 +1279,12 @@ table.sticky-table .filter-guidelines ul li{
     padding:0px;
 }
 
-.mb-identifier.field.field-label-inline.clearfix,
-.mb-identifier.field.field-label-inline.clearfix * {
-    float: none;
-}
-
-.mb-identifier * {
-    display: inline-block !important;
-}
-
+.mb-identifier *,
 .field-name-field-identifier-source,
 .field-name-field-identifier-source .field-items {
     display: inline !important;
-}
-
-.field-name-field-identifier-source .field-item {
-    display: inline !important;
-    font-weight: bold;
+    font-size: 1em;
+    font-weight: 600;
 }
 
 .field-name-field-identifier,
@@ -1280,7 +1296,6 @@ table.sticky-table .filter-guidelines ul li{
     content: ':';
 }
 
-
 .node-type-audio .field-name-field-thumbnail-image .image-preview {
   display: none;
 }
@@ -1290,7 +1305,9 @@ table.sticky-table .filter-guidelines ul li{
     clear: both;
 }
 
-
+#av-details .field-collection-view .field-label{
+  width:auto;
+}
 
 /**
 * ----------------
@@ -1301,11 +1318,9 @@ table.sticky-table .filter-guidelines ul li{
 	margin-bottom:1rem;
 }
 
-
 .container-inline-date .description{
 	margin-left: 2rem;
 }
-
 
 .modal-content .file-image-form div.vertical-tabs {
     display: none;
@@ -1374,6 +1389,30 @@ table.sticky-table .filter-guidelines ul li{
 
 
 
+#edit-field-pbcore-instantiation-und-0-field-date-created{
+  float: left;
+  width: 50%;
+}
+
+.panel-body fieldset.form-wrapper legend{
+  margin-left: 0;
+}
+
+.panel-body fieldset.date-combo legend{
+  margin-bottom:0;
+}
+
+
+.field-collection-view{
+  padding: 3.5em 0 0.3em 0;
+  margin: 0 1em 0 0;
+}
+#av-details .field-label-inline .field-items{
+  font-size: 95%;
+  color: #000;
+}
+
+
 .mb-av-form .kaltura-thumb-wrap {
   float: left;
   margin:1.5rem 3rem 0 2rem !important;
@@ -1397,7 +1436,7 @@ table.sticky-table .filter-guidelines ul li{
 
 /** jquery ui dialog **/
 .mb-kaltura-msg > * {
-    font-family: 'droidserif',georgia,palatino,'Palatino Linotype',serif;
+    
 }
 
 .mb-kaltura-msg > .ui-dialog-titlebar {
@@ -1434,4 +1473,61 @@ table.sticky-table .filter-guidelines ul li{
     font-weight: bold;
     color: #C80000;
     border: thin solid #C80000;
+}
+
+/** Bootbox dialog confirmations **/
+.bootbox.modal.bootbox-confirm .modal-body {
+    color: #555;
+}
+
+.bootbox.modal.bootbox-confirm .btbx-confirm, .bootbox.modal.bootbox-confirm .btbx-cancel {
+    box-shadow: none;
+    color: #606060;
+    letter-spacing: .05em;
+    background: #fff;
+    border: 1px solid #ddd;
+}
+
+.bootbox.modal.bootbox-confirm .btbx-confirm {
+    margin-top: 0px;
+}
+
+.bootbox.modal.bootbox-confirm .btbx-confirm:hover {
+    color: white;
+    background: red;
+}
+
+.bootbox.modal.bootbox-confirm .btbx-cancel:hover {
+    background: #888;
+    box-shadow: none;
+    border-color: #888;
+    color: #fff;
+    text-shadow: 0 0 1px #444;
+}
+
+button .glyphicon-refresh-animate {
+    display: inline-block;
+    margin-left: 8px;
+}
+
+.glyphicon-refresh-animate {
+  -animation: spin .7s infinite linear;
+  -webkit-animation: spin2 .7s infinite linear;
+  font-size: 1rem;
+}
+
+@-webkit-keyframes spin2 {
+  from { -webkit-transform: rotate(0deg);}
+  to { -webkit-transform: rotate(360deg);}
+}
+
+@keyframes spin {
+  from { transform: scale(1) rotate(0deg);}
+  to { transform: scale(1) rotate(360deg);}
+}
+
+
+
+.page-node-edit .panel.panel-default .panel-heading h6{
+    height: 73px;
 }

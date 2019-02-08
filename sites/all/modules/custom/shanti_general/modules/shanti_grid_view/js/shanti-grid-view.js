@@ -24,43 +24,48 @@
                     urlForSize: function (filename, size, rotation) {
                       var url = Drupal.settings.shanti_grid_view.url_for_size;
                       // Adjust url if file is on prod iiif server by removing '-test';
-                      if (filename.match(/shanti-image-(stage-)?\d+/)) {
+                      if (typeof(filename) === 'string' && filename.match(/shanti-image-(stage-)?\d+/)) {
                           url = url.replace('-test','');
                       }
-                      if (typeof(size) == 'undefined') {
+                      if (typeof(size) === 'undefined') {
                         size = '300';
                       }
-                      if (typeof(rotation) != 'undefined') {
-                        url = url.replace('_/0/default', '_/' + rotation + '/default');
+                      if (typeof(rotation) !== 'undefined' && rotation !== '0') {
+                        url = url.replace('/0/default', '/' + rotation + '/default');
                       }
                       size = size.toString();
-
+                      if (url.indexOf('!__SIZE__,') === -1) {
+                          if (size.indexOf('!') === -1) { size = '!' + size;}
+                          if (size.indexOf(',') === -1) { size = size + ','; }
+                      }
                       return url.replace('__FNAME__', filename).replace(/__SIZE__/g, size);
                     },
                     getImageSize: function (lastWindowWidth) {
-                      if (lastWindowWidth <= 640)
-                        return 140;
-                      else if (lastWindowWidth <= 1920)
-                        return 160;
+                      if (lastWindowWidth <= 640) {
+                          return 140;
+                      } else if (lastWindowWidth <= 1920) {
+                          return 160;
+                      }
                       return 200;
                     },
                     getMinAspectRatio: function (lastWindowWidth) {
-                      if (lastWindowWidth <= 400)
-                        return 2;
-                      else if (lastWindowWidth <= 640)
-                        return 3;
-                      else if (lastWindowWidth <= 800)
-                        return 4;
-                      else if (lastWindowWidth <= 1100)
-                        return 6;
-                      else if (lastWindowWidth <= 1400)
-                        return 8;
-                      else if (lastWindowWidth <= 1600)
-                        return 10;
-                      else if (lastWindowWidth <= 1800)
-                        return 12;
-                      else if (lastWindowWidth <= 2000)
-                        return 14;
+                      if (lastWindowWidth <= 400) {
+                          return 2;
+                      } else if (lastWindowWidth <= 640) {
+                          return 3;
+                      } else if (lastWindowWidth <= 800) {
+                          return 4;
+                      } else if (lastWindowWidth <= 1100) {
+                          return 6;
+                      } else if (lastWindowWidth <= 1400) {
+                          return 8;
+                      } else if (lastWindowWidth <= 1600) {
+                          return 10;
+                      } else if (lastWindowWidth <= 1800) {
+                          return 12;
+                      }  else if (lastWindowWidth <= 2000) {
+                          return 14;
+                      }
                       return 13;
                     },
                   }).enable().activatePopdown();

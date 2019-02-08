@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * shanti_texts_features.views_default.inc
@@ -679,56 +680,6 @@ return 1;';
     ),
   );
   $handler->display->display_options['inherit_panels_path'] = '1';
-  $translatables['all_texts'] = array(
-    t('Master'),
-    t('All Texts'),
-    t('more'),
-    t('Search'),
-    t('Reset'),
-    t('Sort by'),
-    t('Asc'),
-    t('Desc'),
-    t('Items per page'),
-    t('- All -'),
-    t('Offset'),
-    t('« first'),
-    t('‹ previous'),
-    t('next ›'),
-    t('last »'),
-    t('<div class="view-result-count-info">Displaying @start - @end of @total texts</div>'),
-    t('Sorry, no texts match your search terms. Please try again.'),
-    t('Collection'),
-    t('Parent Collection'),
-    t('<h3><i class="icon shanticon-texts"></i>[title]</h3>'),
-    t(' [[field_dc_date_orginial_year]]'),
-    t('[field_dc_date_publication_year][field_dc_date_orginial_year]'),
-    t('[title_2] > '),
-    t('[title_2][title_1]'),
-    t('Title'),
-    t('Author'),
-    t('All'),
-    t('By Subject'),
-    t('All Texts by Subject KMap ID'),
-    t('Sorry, no texts match your search terms. Please try again.
-
-BOO'),
-    t('By Place'),
-    t('All Texts by Place KMap ID'),
-    t('By Collection'),
-    t('My Texts (old)'),
-    t('Front Page'),
-    t('[[field_dc_date_orginial_year]]'),
-    t('[field_dc_date_publication_year] [field_dc_date_orginial_year]'),
-    t('View All Texts'),
-    t('View panes'),
-    t('Pane by Collection'),
-    t('All Texts by Collection'),
-    t('Group node from OG membership'),
-    t('View All Texts by Colleciton'),
-    t('SHANTI'),
-    t('Pane by Collection 2'),
-    t('All Texts by Collection + Subs'),
-  );
   $export['all_texts'] = $view;
 
   $view = new view();
@@ -1178,43 +1129,6 @@ return 1;';
   $handler->display->display_options['arguments']['uid']['summary']['format'] = 'default_summary';
   $handler->display->display_options['arguments']['uid']['summary_options']['items_per_page'] = '25';
   $handler->display->display_options['path'] = 'mytexts';
-  $translatables['all_texts_open'] = array(
-    t('Master'),
-    t('All Texts'),
-    t('more'),
-    t('Search'),
-    t('Reset'),
-    t('Sort by'),
-    t('Asc'),
-    t('Desc'),
-    t('Items per page'),
-    t('- All -'),
-    t('Offset'),
-    t('« first'),
-    t('‹ previous'),
-    t('next ›'),
-    t('last »'),
-    t('<div class="view-result-count-info">Displaying @start - @end of @total texts</div>'),
-    t('Sorry, no texts match your search terms. Please try again.'),
-    t('<h3><i class="icon shanticon-texts"></i>[title]</h3>'),
-    t(' [[field_dc_date_orginial_year]]'),
-    t('[field_dc_date_publication_year][field_dc_date_orginial_year]'),
-    t('Title'),
-    t('Author'),
-    t('All'),
-    t('By Subject'),
-    t('All Texts by Subject KMap ID'),
-    t('By Place'),
-    t('All Texts by Place KMap ID'),
-    t('By Collection'),
-    t('Front Page'),
-    t('[[field_dc_date_orginial_year]]'),
-    t('[field_dc_date_publication_year] [field_dc_date_orginial_year]'),
-    t('View All Texts'),
-    t('View panes'),
-    t('My Texts New'),
-    t('My Texts'),
-  );
   $export['all_texts_open'] = $view;
 
   $view = new view();
@@ -1411,34 +1325,6 @@ return 1;';
       'label' => 'Content: Nid',
     ),
   );
-  $translatables['single_text_body'] = array(
-    t('Master'),
-    t('more'),
-    t('Apply'),
-    t('Reset'),
-    t('Sort by'),
-    t('Asc'),
-    t('Desc'),
-    t('Book'),
-    t('.'),
-    t('<a name="shanti-text-[nid]"></a>
-<header class="shanti-text-header depth-[depth]"><h[depth]>[title]</h[depth]></header>'),
-    t('<div class="shanti-texts-section">
-<a name="shanti-texts-[nid]"></a>
-<div id="shanti-texts-[nid]" class="shanti-texts-section-title text-level-[depth]">[title]</div>
-<div class="shanti-texts-section-controls">
-<a class="label label-default" href="/node/add/book?parent=[field_book_mlid]&field_og_collection_ref=[field_og_collection_ref_1]">Insert</a>
-</div>
-<div class="shanti-texts-section-content">
-[field_book_content]
-</div>
-</div>'),
-    t('Places'),
-    t('Subjects'),
-    t('All'),
-    t('Default'),
-    t('SHANTI Texts'),
-  );
   $export['single_text_body'] = $view;
 
   $view = new view();
@@ -1533,30 +1419,6 @@ return 1;';
 
   /* Display: Default */
   $handler = $view->new_display('panel_pane', 'Default', 'panel_pane_default');
-  $translatables['single_text_kmaps'] = array(
-    t('Master'),
-    t('more'),
-    t('Apply'),
-    t('Reset'),
-    t('Sort by'),
-    t('Asc'),
-    t('Desc'),
-    t('Items per page'),
-    t('- All -'),
-    t('Offset'),
-    t('« first'),
-    t('‹ previous'),
-    t('next ›'),
-    t('last »'),
-    t('Book'),
-    t('Places'),
-    t('Places in [title]: [field_kmap_places] '),
-    t('Subjects'),
-    t('Subjects in [title]: [field_kmap_term]'),
-    t('All'),
-    t('Default'),
-    t('View panes'),
-  );
   $export['single_text_kmaps'] = $view;
 
   $view = new view();
@@ -1668,6 +1530,19 @@ return 1;';
     'multiple_from' => '',
     'multiple_to' => '',
   );
+  /* Field: Content: Language (Kmaps) */
+  $handler->display->display_options['fields']['field_language_kmap']['id'] = 'field_language_kmap';
+  $handler->display->display_options['fields']['field_language_kmap']['table'] = 'field_data_field_language_kmap';
+  $handler->display->display_options['fields']['field_language_kmap']['field'] = 'field_language_kmap';
+  $handler->display->display_options['fields']['field_language_kmap']['label'] = 'Language';
+  $handler->display->display_options['fields']['field_language_kmap']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['field_language_kmap']['hide_empty'] = TRUE;
+  $handler->display->display_options['fields']['field_language_kmap']['click_sort_column'] = 'raw';
+  $handler->display->display_options['fields']['field_language_kmap']['type'] = 'kmap_popover_formatter';
+  $handler->display->display_options['fields']['field_language_kmap']['settings'] = array(
+    'target' => '_blank',
+  );
+  $handler->display->display_options['fields']['field_language_kmap']['delta_offset'] = '0';
   /* Field: Content: Subjects */
   $handler->display->display_options['fields']['field_kmap_term']['id'] = 'field_kmap_term';
   $handler->display->display_options['fields']['field_kmap_term']['table'] = 'field_data_field_kmap_term';
@@ -1737,6 +1612,7 @@ return 1;';
   $handler->display->display_options['fields']['field_pdf_version']['alter']['alter_text'] = TRUE;
   $handler->display->display_options['fields']['field_pdf_version']['alter']['text'] = '<a href="[field_pdf_version_1]" target="_blank">View</a> | [field_pdf_version]';
   $handler->display->display_options['fields']['field_pdf_version']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['field_pdf_version']['hide_empty'] = TRUE;
   $handler->display->display_options['fields']['field_pdf_version']['click_sort_column'] = 'fid';
   $handler->display->display_options['fields']['field_pdf_version']['type'] = 'file_download_link';
   $handler->display->display_options['fields']['field_pdf_version']['settings'] = array(
@@ -1791,60 +1667,6 @@ return 1;';
   $handler = $view->new_display('panel_pane', 'Default', 'panel_pane_default');
   $handler->display->display_options['pane_category']['name'] = 'SHANTI Texts';
   $handler->display->display_options['pane_category']['weight'] = '0';
-  $translatables['single_text_meta'] = array(
-    t('Master'),
-    t('more'),
-    t('Apply'),
-    t('Reset'),
-    t('Sort by'),
-    t('Asc'),
-    t('Desc'),
-    t('Collection'),
-    t('Visibility'),
-    t('Author'),
-    t('Editor'),
-    t('<tr><td>Editor</td><td>[field_book_editor] </td></tr>'),
-    t('Translator'),
-    t('<tr><td>Translator</td><td>[field_book_translator] </td></tr>'),
-    t('Year published'),
-    t('<tr><td>Year</td><td>[field_dc_date_publication_year]</td></tr>'),
-    t('Original year published'),
-    t('<tr><td>Year</td><td>[field_dc_date_publication_year] [field_dc_date_orginial_year]</td></tr>'),
-    t('Subjects'),
-    t('<tr><td>Subjects</td><td>[field_kmap_term]</td></tr>'),
-    t('Places'),
-    t('<tr>
-<td>Places</td>
-<td>[field_kmap_places]</td>
-</tr>'),
-    t('Rights'),
-    t('<tr>
-<td>Rights</td>
-<td>[field_dc_rights_general]</td>
-</tr>'),
-    t('<tr>
-<td colspan="2">[field_dc_rights_general]</td>
-</tr>'),
-    t('PDF Version'),
-    t('<a href="[field_pdf_version_1]" target="_blank">View</a> | [field_pdf_version]'),
-    t('[title]
-[field_dc_description]
-<table class="table">
-[field_book_author]
-[field_book_editor]
-[field_book_translator]
-[field_dc_date_publication_year]
-[field_dc_date_orginial_year]
-[field_kmap_term]
-[field_kmap_places]
-[field_dc_rights_general]
-[field_dc_rights_creativecommons]
-</table>
-'),
-    t('All'),
-    t('Default'),
-    t('SHANTI Texts'),
-  );
   $export['single_text_meta'] = $view;
 
   $view = new view();
@@ -1960,23 +1782,6 @@ return 1;';
   $handler->display->display_options['allow']['title_override'] = 'title_override';
   $handler->display->display_options['allow']['exposed_form'] = 0;
   $handler->display->display_options['allow']['fields_override'] = 0;
-  $translatables['single_text_toc'] = array(
-    t('Master'),
-    t('Text TOC'),
-    t('more'),
-    t('Apply'),
-    t('Reset'),
-    t('Sort by'),
-    t('Asc'),
-    t('Desc'),
-    t('Book parent'),
-    t('Book'),
-    t('<a href="#shanti-texts-[nid]" id="shanti-texts-toc-[nid]">[title]</a>'),
-    t('All'),
-    t('Default'),
-    t('Use in a panel or template for viewing combined texts.'),
-    t('SHANTI Texts'),
-  );
   $export['single_text_toc'] = $view;
 
   $view = new view();
@@ -2103,32 +1908,438 @@ return 1;';
   $handler = $view->new_display('panel_pane', 'Default', 'panel_pane_default');
   $handler->display->display_options['pane_category']['name'] = 'SHANTI Texts';
   $handler->display->display_options['pane_category']['weight'] = '0';
-  $translatables['single_text_views'] = array(
-    t('Master'),
-    t('more'),
-    t('Apply'),
-    t('Reset'),
-    t('Sort by'),
-    t('Asc'),
-    t('Desc'),
-    t('Items per page'),
-    t('- All -'),
-    t('Offset'),
-    t('« first'),
-    t('‹ previous'),
-    t('next ›'),
-    t('last »'),
-    t('View in PubReader'),
-    t('View book in NIH PubReader'),
-    t('View as stand-alone text'),
-    t('View in Voyant'),
-    t('View book in Voyant tools'),
-    t('View as raw text'),
-    t('All'),
-    t('Default'),
-    t('SHANTI Texts'),
-  );
   $export['single_text_views'] = $view;
+
+  $view = new view();
+  $view->name = 'text_collections';
+  $view->description = '';
+  $view->tag = 'default';
+  $view->base_table = 'node';
+  $view->human_name = 'Text Collections';
+  $view->core = 7;
+  $view->api_version = '3.0';
+  $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
+
+  /* Display: Master */
+  $handler = $view->new_display('default', 'Master', 'default');
+  $handler->display->display_options['title'] = 'Collections';
+  $handler->display->display_options['use_ajax'] = TRUE;
+  $handler->display->display_options['hide_admin_links'] = TRUE;
+  $handler->display->display_options['use_more_always'] = FALSE;
+  $handler->display->display_options['access']['type'] = 'perm';
+  $handler->display->display_options['cache']['type'] = 'none';
+  $handler->display->display_options['query']['type'] = 'views_query';
+  $handler->display->display_options['query']['options']['distinct'] = TRUE;
+  $handler->display->display_options['exposed_form']['type'] = 'basic';
+  $handler->display->display_options['pager']['type'] = 'pagerer';
+  $handler->display->display_options['pager']['options']['items_per_page'] = '36';
+  $handler->display->display_options['pager']['options']['offset'] = '0';
+  $handler->display->display_options['pager']['options']['id'] = '0';
+  $handler->display->display_options['pager']['options']['quantity'] = '9';
+  $handler->display->display_options['pager']['options']['preset'] = 'shanti_default';
+  $handler->display->display_options['style_plugin'] = 'default';
+  $handler->display->display_options['style_options']['row_class_special'] = FALSE;
+  $handler->display->display_options['row_plugin'] = 'fields';
+  $handler->display->display_options['row_options']['hide_empty'] = TRUE;
+  /* Header: Global: Result summary */
+  $handler->display->display_options['header']['result']['id'] = 'result';
+  $handler->display->display_options['header']['result']['table'] = 'views';
+  $handler->display->display_options['header']['result']['field'] = 'result';
+  $handler->display->display_options['header']['result']['content'] = '<div class="view-result-count-info">Displaying @start - @end of @total Collections</div>';
+  /* Relationship: OG membership: OG membership from Node group */
+  $handler->display->display_options['relationships']['og_membership_rel_group']['id'] = 'og_membership_rel_group';
+  $handler->display->display_options['relationships']['og_membership_rel_group']['table'] = 'node';
+  $handler->display->display_options['relationships']['og_membership_rel_group']['field'] = 'og_membership_rel_group';
+  $handler->display->display_options['relationships']['og_membership_rel_group']['required'] = TRUE;
+  /* Relationship: OG membership: User from OG membership */
+  $handler->display->display_options['relationships']['og_membership_related_user']['id'] = 'og_membership_related_user';
+  $handler->display->display_options['relationships']['og_membership_related_user']['table'] = 'og_membership';
+  $handler->display->display_options['relationships']['og_membership_related_user']['field'] = 'og_membership_related_user';
+  $handler->display->display_options['relationships']['og_membership_related_user']['relationship'] = 'og_membership_rel_group';
+  $handler->display->display_options['relationships']['og_membership_related_user']['required'] = TRUE;
+  /* Field: Global: Custom text */
+  $handler->display->display_options['fields']['nothing']['id'] = 'nothing';
+  $handler->display->display_options['fields']['nothing']['table'] = 'views';
+  $handler->display->display_options['fields']['nothing']['field'] = 'nothing';
+  $handler->display->display_options['fields']['nothing']['label'] = '';
+  $handler->display->display_options['fields']['nothing']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['nothing']['alter']['text'] = '<span class="icon shanticon-stack"></span>';
+  $handler->display->display_options['fields']['nothing']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['nothing']['element_default_classes'] = FALSE;
+  /* Field: Title */
+  $handler->display->display_options['fields']['title']['id'] = 'title';
+  $handler->display->display_options['fields']['title']['table'] = 'node';
+  $handler->display->display_options['fields']['title']['field'] = 'title';
+  $handler->display->display_options['fields']['title']['ui_name'] = 'Title';
+  $handler->display->display_options['fields']['title']['label'] = '';
+  $handler->display->display_options['fields']['title']['alter']['alter_text'] = TRUE;
+  $handler->display->display_options['fields']['title']['alter']['text'] = '[nothing][title]';
+  $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
+  $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
+  $handler->display->display_options['fields']['title']['element_type'] = 'h3';
+  $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
+  /* Field: Content: Body */
+  $handler->display->display_options['fields']['body']['id'] = 'body';
+  $handler->display->display_options['fields']['body']['table'] = 'field_data_body';
+  $handler->display->display_options['fields']['body']['field'] = 'body';
+  $handler->display->display_options['fields']['body']['label'] = '';
+  $handler->display->display_options['fields']['body']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['body']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['body']['type'] = 'text_trimmed';
+  $handler->display->display_options['fields']['body']['settings'] = array(
+    'trim_length' => '80',
+  );
+  /* Field: Content: Post date */
+  $handler->display->display_options['fields']['created']['id'] = 'created';
+  $handler->display->display_options['fields']['created']['table'] = 'node';
+  $handler->display->display_options['fields']['created']['field'] = 'created';
+  $handler->display->display_options['fields']['created']['label'] = '';
+  $handler->display->display_options['fields']['created']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['created']['date_format'] = 'custom';
+  $handler->display->display_options['fields']['created']['custom_date_format'] = 'F Y';
+  $handler->display->display_options['fields']['created']['second_date_format'] = 'long';
+  /* Field: JMeter Data */
+  $handler->display->display_options['fields']['nid']['id'] = 'nid';
+  $handler->display->display_options['fields']['nid']['table'] = 'node';
+  $handler->display->display_options['fields']['nid']['field'] = 'nid';
+  $handler->display->display_options['fields']['nid']['ui_name'] = 'JMeter Data';
+  $handler->display->display_options['fields']['nid']['label'] = '';
+  $handler->display->display_options['fields']['nid']['alter']['alter_text'] = TRUE;
+  $handler->display->display_options['fields']['nid']['alter']['text'] = '<span class="jmeter-data-[nid]"/>';
+  $handler->display->display_options['fields']['nid']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['nid']['element_default_classes'] = FALSE;
+  /* Sort criterion: Content: Title */
+  $handler->display->display_options['sorts']['title']['id'] = 'title';
+  $handler->display->display_options['sorts']['title']['table'] = 'node';
+  $handler->display->display_options['sorts']['title']['field'] = 'title';
+  /* Filter criterion: Content: Published */
+  $handler->display->display_options['filters']['status']['id'] = 'status';
+  $handler->display->display_options['filters']['status']['table'] = 'node';
+  $handler->display->display_options['filters']['status']['field'] = 'status';
+  $handler->display->display_options['filters']['status']['value'] = 1;
+  $handler->display->display_options['filters']['status']['group'] = 1;
+  $handler->display->display_options['filters']['status']['expose']['operator'] = FALSE;
+  /* Filter criterion: Content: Type */
+  $handler->display->display_options['filters']['type']['id'] = 'type';
+  $handler->display->display_options['filters']['type']['table'] = 'node';
+  $handler->display->display_options['filters']['type']['field'] = 'type';
+  $handler->display->display_options['filters']['type']['value'] = array(
+    'collection' => 'collection',
+    'subcollection' => 'subcollection',
+  );
+  $handler->display->display_options['filters']['type']['group'] = 1;
+  /* Filter criterion: Content: Title */
+  $handler->display->display_options['filters']['title']['id'] = 'title';
+  $handler->display->display_options['filters']['title']['table'] = 'node';
+  $handler->display->display_options['filters']['title']['field'] = 'title';
+  $handler->display->display_options['filters']['title']['operator'] = 'contains';
+  $handler->display->display_options['filters']['title']['group'] = 1;
+  $handler->display->display_options['filters']['title']['exposed'] = TRUE;
+  $handler->display->display_options['filters']['title']['expose']['operator_id'] = 'title_op';
+  $handler->display->display_options['filters']['title']['expose']['operator'] = 'title_op';
+  $handler->display->display_options['filters']['title']['expose']['identifier'] = 'title';
+  $handler->display->display_options['filters']['title']['expose']['remember_roles'] = array(
+    2 => '2',
+    1 => 0,
+    3 => 0,
+  );
+  $handler->display->display_options['filters']['title']['expose']['autocomplete_filter'] = 1;
+  $handler->display->display_options['filters']['title']['expose']['autocomplete_items'] = '10';
+  $handler->display->display_options['filters']['title']['expose']['autocomplete_min_chars'] = '0';
+  $handler->display->display_options['filters']['title']['expose']['autocomplete_field'] = 'title';
+  $handler->display->display_options['filters']['title']['expose']['autocomplete_raw_suggestion'] = 1;
+  $handler->display->display_options['filters']['title']['expose']['autocomplete_raw_dropdown'] = 1;
+  $handler->display->display_options['filters']['title']['expose']['autocomplete_dependent'] = 0;
+
+  /* Display: Page */
+  $handler = $view->new_display('page', 'Page', 'page');
+  $handler->display->display_options['defaults']['cache'] = FALSE;
+  $handler->display->display_options['cache']['type'] = 'none';
+  $handler->display->display_options['defaults']['fields'] = FALSE;
+  /* Field: Content: Nid */
+  $handler->display->display_options['fields']['nid']['id'] = 'nid';
+  $handler->display->display_options['fields']['nid']['table'] = 'node';
+  $handler->display->display_options['fields']['nid']['field'] = 'nid';
+  $handler->display->display_options['fields']['nid']['label'] = '';
+  $handler->display->display_options['fields']['nid']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['nid']['element_label_colon'] = FALSE;
+  /* Field: Global: Custom text */
+  $handler->display->display_options['fields']['nothing']['id'] = 'nothing';
+  $handler->display->display_options['fields']['nothing']['table'] = 'views';
+  $handler->display->display_options['fields']['nothing']['field'] = 'nothing';
+  $handler->display->display_options['fields']['nothing']['label'] = '';
+  $handler->display->display_options['fields']['nothing']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['nothing']['alter']['text'] = '<span class="icon shanticon-stack"></span>';
+  $handler->display->display_options['fields']['nothing']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['nothing']['element_default_classes'] = FALSE;
+  /* Field: Title */
+  $handler->display->display_options['fields']['title']['id'] = 'title';
+  $handler->display->display_options['fields']['title']['table'] = 'node';
+  $handler->display->display_options['fields']['title']['field'] = 'title';
+  $handler->display->display_options['fields']['title']['ui_name'] = 'Title';
+  $handler->display->display_options['fields']['title']['label'] = '';
+  $handler->display->display_options['fields']['title']['alter']['alter_text'] = TRUE;
+  $handler->display->display_options['fields']['title']['alter']['text'] = '[nothing][title]';
+  $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
+  $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
+  $handler->display->display_options['fields']['title']['element_type'] = 'h3';
+  $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
+  /* Field: Content: Type */
+  $handler->display->display_options['fields']['type']['id'] = 'type';
+  $handler->display->display_options['fields']['type']['table'] = 'node';
+  $handler->display->display_options['fields']['type']['field'] = 'type';
+  $handler->display->display_options['fields']['type']['label'] = '';
+  $handler->display->display_options['fields']['type']['element_label_colon'] = FALSE;
+  /* Field: Global: PHP */
+  $handler->display->display_options['fields']['php']['id'] = 'php';
+  $handler->display->display_options['fields']['php']['table'] = 'views';
+  $handler->display->display_options['fields']['php']['field'] = 'php';
+  $handler->display->display_options['fields']['php']['label'] = '';
+  $handler->display->display_options['fields']['php']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['php']['use_php_setup'] = 0;
+  $handler->display->display_options['fields']['php']['php_value'] = 'return shanti_texts_get_collection_items($row->nid);';
+  $handler->display->display_options['fields']['php']['php_output'] = '(<em><?php print $value; ?> Items</em>)';
+  $handler->display->display_options['fields']['php']['use_php_click_sortable'] = '0';
+  $handler->display->display_options['fields']['php']['php_click_sortable'] = '';
+  /* Field: Content: Post date */
+  $handler->display->display_options['fields']['created']['id'] = 'created';
+  $handler->display->display_options['fields']['created']['table'] = 'node';
+  $handler->display->display_options['fields']['created']['field'] = 'created';
+  $handler->display->display_options['fields']['created']['label'] = '';
+  $handler->display->display_options['fields']['created']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['created']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['created']['date_format'] = 'custom';
+  $handler->display->display_options['fields']['created']['custom_date_format'] = 'F Y';
+  $handler->display->display_options['fields']['created']['second_date_format'] = 'long';
+  /* Field: Content: Body */
+  $handler->display->display_options['fields']['body']['id'] = 'body';
+  $handler->display->display_options['fields']['body']['table'] = 'field_data_body';
+  $handler->display->display_options['fields']['body']['field'] = 'body';
+  $handler->display->display_options['fields']['body']['label'] = '';
+  $handler->display->display_options['fields']['body']['alter']['max_length'] = '120';
+  $handler->display->display_options['fields']['body']['alter']['trim'] = TRUE;
+  $handler->display->display_options['fields']['body']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['body']['type'] = 'text_plain';
+  $handler->display->display_options['fields']['body']['settings'] = array(
+    'trim_length' => '80',
+  );
+  /* Field: Content: Parent Collection */
+  $handler->display->display_options['fields']['field_og_parent_collection_ref']['id'] = 'field_og_parent_collection_ref';
+  $handler->display->display_options['fields']['field_og_parent_collection_ref']['table'] = 'og_membership';
+  $handler->display->display_options['fields']['field_og_parent_collection_ref']['field'] = 'field_og_parent_collection_ref';
+  $handler->display->display_options['fields']['field_og_parent_collection_ref']['label'] = '';
+  $handler->display->display_options['fields']['field_og_parent_collection_ref']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['field_og_parent_collection_ref']['settings'] = array(
+    'bypass_access' => 0,
+    'link' => 1,
+  );
+  $handler->display->display_options['path'] = 'collections';
+  $export['text_collections'] = $view;
+
+  $view = new view();
+  $view->name = 'text_collections_by_users';
+  $view->description = 'Show groups of a user.';
+  $view->tag = 'og';
+  $view->base_table = 'og_membership';
+  $view->human_name = 'Text Collections by Users';
+  $view->core = 7;
+  $view->api_version = '3.0';
+  $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
+
+  /* Display: Master */
+  $handler = $view->new_display('default', 'Master', 'default');
+  $handler->display->display_options['use_more_always'] = FALSE;
+  $handler->display->display_options['access']['type'] = 'role';
+  $handler->display->display_options['access']['role'] = array(
+    2 => '2',
+  );
+  $handler->display->display_options['cache']['type'] = 'none';
+  $handler->display->display_options['query']['type'] = 'views_query';
+  $handler->display->display_options['query']['options']['query_comment'] = FALSE;
+  $handler->display->display_options['exposed_form']['type'] = 'basic';
+  $handler->display->display_options['pager']['type'] = 'full';
+  $handler->display->display_options['style_plugin'] = 'table';
+  /* No results behavior: Global: Text area */
+  $handler->display->display_options['empty']['area']['id'] = 'area';
+  $handler->display->display_options['empty']['area']['table'] = 'views';
+  $handler->display->display_options['empty']['area']['field'] = 'area';
+  $handler->display->display_options['empty']['area']['content'] = 'User is not a member of any group.';
+  /* Relationship: OG membership: Group Node from OG membership */
+  $handler->display->display_options['relationships']['og_membership_related_node_group']['id'] = 'og_membership_related_node_group';
+  $handler->display->display_options['relationships']['og_membership_related_node_group']['table'] = 'og_membership';
+  $handler->display->display_options['relationships']['og_membership_related_node_group']['field'] = 'og_membership_related_node_group';
+  /* Field: Content: Title */
+  $handler->display->display_options['fields']['title']['id'] = 'title';
+  $handler->display->display_options['fields']['title']['table'] = 'node';
+  $handler->display->display_options['fields']['title']['field'] = 'title';
+  $handler->display->display_options['fields']['title']['relationship'] = 'og_membership_related_node_group';
+  $handler->display->display_options['fields']['title']['label'] = 'Group';
+  $handler->display->display_options['fields']['title']['hide_alter_empty'] = FALSE;
+  /* Field: OG membership: Created */
+  $handler->display->display_options['fields']['created']['id'] = 'created';
+  $handler->display->display_options['fields']['created']['table'] = 'og_membership';
+  $handler->display->display_options['fields']['created']['field'] = 'created';
+  $handler->display->display_options['fields']['created']['label'] = 'Member since';
+  $handler->display->display_options['fields']['created']['hide_alter_empty'] = FALSE;
+  $handler->display->display_options['fields']['created']['date_format'] = 'time ago';
+  /* Sort criterion: Content: Title */
+  $handler->display->display_options['sorts']['title']['id'] = 'title';
+  $handler->display->display_options['sorts']['title']['table'] = 'node';
+  $handler->display->display_options['sorts']['title']['field'] = 'title';
+  $handler->display->display_options['sorts']['title']['relationship'] = 'og_membership_related_node_group';
+  /* Contextual filter: We pass the user ID as the Entity ID. */
+  $handler->display->display_options['arguments']['etid']['id'] = 'etid';
+  $handler->display->display_options['arguments']['etid']['table'] = 'og_membership';
+  $handler->display->display_options['arguments']['etid']['field'] = 'etid';
+  $handler->display->display_options['arguments']['etid']['ui_name'] = 'We pass the user ID as the Entity ID.';
+  $handler->display->display_options['arguments']['etid']['default_action'] = 'default';
+  $handler->display->display_options['arguments']['etid']['title_enable'] = TRUE;
+  $handler->display->display_options['arguments']['etid']['title'] = '%1’s Collections';
+  $handler->display->display_options['arguments']['etid']['default_argument_type'] = 'current_user';
+  $handler->display->display_options['arguments']['etid']['summary']['number_of_records'] = '0';
+  $handler->display->display_options['arguments']['etid']['summary']['format'] = 'default_summary';
+  $handler->display->display_options['arguments']['etid']['summary_options']['items_per_page'] = '25';
+  $handler->display->display_options['arguments']['etid']['specify_validation'] = TRUE;
+  $handler->display->display_options['arguments']['etid']['validate']['type'] = 'user';
+  /* Filter criterion: OG membership: State */
+  $handler->display->display_options['filters']['state']['id'] = 'state';
+  $handler->display->display_options['filters']['state']['table'] = 'og_membership';
+  $handler->display->display_options['filters']['state']['field'] = 'state';
+  $handler->display->display_options['filters']['state']['relationship'] = 'og_membership';
+  $handler->display->display_options['filters']['state']['value'] = array(
+    1 => '1',
+  );
+  /* Filter criterion: Content: Published */
+  $handler->display->display_options['filters']['status']['id'] = 'status';
+  $handler->display->display_options['filters']['status']['table'] = 'node';
+  $handler->display->display_options['filters']['status']['field'] = 'status';
+  $handler->display->display_options['filters']['status']['relationship'] = 'og_membership_related_node_group';
+  $handler->display->display_options['filters']['status']['value'] = '1';
+  /* Filter criterion: OG membership: Entity_type */
+  $handler->display->display_options['filters']['entity_type']['id'] = 'entity_type';
+  $handler->display->display_options['filters']['entity_type']['table'] = 'og_membership';
+  $handler->display->display_options['filters']['entity_type']['field'] = 'entity_type';
+  $handler->display->display_options['filters']['entity_type']['value'] = 'user';
+  $handler->display->display_options['filters']['entity_type']['exposed'] = TRUE;
+  $handler->display->display_options['filters']['entity_type']['expose']['operator_id'] = 'entity_type_op';
+  $handler->display->display_options['filters']['entity_type']['expose']['label'] = 'Type';
+  $handler->display->display_options['filters']['entity_type']['expose']['operator'] = 'entity_type_op';
+  $handler->display->display_options['filters']['entity_type']['expose']['identifier'] = 'entity_type';
+  $handler->display->display_options['filters']['entity_type']['expose']['remember_roles'] = array(
+    2 => '2',
+    1 => 0,
+    3 => 0,
+  );
+  $handler->display->display_options['filters']['entity_type']['expose']['autocomplete_items'] = '10';
+  $handler->display->display_options['filters']['entity_type']['expose']['autocomplete_min_chars'] = '0';
+  $handler->display->display_options['filters']['entity_type']['expose']['autocomplete_raw_suggestion'] = 1;
+  $handler->display->display_options['filters']['entity_type']['expose']['autocomplete_raw_dropdown'] = 1;
+  $handler->display->display_options['filters']['entity_type']['expose']['autocomplete_dependent'] = 0;
+
+  /* Display: Page */
+  $handler = $view->new_display('page', 'Page', 'page_1');
+  $handler->display->display_options['defaults']['title'] = FALSE;
+  $handler->display->display_options['title'] = 'My Collections';
+  $handler->display->display_options['defaults']['pager'] = FALSE;
+  $handler->display->display_options['pager']['type'] = 'pagerer';
+  $handler->display->display_options['pager']['options']['items_per_page'] = '30';
+  $handler->display->display_options['pager']['options']['offset'] = '0';
+  $handler->display->display_options['pager']['options']['id'] = '0';
+  $handler->display->display_options['pager']['options']['quantity'] = '9';
+  $handler->display->display_options['pager']['options']['preset'] = 'shanti_default';
+  $handler->display->display_options['defaults']['style_plugin'] = FALSE;
+  $handler->display->display_options['style_plugin'] = 'default';
+  $handler->display->display_options['defaults']['style_options'] = FALSE;
+  $handler->display->display_options['defaults']['row_plugin'] = FALSE;
+  $handler->display->display_options['row_plugin'] = 'fields';
+  $handler->display->display_options['defaults']['row_options'] = FALSE;
+  $handler->display->display_options['defaults']['fields'] = FALSE;
+  /* Field: Content: Nid */
+  $handler->display->display_options['fields']['nid']['id'] = 'nid';
+  $handler->display->display_options['fields']['nid']['table'] = 'node';
+  $handler->display->display_options['fields']['nid']['field'] = 'nid';
+  $handler->display->display_options['fields']['nid']['relationship'] = 'og_membership_related_node_group';
+  $handler->display->display_options['fields']['nid']['label'] = '';
+  $handler->display->display_options['fields']['nid']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['nid']['element_label_colon'] = FALSE;
+  /* Field: Content: Title */
+  $handler->display->display_options['fields']['title']['id'] = 'title';
+  $handler->display->display_options['fields']['title']['table'] = 'node';
+  $handler->display->display_options['fields']['title']['field'] = 'title';
+  $handler->display->display_options['fields']['title']['relationship'] = 'og_membership_related_node_group';
+  $handler->display->display_options['fields']['title']['label'] = '';
+  $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['title']['hide_alter_empty'] = FALSE;
+  /* Field: Content: Type */
+  $handler->display->display_options['fields']['type']['id'] = 'type';
+  $handler->display->display_options['fields']['type']['table'] = 'node';
+  $handler->display->display_options['fields']['type']['field'] = 'type';
+  $handler->display->display_options['fields']['type']['relationship'] = 'og_membership_related_node_group';
+  $handler->display->display_options['fields']['type']['label'] = '';
+  $handler->display->display_options['fields']['type']['element_label_colon'] = FALSE;
+  /* Field: Global: PHP */
+  $handler->display->display_options['fields']['php']['id'] = 'php';
+  $handler->display->display_options['fields']['php']['table'] = 'views';
+  $handler->display->display_options['fields']['php']['field'] = 'php';
+  $handler->display->display_options['fields']['php']['label'] = '';
+  $handler->display->display_options['fields']['php']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['php']['use_php_setup'] = 0;
+  $handler->display->display_options['fields']['php']['php_value'] = 'return shanti_texts_get_collection_items($row->nid);';
+  $handler->display->display_options['fields']['php']['php_output'] = '(<em><?php print $value; ?> Items</em>)';
+  $handler->display->display_options['fields']['php']['use_php_click_sortable'] = '0';
+  $handler->display->display_options['fields']['php']['php_click_sortable'] = '';
+  /* Field: Content: Body */
+  $handler->display->display_options['fields']['body']['id'] = 'body';
+  $handler->display->display_options['fields']['body']['table'] = 'field_data_body';
+  $handler->display->display_options['fields']['body']['field'] = 'body';
+  $handler->display->display_options['fields']['body']['relationship'] = 'og_membership_related_node_group';
+  $handler->display->display_options['fields']['body']['label'] = '';
+  $handler->display->display_options['fields']['body']['alter']['max_length'] = '120';
+  $handler->display->display_options['fields']['body']['alter']['trim'] = TRUE;
+  $handler->display->display_options['fields']['body']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['body']['empty'] = ' ';
+  $handler->display->display_options['fields']['body']['type'] = 'text_plain';
+  $handler->display->display_options['fields']['body']['settings'] = array(
+    'trim_length' => '600',
+  );
+  /* Field: Content: Parent Collection */
+  $handler->display->display_options['fields']['field_og_parent_collection_ref']['id'] = 'field_og_parent_collection_ref';
+  $handler->display->display_options['fields']['field_og_parent_collection_ref']['table'] = 'og_membership';
+  $handler->display->display_options['fields']['field_og_parent_collection_ref']['field'] = 'field_og_parent_collection_ref';
+  $handler->display->display_options['fields']['field_og_parent_collection_ref']['relationship'] = 'og_membership_related_node_group';
+  $handler->display->display_options['fields']['field_og_parent_collection_ref']['label'] = '';
+  $handler->display->display_options['fields']['field_og_parent_collection_ref']['element_type'] = '0';
+  $handler->display->display_options['fields']['field_og_parent_collection_ref']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['field_og_parent_collection_ref']['settings'] = array(
+    'bypass_access' => 0,
+    'link' => 1,
+  );
+  $handler->display->display_options['defaults']['filter_groups'] = FALSE;
+  $handler->display->display_options['defaults']['filters'] = FALSE;
+  /* Filter criterion: OG membership: State */
+  $handler->display->display_options['filters']['state']['id'] = 'state';
+  $handler->display->display_options['filters']['state']['table'] = 'og_membership';
+  $handler->display->display_options['filters']['state']['field'] = 'state';
+  $handler->display->display_options['filters']['state']['relationship'] = 'og_membership';
+  $handler->display->display_options['filters']['state']['value'] = array(
+    1 => '1',
+  );
+  $handler->display->display_options['filters']['state']['group'] = 1;
+  /* Filter criterion: Content: Published */
+  $handler->display->display_options['filters']['status']['id'] = 'status';
+  $handler->display->display_options['filters']['status']['table'] = 'node';
+  $handler->display->display_options['filters']['status']['field'] = 'status';
+  $handler->display->display_options['filters']['status']['relationship'] = 'og_membership_related_node_group';
+  $handler->display->display_options['filters']['status']['value'] = '1';
+  $handler->display->display_options['filters']['status']['group'] = 1;
+  $handler->display->display_options['path'] = 'my_collections';
+  $handler->display->display_options['menu']['type'] = 'normal';
+  $handler->display->display_options['menu']['title'] = 'My Collections';
+  $handler->display->display_options['menu']['weight'] = '0';
+  $handler->display->display_options['menu']['name'] = 'user-menu';
+  $handler->display->display_options['menu']['context'] = 0;
+  $handler->display->display_options['menu']['context_only_inline'] = 0;
+  $export['text_collections_by_users'] = $view;
 
   $view = new view();
   $view->name = 'text_search';
@@ -2477,38 +2688,6 @@ echo "<div class=\'mega-search-title depth-{$row->depth} weight-{$row->weight}\'
     'book' => 'book',
   );
   $handler->display->display_options['filters']['type']['group'] = 1;
-  $translatables['text_search'] = array(
-    t('Master'),
-    t('Text Search'),
-    t('Full Text Search'),
-    t('more'),
-    t('&#8203;'),
-    t('Reset'),
-    t('Sort by'),
-    t('Asc'),
-    t('Desc'),
-    t('Items per page'),
-    t('- All -'),
-    t('Offset'),
-    t('« first'),
-    t('‹ previous'),
-    t('next ›'),
-    t('last »'),
-    t('<p>Enter a search string, consisting of a word or a phrase enclosed in quotes, to find matching title content. </p>'),
-    t('Parent'),
-    t('.'),
-    t('[title_1]'),
-    t('<li class="mega-search-title depth-[depth] weight-[weight]">[title]</li>'),
-    t('Type'),
-    t('Default'),
-    t('All'),
-    t('Text Search Default'),
-    t('Full'),
-    t('Search the content of texts'),
-    t('Title'),
-    t('Search the titles and subtitles of texts'),
-    t('My'),
-  );
   $export['text_search'] = $view;
 
   return $export;

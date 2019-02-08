@@ -248,6 +248,11 @@ function sources_misc_kmaps_fields_solr_doc_alter(&$solrdoc) {
            $sdoc['pub_dt'] = gmdate('Y-m-d\TH:i:s\Z', strtotime($node->biblio_date));
        }
 
+       // Get Language from Kmap field
+       if (!empty($node->field_language_kmap[LANGUAGE_NONE][0])) {
+           $sdoc['node_lang'] = $node->field_language_kmap[LANGUAGE_NONE][0]['header'];
+       }
+
        // Thumbnail Image
        if (!empty($ew->field_featured_image) && $fimg = $ew->field_featured_image->value()) {
            $uri = $fimg['uri'];
@@ -280,6 +285,7 @@ function sources_misc_taxonomy_term_view($term, $view_mode, $langcode) {
 
 function sources_misc_form_alter(&$form, &$form_state, $form_id) {
     if ($form_id == 'biblio_node_form') {
+        //dpm($form);
         if (strstr($form['#action'], '/add')) {
             drupal_set_title(t('Create a Source'));
         }
@@ -289,21 +295,40 @@ function sources_misc_form_alter(&$form, &$form_state, $form_id) {
         }
 
         global $base_url;
+
+        if (!isset($form['actions']['cancel'])) {
+            $form['actions']['cancel'] = array(
+                '#type' => 'submit',
+                '#class' => 'form-cancel',
+                '#value' => t("Cancel"),
+                '#weight' => 30,
+                '#submit' => array('sources_misc_form_cancel'),
+            );
+        }
+        /*
         $cancel = array(
           '#markup' => l(t('Cancel'), $base_url, array(
             'attributes' => array(
-              'class' => array('btn', 'btn-warning',),
+              'class' => array('btn', 'btn-warning',), // would be best if this is a button not a anchor, to match all other simlar interfaces --- dec 2018 mf8yk
             ),
           )),
           '#weight' => 20,
         );
-        if(isset($form_state['input']) && isset($form_state['input']['biblio_type'])) {
+        //<button class="btn btn-primary form-submit" type="submit" id="edit-cancel" name="op" value="Cancel"><span>Cancel</span></button>
+        // May need to reinstate code below.... (ndg8f Dec 2018)
+        if(isset($form_state['node']->biblio_type) || (isset($form_state['input']) && isset($form_state['input']['biblio_type']))) {
           $form['actions']['cancel'] = $cancel;
         }
         else {
           $form['cancel'] = $cancel;
-        }
+        }*/
     }
+}
+
+function sources_misc_form_cancel(&$form, &$form_state) {
+    $nid = $form['#node']->nid;
+    $path = drupal_get_path_alias("node/{$nid}");
+    drupal_goto($path);
 }
 
 function sources_misc_node_presave($node) {

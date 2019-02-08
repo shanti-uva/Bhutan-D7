@@ -3,8 +3,7 @@
   {{#each facets}}
     {{#if (and (not (eq @key 'count')) (not (eq (len buckets) 0)))}}
     <dl class="shanti-kmaps-solr-facet-block">
-
-      <dt class="shanti-kmaps-solr-facet-title" data-bucket-count="{{len buckets}}">
+      <dt class="shanti-kmaps-solr-facet-title shanti-kmaps-solr-facet-toggle" data-bucket-count="{{len buckets}}">
         {{#if (gt (len buckets) (plus ../numShown 1)) }}
           <span class="facet-title-toggle glyphicon glyphicon-plus-sign" type="button" aria-label="Toggle Search Results Filters List"></span>
         {{else}}
@@ -13,7 +12,16 @@
         {{title}}
       </dt>
         {{#if (gt (len buckets) (plus ../numShown 1)) }}
-          <dd class="shanti-kmaps-solr-facet-quicksearch"><input placeholder="quick search" class="facet-quicksearch form-control form-text" type="text" /><button type="reset" class="facet-quicksearch-reset">x</button><span class="icon"></span></button><span class="facet-quicksearch-count"><span class="facet-quicksearch-shown-count">{{len buckets}}</span>/{{len buckets}}</span></dd>
+          <dd class="shanti-kmaps-solr-facet-quicksearch"><input placeholder="quick search" class="facet-quicksearch form-control form-text" type="text" /><button type="reset" class="facet-quicksearch-reset">x</button><span class="icon"></span></button><span class="facet-quicksearch-count"><span class="facet-quicksearch-shown-count">{{len buckets}}</span>/{{len buckets}}</span>
+            <span style="float: right" class="shanti-kmaps-solr-facet-sort btn-group btn-group-xs" data-toggle="buttons">
+              <label class="btn btn-xs btn-default btn-rounded shanti-kmaps-solr-facet-sort-count active">
+                <input type="radio" name="options"  data-sort="count" autocomplete="off">
+              </label>
+              <label class="btn btn-xs btn-default  shanti-kmaps-solr-facet-sort-alpha">
+                <input type="radio" name="options" data-sort="alpha" autocomplete="off">
+              </label>
+            </span>
+          </dd>
         {{/if}}
         {{#each buckets}}
           <dd class="shanti-kmaps-solr-facet-list" data-facet-name="{{label}}">
@@ -22,8 +30,10 @@
               id="shantiKmapsSolrFacet-{{label}}"
               data-facet-type="{{type}}"
               data-facet-label="{{label}}"
+              data-full-label="{{full_label}}"
               data-facet-id="{{id}}"
               data-kmid="{{id}}"
+              data-facet-count="{{count}}"
               href="#">
 
               {{#if selected}}
@@ -31,13 +41,15 @@
               {{else}}
                 <span class="fancytree-checkbox glyphicon glyphicon-unchecked"></span>
               {{/if}}
-              {{label}}
+              <span class="shanti-kmaps-solr-facet-label{{#unless full_label}} no_label{{/unless}}" data-kmid="{{id}}">{{label}}</span>
             </a>
             ({{count}})
           </dd>
         {{/each}}
-
-    </dl>
+      {{#if (gt (len buckets) (plus ../numShown 1)) }}
+        <span class="shanti-kmaps-solr-facet-see-more shanti-kmaps-solr-facet-toggle"></span>
+      {{/if}}
+      </dl>
     {{/if}}
   {{/each}}
   {{#unless facets.count}}

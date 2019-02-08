@@ -4,6 +4,14 @@
 /**
  *   Styles for Image File Field
  */
+.images.page-node-edit #search-flyout{
+    display:none !important;
+}
+
+.images.page-node-edit .panel.panel-default .panel-heading h6 a{
+    font-weight: 400;
+    font-size: 1.06em;
+ }
 
 .field-name-field-image .fieldset-wrapper .fieldset-description {
     float: right;
@@ -90,3 +98,55 @@
     display: block !important;
 }
 **/
+
+
+/** Bootbox dialog confirmations **/
+.bootbox.modal.bootbox-confirm .modal-body {
+    color: #555;
+}
+
+.bootbox.modal.bootbox-confirm .btbx-confirm, .bootbox.modal.bootbox-confirm .btbx-cancel {
+    box-shadow: none;
+    color: #606060;
+    letter-spacing: .05em;
+    background: #fff;
+    border: 1px solid #ddd;
+}
+
+.bootbox.modal.bootbox-confirm .btbx-confirm {
+    margin-top: 0px;
+}
+
+.bootbox.modal.bootbox-confirm .btbx-confirm:hover {
+    color: white;
+    background: red;
+}
+
+.bootbox.modal.bootbox-confirm .btbx-cancel:hover {
+    background: #888;
+    box-shadow: none;
+    border-color: #888;
+    color: #fff;
+    text-shadow: 0 0 1px #444;
+}
+
+button .glyphicon-refresh-animate {
+    display: inline-block;
+    margin-left: 8px;
+}
+
+.glyphicon-refresh-animate {
+    -animation: spin .7s infinite linear;
+    -webkit-animation: spin2 .7s infinite linear;
+    font-size: 1rem;
+}
+
+@-webkit-keyframes spin2 {
+    from { -webkit-transform: rotate(0deg);}
+    to { -webkit-transform: rotate(360deg);}
+}
+
+@keyframes spin {
+    from { transform: scale(1) rotate(0deg);}
+    to { transform: scale(1) rotate(360deg);}
+}

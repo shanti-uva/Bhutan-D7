@@ -170,9 +170,10 @@
 .shanticon-lock:before {
 	content: "\e622";
 }
-.shanticon-logo:before {
-	content: "\e623";
-}
+/* - removed this logo icon, includes the text for the word SHANTI with logo
+	.shanticon-logo:before {
+		content: "\e623";
+	}*/
 .shanticon-magnify:before {
 	content: "\e624";
 }

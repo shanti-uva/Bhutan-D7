@@ -106,8 +106,6 @@
 }
 /* upload instructions for new images */
 .page-node-edit #edit-field-image-und-table .form-item .description{
-  font-style: normal;
-  font-family: 'Helvetica Neue',helvetica,arial,sans-serif;
   letter-spacing: 0.0275rem;
   font-size: .75em;
   margin-top: 1rem;
@@ -122,7 +120,7 @@
 }
 
 .page-node-edit #edit-field-image-und-table .image-widget-data .file a{
-  font-family: 'museo-sans-500', helvetica, arial, sans-serif;
+
 }
 
 .page-node-edit #edit-field-image-und-table .image-preview{
@@ -140,6 +138,14 @@
 
 .view-all-image-gallery .views-widget-filter-title, .view-collections .views-widget-filter-title {
     margin-left: 12px;
+}
+
+    .view-collections .views-exposed-form .views-exposed-widget{
+      height:auto;  /* fixes filters tripping-up the loading of the gallery in the top row */
+    }
+
+.view-collections .views-exposed-form .views-exposed-widget input{
+    min-width: 18rem;
 }
 
 .view-all-image-gallery .form-type-select label {
@@ -248,7 +254,6 @@
 
 /** Description modal styles for link and modal popup **/
 .desc.morelink {
-    font-family: 'Helvetica Neue',helvetica, arial, sans-serif;
     font-size: 0.88em;
     font-style: italic;
     position: relative;
@@ -338,7 +343,6 @@
   margin-top:.7rem;
   font-size:0.88em;
   letter-spacing: 0.0325rem;
-  font-family: 'Helvetica Neue',helvetica, arial, sans-serif;
 }
 
 .modal-body{
@@ -587,6 +591,49 @@ article.main-col{
   padding-left:0;
 
 }
+
+
+
+
+
+
+/* user account profile page */
+.page-user .field .field-label{
+  font-weight:400;
+  text-transform: uppercase;
+      letter-spacing: 0.0575rem;
+}
+.page-user .field.field-label-above .field-label{
+  margin-top:1rem;
+}
+.page-user .field-label-inline .field-items,
+.page-user .field.field-name-realname .field-label{
+  float:none;
+}
+.page-user .profile dt{
+  font-weight:400;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /*

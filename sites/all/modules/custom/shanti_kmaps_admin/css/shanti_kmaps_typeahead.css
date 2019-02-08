@@ -9,13 +9,14 @@
 }
 .kmaps-tt-menu,
 .twitter-typeahead {
-    padding-top: 0 !important;
+    padding-top: 0;
+    padding-bottom: 0;
     text-rendering: optimizeSpeed;
     width:100%;
 }
 .kmaps-tt-header{
-    padding: .8rem 2rem .4rem 1.4rem !important; 
-    font-weight:normal !important;
+    padding: .8rem 2rem .4rem 1.4rem; 
+    font-weight:normal;
 }
 .kmaps-tt-header:first-of-type {
     border-top: none;
@@ -24,7 +25,6 @@
 .kmap-typeahead-picker .kmaps-tt-header:first-of-type{
     position: relative;
     height: 60px !important;
-    margin-bottom: 0.4rem;
 }
 .kmaps-tt-header .close{
     border: 0 none;
@@ -35,7 +35,6 @@
     top: -0.5rem;
     left: 0.7rem;
     font-size: 2em;
-    /* font-size: 2.12em; */
     font-weight:normal;
     background: none;
     opacity: 0.2;
@@ -49,11 +48,6 @@
     background-color: #eee;
     position: relative;
     /*top: 0.5rem;*/
-}
-.kmap-typeahead-picker label{
-    /*text-transform: capitalize;
-    padding-left:1rem;
-    font-weight: normal;*/
 }
 .kmap-typeahead-picker label span{
     text-transform: uppercase;
@@ -103,6 +97,9 @@
     bottom: 0;
     display: inline-block;
     /*margin-left: 10px;*/
+}
+.tib .kmaps-tt-menu .kmaps-tt-suggestion::before {
+  margin-top: 5px;
 }
 .kmaps-tt-menu .kmaps-tt-suggestion::before{
   margin-left:0;

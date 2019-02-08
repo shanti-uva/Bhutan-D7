@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * shanti_texts_features.features.field_base.inc
@@ -586,6 +587,27 @@ $entity_field[0][\'value\'] = $mlid;',
       'entity_translation_sync' => FALSE,
       'kmap_domain' => 'subjects',
       'kmap_server' => 'production',
+    ),
+    'translatable' => 0,
+    'type' => 'shanti_kmaps_fields_default',
+  );
+
+  // Exported field_base: 'field_language_kmap'.
+  $field_bases['field_language_kmap'] = array(
+    'active' => 1,
+    'cardinality' => -1,
+    'deleted' => 0,
+    'entity_types' => array(),
+    'field_name' => 'field_language_kmap',
+    'indexes' => array(
+      'id' => array(
+        0 => 'id',
+      ),
+    ),
+    'locked' => 0,
+    'module' => 'shanti_kmaps_fields',
+    'settings' => array(
+      'kmap_domain' => 'subjects',
     ),
     'translatable' => 0,
     'type' => 'shanti_kmaps_fields_default',
