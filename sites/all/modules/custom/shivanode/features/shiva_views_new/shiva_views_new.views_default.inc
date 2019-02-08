@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * shiva_views_new.views_default.inc
@@ -118,7 +119,12 @@ function shiva_views_new_views_default_views() {
   $handler->display->display_options['cache']['type'] = 'none';
   $handler->display->display_options['query']['type'] = 'views_query';
   $handler->display->display_options['exposed_form']['type'] = 'basic';
-  $handler->display->display_options['pager']['type'] = 'full';
+  $handler->display->display_options['pager']['type'] = 'pagerer';
+  $handler->display->display_options['pager']['options']['items_per_page'] = '100';
+  $handler->display->display_options['pager']['options']['offset'] = '0';
+  $handler->display->display_options['pager']['options']['id'] = '0';
+  $handler->display->display_options['pager']['options']['quantity'] = '9';
+  $handler->display->display_options['pager']['options']['preset'] = 'pagerer_core';
   $handler->display->display_options['style_plugin'] = 'default';
   $handler->display->display_options['style_options']['default_row_class'] = FALSE;
   $handler->display->display_options['style_options']['row_class_special'] = FALSE;
@@ -132,10 +138,10 @@ function shiva_views_new_views_default_views() {
   $handler->display->display_options['empty']['area']['id'] = 'area';
   $handler->display->display_options['empty']['area']['table'] = 'views';
   $handler->display->display_options['empty']['area']['field'] = 'area';
-  $handler->display->display_options['empty']['area']['label'] = 'No Collections';
+  $handler->display->display_options['empty']['area']['label'] = 'No Content';
   $handler->display->display_options['empty']['area']['empty'] = TRUE;
   $handler->display->display_options['empty']['area']['content'] = '<div class="no-colls-msg">
-<p>There are no collections to display yet.</p>
+<p>There is no content to display yet.</p>
 </div>';
   $handler->display->display_options['empty']['area']['format'] = 'full_html';
   /* Relationship: Content: Author */
@@ -543,7 +549,7 @@ function shiva_views_new_views_default_views() {
   $handler->display->display_options['query']['type'] = 'views_query';
   $handler->display->display_options['exposed_form']['type'] = 'basic';
   $handler->display->display_options['pager']['type'] = 'pagerer';
-  $handler->display->display_options['pager']['options']['items_per_page'] = '30';
+  $handler->display->display_options['pager']['options']['items_per_page'] = '100';
   $handler->display->display_options['pager']['options']['offset'] = '0';
   $handler->display->display_options['pager']['options']['id'] = '0';
   $handler->display->display_options['pager']['options']['quantity'] = '9';
@@ -716,6 +722,14 @@ function shiva_views_new_views_default_views() {
     3 => 0,
     6 => 0,
     11 => 0,
+  );
+  /* Filter criterion: Content: Group content visibility (group_content_access) */
+  $handler->display->display_options['filters']['group_content_access_value']['id'] = 'group_content_access_value';
+  $handler->display->display_options['filters']['group_content_access_value']['table'] = 'field_data_group_content_access';
+  $handler->display->display_options['filters']['group_content_access_value']['field'] = 'group_content_access_value';
+  $handler->display->display_options['filters']['group_content_access_value']['operator'] = 'not';
+  $handler->display->display_options['filters']['group_content_access_value']['value'] = array(
+    2 => '2',
   );
   $handler->display->display_options['path'] = 'gallery';
 

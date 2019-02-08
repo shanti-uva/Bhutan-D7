@@ -1,18 +1,8 @@
-@import url(https://fonts.googleapis.com/css?family=EB+Garamond&subset=latin,latin-ext);
-
-/**
-* The Google font loading will work best with the 'link' method below from the document head section
-* <link href='https://fonts.googleapis.com/css?family=EB+Garamond&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
-*
-* Google :https://developers.google.com/fonts/docs/getting_started?hl=en#a_quick_example
-* Complete Explantion: http://stackoverflow.com/questions/12316501/including-google-web-fonts-link-or-import/12380004#12380004
-*/
-
 .content-section #shanti-texts-body a{
-  border-bottom: 1px solid #99bafb !important;
+  border-bottom: 1px solid transparent !important;
 }
 .content-section #shanti-texts-body a:hover{
-  border-bottom: 1px solid transparent !important;
+  border-bottom: 1px solid #df3d26 !important; /* color was rgba(153, 186, 251, 0.56) */
 }
 .content-section #shanti-texts-body a:active{
   border-bottom: 1px solid #99bafb !important;
@@ -29,7 +19,7 @@
 }
 
 .node-type-book.no-sidebars article.main-col {
-  padding: 0 1.5rem 0 0;
+  padding: 0;
 }
 
 
@@ -52,7 +42,7 @@
 
 
 .shanti-texts-section {
-  border-bottom: 3px double #eee;
+  /*border-bottom: 3px double #eee;*/
   padding-bottom: 1em;
   margin-top: -1rem;
 }
@@ -63,29 +53,22 @@
 .shanti-texts-section.text-level-6,
 .shanti-texts-section.text-level-7{
   background: white;
+  padding-right: 1rem;
 }
 
 .shanti-texts-section.text-level-3{
-  margin-top: -2rem;
+  /*margin-top: -2rem;*/
   padding-left:2.4rem;
+  padding-right: 0;
 }
 
 .shanti-texts-section.text-level-4,
 .shanti-texts-section.text-level-5,
 .shanti-texts-section.text-level-6,
 .shanti-texts-section.text-level-7{
-  margin-top: -1.5rem;
+  /*margin-top: -1.5rem;*/
   padding-left: 2.4rem;
-}
-
-.shanti-texts-section-title {
-  margin-top: 1.5rem;
-  padding-top: 1rem;
-  margin-bottom: 0;
-  font-weight: normal;
-  font-weight: 500;
-  line-height: 2.75rem;
-  color:#000;
+  padding-right:1rem;
 }
 
 .shanti-texts-section h1,
@@ -104,9 +87,24 @@
   margin-bottom:5px;
 }
 
+
+
+
+.shanti-texts-section-title {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  margin-bottom: 0;
+  font-weight: normal;
+  font-weight: 500;
+  line-height: 2.75rem;
+  color:#000;
+}
+
 .shanti-texts-section-title.text-level-2 {
   margin-bottom: 1rem;
-  font-size: 1.44em;
+  font-size: 1.68em;
+  margin-left: 2.75rem;
+  color:#333;
 }
 
 .shanti-texts-section-title.text-level-3,
@@ -115,17 +113,18 @@
 .shanti-texts-section-title.text-level-6,
 .shanti-texts-section-title.text-level-7{
   font-size: 1.18em;
-  background: #f7f7f7;
+  background: #f4f4f4;
   padding: 1.5rem 1rem 1.5rem 3.5rem;
   line-height: 1.5em;
   margin-bottom: 2rem;
+  margin-left: -1rem;
   font-weight: bold;
   letter-spacing: 0.0375rem;
-  color: #555;
+  color: #444;
 }
 
 .shanti-texts-section-title.text-level-3{
-  border-left: 8px double #ccc;
+  border-left: 8px double #d0d0d0;
 }
 
 .shanti-texts-section-title.text-level-4,
@@ -135,6 +134,7 @@
   border-left: 3px solid #ccc;
   margin-top: 1rem;
   padding: 1rem 1rem 1rem 2.4rem;
+  margin-left: -0.6rem;
 }
 
 .shanti-texts-section-title.text-level-1,
@@ -143,11 +143,28 @@
 }
 
 
+div[lang="bo"] .shanti-texts-section-title.text-level-3{
+  padding-bottom: 1rem;
+}
+
+div[lang="bo"] .shanti-texts-section-title.text-level-4,
+div[lang="bo"] .shanti-texts-section-title.text-level-5,
+div[lang="bo"] .shanti-texts-section-title.text-level-6,
+div[lang="bo"] .shanti-texts-section-title.text-level-7 {
+  padding-bottom: .75rem;
+}  
+
+
+
+
+
+
+
 
 
 #shanti-texts-sidebar .tab-content {
   padding: 2rem 1.5rem;
-  overflow-y: scroll;
+  overflow-y: scroll !important;
   max-height: 54rem;
   width: 100%;
   /* for mobile height */
@@ -157,11 +174,11 @@
   border-bottom: 2px solid #aaa;
   border-top: 2px solid #aaa;
   position: relative;
-  top: 150px;
+  top: 130px;
 }
 
 #shanti-texts-body {
-  padding: 3.5rem 0 0 2.5rem;
+  padding: 0 0 0 2.5rem;
   margin: 0;
   height: 100%;
   background-color: white;
@@ -176,6 +193,10 @@
   border-right: 1px solid #d0d0d0;
 }
 
+#shanti-texts-body > div:first-of-type{
+  /*margin-top:-5rem;*/
+}
+
 #shanti-texts-sidebar {
   /* display:none; */ /* INITIAL CONDITION to prevent showing un-tabbed content */
   padding: 2rem 0 0;
@@ -188,7 +209,7 @@
 /*--- texts window scroller styles ---*/
 #shanti-texts-body::-webkit-scrollbar,
 #shanti-texts-sidebar .tab-content::-webkit-scrollbar {
-  width: 1.5rem;
+  width: 1.15rem;
 }
 
 #shanti-texts-body::-webkit-scrollbar-track,
@@ -211,11 +232,21 @@
 
 
 #shanti-texts-body .shanti-texts-section-content {
-  color: #111;
-  font-family: 'EB Garamond', Garamond, Baskerville, 'Baskerville Old Face', 'Hoefler Text', 'Times New Roman', serif;
+  color: #000;
+  font-family: 'EB Garamond',serif;
   font-size: 1.32em;
+    line-height: 1.5;
   letter-spacing: 0.0125rem;
   padding-bottom: 1rem;
+  padding-top:1rem;
+}
+
+#shanti-texts-body .shanti-texts-section-content strong{
+  font-weight:500;
+}
+
+#shanti-texts-body .shanti-texts-section-content a{
+  border-bottom-color: #cccaf3;
 }
 
 #shanti-texts-body img{
@@ -281,7 +312,7 @@
 #shanti-texts-toc ul{
   margin-top: 0;
   padding-top: 0;
-  font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
+  /*font-family: source-sans-pro,'Arial Unicode MS',Helvetica-Neue,Helvetica, sans-serif;*/
 }
 
 #shanti-texts-toc > ul {
@@ -373,7 +404,7 @@ display: block;
   border: 8px double #999;
   position: relative;
   top: .1rem;
-  margin-left: .2rem;
+  margin-left: -3.5rem;
 }
 
 #shanti-texts-toc > ul > li a::before{
@@ -429,24 +460,51 @@ display: block;
 .shanti-texts-section-title.text-level-6::before,
 .shanti-texts-section-title.text-level-7::before{
   border-radius: 50%;
-  border-width: 5px;
+  border-width: 4px;
   border-color: #999;
-  top: -.07rem;
-  left: .3rem;
-  margin-right:  2.5rem;
+  top: 0;
+  left: 0;
+  margin-right:  3.5rem;
   margin-left: -6.2rem;
 }
 .shanti-texts-section-title.text-level-3::before{
-  margin-right: 3.3rem;
+  margin-right: 4rem;
   border-radius: 0;
-  margin-left: -6.5rem;
+  margin-left: -6.2rem;
+  border-width: 5px;
 }
 .shanti-texts-section-title.text-level-4::before,
 .shanti-texts-section-title.text-level-5::before,
 .shanti-texts-section-title.text-level-6::before,
 .shanti-texts-section-title.text-level-7::before{
-  margin-left: -4.9rem;
-  margin-right: 2.8rem;
+  margin-left: -4.1rem;
+  margin-right: 3.5rem;
+  top: -.1rem;
+}
+
+.shanti-texts-section-title.text-level-5::before,
+.shanti-texts-section-title.text-level-6::before,
+.shanti-texts-section-title.text-level-7::before{
+  border-style: solid;
+  border-width: 3px;
+  border-color: #ccc;
+  top: -.2rem;
+}
+
+.shanti-texts-section-title.text-level-6::before{
+  border-color: #777;
+  top: -.2rem;
+}
+.shanti-texts-section-title.text-level-7::before{
+  border-color: #ccc;
+  border-width: 4px;
+}
+
+
+
+
+.toc-selected {
+  font-weight: bold;
 }
 
 
@@ -594,9 +652,10 @@ display: block;
   margin-top: 2rem;
   margin-bottom: 0.8rem;
   letter-spacing: 0.075rem;
-  font-family: 'museo-sans-700', helvetica, sans-serif;
   font-size: 1em;
   letter-spacing: 0.06rem;
+    /*font-family: source-sans-pro,'Arial Unicode MS',Helvetica-Neue,Helvetica, sans-serif;*/
+    font-weight:600;
 }
 
 #shanti-texts-links table a::before{
@@ -611,13 +670,13 @@ display: block;
 }
 #shanti-texts-sidebar .shanti-texts-record-title {
   font-weight: normal;
-  font-size: 1.38em;
+  font-size: 1.32em;
   line-height: 1.32em;
   color: #000;
   border-bottom: 2px solid #ddd !important;
   padding-bottom: 1rem;
   margin: 1rem 0 1.5rem;
-  font-family: 'EB Garamond',Baskerville,palatino,'Palatino Linotype','Times New Roman',serif;
+  font-family: 'EB Garamond',serif;
 }
 #shanti-texts-toc .shanti-texts-record-title > a{
   /*margin-bottom: 1rem;*/
@@ -646,7 +705,7 @@ display: block;
 }
 
 #shanti-texts-sidebar .shanti-texts-field td {
-  font-family: 'Helvetica Neue',helvetica,arial,sans-serif;
+  /*font-family: source-sans-pro,'Arial Unicode MS',Helvetica-Neue,Helvetica, sans-serif;*/
 }
 
 #shanti-texts-sidebar table tr.shanti-texts-field:first-child td{
@@ -658,7 +717,7 @@ display: block;
 }
 
 #shanti-texts-links .shanti-texts-field td.shanti-texts-field-content{
-  font-family: 'museo-sans-500', helvetica, sans-serif !important;
+  /*font-family: source-sans-pro,'Arial Unicode MS',Helvetica-Neue,Helvetica, sans-serif;*/
 }
 
 
@@ -677,7 +736,7 @@ display: block;
   -webkit-transition: all 50ms ease 0s;
   transition: all 50ms ease 0s;
 
-    display:none;
+    /*display:none;*/
 }
 
 #shanti-texts-sidebar .fullview:hover{
@@ -706,9 +765,10 @@ display: block;
   letter-spacing: 0.06rem;
   text-transform: uppercase;
   color: #333;
-  font-family: 'museo-sans-700', helvetica, sans-serif !important;
-    padding: .5rem;
-  padding-right:0.1rem;
+  /*font-family: source-sans-pro,'Arial Unicode MS',Helvetica-Neue,Helvetica, sans-serif;*/
+    font-weight:600;
+  padding: .5rem;
+    padding-right:0.1rem;
   font-size: .88em;
   vertical-align: top;
   white-space: normal;
@@ -790,7 +850,7 @@ display: block;
 */
 #shanti-texts-toc a[lang="bo"]{
   font-size: 1.5em;
-  letter-spacing: 0.085rem;
+  letter-spacing: 0.1rem;
 }
 #shanti-texts-toc a[lang="bo"]::before{
   position: relative;
@@ -843,8 +903,25 @@ display: block;
       white-space:nowrap;
       width:50%;
     }
+
+    .node-type-book.no-sidebars article.main-col{
+      padding-right:1.5rem;
+    }
+
+    .shanti-texts-section.text-level-4,
+    .shanti-texts-section.text-level-5,
+    .shanti-texts-section.text-level-6,
+    .shanti-texts-section.text-level-7{
+      padding-right:0;
+    }
 }
 
+@media screen and (min-width: 850px) {
+
+    #shanti-texts-sidebar .tab-content {
+      top: 15px;
+    }
+}
 
 @media screen and (min-width: 992px) {
 
@@ -888,14 +965,14 @@ display: block;
 
     #shanti-texts-sidebar .tab-content::-webkit-scrollbar {
       height: .7rem; /* horizontal scrolling scroll handle */
-      width: 1.5rem; /* vertical scrolling scroll handle */
+      width: 1.15rem; /* vertical scrolling scroll handle */
     }
 
 
     .node-type-book .nav-tabs.nav-justified>li{
       border-right: 1px solid #ddd;
       border-top: 2px solid #aaa;
-      background-color: #fff !important;
+      background-color: #f5f5f5 !important;
       font-size: 1em;
     }
     .node-type-book .nav-tabs.nav-justified>li:first-child{
@@ -1030,6 +1107,47 @@ display: block;
 
 
 
+
+.group-kmap-terms .kmap-typeahead-picker .shanticon-magnify{
+    position: absolute;
+    top: 2.7rem;
+    left: .9rem;
+}
+
+.group-kmap-terms .kmaps-tt-dataset-places{
+  overflow-x: auto;
+}
+
+.group-kmap-terms .kmaps-place-results-header{
+  white-space: nowrap;
+}
+
+
+
+/* - this helps display of the Places Kmaps dropdown which has columns for feature type and kmaps-id */
+.page-node-group.no-sidebars .tab-panel.main-col{
+  max-width:1200px;
+}
+
+
+
+/** Text Page Formatting, styles for the display of the text itself */
+.shanti-texts-section-content table td p {
+  margin: 0;
+  padding: 0;
+}
+
+.shanti-texts-section-content table[cellpadding] td {
+  padding: 4px !important;
+}
+
+.shanti-texts-section-content a[id*="ref"],
+.shanti-texts-section-content a[id*="edn"],
+.shanti-texts-section-content a[id*="ftn"]{
+  color:cornflowerblue;
+  vertical-align: super;
+  font-size: 70%;
+}
 
 
 

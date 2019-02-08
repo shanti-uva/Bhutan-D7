@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * biblio_long_fields.features.field_instance.inc
@@ -71,28 +72,22 @@ function biblio_long_fields_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
+        'module' => 'list',
         'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 10,
+        'type' => 'list_default',
+        'weight' => 16,
       ),
-      'featured' => array(
+      'full' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
         'weight' => 0,
       ),
-      'full' => array(
-        'label' => 'above',
-        'module' => 'text',
-        'settings' => array(),
-        'type' => 'text_default',
-        'weight' => -5,
-      ),
       'teaser' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 5,
+        'weight' => 0,
       ),
     ),
     'entity_type' => 'node',
@@ -101,21 +96,15 @@ function biblio_long_fields_field_default_field_instances() {
     'required' => 0,
     'settings' => array(
       'entity_translation_sync' => FALSE,
-      'linkit' => array(
-        'button_text' => 'Search',
-        'enable' => 0,
-        'profile' => '',
-      ),
-      'text_processing' => 0,
       'user_register_form' => FALSE,
     ),
     'widget' => array(
       'active' => 1,
-      'module' => 'text',
+      'module' => 'options',
       'settings' => array(
-        'rows' => 5,
+        'apply_chosen' => '',
       ),
-      'type' => 'text_textarea',
+      'type' => 'options_select',
       'weight' => 66,
     ),
   );
@@ -228,12 +217,76 @@ function biblio_long_fields_field_default_field_instances() {
     ),
   );
 
+  // Exported field_instance: 'node-biblio-field_kmaps_subjects'.
+  $field_instances['node-biblio-field_kmaps_subjects'] = array(
+    'bundle' => 'biblio',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'inline',
+        'module' => 'shanti_kmaps_fields',
+        'settings' => array(),
+        'type' => 'kmap_popover_formatter',
+        'weight' => 7,
+      ),
+      'embed' => array(
+        'label' => 'above',
+        'module' => 'shanti_kmaps_fields',
+        'settings' => array(),
+        'type' => 'kmap_simple_formatter',
+        'weight' => 3,
+      ),
+      'featured' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'full' => array(
+        'label' => 'inline',
+        'module' => 'shanti_kmaps_fields',
+        'settings' => array(),
+        'type' => 'kmap_popover_formatter',
+        'weight' => 7,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_kmaps_subjects',
+    'label' => 'Subjects',
+    'required' => 0,
+    'settings' => array(
+      'entity_translation_sync' => FALSE,
+      'kmap_term_limit' => 100,
+      'search_filters' => array(),
+      'search_root_kmap_path' => NULL,
+      'search_root_kmapid' => '',
+      'search_view' => '',
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 0,
+      'module' => 'shanti_kmaps_fields',
+      'settings' => array(),
+      'type' => 'kmap_typeahead_picker',
+      'weight' => 68,
+    ),
+  );
+
   // Translatables
   // Included for use with string extractors like potx.
   t('Content Language');
   t('Long Title');
   t('Long Title Language');
   t('Places');
+  t('Subjects');
 
   return $field_instances;
 }

@@ -16,7 +16,7 @@ function bulk_image_import_set_context($box_auth, $group_id, $collection_id, &$c
   $context['results']['collection_id'] = $collection_id;
 }
 
-function _bulk_image_import_task_handle_error($task, $error, $node = NULL) {
+function _bulk_image_import_task_handle_error($task, $error, $node=NULL, $delete=FALSE) {
   $res = db_query(
     'UPDATE bulk_image_import_task SET errors = :error WHERE tid = :tid',
     array(
@@ -25,8 +25,13 @@ function _bulk_image_import_task_handle_error($task, $error, $node = NULL) {
     )
   );
   if($node) {
-    $node->status = NODE_NOT_PUBLISHED;
-    node_save($node);
+    if($delete) {
+      node_delete($node->nid);
+    }
+    else {
+      $node->status = NODE_NOT_PUBLISHED;
+      node_save($node);
+    }
   }
 }
 

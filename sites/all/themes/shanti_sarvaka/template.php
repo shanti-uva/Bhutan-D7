@@ -519,6 +519,11 @@ function shanti_sarvaka_preprocess_field(&$vars) {
                 $vars['items'][0]['#markup'] = t('Public (default value)');
             }
         }
+    } else {
+	    if (strstr($vars['element']['#field_name'],'og_user_node') ||
+            strstr($vars['element']['#field_name'],'og_group_ref')) {
+	        usort($vars['items'], function($a, $b) { return strcmp($a['#title'], $b['#title']);});
+        }
     }
 }
 
@@ -854,7 +859,7 @@ function shanti_sarvaka_carousel($variables) {
   $newwind = (isset($el['new_window']) && $el['new_window']) ? ' target="_blank"' : '';
   $link = (empty($el['link_text'])) ? '' : '<a href="' . $el['link_url'] . '"' . $newwind . '>' . $el['link_text'] . '</a>';
   $html = '<div class="container-fluid carouseldiv">
-                    <div class="carousel-header show-more"><span>' . $el['title'] . '</span>' . $link . '</div>
+                    <div class="carousel-header go-to-link"><span>' . $el['title'] . '</span>' . $link . '</div>
           <div class="carousel carousel-fade slide row" id="' . $cid . '"' . $autostartclass . $speed . '>
               <div class="carousel-inner">';
   
@@ -910,7 +915,10 @@ function shanti_sarvaka_carousel($variables) {
  * 		- links 	(array) 	: Series of links to show in footer stripes
  */
 function shanti_sarvaka_info_popover($variables) {
-	$html = "<span>{$variables['label']}</span><span class=\"popover-link\"><span class=\"popover-link-tip\"></span><span class=\"icon shanticon-menu3\"></span></span>
+  $lclass = '';
+  $fc =  $fc = mb_substr($variables['label'],0,1,"UTF-8");
+  if ($fc > "ༀ" && $fc < "࿏") { $lclass = ' class="tib"'; }
+	$html = "<span{$lclass}>{$variables['label']}</span><span class=\"popover-link\"><span class=\"popover-link-tip\"></span><span class=\"icon shanticon-menu3\"></span></span>
 						<div class=\"popover\" data-title=\"{$variables['label']}\">
 						     <span class=\"kmid\" style=\"display: none;\">{$variables['kid']}</span>
 							<div class=\"popover-body\">

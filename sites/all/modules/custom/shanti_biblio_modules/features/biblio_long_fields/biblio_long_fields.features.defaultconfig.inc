@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * biblio_long_fields.features.defaultconfig.inc
@@ -11,7 +12,6 @@ function biblio_long_fields_defaultconfig_features() {
   return array(
     'biblio_long_fields' => array(
       'field_default_fields' => 'field_default_fields',
-      'strongarm' => 'strongarm',
     ),
   );
 }
@@ -26,30 +26,157 @@ function biblio_long_fields_defaultconfig_field_default_fields() {
   $fields['node-biblio-field_biblio_long_language'] = array(
     'field_config' => array(
       'active' => 1,
-      'cardinality' => 1,
+      'cardinality' => -1,
       'deleted' => 0,
       'entity_types' => array(),
       'field_name' => 'field_biblio_long_language',
-      'foreign keys' => array(
-        'format' => array(
-          'columns' => array(
-            'format' => 'format',
-          ),
-          'table' => 'filter_format',
-        ),
-      ),
+      'foreign keys' => array(),
       'indexes' => array(
-        'format' => array(
-          0 => 'format',
+        'value' => array(
+          0 => 'value',
         ),
       ),
       'locked' => 0,
-      'module' => 'text',
+      'module' => 'list',
       'settings' => array(
+        'allowed_values' => array(
+          'English' => 'English',
+          'German' => 'German',
+          'Chinese' => 'Chinese',
+          'Tibetan' => 'Tibetan',
+          'Sanskrit' => 'Sanskrit',
+          'Japanese' => 'Japanese',
+          'Sina Bidoyoh' => 'Sina Bidoyoh',
+          'Abkhaz' => 'Abkhaz',
+          'Adyghe' => 'Adyghe',
+          'Afrikaans' => 'Afrikaans',
+          'Akan' => 'Akan',
+          'Albanian' => 'Albanian',
+          'Arabic' => 'Arabic',
+          'Aragonese' => 'Aragonese',
+          'Amharic' => 'Amharic',
+          'Armenian' => 'Armenian',
+          'Aymara' => 'Aymara',
+          'Balinese' => 'Balinese',
+          'Basque' => 'Basque',
+          'Betawi' => 'Betawi',
+          'Bosnian' => 'Bosnian',
+          'Breton' => 'Breton',
+          'Bulgarian' => 'Bulgarian',
+          'Cantonese' => 'Cantonese',
+          'Catalan' => 'Catalan',
+          'Cherokee' => 'Cherokee',
+          'Chickasaw' => 'Chickasaw',
+          'Coptic' => 'Coptic',
+          'Cornish' => 'Cornish',
+          'Corsican' => 'Corsican',
+          'Crimean Tatar' => 'Crimean Tatar',
+          'Croatian' => 'Croatian',
+          'Czech' => 'Czech',
+          'Danish' => 'Danish',
+          'Dutch' => 'Dutch',
+          'Dawro' => 'Dawro',
+          'Esperanto' => 'Esperanto',
+          'Estonian' => 'Estonian',
+          'Ewe' => 'Ewe',
+          'Fiji Hindi' => 'Fiji Hindi',
+          'Finnish' => 'Finnish',
+          'French' => 'French',
+          'Galician' => 'Galician',
+          'Georgian' => 'Georgian',
+          'Greek, Modern' => 'Greek, Modern',
+          'Ancient Greek' => 'Ancient Greek',
+          'Greenlandic' => 'Greenlandic',
+          'Haitian Creole' => 'Haitian Creole',
+          'Hawaiian' => 'Hawaiian',
+          'Hebrew' => 'Hebrew',
+          'Hindi' => 'Hindi',
+          'Hungarian' => 'Hungarian',
+          'Icelandic' => 'Icelandic',
+          'Indonesian' => 'Indonesian',
+          'Inuktitut' => 'Inuktitut',
+          'Interlingua' => 'Interlingua',
+          'Irish' => 'Irish',
+          'Italian' => 'Italian',
+          'Kabardian' => 'Kabardian',
+          'Kannada' => 'Kannada',
+          'Kashubian' => 'Kashubian',
+          'Khmer' => 'Khmer',
+          'Kinyarwanda' => 'Kinyarwanda',
+          'Korean' => 'Korean',
+          'Kurdish/Kurdî' => 'Kurdish/Kurdî',
+          'Ladin' => 'Ladin',
+          'Latgalian' => 'Latgalian',
+          'Latin' => 'Latin',
+          'Lingala' => 'Lingala',
+          'Livonian' => 'Livonian',
+          'Lojban' => 'Lojban',
+          'Lower Sorbian' => 'Lower Sorbian',
+          'Low German' => 'Low German',
+          'Macedonian' => 'Macedonian',
+          'Malay' => 'Malay',
+          'Malayalam' => 'Malayalam',
+          'Mandarin' => 'Mandarin',
+          'Manx' => 'Manx',
+          'Maori' => 'Maori',
+          'Mauritian Creole' => 'Mauritian Creole',
+          'Min Nan' => 'Min Nan',
+          'Mongolian' => 'Mongolian',
+          'Norwegian' => 'Norwegian',
+          'Old Armenian' => 'Old Armenian',
+          'Old English' => 'Old English',
+          'Old French' => 'Old French',
+          'Old Norse' => 'Old Norse',
+          'Old Prussian' => 'Old Prussian',
+          'Oriya' => 'Oriya',
+          'Pangasinan' => 'Pangasinan',
+          'Papiamentu' => 'Papiamentu',
+          'Pashto' => 'Pashto',
+          'Persian' => 'Persian',
+          'Pitjantjatjara' => 'Pitjantjatjara',
+          'Polish' => 'Polish',
+          'Portuguese' => 'Portuguese',
+          'Proto-Slavic' => 'Proto-Slavic',
+          'Rapa Nui' => 'Rapa Nui',
+          'Romanian' => 'Romanian',
+          'Russian' => 'Russian',
+          'Scots' => 'Scots',
+          'Scottish Gaelic' => 'Scottish Gaelic',
+          'Serbian' => 'Serbian',
+          'Serbo-Croatian' => 'Serbo-Croatian',
+          'Slovak' => 'Slovak',
+          'Slovene' => 'Slovene',
+          'Spanish' => 'Spanish',
+          'Sinhalese' => 'Sinhalese',
+          'Swahili' => 'Swahili',
+          'Swedish' => 'Swedish',
+          'Tagalog' => 'Tagalog',
+          'Tajik' => 'Tajik',
+          'Tamil' => 'Tamil',
+          'Tarantino' => 'Tarantino',
+          'Telugu' => 'Telugu',
+          'Thai' => 'Thai',
+          'Tok Pisin' => 'Tok Pisin',
+          'Turkish' => 'Turkish',
+          'Twi' => 'Twi',
+          'Ukrainian' => 'Ukrainian',
+          'Upper Sorbian' => 'Upper Sorbian',
+          'Urdu' => 'Urdu',
+          'Uzbek' => 'Uzbek',
+          'Venetian' => 'Venetian',
+          'Vietnamese' => 'Vietnamese',
+          'Vilamovian' => 'Vilamovian',
+          'Volapük' => 'Volapük',
+          'Võro' => 'Võro',
+          'Welsh' => 'Welsh',
+          'Xhosa' => 'Xhosa',
+          'Yiddish' => 'Yiddish',
+        ),
+        'allowed_values_function' => '',
         'entity_translation_sync' => FALSE,
       ),
       'translatable' => 0,
-      'type' => 'text_long',
+      'type' => 'list_text',
     ),
     'field_instance' => array(
       'bundle' => 'biblio',
@@ -59,28 +186,22 @@ function biblio_long_fields_defaultconfig_field_default_fields() {
       'display' => array(
         'default' => array(
           'label' => 'above',
+          'module' => 'list',
           'settings' => array(),
-          'type' => 'hidden',
-          'weight' => 10,
+          'type' => 'list_default',
+          'weight' => 16,
         ),
-        'featured' => array(
+        'full' => array(
           'label' => 'above',
           'settings' => array(),
           'type' => 'hidden',
           'weight' => 0,
         ),
-        'full' => array(
-          'label' => 'above',
-          'module' => 'text',
-          'settings' => array(),
-          'type' => 'text_default',
-          'weight' => -5,
-        ),
         'teaser' => array(
           'label' => 'above',
           'settings' => array(),
           'type' => 'hidden',
-          'weight' => 5,
+          'weight' => 0,
         ),
       ),
       'entity_type' => 'node',
@@ -89,21 +210,15 @@ function biblio_long_fields_defaultconfig_field_default_fields() {
       'required' => 0,
       'settings' => array(
         'entity_translation_sync' => FALSE,
-        'linkit' => array(
-          'button_text' => 'Search',
-          'enable' => 0,
-          'profile' => '',
-        ),
-        'text_processing' => 0,
         'user_register_form' => FALSE,
       ),
       'widget' => array(
         'active' => 1,
-        'module' => 'text',
+        'module' => 'options',
         'settings' => array(
-          'rows' => 5,
+          'apply_chosen' => '',
         ),
-        'type' => 'text_textarea',
+        'type' => 'options_select',
         'weight' => 66,
       ),
     ),
@@ -276,20 +391,4 @@ function biblio_long_fields_defaultconfig_field_default_fields() {
   t('Places');
 
   return $fields;
-}
-
-/**
- * Implements hook_defaultconfig_strongarm().
- */
-function biblio_long_fields_defaultconfig_strongarm() {
-  $export = array();
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'biblio_rss_number_of_entries';
-  $strongarm->value = '10';
-  $export['biblio_rss_number_of_entries'] = $strongarm;
-
-  return $export;
 }

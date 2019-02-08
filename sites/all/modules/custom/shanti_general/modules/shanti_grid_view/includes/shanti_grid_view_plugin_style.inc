@@ -89,7 +89,7 @@ class shanti_grid_view_plugin_style extends views_plugin_style {
         '#title' => t('IIIF URL Syntax'),
         '#description' => t('Enter the syntax of the <em>relative</em> URL with __FNAME__ for the file name and __SIZE__ ' .
             'for the Popdown Image Size replacements. <strong>Note: </strong> The host name is for the ' .
-            'IIIF server is set as IIIF View URL in <a href="/admin/config/media/shanti_images">Shanti Images settings</a>.'),
+            'IIIF server is set as IIIF View URL and IIIF View Path in <a href="/admin/config/media/shanti_images">Shanti Images settings</a>.'),
         '#default_value' => (!empty($this->options['iiif_options']['iiif_url_syntax'])) ? $this->options['iiif_options']['iiif_url_syntax'] : 'https://iiif-test.lib.virginia.edu/mandala/__FNAME__/full/__SIZE__/0/default.jpg',
         '#size' => 100,
     );

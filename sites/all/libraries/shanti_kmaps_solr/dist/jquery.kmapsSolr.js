@@ -1,11 +1,11 @@
-/*! Shanti Kmaps Solr - v0.1.0 - 2018-11-06
+/*! Shanti Kmaps Solr - v0.1.0 - 2018-12-11
 * Copyright (c) 2018 ys2n; Licensed MIT */
 /*! Shanti Kmaps Solr - v0.1.0 - 2018-07-24
 * Copyright (c) 2018 ys2n; Licensed MIT */
 ;(function ($, window, document, undefined) {
   'use strict';
   var DEBUG = false;
-  var TEXT_SEARCH_FIELD = 'name_autocomplete';
+  var TEXT_SEARCH_FIELD = 'text';
   var JOINQ_LOGIC = "OR";
 
   // ys2n:  how do we combine the kmap selection and other searches?
@@ -88,7 +88,7 @@
   KMapsSolr.prototype = {
     processConfig: function (config, options) {
       var kmapsSolrConfig = {
-        pageSize: 50
+        pageSize: 100
       };
       var arg_type = $.type(config);
       if (arg_type === "string") {
@@ -137,45 +137,295 @@
       // TODO: ys2n: refactor this so that these can be loaded from separate files.  Right now its just an array of hardcoded blobs
       var facetConfig = [
 
-        {
-          name: "kmaps_types",
-          title: "Type",
-          applies: function (search_params) {
+        // {
+        //   name: "asset_type",
+        //   title: "Type",
+        //   applies: function (search_params) {
+        //
+        //     // always apply this facetConfig
+        //     return true;
+        //   },
+        //   getSolrFacetJSONString: function () {
+        //     return undefined;  // return this as a JSON string blob
+        //   },
+        //   transform: function (entry) {
+        //     var type = entry.val;
+        //     var name = entry.val;
+        //     var count = entry.count;
+        //     var fq = "asset_type:" + entry.val;
+        //
+        //     var facetentry = {
+        //       id: "type-" + type,
+        //       type: "Type",
+        //       label: name,
+        //       full_label: true,
+        //       value: type,
+        //       count: count,
+        //       filterQuery: fq,
+        //     };
+        //     return facetentry;          },
+        //   handlebarsTemplate: ""
+        // },
 
+
+        {
+          name: "assetType",
+          title: "Asset Type",
+          applies: function (search_params) {
+            // always apply this facetConfig
+            return false;
+          },
+          getSolrFacetJSONString: function () {
+            // I'm constructing this as an object then serializing via JSON.stringify
+            var json = {
+              assetType: {
+                limit: 300,
+                type: "terms",
+                field: "asset_type",
+                facet: {
+                  subtype: {
+                    limit: 1,
+                    type: "terms",
+                    field: "asset_subtype"
+                  }
+                }
+                // domain: {blockChildren: "block_type:parent"}
+              }
+            };
+            return JSON.stringify(json);  // return this as a JSON string blob
+          },
+          transform: function (entry) {
+
+            var value = entry.val;
+            var name = value;
+            var count = entry.count;
+            var fq = "asset_type:\"" + value + "\"";
+            var evalue = value.replace(/\s+/g,"_");
+            var subtype = (entry.subtype && entry.subtype.buckets && entry.subtype.buckets.length > 0)?entry.subtype.buckets[0].val:"";
+            var subtype_label = (subtype.length > 0)?": " + subtype:"";
+
+            var facetentry = {
+              id: "asset_type-" + evalue,
+              type: "Asset Type",
+              label: name + subtype_label,
+              full_label: true,
+              value: value,
+              count: count,
+              filterQuery: fq
+            };
+            // console.log("FACETENTRY id = " + facetentry.id + " evalue = " + evalue);
+            return facetentry;
+          },
+          handlebarsTemplate: ""
+        },
+
+
+
+        {
+          name: "places",
+          title: "Related Places",
+          applies: function (search_params) {
             // always apply this facetConfig
             return true;
           },
           getSolrFacetJSONString: function () {
             // I'm constructing this as an object then serializing via JSON.stringify
             var json = {
-              kmaps_types: {
-                limit: 100,
+              places: {
+                limit: 300,
                 type: "terms",
-                field: "tree"
+                field: "kmapid",
+                prefix: "places",
+                // domain: {blockChildren: "block_type:parent"}
               }
             };
             return JSON.stringify(json);  // return this as a JSON string blob
           },
           transform: function (entry) {
-            var type = entry.val;
-            var name = entry.val;
+
+            var full_label = false;
+            var kcache = Drupal.settings.kmapsSolr.state.kmapsLabelCache;
+
+            var display_name = entry.val;
+            if (kcache) {
+              var x = kcache[entry.val];
+              if (x) {
+                display_name = x;
+                full_label = true;
+              }
+            }
+            var value = entry.val;
+            var name = display_name;
             var count = entry.count;
-            var fq = "tree:" + entry.val;
+            var fq = "kmapid:\"" + value + "\"";
+            var evalue = value.replace(/\s+/g,"_");
 
             var facetentry = {
-              id: "type-" + type,
-              type: "Type",
+              id: evalue,
+              type: "Related Subjects",
               label: name,
-              value: type,
+              full_label: full_label,
+              value: value,
               count: count,
-              filterQuery: fq,
+              filterQuery: fq
             };
-            return facetentry;          },
+            // console.log("FACETENTRY id = " + facetentry.id + " evalue = " + evalue);
+            return facetentry;
+          },
+          handlebarsTemplate: ""
+        },
+
+
+        {
+          name: "subjects",
+          title: "Related Subjects",
+          applies: function (search_params) {
+            // always apply this facetConfig
+            return true;
+          },
+          getSolrFacetJSONString: function () {
+            // I'm constructing this as an object then serializing via JSON.stringify
+            var json = {
+              subjects: {
+                limit: 300,
+                type: "terms",
+                field: "kmapid",
+                prefix: "subjects",
+                // domain: {blockChildren: "block_type:parent"}
+              }
+            };
+            return JSON.stringify(json);  // return this as a JSON string blob
+          },
+          transform: function (entry) {
+
+            var full_label = false;
+            var kcache = Drupal.settings.kmapsSolr.state.kmapsLabelCache
+
+            var display_name = entry.val;
+            if (kcache) {
+              var x = kcache[entry.val];
+              if (x) {
+                display_name = x;
+                full_label = true;
+              }
+            }
+            var value = entry.val;
+            var name = display_name;
+            var count = entry.count;
+            var fq = "kmapid:\"" + value + "\"";
+            var evalue = value.replace(/\s+/g,"_");
+
+            var facetentry = {
+              id: evalue,
+              type: "Related Subjects",
+              label: name,
+              full_label: full_label,
+              value: value,
+              count: count,
+              filterQuery: fq
+            };
+            // console.log("FACETENTRY id = " + facetentry.id + " evalue = " + evalue);
+            return facetentry;
+          },
+          handlebarsTemplate: ""
+        },
+
+
+        {
+          name: "collection_title",
+          title: "Collection",
+          applies: function (search_params) {
+            // always apply this facetConfig
+            return true;
+          },
+          getSolrFacetJSONString: function () {
+            // I'm constructing this as an object then serializing via JSON.stringify
+            var json = {
+              collection_title: {
+                limit: 300,
+                type: "terms",
+                field: "collection_title"
+                // domain: {blockChildren: "block_type:parent"}
+              }
+            };
+            return JSON.stringify(json);  // return this as a JSON string blob
+          },
+          transform: function (entry) {
+
+            var value = entry.val;
+            var name = value;
+            var count = entry.count;
+            var fq = "collection_title:\"" + value + "\"";
+            var evalue = value.replace(/\s+/g,"_");
+
+            var facetentry = {
+              id: "collection_title-" + evalue,
+              type: "Collection",
+              label: name,
+              full_label: true,
+              value: value,
+              count: count,
+              filterQuery: fq
+            };
+            // console.log("FACETENTRY id = " + facetentry.id + " evalue = " + evalue);
+            return facetentry;
+          },
+          handlebarsTemplate: ""
+        },
+
+
+        {
+          name: "asset_subtype",
+          title: "Asset Type",
+          applies: function (search_params) {
+            // always apply this facetConfig
+            return true;
+          },
+          getSolrFacetJSONString: function () {
+            // I'm constructing this as an object then serializing via JSON.stringify
+            var json = {
+              asset_subtype: {
+                limit: 300,
+                type: "terms",
+                field: "asset_subtype",
+                facet: {
+                  parent_type: {
+                    limit: 1,
+                    type: "terms",
+                    field: "asset_type"
+                  }
+                }
+                // domain: {blockChildren: "block_type:parent"}
+              }
+            };
+            return JSON.stringify(json);  // return this as a JSON string blob
+          },
+          transform: function (entry) {
+
+            var value = entry.val;
+            var name = value;
+            var count = entry.count;
+            var fq = "asset_subtype:\"" + value + "\"";
+            var evalue = value.replace(/\s+/g,"_");
+            var parent_type = entry.parent_type.buckets[0].val
+
+            var facetentry = {
+              id: "asset_subtype-" + evalue,
+              type: "Asset Subtype",
+              label: parent_type + ": " + name,
+              full_label: true,
+              value: value,
+              count: count,
+              filterQuery: fq
+            };
+            // console.log("FACETENTRY id = " + facetentry.id + " evalue = " + evalue);
+            return facetentry;
+          },
           handlebarsTemplate: ""
         },
 
         {
-          name: "feature_types",
+          name: "feature_types_ss",
           title: "Feature Types",
           applies: function (search_params) {
             // always apply this facetConfig
@@ -184,138 +434,232 @@
           getSolrFacetJSONString: function () {
             // I'm constructing this as an object then serializing via JSON.stringify
             var json = {
-              feature_types: {
-                // TODO: ys2n: THIS SHOULD BE CONFIGURABLE!
+              feature_types_ss: {
                 limit: 300,
                 type: "terms",
-                field: "feature_type_id_i",
-                facet: {
-                  feature_type_name_s: {
-                    field: "feature_type_name_s"
-                  }
-                },
-                domain: {blockChildren: "block_type:parent"}
+                field: "feature_types_ss"
+                // domain: {blockChildren: "block_type:parent"}
               }
             };
             return JSON.stringify(json);  // return this as a JSON string blob
           },
           transform: function (entry) {
-            var kmapid = "subjects-" + entry.val;
-            var name = entry.feature_type_name_s.buckets[0].val;
+
+            var kmapid = entry.val;
+            var name = kmapid;
             var count = entry.count;
-            var fq = "{!parent which='block_type:parent'}feature_type_id_i:" + entry.val;
+            var fq = "feature_types_ss:\"" + kmapid + "\"";
 
             var facetentry = {
               id: "feature_types-" + kmapid,
               type: "Feature Type",
               label: name,
+              full_label: true,
               value: kmapid,
               count: count,
               filterQuery: fq
             };
+            // console.log("FACETENTRY id = " + facetentry.id);
             return facetentry;
           },
           handlebarsTemplate: ""
         },
 
         {
-          name: "related_subjects",
-          title: "Related Subjects",
+          name: "node_user",
+          title: "Uploading User",
           applies: function (search_params) {
+            // always apply this facetConfig
+
+            // DISABLED
             return true;
           },
-
           getSolrFacetJSONString: function () {
+            // I'm constructing this as an object then serializing via JSON.stringify
             var json = {
-              related_subjects: {
-                type: "terms",
-                // TODO: ys2n: THIS SHOULD BE CONFIGURABLE!
+              node_user: {
                 limit: 300,
-                prefix: "subjects-",
-                field: "related_subjects_id_s",
-                facet: {
-                  related_subjects_header_s: {
-                    field: "related_subjects_header_s"
-                  }
-                },
-                domain: {blockChildren: "block_type:parent"}
+                type: "terms",
+                field: "user_name_full_s"
+                // domain: {blockChildren: "block_type:parent"}
               }
             };
-            return JSON.stringify(json);
+            return JSON.stringify(json);  // return this as a JSON string blob
           },
-
           transform: function (entry) {
-            if (DEBUG) console.log("transforming: " + JSON.stringify(entry));
-            var kmapid = entry.val;
-            var name = entry.related_subjects_header_s.buckets[0].val;
+
+            var value = entry.val;
+            var name = value;
             var count = entry.count;
-            var fq = "{!parent which='block_type:parent'}related_subjects_id_s:" + kmapid;
+            var fq = "user_name_full_s:\"" + value + "\"";
+            var evalue = value.replace(/\s+/g,"_");
+
             var facetentry = {
-              id: "related_subjects-" + kmapid,
-              type: "Related Subject",
+              id: "node_user-" + evalue,
+              type: "Uploading User",
               label: name,
-              value: kmapid,
+              full_label: true,
+              value: value,
               count: count,
               filterQuery: fq
             };
+            // console.log("FACETENTRY id = " + facetentry.id + " evalue = " + evalue);
             return facetentry;
           },
-
           handlebarsTemplate: ""
         },
 
         {
-          name: "related_places",
-
-          title: "Related Places",
-
+          name: "node_lang",
+          title: "Asset Language",
           applies: function (search_params) {
+            // always apply this facetConfig
             return true;
           },
-
           getSolrFacetJSONString: function () {
+            // I'm constructing this as an object then serializing via JSON.stringify
             var json = {
-              related_places: {
-                type: "terms",
-                // TODO: ys2n: THIS SHOULD BE CONFIGURABLE!
+              node_lang: {
                 limit: 300,
-                prefix: "places-",
-                field: "related_places_id_s",
-                facet: {
-                  related_places_header_s: {
-                    field: "related_places_header_s"
-                  }
-                },
-                domain: {blockChildren: "block_type:parent"}
+                type: "terms",
+                field: "node_lang"
+                // domain: {blockChildren: "block_type:parent"}
               }
             };
-            return JSON.stringify(json);
+            return JSON.stringify(json);  // return this as a JSON string blob
           },
-
           transform: function (entry) {
-            // console.log("transforming: " + JSON.stringify(entry));
-            var kmapid = entry.val;
 
-            // default this value to the kmapid if the related_places_header_s is empty...
-            var name_value = (entry.related_places_header_s.buckets.length !==0 )? entry.related_places_header_s.buckets[0].val : kmapid;
-            var name = name_value;
+            var value = entry.val;
+            var name = value;
             var count = entry.count;
-            var fq = "{!parent which='block_type:parent'}related_places_id_s:" + kmapid;
+            var fq = "node_lang:\"" + value + "\"";
+            var evalue = value.replace(/\s+/g,"_");
+
+            if (name === "") {
+              name = "(unknown)";
+            } else if (name === "und") {
+              name = "(undefined)";
+            }
 
             var facetentry = {
-              id: "related_places-" + kmapid,
-              type: "Related Place",
+              id: "node_lang-" + evalue,
+              type: "Asset Language",
               label: name,
-              value: kmapid,
+              full_label: true,
+              value: value,
               count: count,
               filterQuery: fq
             };
+            // console.log("FACETENTRY id = " + facetentry.id + " evalue = " + evalue);
             return facetentry;
           },
-
           handlebarsTemplate: ""
-        }
+        },
 
+        /*
+                {
+                  name: "related_subjects",
+                  title: "Related Subjects",
+                  applies: function (search_params) {
+                    return true;
+                  },
+
+                  getSolrFacetJSONString: function () {
+                    var json = {
+                      related_subjects: {
+                        type: "terms",
+                        // TODO: ys2n: THIS SHOULD BE CONFIGURABLE!
+                        limit: 300,
+                        prefix: "subjects-",
+                        field: "related_subjects_id_s",
+                        facet: {
+                          related_subjects_header_s: {
+                            field: "related_subjects_header_s"
+                          }
+                        },
+                        domain: {blockChildren: "block_type:parent"}
+                      }
+                    };
+                    return JSON.stringify(json);
+                  },
+
+                  transform: function (entry) {
+                    if (DEBUG) console.log("transforming: " + JSON.stringify(entry));
+                    var kmapid = entry.val;
+                    var name = entry.related_subjects_header_s.buckets[0].val;
+                    var count = entry.count;
+                    var fq = "{!parent which='block_type:parent'}related_subjects_id_s:" + kmapid;
+                    var facetentry = {
+                      id: "related_subjects-" + kmapid,
+                      type: "Related Subject",
+                      label: name,
+                      full_label: true,
+                      value: kmapid,
+                      count: count,
+                      filterQuery: fq
+                    };
+                    // console.log("FACETENTRY id = " + facetentry.id + " evalue = " + evalue);
+                    return facetentry;
+                  },
+
+                  handlebarsTemplate: ""
+                },
+
+                {
+                  name: "related_places",
+
+                  title: "Related Places",
+
+                  applies: function (search_params) {
+                    return true;
+                  },
+
+                  getSolrFacetJSONString: function () {
+                    var json = {
+                      related_places: {
+                        type: "terms",
+                        // TODO: ys2n: THIS SHOULD BE CONFIGURABLE!
+                        limit: 300,
+                        prefix: "places-",
+                        field: "related_places_id_s",
+                        facet: {
+                          related_places_header_s: {
+                            field: "related_places_header_s"
+                          }
+                        },
+                        domain: {blockChildren: "block_type:parent"}
+                      }
+                    };
+                    return JSON.stringify(json);
+                  },
+
+                  transform: function (entry) {
+                    // console.log("transforming: " + JSON.stringify(entry));
+                    var kmapid = entry.val;
+
+                    // default this value to the kmapid if the related_places_header_s is empty...
+                    var name_value = (entry.related_places_header_s.buckets.length !==0 )? entry.related_places_header_s.buckets[0].val : kmapid;
+                    var name = name_value;
+                    var count = entry.count;
+                    var fq = "{!parent which='block_type:parent'}related_places_id_s:" + kmapid;
+
+                    var facetentry = {
+                      id: "related_places-" + kmapid,
+                      type: "Related Place",
+                      label: name,
+                      full_label: true,
+                      value: kmapid,
+                      count: count,
+                      filterQuery: fq
+                    };
+                    // console.log("FACETENTRY id = " + facetentry.id + " evalue = " + evalue);
+                    return facetentry;
+                  },
+
+                  handlebarsTemplate: ""
+                }
+                */
 
       ];
       return facetConfig;
@@ -340,7 +684,9 @@
         // Look for defaultFilterState option
         if (options && typeof options.defaultFilterState !== "undefined") {
           if (typeof this.state === "undefined") {
-            this.state = {};
+            this.state = {
+              kmapsLabelCache: {}
+            };
           }
           try {
             this.state.filters = options.defaultFilterState;
@@ -369,6 +715,8 @@
 
     search: function (arg, _persist) {
 
+      if (DEBUG) console.error("SEARCH with arg: " + JSON.stringify(arg));
+
       var deferred = $.Deferred();
 
       // default to true
@@ -395,46 +743,50 @@
       }
 
       try {
-        this.executeKMapSearch(current, this.settings, function (error, result) {
+        // self.executeKMapSearch(current, self.settings, function (error, result) {
+        //
+        //   $.extend(self.state, result);
+        //   // self.update();
+        //
+        //   if (error) {
+        //     console.error("There was an error during the executeKMapSearch callback.");
+        //     console.dir(error);
+        //   }
+        //
+        //
+        //
+        // });
 
-          $.extend(self.state, result);
-          // self.update();
+        // Do another search, this time, an asset search, based on the kmaps search result or...?
+        self.executeAssetSearch(current, self.settings, function(error, asset_result) {
 
           if (error) {
-            console.error("There was an error during the executeKMapSearch callback.");
+            console.error("There was an error during the executeAssetSearch callback.");
             console.dir(error);
+            console.dir({ state: self.state });
+            console.error("rejecting promise...");
+            deferred.reject(self);
           }
 
-          // Do another search, this time, an asset search, based on the kmaps search result or...?
-          self.executeAssetSearch(current, self.settings, function(error, asset_result) {
+          if (_persist && !error) {
+            $.extend(self.state, asset_result);
 
-            if (error) {
-              console.error("There was an error during the executeAssetSearch callback.");
-              console.dir(error);
-              console.dir({ state: self.state });
-              console.error("rejecting promise...");
-              deferred.reject(self);
+            if (DEBUG) {
+              console.log("HERE ARE THE ASSET RESULTS");
+              console.dir(asset_result);
             }
+            self.update();
+            deferred.resolve(self);
+            sessionStorage.setItem(stateStoreKey, JSON.stringify(self.state));
+            // TODO: ys2n: if there is any url state-storing to be done it could be done here.
 
-            if (_persist && !error) {
-              $.extend(self.state, asset_result);
-
-              if (DEBUG) {
-                console.log("HERE ARE THE ASSET RESULTS");
-                console.dir(asset_result);
-              }
-              self.update();
-              deferred.resolve(self);
-              sessionStorage.setItem(stateStoreKey, JSON.stringify(self.state));
-              // TODO: ys2n: if there is any url state-storing to be done it could be done here.
-
-              if (self.settings.afterSearch !== null && $.type(self.settings.afterSearch) === "function") {
-                self.settings.afterSearch(self.state);
-                if (DEBUG) console.error("AFTERSEARCH!");
-              }
+            if (self.settings.afterSearch !== null && $.type(self.settings.afterSearch) === "function") {
+              self.settings.afterSearch(self.state);
+              // if (DEBUG) console.error("AFTERSEARCH!");
             }
-          });
+          }
         });
+
       } catch (err) {
         console.error("ERROR:" + err);
         deferred.reject(self);
@@ -533,23 +885,283 @@
       return current_search;
     },
 
-    executeKMapSearch: function (searchparams, settings, kmsearch_cb) {
+    // executeKMapSearch: function (searchparams, settings, kmsearch_cb) {
+    //
+    //   // TODO: ys2n: refactor this to simplify logic.
+    //   // TODO: ys2n: e.g. "flatten" the _filters_ object, so that the add/remove mechanics are simpler and more predictable.
+    //
+    //   var self = this;
+    //   var titles = {};
+    //   var transformers = {};
+    //   var merged = {};
+    //
+    //   var x_start = searchparams.start || 0;
+    //   var pageSize = settings.pageSize;
+    //
+    //   $.each(settings.facetConfigList, function (x, y) {
+    //     var facet = JSON.parse(y.getSolrFacetJSONString());
+    //     if (y.applies(searchparams)) {
+    //       $.extend(true, merged, facet);
+    //     }
+    //     if ($.type(y.transform) === 'function') {
+    //       transformers[y.name] = y.transform;
+    //       titles[y.name] = y.title;
+    //     }
+    //   });
+    //
+    //   // serialize to JSON
+    //   var facetJSON = JSON.stringify(merged);
+    //
+    //   // add fq's
+    //   var fqhash = {};  // hash of filter queries (fq)
+    //
+    //   if ($.type(self.state.filters) === "object") {
+    //     // use the stored ones
+    //     fqhash = self.state.filters;
+    //   }
+    //
+    //   // asset type list preprocessing so that the UI is updated in time.
+    //   var assetTypeList;
+    //   if ($.type(self.state.filters) === "object") {
+    //     // use the stored ones
+    //     fqhash = self.state.filters;
+    //     assetTypeList = (self.state.assetTypeList)?self.state.assetTypeList:[];
+    //   }
+    //
+    //   var showAssetTypes = searchparams.showAssetTypes;
+    //
+    //   if (true) { console.log(" showAssetTypes = " + JSON.stringify(showAssetTypes)); }
+    //
+    //   if ($.isArray(showAssetTypes)) {
+    //     assetTypeList = showAssetTypes;
+    //   } else if ( typeof showAssetTypes === "string" && showAssetTypes.length > 0 ) {
+    //     assetTypeList = showAssetTypes.split(/\s+/);
+    //   } else if ( showAssetTypes === "" ) {
+    //     assetTypeList = [ "all","places", "subjects", "audio-video", "images", "sources", "texts", "visuals" ];
+    //   }
+    //
+    //   if (assetTypeList !== null) {
+    //     self.state.assetTypeList = assetTypeList;
+    //     if (DEBUG) console.log("setting state.assetTypeList : " + JSON.stringify(assetTypeList) );
+    //   }
+    //
+    //   if (!assetTypeList || assetTypeList === null || assetTypeList.length === 0 ) {
+    //     assetTypeList = [ "all","places", "subjects", "audio-video", "images", "sources", "texts", "visuals" ];
+    //   }
+    //   if (true)  { console.error("assetTypeList = " + JSON.stringify(assetTypeList)); }
+    //
+    //   // get the current search string and override any
+    //   if ($.type(searchparams.searchString) === "string") {
+    //     if (searchparams.searchString.length === 0) {
+    //       if (fqhash.searchString) {
+    //         delete fqhash.searchString;
+    //       }
+    //     } else {
+    //       fqhash.searchString = TEXT_SEARCH_FIELD + ":" + searchparams["searchString"];
+    //     }
+    //   }
+    //
+    //   // make sure chooseFacets is an array
+    //   var chooseFacets = searchparams["chooseFacets"];
+    //   if (chooseFacets === null || $.type(chooseFacets) === "undefined") {
+    //     searchparams.chooseFacets = [];
+    //   } else if ($.type(chooseFacets) !== "array") {
+    //     searchparams.chooseFacets = [chooseFacets];
+    //   }
+    //
+    //   $.each(searchparams.chooseFacets, function (x, y) {
+    //     fqhash[y.id] = y.filterQuery;
+    //   });
+    //
+    //   var chooseKmaps = searchparams.chooseKmaps;
+    //   if (chooseKmaps === null || $.type(chooseKmaps) === "undefined") {
+    //     searchparams.chooseKmaps = [];
+    //   } else if ($.type(chooseKmaps) !== "array") {
+    //     searchparams.chooseKmaps = [chooseKmaps];
+    //   }
+    //   $.each(searchparams.chooseKmaps, function (x, y) {
+    //     if (!fqhash.kmaps) {
+    //       fqhash.kmaps = {};
+    //     }
+    //
+    //     // delete if this kmap pre-exists
+    //     if (fqhash["kmaps"][y]) {
+    //       delete fqhash["kmaps"][y];
+    //     }
+    //
+    //     // add the kmap clause.   Note that if we do not want the children to match we would use uid instead of ancestor_uids_generic.
+    //     fqhash.kmaps[y] = "ancestor_uids_generic:" + y;
+    //
+    //   });
+    //
+    //   // we use "OR" logic with kmaps queries. (expanding the hits depending on which kmaps were selected).
+    //   var fqlist = $.map(fqhash, function (v, k) {
+    //     if ($.isPlainObject(v)) {
+    //       var kmaplist = $.map(v, function (kid) {
+    //         return kid;
+    //       });
+    //       if (kmaplist.length !== 0) {
+    //         v = "{!tag=kmaps}(" + kmaplist.join(" OR ") + ")";
+    //       }
+    //     }
+    //     return v;
+    //   });
+    //
+    //
+    //   // figure out sort specification
+    //   function calculateSort(state, params) {
+    //
+    //     // console.log("calculateSort");
+    //     //
+    //     // console.log("STATE:");
+    //     // console.dir(state);
+    //     // console.log("PARAMS:");
+    //     // console.dir(params);
+    //
+    //     var sspecs = [];
+    //
+    //     sspecs.push("asset_type ASC");
+    //     sspecs.push("uid ASC");
+    //
+    //     var sortspec = sspecs.join(',');
+    //
+    //     return sortspec;
+    //   }
+    //
+    //   var sortspec = calculateSort(self.state,searchparams);
+    //
+    //   // okay let's execute the query
+    //
+    //   if (DEBUG) {
+    //     // useful debugging
+    //     $('.search-results-facets').html("<pre>DEBUG</pre><pre>" + JSON.stringify({
+    //       fqlist: fqlist
+    //     }, undefined, 3) + "</pre>");
+    //   }
+    //
+    //   var cf = self.getConfig();
+    //
+    //   // verify configuration is set.
+    //   if (!cf.solrBase) {
+    //     throw new Error ("solrBase is not set!");
+    //   } else if (!cf.solrPath){
+    //     throw new Error ("solrPath is not set!");
+    //   } else if (!cf.termIndex) {
+    //     throw new Error("solrPath is not set!");
+    //   }
+    //
+    //   var requestUrl = "https://" + cf.solrBase + cf.solrPath + cf.assetIndex + "/select";
+    //   // console.log("requestUrl = " + requestUrl);
+    //
+    //   // console.error("PAGESIZE = " + pageSize);
+    //
+    //   var fqlist_full = fqlist.slice(); // clone the array
+    //
+    //   // Add configure fq's to fqlist.
+    //
+    //   fqlist_full.push("-asset_type:(terms picture document video)");
+    //   if(cf.kmapFilterQuery && cf.kmapFilterQuery.length > 0) {
+    //     for (var i = 0; i < cf.kmapFilterQuery.length; i++) {
+    //       if (DEBUG) { console.log("pushing \"" + cf.kmapFilterQuery[i] + "\" onto fqlist..."); }
+    //       fqlist_full.push(cf.kmapFilterQuery[i]);
+    //     }
+    //   }
+    //   // fqlist_full.push ("+(ancestor_uids_generic:places-2 tree:subjects)")
+    //
+    //   if (true) {
+    //     console.log("kmap fqlist:");
+    //     console.dir(fqlist_full);
+    //   }
+    //
+    //   var requestParams = {
+    //     q: "asset_type:*",
+    //     fl: '*',
+    //     fq:  fqlist_full,
+    //     facet: true,
+    //     'json.facet': facetJSON,
+    //     start: x_start,
+    //     rows: pageSize,
+    //     sort: sortspec,
+    //     wt:'json',
+    //     echoParams: 'explicit'
+    //   };
+    //
+    //   console.error("AJAXING");
+    //   console.log("FQ: " + JSON.stringify(requestParams.fq),undefined,2);
+    //   console.log("JSON.FACET: " + JSON.stringify(requestParams['json.facet']),undefined,2);
+    //
+    //   try {
+    //     $.ajaxSettings.traditional = true;
+    //     $.ajax({
+    //       type: "GET",
+    //       cache: true,
+    //       url: requestUrl,
+    //       data: requestParams,
+    //       dataType: "jsonp",
+    //       jsonp: 'json.wrf',
+    //       timeout: 30000,
+    //
+    //       error: function (x,e) {
+    //         console.error("ERRORING: " + JSON.stringify(arguments));
+    //         console.log(e);
+    //         kmsearch_cb(e);
+    //       },
+    //       beforeSend: function () {
+    //       },
+    //       success: function (response) {
+    //
+    //         // see the raw solr reponse
+    //         if (DEBUG) { console.error("THE RESPONSE: " + JSON.stringify(response, undefined, 3)) };
+    //
+    //         // process the results
+    //
 
-      // TODO: ys2n: refactor this to simplify logic.
-      // TODO: ys2n: e.g. "flatten" the _filters_ object, so that the add/remove mechanics are simpler and more predictable.
+    //         if (DEBUG) {
+    //           console.dir(current_blob);
+    //         }
+    //         kmsearch_cb(null,current_blob);
+    //
+    //       },
+    //       complete: function () {
+    //         if (DEBUG) {
+    //           console.log("COMPLETE");
+    //         }
+    //       }
+    //     });
+    //   } catch (err) {
+    //     console.error(err);
+    //   }
+    // },
+
+    executeAssetSearch: function (searchparams, settings,  asset_search_cb) {
 
       var self = this;
       var titles = {};
       var transformers = {};
-      var merged = {};
+      var assetQlist = [];
+      var assetTypeList = null;
 
       var x_start = searchparams.start || 0;
       var pageSize = settings.pageSize;
+      var overFetch = (settings.overFetch)?settings.overFetch:0;
 
+      if (DEBUG) console.error("overFetch = " + overFetch);
+
+      var json_facets = {
+        // start with the asset counts
+        "asset_counts": {
+          "limit":100,
+          "type":"terms",
+          "field":"asset_type",
+          "domain": { "excludeTags": "ast"},
+        }
+      };
       $.each(settings.facetConfigList, function (x, y) {
-        var facet = JSON.parse(y.getSolrFacetJSONString());
-        if (y.applies(searchparams)) {
-          $.extend(true, merged, facet);
+        if (y.getSolrFacetJSONString()) {
+          var facet = JSON.parse(y.getSolrFacetJSONString());
+          if (y.applies(searchparams)) {
+            $.extend(true, json_facets, facet);
+          }
         }
         if ($.type(y.transform) === 'function') {
           transformers[y.name] = y.transform;
@@ -558,7 +1170,13 @@
       });
 
       // serialize to JSON
-      var facetJSON = JSON.stringify(merged);
+      var facetJSON = JSON.stringify(json_facets);
+
+
+      if (DEBUG) {
+        console.log("FACETJSON: ");
+        console.dir(facetJSON);
+      }
 
       // add fq's
       var fqhash = {};  // hash of filter queries (fq)
@@ -578,7 +1196,7 @@
 
       var showAssetTypes = searchparams.showAssetTypes;
 
-      if (true) { console.log(" showAssetTypes = " + JSON.stringify(showAssetTypes)); }
+      if (DEBUG) { console.log(" showAssetTypes = " + JSON.stringify(showAssetTypes)); }
 
       if ($.isArray(showAssetTypes)) {
         assetTypeList = showAssetTypes;
@@ -596,7 +1214,7 @@
       if (!assetTypeList || assetTypeList === null || assetTypeList.length === 0 ) {
         assetTypeList = [ "all","places", "subjects", "audio-video", "images", "sources", "texts", "visuals" ];
       }
-      if (true)  { console.error("assetTypeList = " + JSON.stringify(assetTypeList)); }
+      if (DEBUG)  { console.error("assetTypeList = " + JSON.stringify(assetTypeList)); }
 
       // get the current search string and override any
       if ($.type(searchparams.searchString) === "string") {
@@ -611,7 +1229,7 @@
 
       // make sure chooseFacets is an array
       var chooseFacets = searchparams["chooseFacets"];
-      if (chooseFacets === null || $.type(chooseFacets) === "undefined") {
+      if ($.type(chooseFacets) === "undefined" || chooseFacets === null) {
         searchparams.chooseFacets = [];
       } else if ($.type(chooseFacets) !== "array") {
         searchparams.chooseFacets = [chooseFacets];
@@ -638,7 +1256,7 @@
         }
 
         // add the kmap clause.   Note that if we do not want the children to match we would use uid instead of ancestor_uids_generic.
-        fqhash.kmaps[y] = "ancestor_uids_generic:" + y;
+        fqhash.kmaps[y] = "kmapid:" + y;
 
       });
 
@@ -655,217 +1273,6 @@
         return v;
       });
 
-
-      // figure out sort specification
-      function calculateSort(state, params) {
-
-        // console.log("calculateSort");
-        //
-        // console.log("STATE:");
-        // console.dir(state);
-        // console.log("PARAMS:");
-        // console.dir(params);
-
-        var sort1spec = "tree ASC"
-        var sort2spec = "header ASC"
-        var sort3spec = "ancestor_path ASC";
-        var sort4spec = "uid ASC"
-
-        var sortspec = sort1spec + "," + sort2spec + "," + sort3spec + "," + sort4spec;
-
-        return sortspec;
-      }
-
-      var sortspec = calculateSort(self.state,searchparams);
-
-      // okay let's execute the query
-
-      if (DEBUG) {
-        // useful debugging
-        $('.search-results-facets').html("<pre>DEBUG</pre><pre>" + JSON.stringify({
-          fqlist: fqlist
-        }, undefined, 3) + "</pre>");
-      }
-
-      var cf = self.getConfig();
-
-      // verify configuration is set.
-      if (!cf.solrBase) {
-        throw new Error ("solrBase is not set!");
-      } else if (!cf.solrPath){
-        throw new Error ("solrPath is not set!");
-      } else if (!cf.termIndex) {
-        throw new Error("solrPath is not set!");
-      }
-
-      var requestUrl = "https://" + cf.solrBase + cf.solrPath + cf.termIndex + "/query";
-      // console.log("requestUrl = " + requestUrl);
-
-      // console.error("PAGESIZE = " + pageSize);
-
-      var fqlist_full = fqlist.slice(); // clone the array
-
-      // Add configure fq's to fqlist.
-
-      fqlist_full.push("-tree:(terms picture document video)");
-      if(cf.kmapFilterQuery && cf.kmapFilterQuery.length > 0) {
-        for (var i = 0; i < cf.kmapFilterQuery.length; i++) {
-          if (DEBUG) { console.log("pushing \"" + cf.kmapFilterQuery[i] + "\" onto fqlist..."); }
-          fqlist_full.push(cf.kmapFilterQuery[i]);
-        }
-      }
-      // fqlist_full.push ("+(ancestor_uids_generic:places-2 tree:subjects)")
-
-      if (DEBUG) {
-        console.log("kmap fqlist:");
-        console.dir(fqlist_full);
-      }
-
-      var requestParams = {
-        q: "block_type:parent",
-        fl: '*',
-        fq:  fqlist_full,
-        facet: true,
-        'json.facet': facetJSON,
-        start: x_start,
-        rows: pageSize,
-        sort: sortspec
-      };
-
-      try {
-        $.ajaxSettings.traditional = true;
-        $.ajax({
-          type: "GET",
-          cache: true,
-          url: requestUrl,
-          data: requestParams,
-          dataType: "jsonp",
-          jsonp: 'json.wrf',
-          timeout: 90000,
-
-          error: function (e) {
-            console.error("ERRORING: " + JSON.stringify(e));
-            kmsearch_cb(e);
-          },
-          beforeSend: function () {
-
-          },
-          success: function (response) {
-
-            // see the raw solr reponse
-            if (DEBUG) { console.error("THE RESPONSE: " + JSON.stringify(response, undefined, 3)) };
-
-            // process the results
-
-            var results = response.response; // the main results.
-            var facets = response.facets;
-            var facetHash = (self.state.facetHash) ? self.state.facetHash : {};
-
-            var filters = self.state.filters || {};
-
-            var fq = response.responseHeader.params.fq;
-
-            // assemble the fqhash from all the information we have at the moment....
-
-            // make sure fq is an array
-
-            var $fq_type = $.type(fq);
-            if ($fq_type === "undefined") {
-              filters = {};
-            } else if ($fq_type !== "array" && $fq_type !== "string") {
-              throw new Error("unrecognized filters.  Must be string or array: " + JSON.stringify(fq));
-            } else {
-              if ($fq_type === "string") {
-                fq = [fq];
-              }
-
-              // lookup the facet object from the facetHash
-              $.each(fq, function (i, filter) {
-                var $facet;
-                if (self.state && self.state.facetHash) {
-                  $facet = self.state.facetHash[filter];
-                }
-              });
-            }
-
-            // apply the transformers
-            for (var field in facets) {
-              if (field === "count") {
-                // ignore count field right now.
-                // if (DEBUG) console.log("count = " + facets.count);
-              } else {
-                facets[field].title = titles[field];
-                facets[field].name = field;
-                for (var item in facets[field].buckets) {
-                  try { // transform each returned facet according to the transform() method of the FacetConfig
-                    var term = facets[field].buckets[item];
-                    var transformer = transformers[field];
-                    var entry = transformer(term);
-                    if (filters[entry.id]) {
-                      entry.selected = true;
-                    }
-                    facets[field].buckets[item] = entry;
-                    facetHash[entry.id] = entry;
-                    facetHash[entry.filterQuery] = entry;  // want to look it up by id or query!
-                  } catch (e) {
-                    console.error("Skipping transform of " + facets[field].buckets[item] + ": " + e);
-                  }
-                }
-
-                // sort the buckets with selected items on top
-                facets[field].buckets.sort(function(a,b) {
-                    if (!a.selected) { a.selected = false; }
-                    if (!b.selected) { b.selected = false; }
-                    if (a.selected === b.selected ) {
-                      return (b.count - a.count);
-                    } else if (a.selected) {
-                      return -1;
-                    } else if (b.selected) {
-                      return 1;
-                    } else {
-                      return b.count - a.count;
-                    }
-                  }
-                );
-              }
-            }
-
-            // let's store this state in self.state
-            var current_blob = $.extend(self.state, {
-              'facets': facets,
-              'facetHash': facetHash,
-              'filters': filters,
-              'results': results
-            });
-
-            if (DEBUG) {
-              console.dir(current_blob);
-            }
-            kmsearch_cb(null,current_blob);
-
-          },
-          complete: function () {
-            if (DEBUG) {
-              console.log("COMPLETE");
-            }
-          }
-        });
-      } catch (err) {
-        console.error(err);
-      }
-    },
-
-    executeAssetSearch: function (searchparams, settings,  asset_search_cb) {
-
-      var self = this;
-      var titles = {};
-      var transformers = {};
-      var merged = {};
-      var assetQlist = [];
-      var assetTypeList = null;
-
-      var x_start = searchparams.start || 0;
-      var pageSize = settings.pageSize;
 
       // add fq's
       var fqhash = {};  // hash of filter queries (fq)
@@ -918,7 +1325,7 @@
       }
 
       // we use "OR" logic with kmaps queries. (expanding the hits depending on which kmaps were selected).
-      var joinquery_list = $.map(fqhash, function (v, k) {
+      var facetquery_list = $.map(fqhash, function (v, k) {
         // skip searchString
         if (k === "searchString") {
           return null;
@@ -934,25 +1341,25 @@
         return v;
       });
 
-      // if (joinquery_list.length === 0) {
-      //   joinquery_list.push("tree:*"); // need at least one query...
+      // if (facetquery_list.length === 0) {
+      //   facetquery_list.push("tree:*"); // need at least one query...
       // }
 
       if (DEBUG) {
         console.error("FQHASH: " + JSON.stringify(fqhash, undefined, 2));
-        console.error("JOINQUERYLIST:  " + JSON.stringify(joinquery_list, undefined, 2));
+        console.error("FACETQUERY_LIST:  " + JSON.stringify(facetquery_list, undefined, 2));
         console.error("SEARCHSTRING: " + fqhash.searchString);
         console.error("ASSETQLIST:  " + JSON.stringify(assetQlist, undefined, 2));
       }
 
       // okay let's execute the query
 
-      if (DEBUG) {
-        // useful debugging
-        $('.search-results-facets').html("<pre>DEBUG</pre><pre>" + JSON.stringify({
-          fqlist: joinquery_list
-        }, undefined, 3) + "</pre>");
-      }
+      // if (DEBUG) {
+      //   // useful debugging
+      //   $('.search-results-facets').html("<pre>DEBUG</pre><pre>" + JSON.stringify({
+      //     fqlist: facetquery_list
+      //   }, undefined, 3) + "</pre>");
+      // }
 
       var cf = self.getConfig();
 
@@ -967,7 +1374,7 @@
 
       var assetMatch = "";
       var kmapsMatch = "";
-      var kmapsMatchQuery = "";
+      // var kmapsMatchQuery = "";
       if (fqhash.searchString) {
         if (fqhash.searchString !== TEXT_SEARCH_FIELD + ":*")  {
           var search = fqhash.searchString.split(':')[1];
@@ -975,6 +1382,7 @@
           if (xact.search(' ') && xact.charAt(0) != '"') {
               xact = '"' + xact + '"';
           }
+
           // improve "exact matching" sub-strings
           search = search.replace(/\ /g ,'\\ ');
           assetMatch = "title:" + xact + "^100" +
@@ -983,37 +1391,36 @@
             " caption:"+search +
             " summary:"+ search +
             " names_txt:"+ search +"^9" ;
-          kmapsMatch = "{!join from=uid_i to=kmapid_is score=none v=$kmapsMatch}";
+          // kmapsMatch = "{!join from=uid_i to=kmapid_is score=none v=$kmapsMatch}";
           var qSearch = fqhash.searchString;
           if (search.search(' ') > -1 && search.charAt(0) != '"') {
               qSearch = fqhash.searchString.split(':')[0] + ':"' + search + '"';
           }
-          kmapsMatchQuery = qSearch + " OR " + "name_tibt:\"" + fqhash.searchString.split(':')[1] + "\"";
+          // kmapsMatchQuery = qSearch + " OR " + "name_tibt:\"" + fqhash.searchString.split(':')[1] + "\"";
         }
       }
 
 
-      if (DEBUG) console.log("FQLIST: " + JSON.stringify(joinquery_list, undefined, 2));
-
-      // NEED TO ESCAPE SPACES IN THE JOINQ QUERIES WITH "\ ".   BUT ONLY IN THE JOINQ!
-      var joinqlist = $.map(joinquery_list, function(fq) {
-
-        if (fq.startsWith(TEXT_SEARCH_FIELD + ':')) {
-          return fq.replace(" ", "\\ ");
-        } else {
-          return fq;
-        }
-      });
-      var joinquery = (joinqlist.length)?"+" + joinqlist.join(" " +
-        JOINQ_LOGIC +
-        " +") : "";
-      if (DEBUG) console.log("JOINQUERY = " + joinquery);
+      // // NEED TO ESCAPE SPACES IN THE JOINQ QUERIES WITH "\ ".   BUT ONLY IN THE JOINQ!
+      // var joinqlist = $.map(facetquery_list, function(fq) {
+      //
+      //   if (fq.startsWith(TEXT_SEARCH_FIELD + ':')) {
+      //     return fq.replace(" ", "\\ ").replace(":","\\:");
+      //   } else {
+      //     return fq;
+      //   }
+      // });
+      // var joinquery = (joinqlist.length)?"+" + joinqlist.join(" " +
+      //   JOINQ_LOGIC +
+      //   " +") : "";
+      // if (DEBUG) console.log("JOINQUERY = " + joinquery);
 
       var requestUrl = "https://" + cf.solrBase + cf.solrPath + cf.assetIndex + "/select";
+      var assetQueryClause = (assetMatch)?"( " + assetMatch + " )":"*:*";
 
-      var assetQueryClause = (assetMatch)?"( " + assetMatch + " ) OR (" + kmapsMatch + ")": "*:*";
       var fqlist_full = [ assetTypeFilter ];
       fqlist_full.push ("-asset_type:(terms picture document video)");
+
       if(cf.assetFilterQuery && cf.assetFilterQuery.length > 0) {
         for (var i = 0; i < cf.assetFilterQuery.length; i++) {
           if (DEBUG) { console.log("pushing assset query \"" + cf.assetFilterQuery[i] + "\" onto fqlist..."); }
@@ -1021,25 +1428,28 @@
         }
       }
 
+      if (facetquery_list && facetquery_list.length) {
+        for (var j=0; j < facetquery_list.length; j++) {
+          if (DEBUG) { console.log("pushing facet query \"" + facetquery_list[j] + "\" onto fqlist..."); }
+          fqlist_full.push(facetquery_list[j]);
+        }
+      }
+
       if (DEBUG) {
-        console.log("asset fqlist:");
+        console.log("ASSET QUERY fqlist:");
         console.dir(fqlist_full);
       }
 
-      // fqlist_full.push ("+kmapid:(+subjects-8280)");
-
-      // fqlist_full.push ("+(ancestor_uids_generic:places-2 tree:subjects)")
-
-      // fqlist_full.push ("+ancestors_txt:bhutan");
       var requestParams = {
         "q": assetQueryClause,
         "fl": '*',
         "start": x_start,
-        "rows": pageSize,
+        "rows": pageSize + overFetch,
         "wt": "json",
         "fq": fqlist_full,
         "facet": "on",
-        "facet.field": "{!ex=ast}asset_type",
+        // "facet.field": "{!ex=ast}asset_type",
+        'json.facet': facetJSON,
         "hl":"on",
         "hl.method":"unified",
         "hl.fl":"title,caption,summary,names_txt",
@@ -1049,15 +1459,6 @@
         "echoParams":"explicit"
        };
 
-      if (joinquery) {
-        requestParams.joinq=joinquery;
-        requestParams.fq.push("{!join from=uid fromIndex=" + cf.termIndex + " to=kmapid score=none v=$joinq}");
-      }
-
-      if (kmapsMatch) {
-        requestParams.kmapsMatch=kmapsMatchQuery;
-      }
-
       // if (assetQlist.length > 0) {
       //   requestParams.fq = assetQlist;
       // }
@@ -1066,6 +1467,7 @@
 
 
       try {
+        // traditional is required to properly process multiple fq parameters for SOLR
         $.ajaxSettings.traditional = true;
         $.ajax({
           type: "GET",
@@ -1074,7 +1476,7 @@
           data: requestParams,
           dataType: "jsonp",
           jsonp: 'json.wrf',
-          timeout: 90000,
+          timeout: 30000,
 
           error: function (e) {
             console.error("ERRORING: " + JSON.stringify(e));
@@ -1085,9 +1487,110 @@
           },
           success: function (response) {
 
+            // process facets
+
+            var results = response.response; // the main results.
+            var facets = response.facets;
+            var facetHash = (self.state.facetHash) ? self.state.facetHash : {};
+
+            var filters = self.state.filters || {};
+
+            var fq = response.responseHeader.params.fq;
+
+            // assemble the fqhash from all the information we have at the moment....
+
+            // make sure fq is an array
+
+            var $fq_type = $.type(fq);
+            if ($fq_type === "undefined") {
+              filters = {};
+            } else if ($fq_type !== "array" && $fq_type !== "string") {
+              throw new Error("unrecognized filters.  Must be string or array: " + JSON.stringify(fq));
+            } else {
+              if ($fq_type === "string") {
+                fq = [fq];
+              }
+
+              // lookup the facet object from the facetHash
+              $.each(fq, function (i, filter) {
+                var $facet;
+                if (self.state && self.state.facetHash) {
+                  $facet = self.state.facetHash[filter];
+                }
+              });
+            }
+
+            // apply the transformers
+            for (var field in facets) {
+              // console.error("MUNGING: " + field);
+              if (field === "count" || field === "asset_counts") {
+                // ignore count field right now.
+                // if (DEBUG) console.log("count = " + facets.count);
+              } else {
+                facets[field].title = titles[field];
+                facets[field].name = field;
+                for (var item in facets[field].buckets) {
+                  try { // transform each returned facet according to the transform() method of the FacetConfig
+                    var term = facets[field].buckets[item];
+                    var transformer = transformers[field];
+
+                    if (DEBUG) {
+                      console.log("Term = " + JSON.stringify(term));
+                      console.log("Field = " + field);
+                      console.log("Found transformer = " + transformer);
+                    }
+
+                    if ($.type(transformer) === "function") {
+                      var entry = transformer(term);
+                      if (filters[entry.id]) {
+                        entry.selected = true;
+                      }
+                      facets[field].buckets[item] = entry;
+                      facetHash[entry.id] = entry;
+                      facetHash[entry.filterQuery] = entry;  // want to look it up by id or query!
+                    } else {
+                      console.error("transformer not found for field = " + field);
+                    }
+                  } catch (e) {
+                    console.error("Skipping transform of " + facets[field].buckets[item] + ": " + e);
+                    throw(e);
+                  }
+                }
+
+                // sort the buckets with selected items on top
+                facets[field].buckets.sort(function (a, b) {
+                    if (!a.selected) {
+                      a.selected = false;
+                    }
+                    if (!b.selected) {
+                      b.selected = false;
+                    }
+                    if (a.selected === b.selected) {
+                      return (b.count - a.count);
+                    } else if (a.selected) {
+                      return -1;
+                    } else if (b.selected) {
+                      return 1;
+                    } else {
+                      return b.count - a.count;
+                    }
+                  }
+                );
+              }
+            }
+
+            // let's store this state in self.state
+            var current_blob = $.extend(self.state, {
+              'facets': facets,
+              'facetHash': facetHash,
+              'filters': filters,
+              'results': results
+            });
+
             // see the raw solr reponse
             if (DEBUG){
-              console.error("THE ASSET RESPONSE: " + JSON.stringify(response, undefined, 3));
+              console.error("THE ASSET RESPONSE");
+              console.dir(response);
             }
 
             // process the results
@@ -1095,7 +1598,7 @@
             var asset_counts = {};
 
             // process highlighting!
-            if (DEBUG) {
+            if (false) {
               console.log("HIGHLIGHTING:");
               console.dir(response.highlighting);
             }
@@ -1109,40 +1612,40 @@
               // Insert highlighting
               if (hl[doc.uid]) {
                 if (hl[doc.uid].title.length > 0) {
-                  if (DEBUG) {
+                  if (false) {
                     console.log("highlighting doc.title for " + doc.uid + "...");
                   }
                   doc.title = hl[doc.uid].title;
                 }
                 if (hl[doc.uid].caption.length > 0) {
-                  if (DEBUG) {
+                  if (false) {
                     console.log("highlighting doc.caption for " + doc.uid + "...");
                   }
                   doc.caption = hl[doc.uid].caption[0];
                 }
                 if (hl[doc.uid].summary.length > 0) {
-                  if (DEBUG) {
+                  if (false) {
                     console.log("highlighting doc.summary for " + doc.uid + "...");
                   }
                   doc.summary = hl[doc.uid].summary[0];
                 }
 
                 if (hl[doc.uid].names_txt.length > 0) {
-                  if (DEBUG) {
+                  if (false) {
                     console.log("highlighting doc.names_txt for " + doc.uid + "...");
                   }
 
                   var hl_names = hl[doc.uid].names_txt;
                   for (var j = 0; j < doc.names_txt.length; j++) {
-                    if (DEBUG) { console.log("doc.title = " + $("<i>" + doc.title[0] + "</i>").text()); }
+                    if (false) { console.log("doc.title = " + $("<i>" + doc.title[0] + "</i>").text()); }
                     if (doc.names_txt[j] === $("<i>" + doc.title[0] + "</i>").text()) { // idiomatic way of removing markup...
-                      if (DEBUG) { console.log ("REMOVING " + doc.names_txt[j]); }
+                      if (false) { console.log ("REMOVING " + doc.names_txt[j]); }
                       delete doc.names_txt[j];
                     } else {
                       for (var i = 0; i < hl_names.length; i++) {
                         if (doc.names_txt[j] === $("<i>"+ hl_names[i] + "</i>").text()) {
-                          if (DEBUG) {
-                            if (DEBUG) { console.log(" ...REPLACING: " + doc.names_txt[j] + " with " + hl_names[i]) };
+                          if (false) {
+                            if (false) { console.log(" ...REPLACING: " + doc.names_txt[j] + " with " + hl_names[i]) };
                           }
                           doc.names_txt[j] = hl_names[i];
                           break;
@@ -1152,6 +1655,34 @@
                   }
                 }
               }
+
+              // make kmapid_strict uniq!
+              if (doc.kmapid_strict) {
+                var kmapid_strict = doc.kmapid_strict;
+
+                var unique = [];
+                var places = [];
+                var subjects = [];
+                $.each(kmapid_strict, function (i, el) {
+                  if ($.inArray(el, unique) === -1 && el !== doc.uid) {
+                    unique.push(el);
+                    if (el.startsWith('subjects')) {
+                      subjects.push(el);
+                    } else if (el.startsWith('places')) {
+                      places.push(el);
+                    }
+                  }
+                });
+                doc.kmapid_strict = unique;
+                doc.kmapid_strict_places = places;
+                doc.kmapid_strict_subjects = subjects;
+              }
+
+
+              // sort and organize kmapid_strict
+
+
+
 
 
               // fix title
@@ -1172,7 +1703,7 @@
               }
 
               if (doc.asset_subtype) {
-                doc.asset_subtype = doc.asset_subtype.replace(" ","_");
+                doc.asset_subtype = doc.asset_subtype.replace(/\s+/g,"_");
               }
 
               // fix ancestors
@@ -1187,53 +1718,41 @@
                   doc.feature_types = doc.feature_types_ss;
                 }
               }
+
+              var display = $('<i>' + doc.header + '<\i>').text(); //  + " (" + doc.uid + ")"; // display kmapid
+              // console.log( "DOC DOC: " + doc.uid + " = " + display);
+
+              if ($.type(self.state.kmapsLabelCache) === "undefined") {
+                self.state.kmapsLabelCache = {};
+              }
+              self.state.kmapsLabelCache[doc.uid] = display;
+
+              if (DEBUG) console.dir(doc);
+
+              // trip a solr lookup
+              // let's not...  Its quite expensive.
+              // self.updateKmapLabels(doc.kmapid);
+
               return doc;
             });
 
-            // inject asset facets!
-
-            if (DEBUG) {
-              console.log("RESPONSE.FACET_COUNTS");
-              console.dir(response.facet_counts);
-            }
-
-            if (response.facet_counts &&
-              response.facet_counts.facet_fields.asset_type) {
-
-              var flist = response.facet_counts.facet_fields.asset_type;
-
-              while (flist.length > 1) {
-
-                var value = flist.shift();
-                var count = flist.shift();
-
-                // do some value mapping
-
-                if (value === "picture") {
-                  value = null;
-                } else
-                  if (value === "video") {
-                  value = null;
-                } else if (value === "document") {
-                  value = null;
-                } else if (value === "onlineresource") {
-                  value = null;
-                } else if (value === "__NONE__" ) {
-                  if (DEBUG) console.log("ignoring count " + value);
-                  value = null; // let's ignore these types for now
-                }
-
-                if (value) {
-                  if (typeof asset_counts[value] === "undefined") {
-                    asset_counts[value] = 0;
-                  }
-                  // console.error(value + ": " + count);
-                  asset_counts[value] += count;
-                }
+            if (response.facets && response.facets.asset_counts) {
+              if (DEBUG) console.error(JSON.stringify(response.facets.asset_counts, undefined, 3));
+              var buckets = response.facets.asset_counts.buckets;
+              for (var b=0; b < buckets.length; b++) {
+                var bucket = buckets[b];
+                var value = bucket.val;
+                var count = bucket.count;
+                asset_counts[value] = count;
               }
+
+              // Now discard the asset_counts from the original facet list so it doesn't appear in the facet list.
+              delete response.facets.asset_counts;
+
             }
 
             if (DEBUG) {
+              console.log("ASSET COUNTS : " + JSON.stringify(asset_counts, undefined, 3));
               console.log("checking state.assetQlist : " + assetQlist);
               console.log("checking state.assetTypeList : " + JSON.stringify(assetTypeList));
             }
@@ -1261,9 +1780,9 @@
 
           },
           complete: function () {
-            if (DEBUG) {
-              console.log("COMPLETE");
-            }
+            // if (DEBUG) {
+            //   console.log("COMPLETE");
+            // }
           }
         });
       } catch (err) {
@@ -1390,9 +1909,123 @@
 
     getConfig: function () {
       return this.settings;
+    },
+
+    // utility
+    updateKmapLabels: function(requested_kids, callback) {
+
+      var DEBUG = false;
+
+      var self = this;
+      var cf = self.getConfig();
+
+      // lookup the list of kmaps and cache their name
+
+      if (DEBUG) { console.log("updateKmapLabels: " + JSON.stringify(requested_kids)); }
+
+      var unique = [];
+      $.each(requested_kids, function(i, el){
+        if($.inArray(el, unique) === -1) unique.push(el);
+      });
+
+
+
+      if ($.type(callback) !== "function") {
+        callback = function() { if (DEBUG) console.log("updateKmapLabels no-op callback: " + JSON.stringify(arguments)); };  // no-op callback
+      }
+
+      try {
+        if (!Drupal.settings.kmapsSolr.state.kmapsLabelCache) {
+          Drupal.settings.kmapsSolr.state.kmapsLabelCache = {};
+        }
+        if ($.isArray(requested_kids) && requested_kids.length > 0) {
+          requested_kids = $.grep(requested_kids, function(x) {
+            if (Drupal.settings.kmapsSolr.state.kmapsLabelCache[x]) {
+              if (DEBUG) console.error(x + " exists in cache. skipping...");
+              // var cached = {
+              //   uid: x,
+              //   header: Drupal.settings.kmapsSolr.state.kmapsLabelCache[x]
+              // }
+              // $(Drupal.settings.kmapsSolr).trigger('kmapsLabelCacheUpdate', [cached]);
+
+              return false;
+            } else {
+              return true;
+            }
+          });
+
+          if (unique.length > 0) {
+              var kmapids = unique.slice(0,100); // truncate
+              if (DEBUG) console.log("cacheKmaps: " + JSON.stringify(kmapids));
+              var kst = kmapids.join(' ');
+              var query = "uid: (" + kst + ")";
+              $.ajax({
+                "type": "GET",
+                "cache": true,
+                "url": "https://" + cf.solrBase + cf.solrPath + cf.termIndex + "/query",
+                "data": {
+                  "q": query,
+                  "fl": "uid,header",
+                  "rows": 100
+                },
+                "dataType": "jsonp",
+                "jsonp": "json.wrf",
+                "error": function (x, etype, message) {
+                  console.error(message);
+                  callback(message, null);
+                },
+                "success": function (resp) {
+                  var ret = $.map(resp.response.docs, function (mapping, y) {
+                    // if (DEBUG) console.error("Caching " + JSON.stringify(mapping));
+                    var display_label = mapping.header; // + " (" + mapping.uid + ")"; // display kmapid
+                    // console.error( "Label: " + display_label);
+                    Drupal.settings.kmapsSolr.state.kmapsLabelCache[mapping.uid] = display_label;
+                    $(Drupal.settings.kmapsSolr).trigger('kmapsLabelCacheUpdate', [mapping]);
+                    return mapping;
+                  });
+
+                  //  COMPARE THE REQUESTED kmapids with the returns
+                  //  Deal with those labels that are unavailable...
+
+                  if (DEBUG) {
+                    console.log("REQUESTED KMAPIDS: " + JSON.stringify(kmapids));
+                    console.log("RETURNED: " + JSON.stringify(ret, undefined, 2));
+                  }
+
+                  var kmapid_map = {};
+
+                  for (var i = 0; i < kmapids.length; i++) {
+                    kmapid_map[kmapids[i]] = kmapids[i];
+                  }
+
+                  for (var j = 0; j < ret.length; j++) {
+                    delete kmapid_map[ret[j].uid];
+                  }
+
+                  if (ret.length == 0 && !$.isEmptyObject(kmapid_map)) {
+                    console.error("We couldn't get the proper labels for these: " + JSON.stringify(kmapid_map, undefined, 2));
+
+                    // give up on these and cache a the uid as the label
+                    $.each(kmapid_map, function (x, y) {
+                      var mapping = {uid: x, header: "Unknown " + y};
+                      Drupal.settings.kmapsSolr.state.kmapsLabelCache[mapping.uid] = mapping.header;
+                      $(Drupal.settings.kmapsSolr).trigger('kmapsLabelCacheUpdate', [mapping]);
+                    });
+                  }
+
+
+                  callback(null, ret);
+                }
+              });
+          }
+        }
+      } catch (e) {
+        console.error(e);
+        callback(e,null);
+      }
     }
 
-  };
+};
 
   $.extend(KMapsSolr.prototype, {
     update: function () {

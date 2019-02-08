@@ -23,7 +23,6 @@
 .extruder .extruder-content,.extruder .panel-default .panel-heading,.extruder .panel-heading,.extruder .panel-group,.extruder .panel-group .panel,.extruder .panel-default>.panel-heading {
   border: none;
 }
-
 /**
 * ---------------
 * Search Panel
@@ -89,9 +88,9 @@
   padding: 0;
   text-shadow: none;
   /* default panel container width is set */
-  width: 277px;
-  min-width: 277px !important;
-  font-family: 'Helvetica Neue',helvetica,arial,sans-serif;
+  width: 320px;
+  min-width: 320px !important;
+  font-family:'Open Sans','Segoe UI',Tahoma,sans-serif;
 }
 
 #search-flyout.extruder .text,
@@ -113,7 +112,7 @@
   text-align: center;
   cursor: default;
   background: #888;
-  font-size: 1.75rem;
+  font-size: 1.82rem;
 }
 .extruder .btn-collapse-flyout:hover{
   color: #fff;
@@ -519,37 +518,18 @@ object.flip_label {
   background: #eee;
   color: #777;
 }
-
+.input-section .input-group .btn.btn-default:focus,
 .input-section .input-group .btn.btn-default:active,
 .input-section .input-group .btn-default.active {
   background: transparent;
   border-color: #fff;
+  color: #4d59ca;
 }
 
 .extruder .input-section .input-group .glyphicon {
   position: relative;
-  top: .3rem;
+  top: .2rem;
 }
-/*
-.input-section .input-group .btn.btn-default .icon {
-  font-family: 'Glyphicons Halflings' !important;
-  background: transparent;
-      position: relative;
-      top: .25rem;
-}
-
-.input-section .input-group .btn.btn-default .icon::before {
-  content: '\e080';
-  position: relative;
-  right: 0.25rem;
-  top: -0.56rem;
-}
-
-.input-section .input-group .btn.btn-default:active .icon,
-.input-section .input-group .btn.btn-default.active .icon {
-  color: #777;
-}
-*/
 
 
 
@@ -750,7 +730,7 @@ object.flip_label {
 
 .extruder .input-section label span{
   text-transform: uppercase;
-  font-weight: bold;
+  font-weight: 600;
   color:#555;
   font-size: .93em;
   letter-spacing: .075rem;
@@ -796,7 +776,7 @@ object.flip_label {
   line-height: 1.5em;
 }
 .view-section .nav-tabs>li.shanti-kmaps-faceted-search-kmaps-2{
-  width:27%;
+  width:29%;
 }
 
     .visuals .view-section .nav-tabs>li.shanti-kmaps-faceted-search-kmaps-2{
@@ -808,10 +788,10 @@ object.flip_label {
     
 .view-section .nav-tabs>li>a {
   color: #777;
-  font-size: 0.93em;
+  font-size: 1em;
   line-height: 20px;
   margin-right: 4px;
-  font-weight: bold;
+  font-weight: 400;
   padding: 10px 0 7px 0;
   /* display:none prevents flash on load */
   display: none;
@@ -841,6 +821,7 @@ object.flip_label {
   border-color: #ddd;
   border-top: 2px solid #888;
   border-bottom-color: transparent;
+  font-size: 1.06em;
 }
 
 .view-section .nav-tabs>li> .icon {
@@ -861,11 +842,6 @@ object.flip_label {
   right: 5px;
 }
 
-.view-section .listview>div,
-.view-section .treeview>div {
-  padding: 0;
-  overflow-y: scroll;
-}
 
 .view-section .treeview .tab-content {
   padding-top: 10px;
@@ -886,7 +862,7 @@ object.flip_label {
   line-height: 20px;
   margin: 0 2%;
   width: 96%;
-  font-family: palatino,'Palatino Linotype',georgia,serif;
+  font-family: 'EB Garamond',serif;
 }
 
 .view-section table.table-results a {
@@ -1001,8 +977,41 @@ object.flip_label {
 
 
 /**
-* search view-section scrollbars
+* search scrollbars
 */
+
+/* new selector targets - dec 2018 */
+/*.view-section .listview>div,*/
+.view-section .treeview>div {
+  padding: 0;
+  overflow-y: scroll;
+}
+
+.view-section .treeview>div::-webkit-scrollbar {
+  width: 0.6rem;
+  border-radius: 0.6rem;
+  background-clip: padding-box;
+}
+
+.view-section .treeview>div::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.1);
+}
+
+.view-section .treeview>div::-webkit-scrollbar-thumb {
+  background-color: #e5e5e5;
+  border-radius: 0.6rem;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.2);
+}
+
+.view-section .treeview>div:hover::-webkit-scrollbar-thumb {
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+}
+
+
+
+
+/* older selector targets for scrolling pre-kmaps facets */
+/*
 .view-section .view-wrap::-webkit-scrollbar {
   width: 0.6rem;
   border-radius: 0.6rem;
@@ -1022,6 +1031,8 @@ object.flip_label {
 .view-section .view-wrap:hover::-webkit-scrollbar-thumb {
   -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
 }
+*/
+
 
 /*.view-section ul.fancytree-container::-webkit-scrollbar {
   width: 0.6rem;
@@ -1041,6 +1052,9 @@ object.flip_label {
 .view-section ul.fancytree-container:hover::-webkit-scrollbar-thumb {
   -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
 }*/
+
+
+
 
 /**
 * bootstrap-select scrollbars
@@ -1076,7 +1090,7 @@ object.flip_label {
 }
 
 .view-section .popover-content {
-  font-family: sans-serif;
+  font-family: 'EB Garamond',serif;
   font-size: 10px;
 }
 
@@ -1115,7 +1129,7 @@ object.flip_label {
 }
 
 .view-section .popover-content .kmap-caption p{
-  font-family: 'Helvetica Neue',helvetica,arial,sans-serif;
+  /*font-family: source-sans-pro,'Arial Unicode MS',Helvetica-Neue,Helvetica,sans-serif;*/
 }
 
 .view-section .popover-title .kmapid-display {
@@ -1138,8 +1152,7 @@ object.flip_label {
   position: relative;
   top: 19px;
   font-size: 10px;
-  font-family: 'Helvetica Neue',helvetica,arial,sans-serif;
-  letter-spacing: 0.06em;
+  /*font-family: source-sans-pro,'Arial Unicode MS',Helvetica-Neue,Helvetica,sans-serif;*/
   border: 1px solid #c0c0c0;
   background: #f9f9f9;
   color: #444;
@@ -1187,7 +1200,9 @@ object.flip_label {
   margin: 0;
   background-color: transparent !important;
   border: none !important;
-  font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
+  font-family:'Open Sans','Segoe UI',Tahoma,sans-serif;
+  font-weight: 400;
+  letter-spacing: normal;
 }
 
 .extruder .fancytree-container{
@@ -1263,10 +1278,9 @@ object.flip_label {
   margin-left: .3rem;
   height: 1.62em;
   font-size: 1.06em;
-  font-family: 'Helvetica Neue', arial, sans-serif;
   line-height: 1.5em;
   margin-left: 3.5rem;
-  /*box-sizing: content-box;*/
+  color:#333 !important;
 }
 
 .fancytree-exp-nl .fancytree-icon,
@@ -1431,7 +1445,7 @@ object.flip_label {
 
 .loading {
   border: 2px solid transparent;
-  border-color: transparent #aaa transparent #aaa;
+  border-color: transparent #4d59ca transparent #4d59ca;
   -moz-animation: rotate-loading 1.5s linear 0s infinite normal;
   -moz-transform-origin: 50% 50%;
   -o-animation: rotate-loading 1.5s linear 0s infinite normal;
@@ -1443,6 +1457,8 @@ object.flip_label {
   -webkit-transform-origin: 50% 50%;
   -ms-transform-origin: 50% 50%;
   transform-origin: 50% 50%;
+  filter: alpha(opacity=50);
+  opacity: .5;
 }
 
 .loading-container:hover .loading {
@@ -1458,18 +1474,17 @@ object.flip_label {
 #loading-text {
   -webkit-animation: loading-text-opacity 1s linear 0s infinite normal;
   animation: loading-text-opacity 1s linear 0s infinite normal;
-  color: #000;
-  font-family: 'Helvetica Neue',helvetica,arial,sans-serif;
-  font-size: 1.18em;
+  color: #4d59ca;
+  font-size: 1.38em;
   text-transform: capitalize;
   font-weight: normal;
-  filter: alpha(opacity=0);
-  opacity: 0;
+  filter: alpha(opacity=50);
+  opacity: .5;
   position: absolute;
   z-index: 330;
   top: -15px;
-  left: 40px;
-  width: 120px;
+  left: 27px;
+  width: 100px;
 }
 
 @-webkit-keyframes rotate-loading {
@@ -1515,13 +1530,18 @@ object.flip_label {
   }
 
   20% {
-    filter: alpha(opacity=30);
-    opacity: .3;
+    filter: alpha(opacity=80);
+    opacity: .8;
   }
 
   50% {
     filter: alpha(opacity=100);
     opacity: 1;
+  }
+
+  80% {
+    filter: alpha(opacity=80);
+    opacity: .8;
   }
 
   100% {
@@ -1537,13 +1557,18 @@ object.flip_label {
   }
 
   20% {
-    filter: alpha(opacity=30);
-    opacity: .3;
+    filter: alpha(opacity=80);
+    opacity: .8;
   }
 
   50% {
     filter: alpha(opacity=100);
     opacity: 1;
+  }
+
+  80% {
+    filter: alpha(opacity=80);
+    opacity: .8;
   }
 
   100% {
@@ -1571,8 +1596,6 @@ object.flip_label {
   line-height: 1.12em;
   padding: 12px 12px 7px;
   position: relative;
-  font-family: 'museo-sans-500',helvetica,arial,sans-serif;
-  font-weight: normal;
 }
 
 .search-popover > .popover-title .kmapid-display {
@@ -1586,12 +1609,7 @@ object.flip_label {
   color: #222;
 }
 
-.search-popover > .popover-title .kmapid-display::before {
- /* content: '' */
-}
-
 .search-popover > .popover-content {
-  font-family: 'museo-sans-500',helvetica,arial,sans-serif;
   font-size: 0.75em;
   padding: 0.5rem 0 0.5rem;
 }
@@ -1601,7 +1619,6 @@ object.flip_label {
   margin: 2.3rem 0 0 1rem;
   font-size: 1.25em;
   border-left: 4px solid #f0f0f0;
-  font-family: Palatino, 'Palatino Linotype', 'Palatino LT STD', 'Book Antiqua', Georgia, serif;
 }
 
 .search-popover > .popover-content > .kmap-path {
@@ -1642,7 +1659,6 @@ object.flip_label {
   position: relative;
   top: 22px;
   font-size: 0.88em;
-  font-family: 'Helvetica Neue',helvetica,arial,sans-serif;
   line-height: 1.18em;
   height: 1.56em;
   letter-spacing: 0.06em;
@@ -1650,7 +1666,6 @@ object.flip_label {
   background: #f9f9f9;
   color: #111;
   padding: 1px 6px;
-  font-weight: normal;
 }
 
 .search-popover > .popover-content .associated {
@@ -1751,7 +1766,6 @@ object.flip_label {
 .view-wrap .kmaps-tt-suggestion{
   margin-left:0;
   padding: 6px 12px;
-  font-family: 'Helvetica Neue',helvetica,arial,sans-serif;
 }
 
 .view-wrap .kmaps-tt-dataset .kmaps-tt-suggestion:nth-chld(1){
@@ -1760,7 +1774,7 @@ object.flip_label {
 
 .view-wrap .kmaps-tt-suggestion .kmaps-term{
   color: #505050 !important;
-  font-weight: bold;
+  font-weight: 600;
 }
 
 .view-wrap .kmaps-tt-suggestion .kmaps-ancestors{
@@ -1865,7 +1879,7 @@ object.flip_label {
 }
 .extruder .view-section .active-kmfacets-list .selected-kmap{
   text-shadow: 0 1px 2px #555;
-  font-family: 'museo-sans-700', helvetica, arial, sans-serif;
+  font-weight:600;
   text-align:left;
   max-width: 95%;
   overflow:hidden;
@@ -2000,35 +2014,16 @@ ul.facetapi-facet-transcript-languages li > a[href$="_empty_"] {
 * Advanced Options
 */
 .input-section .advanced-view {
- /*** height:275px;  height can help control cross-browser issues ***/
-  /*padding: 0 .9rem;
-  background: #f8f8f8;
-  width: 100%;
-  margin-right: 0.3rem;*/
       display:none;
 }
-    /*.input-section .advanced-view .form-group {
-      border-top: 1px solid #e0e0e0;
-      margin: 0;
-    }
-    .input-section .advanced-view .form-group.last {
-      padding-bottom: 0;
-    }*/
 
-/**
-* advanced toggle for search panel */
+/* advanced toggle for search panel */
 .input-section .toggle-link {
-  /*background: #f8f8f8;
-  color: #555 !important;*/
   font-size: 0.88em;
   display: block;
   text-align: right;
-  font-weight: bold;
-  /*line-height: 0.93em;*/
+  font-weight: 600;
   margin: .5rem 2.5rem 0 0;
-  /*padding: 0;
-  text-decoration: none;
-  font-family: 'droidserif',georgia,palatino,'Palatino Linotype',serif;*/
 }
 
 .input-section .toggle-link:hover {
@@ -2060,12 +2055,6 @@ ul.facetapi-facet-transcript-languages li > a[href$="_empty_"] {
 }
 
 .input-section .toggle-link.advanced-link {
-  /*margin: 0;
-  padding: 0;
-  position: relative;
-  top: 23px;
-  left: -12px;
-  float: right;*/
   display:none;
 }
 
@@ -2208,6 +2197,7 @@ ul.facetapi-facet-transcript-languages li > a[href$="_empty_"] {
   box-shadow: inset 0 0 4px 0 #eee;
   background: #fdfdfd;
 }
+
 /**
 *** END / Input & Advanced */
 

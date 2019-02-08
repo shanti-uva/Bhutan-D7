@@ -502,14 +502,14 @@
     this.pig.container.appendChild(this.getElement());
     this.existsOnPage = true; //inview(this.getElement());
 
-    setTimeout(function() {
+    /*setTimeout(function() {
 
       // The image was hidden very quickly after being loaded, so don't bother
       // loading it at all.
       if (!this.existsOnPage) {
         return;
       }
-
+*/
       // Show thumbnail
       if (!this.thumbnail) {
         this.thumbnail = new Image();
@@ -528,7 +528,7 @@
         this.show();
       }
 
-    }.bind(this), 1);
+   // }.bind(this), 1);
   }; // End of ProgressiveImage Load
 
 

@@ -14,7 +14,6 @@
     font-size: 18px;
     color: inherit;
     color: #eee;
-    font-family: 'museo-sans-500',sans-serif;
     font-style: italic;
     margin-left: 12px;
 }
@@ -22,8 +21,7 @@
 /* homepage bottom panel To Get Started text */
 .homepage-intro-text .panel-body li{
     margin-bottom: 0.75rem;
-    font-size: 1.64rem;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 1.5rem;
     font-style: italic;
     color: #222;
 }
@@ -36,8 +34,8 @@
     content: '\e634';
     opacity: 0.85;
     margin-right:.4rem;
-position: relative;
-left: -0.1rem;
+    position: relative;
+    left: -0.1rem;
 }
 
 /* Mandala homepage */
@@ -57,7 +55,7 @@ left: -0.1rem;
 }
 
 .front .homepage-main-content{
-    padding: 0 1.5rem 7rem;
+    padding: 0 0 7rem;
 }
 
 /* carousel navbar */
@@ -121,7 +119,6 @@ left: -0.1rem;
 }
 
 .front .main-col .dropdown-menu>li>a{
-    font-family: 'museo-sans-500',helvetica,sans-serif;
 }
 
 .front .main-col .dropdown-menu>li>a:hover{
@@ -135,9 +132,9 @@ left: -0.1rem;
 }
 
 .homepage-main-content a{
-    font-weight: bold;
+    font-weight: 600;
     text-transform: uppercase;
-    font-size: 81%;
+    font-size: 85%;
 }
 
 .homepage-intro-text{
@@ -145,30 +142,27 @@ left: -0.1rem;
 }
 
 .homepage-main-content h1{
-    margin-bottom: 1rem;
+    /*margin-bottom: 1rem;
     margin-left: .2rem;
     font-size: 1.62em;
-    font-family: 'museo-sans-500', arial, sans-serif;
     color: #444;
-    letter-spacing: -0.01rem;
+    letter-spacing: -0.01rem;*/
         
         display:none; /* hiding this for now */
 }
 
-.homepage-main-content .bullet{
-    margin-left: 2.5rem;
-    font-size: 1.12em;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    letter-spacing: 0.00055rem;
+.homepage-intro-text > p{
+    margin-left: 3.7rem;
+    font-size: 1em;
     max-width: 60em;
-    color:#111;
+    color: #000;
+    line-height: 1.68em;
 }
 
-.homepage-main-content .bullet::before{
+.homepage-intro-text > p::before{
     content: '';
     width: 1rem;
     height: 1rem;
-    /* border-radius: 50%; */
     border: 5px double #aaa;
     position: relative;
     top: 0rem;
@@ -303,7 +297,6 @@ left: -0.1rem;
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
     z-index: 2;
-    font-family: 'museo-sans-500', helvetican, sans-serif;
     font-size: 1.5em;
     text-align: center;
     line-height: 5em;
@@ -312,7 +305,7 @@ left: -0.1rem;
 }
 
 .flip .card .front {
-  paddingosition: absolute;
+    position: absolute;
     z-index: 1;
     background: #222;
     color: white;
@@ -469,8 +462,8 @@ left: -0.1rem;
     transform: rotate(45deg);
 }
 
-.card a { color:#fff; }
-.card a:hover { color:#fff; border-color:#ccc; }
+.card a { color:#e5e5e5; border-bottom-color:transparent; transition: 0.4s; -webkit-transition: 0.4s;}
+.card a:hover { color:#fff; border-bottom-color:#ccc; }
 
 .card p{
     -webkit-transform: rotate(-45deg);
@@ -845,8 +838,8 @@ line-height: 1em;
         text-transform: uppercase;
         font-size: 90%;
         background-image:none;
-        font-family: 'museo-sans-500',helvetica,sans-serif;
-        position: relative; top:0;
+        position: relative; 
+        top:0;
         border-top: 1px solid #aaa;
         border-bottom: 1px solid #888;
         padding: 10px 20px 8px;
@@ -995,7 +988,6 @@ line-height: 1em;
 /**
 *  BEGIN - Firefox only rules
 */
-
 _:-moz-tree-row(hover),
 
             .deg225 .card ul{
@@ -1009,31 +1001,6 @@ _:-moz-tree-row(hover),
                 position: absolute;
                 left: -1rem;
             }
-
-/**
-* TEMP
-*/
-.carousel-description,
-.carousel-description p {
-  line-height: 1.56em;
-  letter-spacing: 0.0107rem;
-  font-size: 1.12em;
-  color:#444;
-}
-
-.carousel-description p{
-    font-size: 1em;
-}
-/*end temp */
-
-/*
-@media screen and (min-width: 1920px) {
-
-  .front.kmaps article.main-col{
-    max-width: 1050px !important;
-  }
-}
-*/
 
 
 /**

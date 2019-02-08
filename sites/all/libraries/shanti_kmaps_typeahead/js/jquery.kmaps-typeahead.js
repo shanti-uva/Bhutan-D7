@@ -24,7 +24,7 @@
       empty_query: 'level_i:2', //ignored unless min_chars = 0
       empty_limit: 10,
       empty_sort: '',
-      sort: '',
+      sort: 'header_ssort asc',
       fields: '',
       filters: '',
       menu: '',
@@ -106,8 +106,14 @@
             var extras = {};
             var val = input.val();
             if (val) {
+              var trimval = val.toLowerCase().replace(/[\s\u0f0b\u0f0d]+/g, '\\ ');
+              var qfield = settings.autocomplete_field;
+              if (!isNaN(val)) {
+                trimval = settings.domain + '-' + val + '*';
+                qfield = 'id';
+              }
               extras = {
-                'q': settings.autocomplete_field + ':' + val.toLowerCase().replace(/[\s\u0f0b\u0f0d]+/g, '\\ '),
+                'q': qfield + ':' + trimval,
                 'rows': settings.max_terms,
                 'sort': settings.sort,
                 'start': plugin.start,
@@ -322,7 +328,7 @@
           var pager = !result_paging ? '' : KMapsUtil.getTypeaheadPager(Number(plugin.settings.max_terms), data.suggestions[0].index, data.suggestions[0].numFound);
           var header = '<div class="kmaps-tt-header kmaps-tt-results"><button class="close" aria-hidden="true" type="button">×</button>' + results + pager + '</div>';
           if (settings.domain == 'places') { // add column headers
-            header += '<div class="kmaps-place-results-header"><span class="kmaps-place-name">Name</span> <span class="kmaps-feature-type">Feature Type</span></div>';
+            header += '<div class="kmaps-place-results-header"><span class="kmaps-place-name">Name</span> <span class="kmaps-feature-type">Feature Type</span> <span class="kmaps-id">Kmap ID</span></div>';
           }
           return header;
         },
@@ -339,12 +345,23 @@
           if (data.selected) cl.push('kmaps-tt-selected');
           var display_path = data.doc.ancestors ? data.doc.ancestors.join("/") : "";
           if (settings.domain == 'subjects') { // show hierarchy
-            return '<div data-id="' + data.id + '" data-path="' + display_path + '" class="' + cl.join(' ') + '"><span class="kmaps-term">' + data.value + '</span>' + (use_ancestry ? ' <span class="kmaps-ancestors">' + data.anstring + '</span>' : '') + '</div>';
+            cl.push('kmaps-subject-result');
+            return '<div data-id="' + data.id + '" data-path="' + display_path + '" class="' + cl.join(' ') + '">' +
+                   '<span class="kmaps-term typeahead-popover" data-toggle="popover" data-content="' +
+                      data.anstring + '">' + data.value + '</span>' +
+                   '<span class="kmaps-id">('  + settings.domain + '-' + data.id + ')</span>' +
+                '</div>';
           }
           else { // show feature types
             cl.push('kmaps-place-result');
             var feature_types = data.doc.feature_types ? data.doc.feature_types.join('/') : '';
-            return '<div data-id="' + data.id + '" data-path="' + display_path + '" class="' + cl.join(' ') + '"><span class="kmaps-place-name">' + data.value + '</span> <span class="kmaps-feature-type">' + feature_types + '</span>' + '</div>';
+            return '<div data-id="' + data.id + '" data-path="' + display_path + '" class="' + cl.join(' ') + '">' +
+                   '<span class="kmaps-place-name typeahead-popover" data-toggle="popover" data-content="' +
+                      data.anstring.substring(data.anstring.indexOf('-') + 1) +
+                      '">' + data.value + '</span> ' +
+                   '<span class="kmaps-feature-type">' + feature_types + '</span>' +
+                   '<span class="kmaps-id">' + settings.domain + '-' + data.id + '</span>' +
+                   '</div>';
           }
         }
       };

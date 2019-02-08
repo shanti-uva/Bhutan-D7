@@ -260,7 +260,7 @@ p.table-note {
 }
 
 form.node-shivanode-form, form.node-shivanode-form .form-item {
-  margin-top: 0px !important;
+  /* margin-top: 0px !important; ------ mf8yk removed jan 3, 2018 */
 }
 
 div.addspreadsheet-button {

@@ -64,6 +64,23 @@ function shanti_images_views_data() {
         ),
     );
 
+    $data['shanti_images']['uid'] = array(
+        'title' => t('Shanti Images User ID'),
+        'help' => t('The user ID of person posting images'),
+        'field' => array(
+            'handler' => 'views_handler_field_numeric',
+        ),
+        'filter' => array(
+            'handler' => 'views_handler_filter_numeric',
+        ),
+        'sort' => array(
+            'handler' => 'views_handler_sort',
+        ),
+        'argument' => array(
+            'handler' => 'views_handler_argument_numeric',
+        ),
+    );
+
     $data['shanti_images']['fid'] = array(
         'title' => t('Shanti Images File ID'),
         'help' => t('The original file ID'),

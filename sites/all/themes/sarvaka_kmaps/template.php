@@ -19,13 +19,15 @@ function sarvaka_kmaps_breadcrumb($variables) {
   $app = explode("/", current_path());
   $app = $app[0];
   $breadcrumbs = is_array($variables['breadcrumb']) ? $variables['breadcrumb'] : array();
-  $output = '<ol class="breadcrumb">';
-  array_unshift($breadcrumbs, '<a href="' . base_path() . $app . '">' . theme_get_setting('shanti_sarvaka_breadcrumb_intro') . '</a>');
-  if(count($breadcrumbs) > 1) {
-    $breadcrumbs[0] = str_replace('</a>', ':</a>', $breadcrumbs[0]);
+  if (isset($variables['breadcrumbids']) && !empty($variables['breadcrumbids'])) {
+    function make_links(&$crumb, $idx, $crumbids) {
+      global $base_url;
+      $crumb = '<a href="' . $base_url . '/' . str_replace("-", "/", $crumbids[$idx]) . '/nojs' . '">' . strtolower($crumb) . '</a>';
+    }
+    array_walk($breadcrumbs, 'make_links', $variables['breadcrumbids']);
   }
-  $lidx = count($breadcrumbs) - 1;
-  $breadcrumbs[$lidx] = '<a href="#">' . $breadcrumbs[$lidx] . '</a>';
+  $output = '<ol class="breadcrumb">';
+  array_unshift($breadcrumbs, '<a href="' . $base_url . '/' . $app . '">' . ucfirst($app) . ': </a>');
   if (count($breadcrumbs) > 2) {
       foreach($breadcrumbs as $crumb) {
           $icon = ($breadcrumbs[0] == $crumb) ? '' : ' <span class="icon shanticon-arrow3-right"></span>';

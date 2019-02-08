@@ -176,7 +176,7 @@ function shanti_images_init() {
 
      $items['api/imginfo/%/%'] = array(
          'title' => 'MMS ID Information',
-         'description' => 'Return info about an image from MMS ID',
+         'description' => 'Return info about an image based on some type of id',
          'page callback' => 'shanti_images_info_api',
          'page arguments' => array(3,2),
          'access callback' => TRUE,
@@ -188,6 +188,14 @@ function shanti_images_init() {
          'page callback' => 'shanti_images_mms_lookup',
          'page arguments' => array(2),
          'access callback' => TRUE,
+     );
+
+     $items['search/siid/%'] = array(
+       'title' => 'Shanti Image ID Lookup',
+       'description' => 'Return the node page for a specific Shanti Image ID',
+       'page callback' => 'shanti_images_siid_lookup',
+       'page arguments' => array(2),
+       'access callback' => TRUE,
      );
 
      /**
@@ -227,6 +235,35 @@ function shanti_images_permission()
 }
 
 /**
+ * Implements hook_node_access().
+ */
+function shanti_images_node_access($node, $op, $account)
+{
+    // If a shanti image is set to private and does not have a group, do not allow anyone but owner to view
+    if ($op == 'view' && isset($node->type)) {
+            if ($node->type == 'shanti_image') {
+                if (empty($node->field_og_collection_ref)) {
+                    if ($node->group_content_access[LANGUAGE_NONE][0]['value'] == 2) {
+                        if (isset($account->uid) && $account->uid == $node->uid) {
+                            return NODE_ACCESS_ALLOW;
+                        } else {
+                            return NODE_ACCESS_DENY;
+                        }
+                    }
+                }
+            } elseif ($node->type == 'subcollection') {
+                /* Allows users to see subcollections that are explicitly public, but can't see it's content
+                Need to do more.
+                if ($node->group_access['und'][0]['value'] == 0) {
+                    return NODE_ACCESS_ALLOW;
+                }
+                */
+            }
+        return NODE_ACCESS_IGNORE;
+    }
+}
+
+/**
  * Implements hook_views_api()
  */
 function shanti_images_views_api() {
@@ -260,18 +297,31 @@ function shanti_images_preprocess_views_view(&$vars) {
  * @return string markup to insert through ajax
  */
 function shanti_images_get_node_carousel($nid) {
+    if (empty($nid)) { return '<div id="fscarousel" class="hidden"></div>'; }
     $num_of_sibs = 30;
     $halfnum = intval($num_of_sibs / 2);
     $coll = shanti_collections_get_collection($nid); // Get node's collection
     $markup = '';
     $data_att = '';
-
+    // Only create carousel if image is part of a collection
     if ($coll) {
-        $sibids = shanti_collections_get_items_in_collection($coll, 'nids');
+
+        $nids = _shanti_images_get_coll_node_ids($coll);  // in shanti_images.inc for cached function
+
+        // Find the index of the current node id or if not found, use 1/2
+        $myind = array_search($nid, $nids);
+        if (!$myind) { $myind = intval(count($nids) / 2); }
+        // Get the slice of nodes around current node based on num of sibs above
+        $stind = $myind - $halfnum;
+        if ($stind < 0) { $stind = 0; }
+        $sibids = array_slice($nids, $stind, $num_of_sibs);
+        // Reset the myind to be the index of the sliced array
         $myind = array_search($nid, $sibids);
         if (!$myind) { $myind = $halfnum; }
         $thmbst = $myind - $halfnum;
         if ($thmbst < 0 ) { $thmbst = 0; }
+
+        // Create the markup for the carousel
         $data_att .= ' data-start="' . $thmbst . '"';
         $data_att .= ' data-collid="' . $coll->nid . '"';
         $carousel_slides = '<ul class="slides">' . _shanti_images_get_carousel_slides($sibids, $thmbst, $num_of_sibs, $nid) . '</ul>';
@@ -279,16 +329,15 @@ function shanti_images_get_node_carousel($nid) {
 
     } else {
         // TODO: what to do if the node has no collection. Show carousel based on the homepage?
-        // TODO: What to do if coming from the homepage? Use collection context or homepage context????
+        // Hiding carousel if there is no collection for node
+        $markup = '<div id="fscarousel" class="flexslider fscarousel hidden nodata" style="display: none; visibility: hidden;"></div>';
     }
-
 
     print $markup;
 }
 
 function _shanti_images_get_carousel_slides($slideids, $startslide, $num_of_slides, $current = FALSE) {
     global $base_url;
-    $galinfo = array();
     $carousel_slides = '';
     $is_dev = (strstr($base_url, '.dd') || strstr($base_url, '-dev')) ? TRUE : FALSE;
     $items = array_slice($slideids, $startslide, $num_of_slides);
@@ -297,26 +346,19 @@ function _shanti_images_get_carousel_slides($slideids, $startslide, $num_of_slid
         // Process list of node objects into gallery item objects per specifications above
         foreach($items as $nid) {
             $si = _shanti_images_get_node_image($nid);
-            $gitem = new stdClass;
-            $gitem->nid = $nid;
-            $gitem->filename = $si->getIIIFName();
-            $gitem->title = $si->title;
-            $gitem->path = $si->path;
-            $galinfo[] = $gitem;
-        }
-        foreach($galinfo as $n => $item) {
-            if (!is_object($item) || empty($item->nid)) { continue; } // Took out || empty($item->filename) from condition
-            $si = _shanti_images_get_node_image($item->nid);
-            $item_rotate = (!empty($item->rotation)) ? (360 - $item->rotation) % 360 : 0;
-            $url = $si->getCropped(90, 65, $item_rotate);
+            //$rotate = (!empty($si->rotation)) ? (360 - $si->rotation) % 360 : 0;
+            $url = $si->getCropped(90, 65, $si->rotation);
             // use prod server when on DEV but looking for images on prod
             if ($is_dev && preg_match('/shanti-image(-stage)?-\d+/', $si->getIIIFName())) {
                 $url = str_replace('-test', '', $url);
             }
-            $ipath = trim($item->path);
+            $ipath = trim($si->path);
             if (substr($ipath, 0, 1) !== '/' && strpos($ipath, 'http') !== 0) { $ipath = '/' . $ipath; }
-            $active = ($current && $item->nid == $current) ? ' class="flex-active-slide"' : '';
-            $carousel_slides .= "<li$active><a href=\"{$ipath}\"><img src=\"$url\" /></a></li>";
+            $classes = array();
+            if ($current && $nid == $current) { $classes[] = 'flex-active-slide'; }
+            if ($si->rotation / 90 % 2) { $classes[] = 'portrait'; }
+            $class = (!empty($classes)) ? ' class="' . implode(' ', $classes) . '"' : '';
+            $carousel_slides .= "<li$class><a href=\"{$ipath}\"><img src=\"$url\" onerror=\"jQuery(this).fadeOut();\"/></a></li>";
         }
     }
     return $carousel_slides;
@@ -449,7 +491,29 @@ function shanti_images_get_more_slides($collid, $st, $num) {
          drupal_add_css(drupal_get_path('module', 'shanti_images') . '/css/shanti-image-media-browser.css', array('group' => CSS_THEME));
 
 
+     } elseif ($form_id == 'shanti_image_node_form') {
+         global $base_path;
+         $cp = current_path();
+         $url = ($form['nid']['#value']) ? $base_path . drupal_get_path_alias("node/{$form['nid']['#value']}") :
+             $base_path;
+         if (!strstr($cp, '/add/')) {
+             /*dpm($form);
+             $ltxt = t('View without saving');
+             $msg = t('Back to viewing the image without saving changes made here');
+             $form['#prefix'] = '<a href="' . $url . '" title="' . $msg . '" class="backarrow"><span class="icon shanticon-arrow-left_2"></span> ' . $ltxt . '</a>';
+             */
+             if (!isset($form['actions']['cancel'])) {
+                 $form['actions']['cancel'] = array(
+                     '#type' => 'submit',
+                     '#class' => 'form-cancel',
+                     '#value' => t("Cancel"),
+                     '#weight' => 13,
+                     '#submit' => array('shanti_images_edit_form_cancel'),
+                 );
+             }
+         }
      }
+
      /* Unnecessary to confirm IIIF delete
      // Shanti Image Node Delete Confirm Form
      else if ($form_id == 'node_delete_confirm' && $form['#node']->type == 'shanti_image') {
@@ -476,6 +540,12 @@ function shanti_images_get_more_slides($collid, $st, $num) {
      */
  }
 
+ function shanti_images_edit_form_cancel(&$form, &$form_state) {
+     $nid = $form['#node']->nid;
+     $path = drupal_get_path_alias("node/{$nid}");
+     drupal_goto($path);
+ }
+
 /**
  * Form Alter method for Shanti Image Node Form
  *
@@ -488,12 +558,18 @@ function shanti_images_get_more_slides($collid, $st, $num) {
      // Image edit form
      //dpm($form, 'form var');
      //dpm($form['#fieldgroups']['group_image_info']);
+     global $base_url;
      $fnid = (isset($form_state['node']->nid)) ? $form_state['node']->nid : FALSE;
      $siobj = ($fnid) ? _shanti_images_get_node_image($form_state['node']->nid) : FALSE;
      $flang = $form['field_image']['#language'];
      if (!empty($form['field_image'][$flang][0]['#description'])) {
          $form['field_image']['#prefix'] = $form['field_image'][$flang][0]['#description'];
          unset($form['field_image'][$flang]['#description'],$form['field_image'][$flang][0]['#description']);
+     }
+
+     // Add bootbox for field delete confirmation to any node forms also added in av node forme function
+     if (strpos($form_id, 'node_form')) {
+         drupal_add_js('sites/all/themes/shanti_sarvaka/js/inc/other/bootbox.min.js', 'file');
      }
 
      // If it exists, insert IIIF image and ability to Delete.
@@ -523,6 +599,7 @@ function shanti_images_get_more_slides($collid, $st, $num) {
                     '<div class="image-placeholder-desc">' . t('This is the image currently uploaded to the server') .
                     '</div></div>' . $i3info . '</div>',
          );
+
          $form['image_pane']['replace_link'] = array(
              '#type' => 'button',
              '#value' => t('Replace Image'),
@@ -533,6 +610,16 @@ function shanti_images_get_more_slides($collid, $st, $num) {
                  'effect' => 'fade',
              ),
          );
+
+         // If it's a prod image on one of the other servers, don't allow to replace
+         if (preg_match('/(-dev)|(-stage)|(.dd)/', $base_url)) {
+             if (preg_match('/shanti-image-\d+/', $siobj->i3fid)) {
+                 $form['image_pane']['replace_link'] = array(
+                     '#type' => 'markup',
+                     '#markup' => t('<div class="image-info-msg clearfix">(<em>This image can only be replaced from the production site</em>s)</div>'),
+                 );
+             }
+         }
          array_unshift($form['#groups']['group_image_info']->children, 'image_pane');
          array_unshift($form['#fieldgroups']['group_image_info']->children, 'image_pane');
          $form['#group_children']['image_pane'] = 'group_image_info';
@@ -668,7 +755,7 @@ function shanti_images_get_license_title($license_url) {
           // Get IIIF urls and add to vars
          $node = $vars['node'];
          $ew = entity_metadata_wrapper('node', $node);
-         $rotation = (360 - $ew->field_image_rotation->value()) % 360;
+         $rotation = $ew->field_image_rotation->value(); // was (360 - $ew->field_image_rotation->value()) % 360;
          //$fids = _shanti_images_get_node_files($node, TRUE);
          $nimgs = array(_shanti_images_get_node_image($node->nid));
          $urls = array();
@@ -859,17 +946,19 @@ function shanti_images_node_thumb($nid) {
  * @return JSON Output
  */
 function shanti_images_info_api($imgid, $col='mmsid') {
+    $infout = array('status' => 401);
     $sischema = drupal_get_schema('shanti_images');
     $fnms = array_keys($sischema['fields']);
     if (in_array($col, $fnms)) {
         $si = _shanti_images_get_record($imgid, $col);
         if (!empty($si)) {
+            //if (!empty($si->))
             drupal_json_output($si);
             return;
         }
     }
     // Else not found
-    drupal_not_found();
+    http_response_code(404);
 }
 
 /**
@@ -905,6 +994,21 @@ function shanti_images_mms_lookup($mmsid) {
     } else {
         drupal_not_found();
     }
+}
+
+/**
+ * Given a particular Shanti Image ID redirect to the Drupal node page if it exists
+ *
+ * @param $siid
+ */
+function shanti_images_siid_lookup($siid) {
+  $si = _shanti_images_get_record($siid, 'siid');
+  if ($si && !empty($si->nid)) {
+    $alias = drupal_get_path_alias('node/' . $si->nid);
+    drupal_goto($alias);
+  } else {
+    drupal_not_found();
+  }
 }
 
 /**
@@ -970,11 +1074,17 @@ function shanti_images_image_download($imgnm, $width) {
  * Implements hook_file_insert to replace periods in file names with dashes
  */
 function shanti_images_file_insert($file) {
-    $uripts = explode('.', $file->uri);
-    $ext = array_pop($uripts);
-    $dest = implode('-', $uripts) . '.' . $ext;
-    $file = file_move($file, $dest);
-    file_save($file);
+    if (substr_count($file->uri, '.') > 1) {
+        $uripts = explode('.', $file->uri);
+        $ext = array_pop($uripts);
+        $dest = implode('-', $uripts) . '.' . $ext;
+        if ($dest != $file->uri) {
+            $success = file_move($file, $dest);
+            if (!$success) {
+                drupal_set_message(t("Could not rename file to replace periods (shanti_images_file_insert", 'warning'));
+            }
+        }
+    }
 }
 
 function shanti_images_upload_iiif_callback($nid, $fid, $sid) {
@@ -1146,14 +1256,21 @@ function shanti_images_kmaps_fields_solr_doc_alter(&$solrdoc) {
        // Do Caption and Summary
        // TODO: Deal with multiple descriptions and those in different languages
        $maindesc = FALSE;
-       if (!empty($sdoc['mynode']->field_image_descriptions['und'])) {
-           $descid = $sdoc['mynode']->field_image_descriptions['und'][0]['target_id'];
+       if (!empty($sdoc['mynode']->field_image_descriptions[LANGUAGE_NONE])) {
+           $descid = $sdoc['mynode']->field_image_descriptions[LANGUAGE_NONE][0]['target_id'];
            $descnode = node_load($descid);
            $maindesc = $descnode;
-           $sdoc['caption'] = $descnode->title;
-           if (!empty($descnode->field_summary['und'][0]['safe_value'])) {
-             $sdoc['summary'] = $descnode->field_summary['und'][0]['safe_value'];
+
+           // Deal with Language
+           if (!empty($maindesc->field_language)) {
+               $sdoc['node_lang'] = $maindesc->field_language[LANGUAGE_NONE][0]['header'];
            }
+
+           $sdoc['caption'] = $descnode->title;
+           if (!empty($descnode->field_summary[LANGUAGE_NONE][0]['safe_value'])) {
+             $sdoc['summary'] = $descnode->field_summary[LANGUAGE_NONE][0]['safe_value'];
+           }
+
        }
 
        // Do Dates, use date with first agents
@@ -1166,12 +1283,7 @@ function shanti_images_kmaps_fields_solr_doc_alter(&$solrdoc) {
            unset($sdoc['date_start']);
        }
 
-       // Deal with Language
-       if (!empty($maindesc->field_language)) {
-            $sdoc['language'] = $maindesc->field_language['und'][0]['header'];
-       } else {
-            unset($sdoc['language']);
-       }
+
 
        // Deal with Thumb url (need to return the iiif url so mandala kmaps sites can deal with it)
        $siimg = _shanti_images_get_node_image($sdoc['id']);
@@ -1248,6 +1360,9 @@ function shanti_images_js_map($type) {
 
 function shanti_images_mms_summary_page() {
     global $base_path;
+
+    $format = arg(6);
+
     drupal_add_css($base_path . drupal_get_path('module', 'shanti_images') . '/css/shanti-image-mms-list.css', 'external');
     $page = array(
         '#prefix' => '<div id="mms-summary">',
@@ -1352,6 +1467,26 @@ function shanti_images_mms_summary_page() {
         $ignorelist[] = _shanti_images_make_mms_range_out($rst);
     } else {
         $ignorelist[] = _shanti_images_make_mms_range_out($rst, $lastid);
+    }
+
+    // Output JSON Page if requested
+    if ($format == 'json') {
+        foreach ($rngs as &$r) {
+            $r = str_replace(' - ', '-', strip_tags($r));
+        }
+        foreach ($missing as &$m) {
+            $m = str_replace(' - ', '-', str_replace(" x", "", strip_tags($m)));
+        }
+        foreach ($ignorelist as &$ign) {
+            $ign = strip_tags($ign);
+        }
+        $outdata = array(
+            'imported' => $rngs,
+            'missing' => $missing,
+            'ignored' => $ignorelist,
+        );
+        drupal_json_output($outdata);
+        return;
     }
 
     // Create the page with the lists of mms ranges and missing mms ranges
@@ -1467,8 +1602,8 @@ function shanti_images_get_valid_extensions($as_array=TRUE) {
   return $ext;
 }
 
-function shanti_images_get_image_object($id, $type='node') {
-  $si = new ShantiImage('', $id); // Load existing record from node ID, siid is '' because filled in by table
+function shanti_images_get_image_object($nid, $type='node') {
+  $si = new ShantiImage('', $nid); // Load existing record from node ID, siid is '' because filled in by table
   return $si;
 }
 

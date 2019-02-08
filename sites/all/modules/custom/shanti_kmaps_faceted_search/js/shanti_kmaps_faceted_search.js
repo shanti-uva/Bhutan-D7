@@ -2,6 +2,7 @@
 
   'use strict';
   var DEBUG = false; // To turn on console log DEBUGging
+  var PROFILING = false;
   var ASSET_VIEWER_PATH = "/places/0/";
   var ASSET_TYPE_LIST = ["all", "places", "subjects", "audio-video", "images", "sources", "texts", "visuals"];
   var storage = window.localStorage; // probably should polyfill
@@ -105,7 +106,7 @@
               setTimeout(function () {
                 var roots = $(tree).fancytree('getTree').getRootNode().getChildren();
                 if (roots && roots.length === 1) {
-                  console.log("auto expanding single root node");
+                  if (DEBUG) console.log("auto expanding single root node");
                   roots[0].setExpanded(true);
                 }
               }, 1000);
@@ -268,7 +269,7 @@
 
         Handlebars.registerHelper('choosegallery', function(view_type) {
           var DEFAULT_TEMPLATE = "search-results-gallery-default";
-          if (true) console.log("chooseGallery: view_type = " + view_type);
+          if (DEBUG) console.log("chooseGallery: view_type = " + view_type);
 
           // see if a template with this name exists
           var mapped_template = $('#search-results-gallery-' + view_type);
@@ -277,7 +278,7 @@
           if(mapped_template[0]) {
             template = "search-results-gallery-" + view_type;
           }
-          console.log("Returning template " + template);
+          // console.log("Returning template " + template);
           return template;
         });
 
@@ -317,7 +318,7 @@
 
                 // TODO: ys2n: candidate for removal.  not sure this is necessary
                 $('#facetpicker a').on('click', function () {
-                  console.log("opening flyout on click or submit in #facetpicker anchor");
+                  // console.log("opening flyout on click or submit in #facetpicker anchor");
                   // console.error("attachBehaviors: facetpicker onclick");
                   // Drupal.attachBehaviors('#faceted-search-results');
                   // openSearchResults();
@@ -325,7 +326,7 @@
                 });
 
                 $('.fancytree-title').on('click', function() {
-                  console.log("closing flyout on click fancytree-title");
+                  // console.log("closing flyout on click fancytree-title");
                   closeSearchResults();
                 });
 
@@ -337,7 +338,7 @@
                   var app = $(this).data('app');
                   var kid = $(this).data('id');
                   $('.place-open-' + kid).toggle('fast');
-                  console.log("open: " + app + "-" + kid);
+                  // console.log("open: " + app + "-" + kid);
                   populateAssetCounts($('.place-open-' + kid + " .results-kmaps-resource-list"), kid, app);
                 });
 
@@ -380,7 +381,7 @@
 
                 $('.ext_wrapper').append($results_tab);
                 $('#btn-show-search-results').click( function() {
-                  console.log("opening search results on click #btn-show-search-results");
+                  // console.log("opening search results on click #btn-show-search-results");
                   openSearchResults();
                   $('#mandala-veil-bg').css({'z-index' : '290','opacity' : '85'});
                   // Added by ndg8f 2017-07-06 to rebuild gallery when opening after going to a result
@@ -396,6 +397,8 @@
                 });
               });
 
+
+
               var a = $('<a>', { href: Drupal.settings.shanti_kmaps_admin.shanti_kmaps_admin_server_solr_terms });
               $solrBase = a.prop('hostname');
               var $fullPath = a.prop('pathname').split('/');
@@ -404,7 +407,6 @@
 
 
               // Do it again for assets.   ASSUME THAT THE SERVER IS THE SAME!
-
               var b = $('<a>', { href: Drupal.settings.shanti_kmaps_admin.shanti_kmaps_admin_server_solr });
               // $solrBase = b.prop('hostname');
               var $fullPath2 = b.prop('pathname').split('/');
@@ -420,15 +422,15 @@
                 if ($.kmapsSolr) {
 
                   // analyze query string for encoded filterState
-                  if (DEBUG) {
-                    console.log("WINDOW LOCATION");
-                    console.dir(window.location);
-                  }
+                  // if (DEBUG) {
+                  //   console.log("WINDOW LOCATION");
+                  //   console.dir(window.location);
+                  // }
 
                   var defaultFilterState = null;
                   try {
                     if ($.cookie('defaultFilterState')) {
-                      console.log("restoring defaultFilterState... " + JSON.stringify($.cookie('defaultFilterState')));
+                      if (DEBUG) console.log("restoring defaultFilterState... " + JSON.stringify($.cookie('defaultFilterState')));
                       defaultFilterState = JSON.parse($.cookie('defaultFilterState'));
                     }
                   } catch (err) {
@@ -478,9 +480,9 @@
 
                     if (Drupal.settings.shanti_kmaps_admin.shanti_kmaps_admin_root_subjects_filter_enabled) {
 
-                      console.log("subjects root: " + Drupal.settings.shanti_kmaps_admin.shanti_kmaps_admin_root_subjects_id);
+                      // console.log("subjects root: " + Drupal.settings.shanti_kmaps_admin.shanti_kmaps_admin_root_subjects_id);
                       var slist = Drupal.settings.shanti_kmaps_admin.shanti_kmaps_admin_root_subjects_id.split('\s+');
-                      console.log ("slist: "  + JSON.stringify(slist));
+                      // console.log ("slist: "  + JSON.stringify(slist));
 
                       var s = $.map(slist, function (value) {
                         if (!value) {
@@ -499,7 +501,7 @@
                     }
 
                     if (root_id_list.length) {
-                      console.log("root_id_list = " + JSON.stringify(root_id_list));
+                      // console.log("root_id_list = " + JSON.stringify(root_id_list));
                       kmapFilters.push(
                         "ancestor_uids_generic: (" + root_id_list.join(' ') + ")"
                       );
@@ -518,20 +520,22 @@
 
 
                   }
-                    console.log("Solr Filtering Enabled: ");
-                    console.dir({
-                        admin_settings: Drupal.settings.shanti_kmaps_admin,
-                        kmapFilters: kmapFilters,
-                        assetFilters: assetFilters
-                      },
-                      undefined,
-                      2);
+                    // console.log("Solr Filtering Enabled: ");
+                    // console.dir({
+                    //     admin_settings: Drupal.settings.shanti_kmaps_admin,
+                    //     kmapFilters: kmapFilters,
+                    //     assetFilters: assetFilters
+                    //   },
+                    //   undefined,
+                    //   2);
 
                   // SEARCH LISTENERS
 
                   var numShown = 5; // TODO: ys2n: configure numShown...
 
                   var resetExpand = function ($this, expand) {
+
+                    if (DEBUG) console.log("resetExpand (" + expand + ")");
                     var $block = $this.closest('.shanti-kmaps-solr-facet-block');
 
                     // toggle the icon
@@ -613,14 +617,18 @@
                   });
 
                   // toggle-on-click handler
-                  $('#search-flyout').on('click', '.shanti-kmaps-solr-facet-title', function () {
-                    var $this = $(this);
-                    var $glyph = $this.find('.facet-title-toggle.glyphicon');
+                  $('#search-flyout').on('click', '.shanti-kmaps-solr-facet-toggle', function (evt) {
 
-                    if ($glyph.hasClass('glyphicon-plus-sign')) {
-                      expandFacets($this);
-                    } else {
+                    if (DEBUG) console.log("toggle: ", evt);
+                    var $this = $(this);
+                    var $block = $this.closest('.shanti-kmaps-solr-facet-block');
+                    // var $glyph = $this.find('.facet-title-toggle.glyphicon');
+
+                    // if ($glyph.length === 0 || $glyph.hasClass('glyphicon-plus-sign')) {
+                    if ($block.hasClass('facets-showing-all')) {
                       contractFacets($this);
+                    } else {
+                      expandFacets($this);
                     }
                   });
 
@@ -669,14 +677,14 @@
 
                     var viewMode = $(this).data("view-mode");
                     if (viewMode === "list") {
-                      $('#faceted-search-results').removeClass("gallery-mode");
+                      $('.faceted-search-results').removeClass('gallery-mode');
                       $('.search-results-node-preview').removeClass('show-gallery');
                       // update the cookie
                       vm[selected_asset_types[0]] = "list";
 
                     } else {
+                      $('.faceted-search-results').addClass('gallery-mode');
                       $('.search-results-node-preview').addClass('show-gallery');
-                      $('#faceted-search-results').addClass("gallery-mode");
                       // update the cookie
                       vm[selected_asset_types[0]] = "gallery";
                     }
@@ -689,6 +697,7 @@
                   settings.kmapsSolr = $.kmapsSolr(
                     {
                       'pageSize': 100,
+                      'overFetch': 100,
                       'solrBase': $solrBase,
                       'solrPath': $solrPath,
                       'assetIndex': $assetIndex,
@@ -697,19 +706,41 @@
                       'assetFilterQuery': assetFilters,
                       // update handler is called whenever a search is completed
                       updateHandler: function (blob) {
-
-
                         var start = Date.now();
                         var now = start;
                         var last = now;
-                        console.error();
-                        console.error("elapsed A: " + Number(now - last) );
+                        if (PROFILING) console.error("elapsed A: " + Number(now - last) );
                         last = now;
 
                         // console.log("RESULTS: " + JSON.stringify(blob.results, undefined, 2));
                         // TODO: ys2n: These should be confgurable (or derivable).
                         var $flist = $("#facetpicker");
-                        var template = Handlebars.compile($('#shantiKmapsSolrFacetList').html());
+                        var SKSFLtemplate = Handlebars.compile($('#shantiKmapsSolrFacetList').html());
+
+                        if (DEBUG) console.log("SEE IF WE SHOULD TRIGGER LABEL UPDATES");
+
+                        if (blob.facets && blob.facets.places && blob.facets.places.buckets ) {
+
+                          var ups = $.merge($.merge([], blob.facets.places.buckets.slice(0, 50)), blob.facets.subjects.buckets.slice(0, 50));
+
+                          var chunky = $.map(ups, function (x) {
+                            return x.value;
+                          });
+
+                          if (DEBUG) console.dir(chunky);
+
+                          var unique = [];
+                          $.each(chunky, function(i, el){
+                            if($.inArray(el, unique) === -1) unique.push(el);
+                          });
+
+                          settings.kmapsSolr.updateKmapLabels(unique);
+
+                        }
+
+                        // blob.facets.subjects.buckets;
+
+                        // settings.kmapsSolr.updateKmapLabels
 
                         // use the filters to mark the chosen facets
                         if (DEBUG) console.dir( {
@@ -717,7 +748,7 @@
                           'facets' : blob.facets
                         });
 
-                        $flist.html(template({
+                        $flist.html(SKSFLtemplate({
                           facets: blob.facets,
                           numShown: numShown
                         }));
@@ -731,7 +762,7 @@
                         });
 
                         now = Date.now();
-                        console.error("elapsed B: " + Number(now - last) );
+                        if (PROFILING) console.error("elapsed B: " + Number(now - last) );
                         last = now;
 
                         // attach listeners to slide-expand-show truncated list on click
@@ -741,12 +772,11 @@
 
                           // find facet block
                           var $block = $($(item).closest('.shanti-kmaps-solr-facet-block'));
-
                           // mark short lists with .facets-short-list
                           if (
                             $block
                               .find('.shanti-kmaps-solr-facet-list')
-                              .size() < veil_threshold) {
+                              .size() < veil_threshold + 1) {
                             $block.addClass("facets-short-list");
                           } else {
                             $block.removeClass("facets-short-list");
@@ -764,12 +794,35 @@
                           settings.kmapsSolr.selectFacet(facetId);
                         });
 
+                        // attach facet sort listeners
+                        $('.shanti-kmaps-solr-facet-sort').on('click', function (x) {
+                          var mode = $(x.target).find('input').data('sort');
+                          var $block = $(this).closest('.shanti-kmaps-solr-facet-block');
+
+                          if (mode === 'alpha') {
+                            $block.find('.shanti-kmaps-solr-facet-list').sort(function (a, b) {
+                              var $a = String($($(a).find('.shanti-kmaps-solr-facet-item')[0]).data('facet-label'));
+                              var $b = String($($(b).find('.shanti-kmaps-solr-facet-item')[0]).data('facet-label'));
+                              return $a.localeCompare($b);
+                            }).appendTo($block);
+
+                          } else { // mode === 'count'
+                            $block.find('.shanti-kmaps-solr-facet-list').sort(function (a, b) {
+                              var $a = Number($($(a).find('.shanti-kmaps-solr-facet-item')[0]).data('facet-count'));
+                              var $b = Number($($(b).find('.shanti-kmaps-solr-facet-item')[0]).data('facet-count'));
+                              return $b - $a;
+                            }).appendTo($block);
+
+
+                          }
+                        });
+
                         // search string handling
                         var searchString;
                         if (Drupal.settings.kmapsSolr &&
                           Drupal.settings.kmapsSolr.getState().filters &&
                           Drupal.settings.kmapsSolr.getState().filters.searchString) {
-                          searchString = Drupal.settings.kmapsSolr.getState().filters.searchString.replace('name_autocomplete:', '');
+                          searchString = Drupal.settings.kmapsSolr.getState().filters.searchString.replace('text:', '');
                         }
 
                         var total_count = 0;
@@ -789,6 +842,8 @@
                           for(var f in ASSET_TYPE_LIST) {
                             var field = ASSET_TYPE_LIST[f];
                             var value = blob.asset_counts[field];
+
+                            if ($.type(value) === 'undefined') { value = 0 };
 
                             if (DEBUG) console.log("field = " + field + " count = " + value);
 
@@ -832,22 +887,29 @@
                         var encodedFilters = LZString.compressToEncodedURIComponent(filterJson);
 
                         if (DEBUG) {
-                          console.log("filterJson = " + filterJson);
-                          console.log("encodedFilters = " + encodedFilters);
+                          console.error("filterJson = " + filterJson);
+                          console.error("encodedFilters = " + encodedFilters);
                         }
 
                         // groom asset_results
                         if (blob.asset_results && blob.asset_results.docs) {
-                          $.each(blob.asset_results.docs, function() {
+                          $.each(blob.asset_results.docs, function(ii) {
 
+                            // TODO: ys2n:  refactor this!
                             // FIX URLS for DEVELOPMENT
-
                             var hst = window.location.hostname;
                             if (hst.indexOf('.dd') > -1 || hst.indexOf('-dev') > -1 || hst.indexOf('-predev') > -1) {
                               var thumb = this.url_thumb;
                               if (thumb && thumb.match(/shanti-image(-stage)?-\d+/)) {
-                                this.url_thumb=thumb.replace('-test', '');
+                                thumb=thumb.replace('-test', '');
                               }
+                            }
+
+                            // insert image proxy
+                            // TODO:  ys2n: refactor this!  Right now its a kludge.
+                            if (this.url_thumb) {
+                              this.url_thumb = this.url_thumb.replace(/iiif\.lib\.virginia\.edu/, "cicada.shanti.virginia.edu/images");
+                              // console.error("url_thumb = " + this.url_thumb);
                             }
 
                             // DISPLAY LABEL LOGIC
@@ -865,10 +927,11 @@
                             }
 
                             // if its a subject or a place, append the kmapid
-                            if (this.asset_type === "subjects" || this.asset_type === "places") {
-                              display_label = display_label + " (" + this.uid + ")";
-                            }
+                            // if (this.asset_type === "subjects" || this.asset_type === "places") {
+                            //   display_label = display_label  + " (" + this.uid + ")";
+                            // }
 
+                            // remove markup.
                             this.display_label = $("<i>" + display_label + "</i>").text();
 
                             //
@@ -890,6 +953,10 @@
                                 this.url_asset_nav = new Handlebars.SafeString(this.url_html + "?f=" + encodedFilters);
                               } else if (this.asset_type === "images") {
                                 // this.url_asset_nav = ASSET_VIEWER_PATH + "photos_node/" + this.id + "/nojs?f=" + encodedFilters;
+                                var xx = $('<img/>');
+                                xx.src = this.url_thumb;
+                                $('document').append(xx); // silliness, perhaps.
+                                // console.log("prefetching " +ii + ": " + this.url_thumb);
                                 this.url_asset_nav = new Handlebars.SafeString(this.url_html + "?f=" + encodedFilters);
                               } else if (this.asset_type === "picture") {
                                 // this.url_asset_nav = ASSET_VIEWER_PATH + "photos_node/" + this.id + "/nojs?f=" + encodedFilters;
@@ -933,6 +1000,9 @@
                           });
                         }
 
+                        // truncate the list (limit list when using overfetch)
+                        blob.asset_results.docs = blob.asset_results.docs.slice(0,this.pageSize);
+
                         var hbcontext = {
                           encodedFilters: encodedFilters,
                           searchString: searchString,
@@ -962,13 +1032,16 @@
                           $('#results-count-badge').html( count );
                           // $('.search .search-hint').html("search hint");
 
-
-                          // cache results data for use later
-                          $.each(blob.results.docs,
-                            function( n, doc ) {
-                              cacheDoc(doc);
-                            }
-                          );
+                          // if (blob && blob.results) {
+                          //   // cache results data for use later
+                          //   $.each(blob.results.docs,
+                          //     function (n, doc) {
+                          //       cacheDoc(doc);
+                          //     }
+                          //   );
+                          // } else {
+                          //   console.error("blob.results is not defined!");
+                          // }
                         } else {
                           $('#results-count-badge').html("");
                           $('.search .search-hint').html("");
@@ -976,7 +1049,7 @@
 
 
                         now = Date.now();
-                        console.error("elapsed C: " + Number(now - last) );
+                        if (PROFILING) console.error("elapsed C: " + Number(now - last) );
                         last = now;
 
                         // render template:  see search_main_template retrieval above
@@ -998,7 +1071,7 @@
 
                           var vmc = $.cookie('search-results-view-mode');
                           if (vmc) {
-                            console.log("vmc = " + JSON.stringify(vmc));
+                            // console.log("vmc = " + JSON.stringify(vmc));
                             try {
                               viewMode = JSON.parse(vmc);
                             } catch (e) {
@@ -1017,7 +1090,7 @@
                           viewMode['texts'] = 'list';
                           viewMode['sources'] = 'list';
 
-                          console.dir(viewMode);
+                          if (DEBUG) console.dir(viewMode);
 
                           // We use the first item in the array
                           // The implicit assumption here is that this is a radio-button selector
@@ -1033,12 +1106,14 @@
                             hbcontext.gallery_mode_selected = "";
                           }
 
-                          console.error("CURRENT: " + current);
+                          // console.error("CURRENT: " + current);
 
                           if (current === "all" || current === "subjects" || current === "places" || current === "texts" || current === "sources") {
                             hbcontext.no_gallery = true;
+                            $('body').addClass('results-display-no-gallery');
                           } else {
                             hbcontext.no_gallery = false;
+                            $('body').removeClass('results-display-no-gallery');
                           }
 
                           if (current === "audio-video") {
@@ -1052,14 +1127,14 @@
                           var markup = search_main_template(hbcontext);
 
                           now = Date.now();
-                          console.error("elapsed D: " + Number(now - last) );
+                          if (PROFILING) console.error("elapsed D: " + Number(now - last) );
                           last = now;
 
                           // TODO: ys2n: this should be configurable
                           $('#faceted-search-results').html(markup);
 
                           now = Date.now();
-                          console.error("elapsed E1: " + Number(now - last) );
+                          if (PROFILING) console.error("elapsed E1: " + Number(now - last) );
                           last = now;
 
                           //  apply customized popovers
@@ -1076,15 +1151,17 @@
                           });
 
                           now = Date.now();
-                          console.error("elapsed E2: " + Number(now - last) );
+                          if (PROFILING) console.error("elapsed E2: " + Number(now - last) );
                           last = now;
 
-
-                          // attach gallery behaviors (e.g. wookmark)
-                          Drupal.attachBehaviors('.shanti-gallery');
+                          // // attach gallery behaviors (e.g. wookmark)
+                          // setTimeout( function() {
+                          //   console.error("SHANTI GALLERY BEHAVIORS ATTACHED");
+                          //   Drupal.attachBehaviors('.shanti-gallery');
+                          // }, 500);
 
                           now = Date.now();
-                          console.error("elapsed E3: " + Number(now - last) );
+                          if (PROFILING) console.error("elapsed E3: " + Number(now - last) );
                           last = now;
 
                           // if the results are unfiltered, lets hide the results-tab
@@ -1094,13 +1171,13 @@
 
                           // This is a debug block that can be used to develop the UI.   Of course,
                           // this shouldn't be displayed to users in the end.
-                          if (false) {
-                            // useful debugging
-                            $('.search-results-facets').append("<pre>" + JSON.stringify({
-                              filters: blob.filters,
-                              results: blob.results.numFound + " documents"
-                            }, undefined, 3) + "</pre>");
-                          }
+                          // if (false) {
+                          //   // useful debugging
+                          //   $('.search-results-facets').append("<pre>" + JSON.stringify({
+                          //     filters: blob.filters,
+                          //     results: blob.results.numFound + " documents"
+                          //   }, undefined, 3) + "</pre>");
+                          // }
 
                           // set or unset "filters-applied" class
                           // console.log("FILTERS: " + JSON.stringify(blob.filters));
@@ -1136,7 +1213,7 @@
 
                           // asset filter handling
                           $('.results-list-asset-type-filter').on('click',function() {
-                            console.error("PROCESS ASSET TYPE");
+                            // console.error("PROCESS ASSET TYPE");
                             $(this).toggleClass('selected');
 
                             var singleMode = true;
@@ -1144,7 +1221,7 @@
                               $(this).siblings('.results-list-asset-type-filter').removeClass('selected');
                             }
 
-                            console.log("result asset type filter clicked: " + $(this).data('asset-type') + " selected=" + $(this).hasClass('selected'));
+                            if (DEBUG) console.log("result asset type filter clicked: " + $(this).data('asset-type') + " selected=" + $(this).hasClass('selected'));
 
                             var selected_nodes = $('.results-list-asset-type-filter.selected');
                             var selected_asset_types = $.map(selected_nodes, function(x){
@@ -1152,7 +1229,7 @@
                               return type;
                               }
                             );
-                            console.log("SELECTED_ASSET_TYPES: " + selected_asset_types);
+                            if (DEBUG) console.log("SELECTED_ASSET_TYPES: " + selected_asset_types);
                             settings.kmapsSolr.showAssetTypes(selected_asset_types);
 
                           });
@@ -1172,7 +1249,7 @@
 
 
                           now = Date.now();
-                          console.error("elapsed F: " + Number(now - last) );
+                          if (PROFILING) console.error("elapsed F: " + Number(now - last) );
                           last = now;
 
                           //  kludge logic for seeing if the search has been updated:
@@ -1200,19 +1277,19 @@
                             }
                           }
                           now = Date.now();
-                          console.error("elapsed G: " + Number(now - last) );
+                          if (PROFILING) console.error("elapsed G: " + Number(now - last) );
                           last = now;
 
                           // apply the justified gallery script
-                          $('#search-results-gallery.justified-gallery').justifiedGallery({
-                            waitThumbnailsLoad:false,
-                            rowHeight : 110,
-                            lastRow : 'nojustify',
-                            margins : 3,
-                          });
+                            $('#search-results-gallery.justified-gallery').justifiedGallery({
+                              waitThumbnailsLoad: false,
+                              rowHeight: 110,
+                              lastRow: 'nojustify',
+                              margins: 3,
+                            });
 
                           now = Date.now();
-                          console.error("elapsed H: " + Number(now - last) );
+                          if (PROFILING) console.error("elapsed H: " + Number(now - last) );
                           last = now;
 
 
@@ -1232,7 +1309,7 @@
 
                         try {
                           var serializedFilterState = JSON.stringify(x.filters);
-                          console.log("Saving defaultFilterState: " + serializedFilterState);
+                          if (DEBUG) console.log("Saving defaultFilterState: " + serializedFilterState);
                           $.cookie("defaultFilterState", serializedFilterState, { expires: 1 , path: "/" })
                         } catch (err) {
                           console.error("Failed to serialize and save filter state: " + err);
@@ -1246,17 +1323,51 @@
                         // console.log("afterSearch: overlayMask hide")
                         $('.extruder-content').overlayMask('hide');
 
+
+
+                        // start kmapsUpdates
+                        var checkKmapUpdates = function() {
+                          var $needUpdates = $('.no_label');
+                          var update_list = $needUpdates.map(function (n, item) {
+                            // console.log($(item).text());
+                            var $text=null;
+                            if ($(item).text().length !== 0 ) {
+                              $text = $(item).text();
+                            }
+                            return $text;
+                          });
+                          var $kmap_updates = update_list.toArray();
+                          if ($kmap_updates.length > 0) {
+
+                            if (DEBUG) console.log("kmap updates: " + $kmap_updates.length);
+                            if (DEBUG) console.dir($kmap_updates);
+
+                            settings.kmapsSolr.updateKmapLabels($kmap_updates);
+                            setTimeout(checkKmapUpdates, 5000);
+                          } else {
+                            if (DEBUG) console.log("No more updates!");
+                            setTimeout(checkKmapUpdates, 60000);
+                          }
+                        }
+
+                        checkKmapUpdates();
                       },
 
                       afterInit: function (xxx) {
                         $(function () {
                           // console.error("dEBUG: " + JSON.stringify(xxx.getState().filters, undefined, 3));
                           var $filters = xxx.getState().filters;
+                          if (!$filters) { $filters = {}; }
                           // console.dir($filters);
 
                           var tagList = [], pathLists = {};
 
+                          if (DEBUG) {
+                            console.error("FILTERS");
+                            console.dir($filters);
+                          }
                           $.each($filters, function (x, v) {
+                            // console.error("floop:" + x);
                             if (x === "kmaps") {
                               $.each(v, function (xid, i) {
                                 var data = JSON.parse(storage.getItem(xid));
@@ -1281,13 +1392,15 @@
                                 pathLists[kmtype].push($path);
                               });
                             } else {
-                              var ent = xxx.getState().facetHash[x];
-                              // console.log("*****: " + JSON.stringify(ent));
-                              if (ent) {
-                                tagList.push({
-                                  'label': ent.type + ":" + ent.label,
-                                  'id':ent.id
-                                });
+                              if (xxx.getState() && xxx.getState().facetHash && x !== 'searchString') {
+                                var ent = xxx.getState().facetHash[x];
+
+                                if (ent) {
+                                  tagList.push({
+                                    'label': ent.type + ":" + ent.label,
+                                    'id': ent.id
+                                  });
+                                }
                                 // addFacetTagToList(ent.type + ": " + ent.label, ent.id);
                               } else {
                                 console.error("Hmmm:  unknown facet: " + x);
@@ -1305,9 +1418,9 @@
                               $tree.loadKeyPath(pathList) .done( function() {
                                 $.each(pathList, function (i,path) {
                                   var id = path.split('/').pop();
-                                  console.log("selecting " + id);
+                                  if(DEBUG) console.log("selecting " + id);
                                   var $node = $tree.getNodeByKey(id);
-                                  console.log("found node " + $node);
+                                  if(DEBUG) console.log("found node " + $node);
                                   if ($node) {
                                     $node.setSelected(true);
                                   } else {
@@ -1321,14 +1434,30 @@
                             }
                           });
 
-                          if (xxx.getState().filters.searchString) {
-                            // TODO: ys2n: kinda icky way to do this....
-                            $(select_searchInput).val(xxx.getState().filters.searchString.replace('name_autocomplete:*', '').replace('*', ''));
+                          if ($filters.searchString) {
+                            // TODO: ys2n: kinda icky way to do this.... refactor
+                            $(select_searchInput).val($filters.searchString.replace('text:*', '').replace('*', ''));
                           }
+
+                          // ys2n: the kmapsLabelCacheUpdate event is triggered by jquery.kmapsSolr.js when a new kmap name has been
+                          // mapped to a kmapid.  This finds any facet that lists that kmapid and updates it.
+                          $(Drupal.settings.kmapsSolr).on('kmapsLabelCacheUpdate', function(evt, data) {
+                            if (DEBUG) console.error("kmapsLabelCacheUpdate event: ")
+                            var uid = data.uid;
+                            var header = data.header;
+                            var display_label = header;
+
+                            // update the label and the data-facet-label
+                            $(".shanti-kmaps-solr-facet-label[data-kmid='" + uid + "']").removeClass('no_label').text(display_label);
+                            $(".shanti-kmaps-solr-facet-label[data-kmid='" + uid + "']").attr("data-facet-label",display_label).attr("data-full-label",true);
+
+                            // Also relabel the facet-item so that the javascript sort works when the labels are updated.
+                            $(".shanti-kmaps-solr-facet-item[data-kmid='" + uid + "']").removeClass('no_label');
+                            $(".shanti-kmaps-solr-facet-item[data-kmid='" + uid + "']").attr("data-facet-label",display_label).attr("data-full-label",true);
+
+                          });
                         });
                       }
-
-
                     },
                     { 'defaultFilterState': defaultFilterState }
                   );
@@ -1383,7 +1512,7 @@
                 $ss = "*" + $ss.toLowerCase() + "*";
                 $params = {searchString: $ss};
               }
-              console.log("DOING SEARCH: " + JSON.stringify($params));
+              if (DEBUG) console.log("DOING SEARCH: " + JSON.stringify($params));
               // do an initial search to populate facets
               settings.kmapsSolr.search($params);
               return false;
@@ -1630,6 +1759,8 @@
         path = doc.ancestor_id_path;
       } else if (doc.ancestor_id_gen_path) {
         path = doc.ancestor_id_gen_path;
+      } else if (doc.ancestor_ids_is) {
+        path = doc.ancestor_ids_is.join('/');
       }
 
       if (path) {
@@ -1642,7 +1773,9 @@
         // console.log("caching: " + jsondata);
         storage.setItem(doc.uid, jsondata);
       } else {
-        console.error ("Could not determine path from: " + JSON.stringify(doc.uid,undefined,1));
+        if (doc.asset_type === 'subjects' || doc.asset_type === 'places') {
+          console.error("Could not determine path from: " + JSON.stringify(doc, undefined, 1));
+        }
       }
 
     }
@@ -1757,7 +1890,7 @@
 
     // encapsulate searchResults open
     function openSearchResults() {
-      console.error("opening Search Results");
+      // console.error("opening Search Results");
       $('#faceted-search-results')
         .css('display', 'block')
         .attr('aria-expanded', 'true')
@@ -1765,21 +1898,28 @@
       $('#mandala-veil-bg').css({'z-index' : '290','opacity' : '85'});
       $('#btn-show-search-results').hide('fast');
       $('#btn-collapse-flyout').fadeIn('fast');
-      console.log("openSeachResults");
+      if (DEBUG) console.log("openSeachResults");
+
+      setTimeout( function() {
+        // attach gallery behaviors (e.g. wookmark)
+        // kind of a kludge!
+        if (DEBUG) console.error("SHANTI GALLERY BEHAVIORS ATTACHEDß");
+        Drupal.attachBehaviors('.shanti-gallery');
+      }, 100);
       // console.error("attachBehaviors: openSearchResults");
       // Drupal.attachBehaviors('#faceted-search-results');
     }
 
     // encapsulate searchResults close
     function closeSearchResults() {
-      console.error("closing Search Results");
+      // console.error("closing Search Results");
       $('#faceted-search-results')
         .attr('aria-expanded', 'false')
         .closeFlyout();
       $('#mandala-veil-bg').css({'z-index' : '-1','opacity' : '0'});
       $('#btn-collapse-flyout').fadeOut('fast');
       showResultsTab();
-      console.log("closeSeachResults");
+      if (DEBUG) console.log("closeSeachResults");
       // console.error("attachBehaviors: closeSearchResults");
       // Drupal.attachBehaviors('#faceted-search-results');
     }
@@ -1808,13 +1948,13 @@
       // console.error("CHECK NAVIGATION");
       // console.dir( { 'curr_app' : curr_app, 'data' : data , 'domain' : domain  })
       if (curr_app === domain) {
-        console.log("NAVIGATE: " + domain + " " + kmid + " " + fullkid);
+        if (DEBUG) console.log("NAVIGATE: " + domain + " " + kmid + " " + fullkid);
         Drupal.ajax["ajax-id-" + kmid].createNavigateAction(kmid, domain);
         // booby trap
         // TODO: ys2n: gotta be a better way to do this!
         closeSearchResults();
       } else {
-        console.log("NAVIGATE BY REDIRECT! " + domain + " " + kmid + " " + fullkid);
+        if (DEBUG) console.log("NAVIGATE BY REDIRECT! " + domain + " " + kmid + " " + fullkid);
 
         var kmloc = "https://mandala-dev.shanti.virginia.edu/" + domain + "/__KMAPID__/overview/nojs";
 
@@ -1827,7 +1967,7 @@
         }
         kmloc = kmloc.replace('__KMAPID__', kmid)
 
-        console.log("NAVIGATE BY REDIRECT! " + kmloc);
+        if (DEBUG) console.log("NAVIGATE BY REDIRECT! " + kmloc);
 
         window.location = kmloc;
 
@@ -2017,7 +2157,7 @@
       type: "GET",
       url: assetCountsUrl,
       dataType: "jsonp",
-      timeout: 90000,
+      timeout: 30000,
       error: function (e) {
         console.error(e);
         // countsElem.html("<i class='glyphicon glyphicon-warning-sign' title='" + e.statusText);
@@ -2053,7 +2193,7 @@
       type: "GET",
       url: relatedCountsUrl,
       dataType: "jsonp",
-      timeout: 90000,
+      timeout: 30000,
       error: function (e) {
         console.error(e);
         // countsElem.html("<i class='glyphicon glyphicon-warning-sign' title='" + e.statusText);
@@ -2083,7 +2223,7 @@
       type: "GET",
       url: subjectsRelatedPlacesCountQuery,
       dataType: "jsonp",
-      timeout: 90000,
+      timeout: 30000,
       error: function (e) {
         console.error(e);
         // countsElem.html("<i class='glyphicon glyphicon-warning-sign' title='" + e.statusText);
@@ -2263,7 +2403,7 @@
     var doRemoveFacet = function (kmid) {
 
             var cid = "#facet-item-delete-" + kmid;
-            console.log("doRemoveFacet:  cid=" + cid + " kmid=" + kmid);
+            if (DEBUG) console.log("doRemoveFacet:  cid=" + cid + " kmid=" + kmid);
             // Remove kmap from hidden input #kmap_filters_input value, set above in AddFacetTagToList()
             if ($('#search-block-form .input-group  #kmap_filters_input').length != 0) {
                 var val = $('#search-block-form .input-group #kmap_filters_input').attr('value').replace(kmid, '').replace('__', '_').replace(/^_([^_]+)/, "$1").replace(/([^_]+)_$/, "$1");
@@ -2276,7 +2416,7 @@
               var nodeid = (keypts.length == 3) ? keypts[2] : false;
               var kmtype = keypts[1];
 
-              console.log("Drupal.settings.shanti_kmaps_faceted_search.activeTree: " + Drupal.settings.shanti_kmaps_faceted_search.activeTree);
+              if (DEBUG) console.log("Drupal.settings.shanti_kmaps_faceted_search.activeTree: " + Drupal.settings.shanti_kmaps_faceted_search.activeTree);
 
               var activeNode = $('.kmapfacetedtree[data-kmtype="' + kmtype + '"]').fancytree('getTree').getNodeByKey(nodeid);
               if (activeNode) {

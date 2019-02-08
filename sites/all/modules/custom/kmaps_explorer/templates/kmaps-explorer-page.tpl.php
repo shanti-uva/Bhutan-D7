@@ -90,12 +90,6 @@
         </li>
       <?php endif; ?>
 
-      <?php if(false): ?>
-        <li class="terms"><a href="<?php print base_path() . $type . '/' . $kid; ?>/terms">
-          <span class="icon shanticon-terms"></span>Terms<span class="badge"></span></a>
-        </li>
-      <?php endif; ?>
-
       <?php if($sources_count > 0): ?>
         <li class="sources <?php print isset($sources) ? 'active' : ''; ?>">
           <a href="<?php print base_path() . $type . '/' . $kid; ?>/sources/nojs" class="use-ajax">
@@ -104,6 +98,15 @@
             <span class="badge"><?php print $sources_count; ?></span>
           </a>
         </li>
+      <?php endif; ?>
+
+      <?php if($terms_count > 0): ?>
+          <li class="terms <?php print isset($terms) ? 'active' : '' ?>">
+              <a href="<?php print base_path() . $type . '/' . $kid; ?>/terms/nojs" class="use-ajax">
+                  <span class="icon shanticon-terms"></span>
+                  Terms
+              </a>
+          </li>
       <?php endif; ?>
     </ul>
   </section>

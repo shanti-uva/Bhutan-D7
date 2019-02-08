@@ -467,6 +467,8 @@ function mb_structure_form_subcollection_node_form_alter(&$form, &$form_state, $
 function mb_structure_form_video_node_form_alter(&$form, &$form_state, $form_id)
 {
   //dpm(array('form' => $form, 'form state' => $form_state), "vids f and fs");
+  // Add bootbox confirmation dialog script to add confirm box for deleting field collection fields (see mediabase.js)
+  drupal_add_js('sites/all/themes/shanti_sarvaka/js/inc/other/bootbox.min.js', 'file');
   
   // Remove Preview actions since unhelpful (MANU-1850)
   if (isset($form['actions']['preview'])) {
@@ -703,6 +705,11 @@ function mb_structure_form_alter(&$form, &$form_state, $form_id)
                 }
             }
         }
+    }
+
+    // Add bootbox for field delte confirmation to any node forms also added in av node forme function
+    if (strpos($form_id, 'node_form')) {
+        drupal_add_js('sites/all/themes/shanti_sarvaka/js/inc/other/bootbox.min.js', 'file');
     }
 }
 

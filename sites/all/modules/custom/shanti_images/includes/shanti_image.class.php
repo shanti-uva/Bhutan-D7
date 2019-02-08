@@ -56,7 +56,11 @@ class ShantiImage
         $this->updateFromNode();
 
         // If width and height are still missing, update from IIIF and save to shanti_images table
-        /*if (!$this->width || !$this->height) {
+        if (!$this->width || !$this->height) {
+            //watchdog("shanti image class", "setting dimensions by iiif");
+            if ($this->id == 264146) {
+                watchdog('shanto images', "264146 Node withd / height: " . $this->width . ":" . $this->height);
+            }
             $this->setDimensionsByIIIF();
             if ($this->width && $this->height) {
                 $data = array(
@@ -65,7 +69,7 @@ class ShantiImage
                 );
                 $this->updateTable($data);
             }
-        }*/
+        }
 
     }
 
@@ -245,7 +249,7 @@ class ShantiImage
         return _shanti_images_build_IIIFURL($fname, $width, $height, $rotation, $crop, $scaled);
     }
 
-    static function buildIIIFURL($fname, $width = '800', $height = '', $rotation = FALSE, $crop = 'full', $scaled = TRUE)
+    static function buildIIIFURL($fname, $width = '800', $height = '', $rotation = 0, $crop = 'full', $scaled = TRUE)
     {
         $server = variable_get('shanti_images_view_url', 'https://iiif.lib.virginia.edu');
         $servpath = variable_get('shanti_images_view_path', '/mandala/');
@@ -268,11 +272,12 @@ class ShantiImage
      */
     function getInfoURL()
     {
+        global $base_url;
         $iiifname = $this->getIIIFName();
         $url = $this->server . $this->servpath . $iiifname . '/' . 'info.json';
         // account for PROD images on DEV and Stage
-        if (preg_match('/(-dev)|(-stage)|(.dd)/', gethostname())) {
-            if (preg_match('/shanti-images-\d+/', $iiifname)) {
+        if (preg_match('/(-dev)|(-stage)|(.dd)/', $base_url)) {
+            if (preg_match('/shanti-image-\d+/', $iiifname)) {
                 $url = str_replace('-test', '', $url);
             }
         }
@@ -301,13 +306,15 @@ class ShantiImage
                     $jobj = json_decode($json);
                 }
             } else {
-                watchdog('shanti_image class', 'No info at: ' . $iurl);
+                //watchdog('shanti_image class', 'No info at: ' . $iurl);
             }
         }
         if ($as_array) {
             $jobj = (array)$jobj;
         }
-        if (!$jobj) { watchdog("shanti image class", "Unable to get IIIF info for Shanti Image: {$this->id} (NID: {$this->nid})");}
+        if (!$jobj) {
+            //watchdog("shanti image class", "Unable to get IIIF info for Shanti Image: {$this->id} (NID: {$this->nid})");
+        }
         return $jobj;
     }
 
@@ -323,7 +330,8 @@ class ShantiImage
     function getCropped($cropwidth, $cropheight, $rotation = FALSE, $centerx = TRUE, $centery = FALSE)
     {
         if (empty($this->width) && empty($this->height)) {
-            watchdog('shanti_image class', "No width or height for siid {$this->id} ({$this->nid} in get cropped");
+
+            //watchdog('shanti_image class', "No width or height for siid {$this->id} ({$this->nid} in get cropped");
             $this->setDimensionsByIIIF();
         }
         $fnm = $this->getIIIFName();
@@ -372,8 +380,8 @@ class ShantiImage
             if (!empty($rec->filename)) {
                 $this->filename = $rec->filename;
             }
-            if (!empty($rec->width) && !empty($this->height)) {
-                $this->setDimensions($rec->width, $this->height);
+            if (!empty($rec->width) && !empty($rec->height)) {
+                $this->setDimensions($rec->width, $rec->height);
             }
             return TRUE;
         } else {
@@ -389,6 +397,27 @@ class ShantiImage
     function updateFromNode($node=FALSE)
     {
         global $base_path;
+        if (is_numeric($node)) {
+            $nid = $node;
+        } elseif (isset($node->nid)) {
+            $nid = $node->nid;
+        } else {
+            $nid = $this->nid;
+        }
+
+        $qry = db_select('node', 'n');
+        $qry->condition('n.nid', $nid);
+        $qry->join('field_data_field_image_rotation', 'rot', 'rot.entity_id = n.nid');
+        $res =  $qry->fields('n', array('nid', 'title'))
+            ->fields('rot', array('field_image_rotation_value'))
+            ->execute();
+
+        $res = $res->fetchAssoc($res);
+        $this->title = $res['title'];
+        $this->path = $base_path . drupal_get_path_alias('node/' . $nid);
+        $this->rotation = $res['field_image_rotation_value'];
+
+        /*  Loading node is too time consuming
         if (!$node) { $node = $this->nid; }
         if (is_numeric($node)) { $node = node_load($node); }
         if ($node) {
@@ -397,7 +426,9 @@ class ShantiImage
             if (!empty($node->field_image_rotation[LANGUAGE_NONE][0]['value'])) {
                 $this->rotation = $node->field_image_rotation[LANGUAGE_NONE][0]['value'];
             }
-        }
+        }*/
+
+
     }
 
     /**

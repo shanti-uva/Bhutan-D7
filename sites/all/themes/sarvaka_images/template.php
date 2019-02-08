@@ -46,14 +46,6 @@ function sarvaka_images_form_alter(&$form, &$form_state, $form_id) {
     if ($form_id == 'shanti_image_node_form') {
         $css = drupal_get_path('theme', 'sarvaka_images') . '/css/shanti-image-node-edit.css';
         $test = drupal_add_css($css, array('group' => CSS_THEME));
-        $cp = current_path();
-        $url = ($form['nid']['#value']) ? $base_path . drupal_get_path_alias("node/{$form['nid']['#value']}") :
-                                            $base_path;
-        if (!strstr($cp, '/add/')) {
-            $ltxt = t('View without saving');
-            $msg = t('Back to viewing the image without saving changes made here');
-            $form['#prefix'] = '<a href="' . $url . '" title="' . $msg . '" class="backarrow"><span class="icon shanticon-arrow-left_2"></span> ' . $ltxt . '</a>';
-        }
     }
 }
 
@@ -415,7 +407,6 @@ function sarvaka_images_preprocess_views_view(&$vars) {
             $genurls = array();
             $infourls = array();
             $ratios = array();
-            //dpm($view->result[0], 'first row in template views pp');
             $dit = FALSE;
             foreach ($view->result as $n => $item) {
                 if (!empty($item->field_field_image)) {
@@ -440,9 +431,10 @@ function sarvaka_images_preprocess_views_view(&$vars) {
                         }
                     }
                 } elseif (!empty($item->shanti_images_i3fid)) {
+
                     $fnm = $item->shanti_images_i3fid;
-                    // TODO: adjust urls for Prod images on Dev etc.
-                    $gnurl = _shanti_images_build_IIIFURL($fnm, '__W__', '__H__');
+                    $rotation = (empty($item->field_field_image_rotation[0]['raw'])) ? 0 : $item->field_field_image_rotation[0]['raw']['value'];
+                    $gnurl = _shanti_images_build_IIIFURL($fnm, '__W__', '__H__', $rotation);
                     $gnurl = _fix_prod_urls_on_dev($gnurl, $fnm);
                     $genurls[] = $gnurl;
                     // URLs for the IIIF info from the IIIF server for each image. Used by IIIF viewers
@@ -454,7 +446,7 @@ function sarvaka_images_preprocess_views_view(&$vars) {
                     if (is_numeric($width) && is_numeric($height) && $height > 0) {
                         $ratio = $width / $height;
                     } else {
-                        $ratio = 0;
+                        $ratio = 1;
                     }
                     $ratios[] = $ratio; //_shanti_images_get_ratio($fnm, 'i3fid');
                 } else {
@@ -519,7 +511,7 @@ function sarvaka_images_metadata_process($mdinfo) {
  */
 function sarvaka_images_create_collection_thumb($item) {
     global $base_path;
-    $collurl = url('/node/' . $item->node_og_membership_nid);
+    $collurl = url('/' . drupal_get_path_alias('node/' . $item->node_og_membership_nid));
     $imgurl = '/sites/all/modules/custom/mediabase/images/collections-generic.png';
     if (!empty($item->field_field_general_featured_image)) {
         $img = $item->field_field_general_featured_image[0];

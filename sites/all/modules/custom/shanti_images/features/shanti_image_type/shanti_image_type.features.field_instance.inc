@@ -1884,7 +1884,7 @@ Please note the uploaded image will be converted and saved in a more compact for
       'alt_field' => 0,
       'default_image' => 0,
       'file_directory' => 'userimgs/[current-user:name]',
-      'file_extensions' => 'jpg jpeg png jp2 tif tiff',
+      'file_extensions' => 'jpg jpeg png jp2 tif tiff cr2',
       'max_filesize' => '',
       'max_resolution' => '',
       'min_resolution' => '',

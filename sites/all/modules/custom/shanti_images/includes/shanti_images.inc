@@ -17,18 +17,17 @@ function _shanti_images_process_image_files($node) {
     // Load the Shanti Image object
     $nid = $node->nid;
     $siobj = _shanti_images_get_node_image($node);
-    $file = _shanti_images_get_node_files($node);
-    if (is_array($file) && isset($file[0])) {
-        $file = $file[0];
+    $fid = _shanti_images_get_node_files($node, TRUE);
+    if (is_array($fid) && isset($fid[0])) {
+        $fid = $fid[0];
     }
-    if (isset($file['fid'])) {
+    if (!empty($fid)) {
         $upload = FALSE;
-        $fid = $file['fid'];
         $dbrec = _shanti_images_get_record($nid, 'nid');
         // If no db rec it's a new file
         if (!$dbrec) {
             $upload = TRUE;
-        // If db rec fid is not same as current fid, it's a new image so upload
+        // If db rec fid is not same as current fid, it's a new image so upload.
         } else if (empty($dbrec->fid) || $dbrec->fid != $fid) {
 
             // Delete image up on IIIF server
@@ -44,9 +43,10 @@ function _shanti_images_process_image_files($node) {
         }
         // If the node is saved with the same file then upload will not be TRUE. Only upload if it's a new file
         if ($upload) {
-            $fnm = $file['filename'] ?: '';
-            $width = $file['width'] ?: 0;
-            $height = $file['height'] ?: 0;
+            $file = file_load($fid);
+            $fnm = $file->filename ?: '';
+            $width = $file->width ?: 0;
+            $height = $file->height ?: 0;
             $siid = _shanti_images_create_record($nid, $fid, $fnm, $width, $height);
             $files_to_add[] = array('nid' => $nid, 'fid' => $fid, 'siid' => $siid);
         }
@@ -176,10 +176,43 @@ function _shanti_images_get_node_image($nid) {
         }
     } else {
         $imgObj = new ShantiImage('none', $nid);
-
         //watchdog('shanti_images inc', "No shanti_image record found in database for node {$nid}");
     }
     return $imgObj;
+}
+
+/**
+ * Function to get a list of node ids in sequential order from the view in order to create image carousels.
+ *
+ * @param $coll
+ * @return array
+ */
+function _shanti_images_get_coll_node_ids($coll) {
+    $cache_name = 'shanti_images_coll_nids_' . $coll->nid;
+    $cache = cache_get($cache_name);
+    if ($cache && !empty($cache->data)) {
+        $nids = $cache->data;
+    } else {
+        // old: $sibids = shanti_collections_get_items_in_collection($coll, 'nids');
+        // Get All Collection Nodes Sorted by Create Date Descending
+        $collids = shanti_collections_get_subcollections($coll);  // Get all Sub collection IDs
+        $collids[] = $coll->nid;  // Add this collection ID and get the view results for all nodes panel of the all image gallery with collection parameter
+        $results = views_get_view_result('all_image_gallery', 'coll_all_nodes', implode($collids, ','));
+        // Sort the node list by date created descending
+        usort($results, function($a, $b) {
+            if ($a->node_shanti_images_created > $b->node_shanti_images_created) { return -1; }
+            elseif($a->node_shanti_images_created < $b->node_shanti_images_created) { return 1; }
+            else { return strcmp($a->node_shanti_images_title, $b->node_shanti_images_title); }
+        });
+
+        // Create a list of node IDs
+        $nids = array();
+        foreach ($results as $nobj) {
+            $nids[] = $nobj->shanti_images_nid;
+        }
+        cache_set($cache_name, $nids, 'cache',  CACHE_TEMPORARY); //stores in cache table and expires after 6 months
+    }
+    return $nids;
 }
 
 /**
@@ -230,7 +263,6 @@ function _shanti_images_do_upload_to_iiif($file, $i3fid) {
                 watchdog('shanti_images', "Upload to IIIF failed: FID: {$file->fid} ($i3fid); msg: $errmsg");
             } else {
                 $restr = json_encode($res);
-                watchdog('shanti_images', "Upload cmd failed: $curlcmd Resp: $restr");
             }
             if (variable_get('shanti_images_debug', FALSE)) {
                 watchdog('shanti_images DEBUG', "Curl cmd: $curlcmd");
@@ -352,7 +384,7 @@ function _shanti_images_can_delete($deleteurl, $inm) {
 function _shanti_image_process_dates(&$node) {
     $mnths_full = '/(january|february|march|april|may|june|july|august|september|october|november|december)\s+(\d{4})/';
     $mnts_abbr = '/(jan|feb|mar|apr|may|jun|jul|aug|sept|oct|nov|dec)\s+(\d{4})/';
-    if (!empty($node->field_agent_dates_approx) && empty($node->field_agent_dates[LANGUAGE_NONE])) {
+    if (!empty($node->field_agent_dates_approx[LANGUAGE_NONE]) && empty($node->field_agent_dates[LANGUAGE_NONE])) {
         $dpts = array();
         $currtz = date_default_timezone_get();
         $tz = 'UTC';
@@ -423,8 +455,15 @@ function _shanti_images_desc_view($node, $view_mode, $langcode) {
 
 function _shanti_images_build_IIIFURL($fname, $width = '800', $height = '', $rotation = 0, $crop = 'full', $scaled = TRUE)
 {
+    global $base_url;
     $server = variable_get('shanti_images_view_url', 'https://iiif.lib.virginia.edu');
     $servpath = variable_get('shanti_images_view_path', '/mandala/');
+    // account for PROD images on DEV and Stage
+    if (preg_match('/(-dev)|(-stage)|(.dd)/', $base_url)) {
+        if (preg_match('/shanti-image-\d+/', $fname)) {
+            $servpath = str_replace('-test', '', $servpath);
+        }
+    }
     $url = $server . $servpath . $fname . '/' . $crop . '/';
     $dimensions = "{$width},{$height}";
     if (empty($width) && empty($height)) {
@@ -551,7 +590,6 @@ function _shanti_images_update_table_from_image($siobj) {
     return _shanti_images_update_record($siobj->getID(), $data);
 }
 
-
 /**
  * Retrieve a record from the Shanti Images table
  *
@@ -561,14 +599,38 @@ function _shanti_images_update_table_from_image($siobj) {
  * @return mixed
  */
 function _shanti_images_get_record($id, $col = 'siid', $as_array=FALSE) {
-    $result = db_select('shanti_images', 'si')
-        ->fields('si')
-        ->condition($col, $id, '=')
-        ->execute();
-    $result = $result->fetchAll();
-    if (empty($result)) { return FALSE; }
-    if (count($result) > 0 and !$as_array) { $result = $result[0]; }
-    return ($as_array) ? (array)$result : $result;
+    $cache_name = "_shanti_images_record_{$col}_{$id}";
+    if ($cache = cache_get($cache_name)) {
+        $result = $cache->data;
+    } else {
+        $result = db_select('shanti_images', 'si')
+            ->fields('si')
+            ->condition($col, $id, '=')
+            ->execute();
+        if ($result->rowCount() > 0) {
+            $result = $result->fetchObject();
+            $nid = $result->nid;
+            $path = drupal_get_path_alias('node/' . $nid);
+            $result->node_url = url($path, array('absolute' => TRUE));
+            $result->rotation = 0;
+            $res2 = db_select('field_data_field_image_rotation', 'rot')
+                ->fields('rot', array('field_image_rotation_value'))
+                ->condition('rot.entity_id', $result->nid, '=')
+                ->execute();
+            if ($res2->rowCount() > 0) {
+                $res2 = $res2->fetchObject();
+                $result->rotation = $res2->field_image_rotation_value;
+            }
+            $result->image_url = ShantiImage::buildIIIFURL($result->i3fid, 800, '', $result->rotation);
+            cache_set($cache_name, $result, CACHE_TEMPORARY);
+        } else {
+            return FALSE;
+        }
+    }
+    if ($as_array && !empty($result)) {
+        $result = (array)$result;
+    }
+    return $result;
 }
 
 /**

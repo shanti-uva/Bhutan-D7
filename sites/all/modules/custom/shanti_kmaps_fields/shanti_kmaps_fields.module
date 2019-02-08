@@ -4,6 +4,20 @@ define('SHANTI_KMAPS_FIELDS_PATH', drupal_get_path('module', 'shanti_kmaps_field
 
 include_once 'includes/shanti_kmaps_fields.feeds.inc';
 
+/**
+ * Implements hook_init().
+ */
+function shanti_kmaps_fields_init()
+{
+    // If current path is admin, then load jquery ui from jquery update.
+    // Otherwise fancytree aborts on init and throws an error.
+    $cp = current_path();
+    if (path_is_admin($cp) && strstr($cp, 'admin/structure/types/manage')) {
+        drupal_add_js(drupal_get_path('module', 'jquery_update') . '/replace/ui/ui/jquery-ui.js', 'file');
+    }
+}
+
+
 // These fileds are added to the Solr doc to enhance Mandala searches
 // They are to be mapped to the fields of the content type to which a kmap field is attacheds
 // They should really come from an authory list somewhere
@@ -127,23 +141,45 @@ function shanti_kmaps_fields_reindexer_get_nids(&$context)
 function shanti_kmaps_fields_reindexer_get_all_nids(&$context)
 {
     $context['message'] = t("Acquiring all node IDs to reindex.");
-        $nids = array();
-        $kmap_field = 'shanti_kmaps_fields_default'; // PARAMETIZE THIS
-        /*  Old $sql = "
-            SELECT n.nid
-            FROM `field_config` fc
-                JOIN `field_config_instance` fci ON (fc.id = fci.field_id)
-                JOIN `node` n ON (fci.bundle = n.type)
-            WHERE fc.type LIKE :kmap_field
-        ";*/
+    // Get list of node types that allow solr indexing (setting in node type page)
+    $cts = node_type_get_types();
+    $indexable = array();
+    foreach($cts as $ct) {
+        $ctype = $ct->type;
+        $asset_type = variable_get("shanti_kmaps_fields_asset_type__{$ctype}", 'DNI');
+        if ($asset_type !== 'DNI' && $asset_type !== '__NONE__') {
+            $indexable[] = $ctype;
+        }
+    }
+    // Find all node IDs for nodes of indexable types
+    $query = db_select('node', 'n')
+                ->fields('n', array('nid'))
+                ->condition('n.type', $indexable, 'IN');
+    $results = $query->execute();
+    $nids = $results->fetchCol();
+
+    // Add node list to context for batch processing
+    $context['results']['nid_count'] = count($nids);
+    $context['results']['nids'] = $nids;
+
+    /*  old code
+    $kmap_field = 'shanti_kmaps_fields_default'; // PARAMETIZE THIS
+     Old $sql = "
+        SELECT n.nid
+        FROM `field_config` fc
+            JOIN `field_config_instance` fci ON (fc.id = fci.field_id)
+            JOIN `node` n ON (fci.bundle = n.type)
+        WHERE fc.type LIKE :kmap_field
+    ";
         // Get all published nodes. Private nodes are excluded in the get solr doc function
         $sql = "SELECT n.nid FROM `node` n  WHERE n.status = 1";
         $rs = db_query($sql, array(':kmap_field' => $kmap_field));
+
+
         foreach ($rs as $r) {
             $nids[] = $r->nid;
         }
-    $context['results']['nid_count'] = count($nids);
-    $context['results']['nids'] = $nids;
+    */
 }
 
 function shanti_kmaps_fields_reindexer_del_then_add(&$context)
@@ -416,7 +452,7 @@ function _shanti_kmaps_fields_get_solr_doc($nid_list, $force=FALSE)
 
         // Do not set doc Shanti Asset Type is set to Do Not Index
         $shanti_asset_type = variable_get('shanti_kmaps_fields_asset_type__' . $node->type); // Check for "Do Not Index" type
-        if ($shanti_asset_type == 'DNI') { continue;}
+        if ($shanti_asset_type == 'DNI') { continue; }
 
         // Do not set solr doc if it is not public, unless forced to
         if (!$force && !shanti_general_is_public($node)) {
@@ -465,13 +501,13 @@ function _shanti_kmaps_fields_get_solr_doc($nid_list, $force=FALSE)
             $kmapids_is[] = $uid * 100 + $di;  // e.g subjects-385 = 38502
           }
         }
-
-        $user_name = ($node->uid == 0) ? t('Anonymous') : $node_wrapper->author->value()->name; // Biblio imported nodes without an associated user
+        $creator_acct = user_load($node->uid);
+        $creator_name = ($node->uid == 0) ? t('Anonymous') : $creator_acct->name; // was $node_wrapper->author->value()->name; // Biblio imported nodes without an associated user
         $tmp = array(
             'id' => $node->nid,
             'uid' => SHANTI_KMAPS_ADMIN_SERVICE . '-' . $node->nid,
-            'node_user' => $user_name,
-            'node_lang' => $node_wrapper->language->value(),
+            'node_user' => $creator_name,
+            'node_lang' => '', // was $node_wrapper->language->value() but node_lang should be set by a kmap field value
             'node_created' => gmdate('Y-m-d\TH:i:s\Z',$node->created),
             'node_changed' => gmdate('Y-m-d\TH:i:s\Z',$node->changed),
             'title' => $node->title,
@@ -485,6 +521,10 @@ function _shanti_kmaps_fields_get_solr_doc($nid_list, $force=FALSE)
             'kmapid_strict' => $kmapids_strict,
             'kmapid_is' => $kmapids_is,
         );
+
+        if (isset($creator_acct->realname) && !empty($creator_acct->realname)) {
+            $tmp['node_user_full_s'] = $creator_acct->realname;
+        }
 
         if (isset($node_wrapper->$collection_field) && !empty($node_wrapper->$collection_field->value())) {
             $tmp['collection_title'] = $node_wrapper->$collection_field->value()->title;
@@ -526,6 +566,7 @@ function _shanti_kmaps_fields_get_solr_doc($nid_list, $force=FALSE)
     // Remove the node object from the solr doc before sending to SOLR
     foreach($doc as &$adoc) {
       unset($adoc['mynode']);
+      if ($adoc['node_lang'] == 'und') { $adoc['node_lang'] = ''; }
     }
     return $doc;
 }
@@ -623,7 +664,7 @@ function shanti_kmaps_fields_field_settings_form($field, $instance, $has_data)
       '#title' => t('KMap Domain'),
       '#description' => t('The domain (subjects or places) to use for KMaps access on this entity type.'),
       '#required' => TRUE,
-      '#options' => array('subjects' => 'subjects', 'places' => 'places'),
+      '#options' => array('subjects' => 'subjects', 'places' => 'places', 'terms' => 'terms'),
       '#default_value' => $settings['kmap_domain'],
     );
   }
@@ -764,6 +805,17 @@ function shanti_kmaps_fields_field_widget_info()
       'default value' => FIELD_BEHAVIOR_DEFAULT,
     ),
   );
+
+  $info['kmap_typeahead_term_picker'] = array(
+    'weight' => 6,
+    'label' => t("Autocomplete Terms"),
+    'field types' => array('shanti_kmaps_fields_default'),
+    'settings' => array(),
+    'behaviors' => array(
+      'multiple values' => FALSE,
+      'default value' => FIELD_BEHAVIOR_DEFAULT,
+    ),
+  );
   return $info;
 }
 
@@ -781,8 +833,9 @@ function shanti_kmaps_fields_field_widget_form(&$form, &$form_state, $field, $in
     '#attributes' => array('id' => $field_id . '-fieldset'),
   );
   $element["{$field_id}_result_box"] = array(
-    '#weight' => -5,
+    '#weight' => -10,
     '#type' => 'container',
+    //'#prefix' => '<div><span style="color: green;">Yolanda, weight is -10</span></div>',
     '#attributes' => array('id' => $field_id . '-result-box', 'class' => array('kmap-result-box')),
   );
   $element["{$field_id}_hidden_box"] = array(
@@ -847,7 +900,9 @@ function shanti_kmaps_fields_field_widget_form(&$form, &$form_state, $field, $in
       $element['#attached']['css'][] = SHANTI_KMAPS_FIELDS_PATH . "/css/shanti_kmaps_fields.lazy-tree.css";
       $element['#attached']['css'][] = SHANTI_KMAPS_ADMIN_PATH . "/css/shanti_kmaps_picklist.css";
       break;
+
     case 'kmap_typeahead_picker':
+    case 'kmap_typeahead_term_picker':
       $element["{$field_id}_search_header"] = array(
         '#weight' => -20,
         '#prefix' => "<div id='{$field_id}-search-header' class='kmap-search-header'>",
@@ -857,7 +912,7 @@ function shanti_kmaps_fields_field_widget_form(&$form, &$form_state, $field, $in
         '#suffix' => "</div>",
       );
       $element["typeahead_wrapper"] = array(
-        '#weight' => -10,
+        '#weight' => -12,
         '#theme' => 'shanti_kmaps_typeahead',
         '#namespace' => $field_id,
         '#domain' => substr($instance['label'], -1) == 's' ? $instance['label'] : $instance['label'].'s',
@@ -1588,10 +1643,40 @@ function shanti_kmaps_fields_get_popover_array($domain, $kid, $entity_type = FAL
         // Description
         $desc = t('For more information about this term, see Full Entry below.');
 
+        // Add Term Specific information to the popover, use Tibetan header, and add subject types
+        if ($domain == 'terms') {
+          $predesc = array($kdoc['header']);
+          $kdoc['header'] = $kdoc['name_tibt'][0];
+          $prefix  = ' ';
+          foreach ($kdoc['associated_subjects'] as $n => $subj_name) {
+            $type_url = str_replace('__KMAPID__', $kdoc['associated_subject_ids'][$n], variable_get('shanti_kmaps_admin_server_subjects_explorer'));
+            $predesc[] = '<a href="' . $type_url . '" target="_blank">' . $subj_name . '</a>';
+          }
+          if (!empty($predesc)) {
+            $prestr = implode(', ', $predesc);
+            $prefix .= '</br>' . $prestr . '</br></br>';
+          }
+          $desc = $prefix . $desc;
+        }
+
         // Ancestors
         $ancestors = array();
-        $atitles = $kdoc['ancestors'];
-        $aids    = $kdoc['ancestor_ids_generic'];
+        switch ($domain) {
+          case 'subjects':
+            $perspective = '_generic';
+            break;
+          case 'places':
+            $perspective = '_pol.admin.hier';
+            break;
+          case 'terms':
+            $perspective = '_tib.alpha';
+            break;
+          default:
+            $perspective = '';
+        }
+        $ancpersp = ($domain == 'terms') ? $perspective : '';
+        $atitles = $kdoc['ancestors' . $ancpersp];
+        $aids    = $kdoc['ancestor_ids' . $perspective];
         for ($i = 0; $i < count($aids); $i++) {
             $url = str_replace('__KMAPID__', $aids[$i], variable_get('shanti_kmaps_admin_server_' . $domain . '_explorer'));
             $ancestors[] = "<a target='_blank' href='$url'>{$atitles[$i]}</a>";
@@ -1605,24 +1690,6 @@ function shanti_kmaps_fields_get_popover_array($domain, $kid, $entity_type = FAL
         // Link to full record on Mandala
         $external_url = str_replace('__KMAPID__', $kid, variable_get('shanti_kmaps_admin_server_' . $domain . '_explorer'));
         $links['Full Entry'] = array('icon' => 'link-external', 'href' => $external_url, 'external' => TRUE);
-
-         /* Old way of getting counts by making queries.
-        $external_asset_links = shanti_kmaps_fields_get_assets_for_kmapid($domain, $kid);
-        foreach ($external_asset_links as $atype => $ainfo) {
-            $links["Related " . ucfirst($atype) . " ({$ainfo['count']})"] = array('icon' => $atype, 'href' => $ainfo['href'], 'external' => TRUE);
-        }
-
-        // Links to Related Subjects and Places
-        $external_term_links = shanti_kmaps_fields_get_related_terms_for_kmapid($domain, $kid);
-        foreach ($external_term_links as $my_domain => $count) {
-            if (!$count) continue;
-            $href = preg_replace("/__KMAPID__/", $kid . '/' . $my_domain, variable_get('shanti_kmaps_admin_server_' . $domain . '_explorer'));
-            if ($my_domain == 'photos') {
-                $href = preg_replace("/\/overview/", "", $href);
-            }
-            $links["Related " . ucfirst($my_domain) . " ($count)"] = array('icon' => $my_domain, 'href' => $href, 'external' => TRUE);
-        }
-          * */
 
         // Get all counts (terms and assets) by using Mandala API URL (new way)
         $external_links = shanti_kmaps_fields_get_all_counts_by_kmapid($domain, $kid);

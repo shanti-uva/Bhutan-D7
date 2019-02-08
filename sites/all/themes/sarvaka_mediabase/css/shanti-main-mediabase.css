@@ -22,15 +22,15 @@
 
 .bootstrap-select.btn-group.show-tick .dropdown-menu>li.selected>a .glyphicon-ok,
 .bootstrap-select.btn-group.show-tick .dropdown-menu>li.selected>a:hover .glyphicon-ok,
-.bootstrap-select.btn-group.show-tick .dropdown-menu>li.selected>a:active .glyphicon-ok,
-.view-section .nav-tabs>li.active>a, 
+.bootstrap-select.btn-group.show-tick .dropdown-menu>li.selected>a:active .glyphicon-ok
+/*.view-section .nav-tabs>li.active>a, 
 .view-section .nav-tabs>li.active>a:hover, 
 .view-section .nav-tabs>li.active>a:active,
 .view-section .fancytree-container .glyphicon,
 .view-section .fancytree-container .fancytree-node:hover > .glyphicon,
 .view-section .fancytree-container .fancytree-node:active > .glyphicon,
 .view-section .fancytree-node.fancytree-active > .glyphicon,
-.view-section .fancytree-node.fancytree-selected > .glyphicon{
+.view-section .fancytree-node.fancytree-selected > .glyphicon*/{
   color: #31acb6 !important;
 }
 
@@ -118,7 +118,9 @@ article.main-col{
 */
 
 
-
+.views-exposed-widgets{
+  margin-bottom:0;
+}
 
 
 /* Home media list block */
@@ -146,7 +148,7 @@ article.main-col{
     }
 
     #views-exposed-form-browse-media-home-block .views-exposed-form input#edit-title {
-        max-width: 130px;
+        max-width: 150px;
     }
 
 
@@ -266,7 +268,7 @@ article.main-col{
 
 .shanti-filters .control-box-cell-filters {
   margin: 0;
-  /*padding-left:3rem;*/
+  height: 2.62em;
 }
 
 .shanti-filters .control-box-cell-filters .views-exposed-form .form-item {
@@ -386,15 +388,17 @@ article.main-col{
   margin-left: 0;
 }
 
-
+.panel-body fieldset.date-combo legend{
+  margin-bottom:0;
+}
 
 
 /*--- show-hide toggle button ---*/
 a.show-annot, a.hide-annot {
   font-size: 1em;
   text-transform: uppercase;
-  font-family: sans-serif;
-  font-weight: bold;
+  font-family: 'EB Garamond',serif;
+  font-weight: 500;
   margin-left: -0.5em;
 }
 
@@ -424,18 +428,12 @@ a.hide-annot::before {
 }
 
 /**All collections page when second sidebar is present **/
-.one-sidebar.sidebar-second.page-collections-all .view-browse-media {
+.page-collections-all .view-browse-media {
     clear: both;
 }
 
-.one-sidebar.sidebar-second.page-collections-all .view-browse-media .shanti-gallery {
+.page-collections-all .view-browse-media .shanti-gallery {
     margin-top: 35px;
-}
-
-.page-collections .shanti-thumbnail-image a .overlay::before,
-.page-mycontent-collections .shanti-thumbnail-image a .overlay::before{
-  /* shanticon-grid icon for collections
-  content: "\e61b";  */
 }
 
 .view-collections .shanti-field-body{
@@ -513,7 +511,7 @@ a.hide-annot::before {
 .field-type-shanti-kmaps-fields-default .field-items-span{
   font-style:italic;
   display: inline;
-  font-size:0.93em;
+  font-size:1em;
 }
 
 /**
@@ -522,11 +520,12 @@ a.hide-annot::before {
 .av-related-wrapper.col-xs-12{
   padding-top:2rem;
   margin-bottom: .8rem;
-  font-family: 'Helvetica Neue', helvetica, sans-serif !important;
   letter-spacing: 0.04rem;
   background:#eee;
   padding-left: 0;
   padding-right: 0;
+  font-family: 'Open Sans','Segoe UI',Tahoma,sans-serif;
+  font-size: .88em;
 }
 
 .av-related-wrapper #related .related-av-nodes {
@@ -559,6 +558,17 @@ a.hide-annot::before {
 }
 
 
+
+#av-details .panel.panel-default .panel-heading h6{
+  font-size:1.32em;
+}
+
+
+#av-details .panel-heading .accordion-toggle::after{
+  /*position: relative;
+  bottom:.1rem;*/
+}
+
 /* add space after collection name */
 #av-details .field-name-av-collection {
   margin-bottom: 0.8rem;
@@ -574,17 +584,17 @@ a.hide-annot::before {
 }
 
 
-#av-details .field-label-inline{
-  line-height: 2em;
-}
+
 
 #av-details .field-name-field-recording-location-new{
-  line-height: 1em;
+  /*line-height: 1em;*/
 }
 
 #av-details .group-availability-access .field-name-field-tags{
   line-height:2.5em;
 }
+
+
 
 #av-details .field-items-span,
 #av-details .field-label-inline,
@@ -592,16 +602,42 @@ a.hide-annot::before {
 #av-details .field-label-inline .field-items{
   display:inline;
   color: #444;
+  line-height: 2em;
+    line-height: 2.5em;
 }
+    #av-details .field-label-above,
+    #av-details .field-label-inline,
+    #av-details .field-label-inline .field-label{
+      line-height: 2.3em;
+    }
 
+    #av-details .field-label-inline .field-items{
+      line-height:inherit;
+      font-size:108%;
+    }
+#av-details .field-label-above{
+  line-height: 1.75em;
+    line-height: 2.5em;
+  font-weight: 600;
+}
 #av-details .field-name-field-format-id-source.field-label-inline {
-  padding-left: 4px;
+  padding-left: 14px;
 }
 
+.field-label-inline .field-label{
+    font-family: 'Open Sans','Segoe UI',Tahoma,sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-style: normal;
+    font-size: .93em;
+    line-height: 1.62em;
+    color: #444;
+        letter-spacing: 0.0475rem;
+}
 
 #av-details .field-name-field-pbcore-instantiation .field-label,
 #av-details .field-name-field-identifier-source > .field-items{
-  margin-bottom: .4rem;
+  /*margin-bottom: .4rem;*/
   text-transform: uppercase;
 }
 
@@ -637,9 +673,13 @@ a.hide-annot::before {
   margin-top:.5rem;
 }
 
+#av-details .panel-body .field-name-field-pbcore-relation .field-items .even:first-child{
+  margin-top: 0;
+}
+
 #av-details .field-name-field-pbcore-identifier,
 #av-details .field-name-field-pbcore-instantiation{
-  margin-top: .8rem;
+  /*margin-top: .8rem;*/
   color: #444;
 }
 
@@ -651,9 +691,10 @@ a.hide-annot::before {
 #av-details .field-label-span{
   color: #444;
   margin: 0;
-  font-size: 13px;
-  font-weight: bold;
+  font-size: 12px;
+  font-weight: 400;
   text-transform: uppercase;
+  float:left;
 }
 
 #av-details .mb-identifier label{
@@ -661,11 +702,6 @@ a.hide-annot::before {
   margin: 0;
   font-size: 14px;
   text-transform: capitalize;
-}
-
-#av-details .mb-identifier.field-label-span,
-#av-details .field-type-shanti-kmaps-fields-default{
-  margin-bottom: 5px;
 }
 
 #av-details .mb-identifier.field-label-span{
@@ -713,22 +749,30 @@ a.hide-annot::before {
 
 #av-details .popover-link{
   position: relative;
-  top: 0.25rem;
+  top: 0.8rem;
 }
 
 #av-details .popover-link-tip{
-  /*position: relative;
-  bottom: 1.12rem;*/
+  position: relative;
+  bottom: 1.8rem;
 }
 
 #av-details .popover-link .icon{
   position: relative;
-  bottom: 0.2rem;
+  bottom: 0.9rem;
 }
 
 
+.node-video > .content{
+  color: #000;
+  font-size:1.18em;
+  font-family: 'EB Garamond',serif;
+}
 
-
+.node-video > .content .altlang{
+    font-size: 112%;
+    letter-spacing: .1rem;
+}
 
 /**
 * KALTURA Player
@@ -816,8 +860,9 @@ fieldset.form-wrapper .f-set > table{
 }
 
 .video-overview .show-more a{
-  font-size:0.88em;
+  font-size:0.68em;
   display: block;
+    font-family:'Open Sans','Segoe UI',Tahoma,sans-serif;
 }
 
 .video-overview .icon.shanticon-create::before{
@@ -839,7 +884,10 @@ fieldset.form-wrapper .f-set > table{
 
 .video-overview > h5 {
   text-transform: uppercase;
-    }
+  font-size: .82em;
+  font-weight: 600;
+  font-family:'Open Sans','Segoe UI',Tahoma,sans-serif;
+}
 /* BEGIN left metadata column */
 .avinfo {
   padding-left: 0px !important;
@@ -949,14 +997,15 @@ fieldset.form-wrapper .f-set > table{
 .fivestar-basic div.fivestar-widget .cancel a {
   color: #777;
   font-size: 0.88em;
-  width: 1.1rem;
+  width: 1.5rem;
   height: 1.5rem;
-  margin-right: 0.5rem;
+  margin-right: 0;
   letter-spacing: normal;
   font-family: 'shanticon';
-  text-indent: 0;
+  text-indent: 0.1rem;
   background-image: none;
   border: none;
+  display: inline-block;
 }
 
 .fivestar-basic div.fivestar-widget .cancel a:hover,
@@ -967,6 +1016,11 @@ fieldset.form-wrapper .f-set > table{
 .fivestar-basic div.fivestar-widget .cancel a::before {
   content: '\e60f';
 }
+.fivestar-widget-static .star{
+  height: 20px;
+}
+
+
 /* BEGIN avshare */
 .avshare div h5 span {
   color: #5a65d1;
@@ -1017,8 +1071,9 @@ ul.inline li a,
 ul.links.inline li a{
   color: #5a65d1;
   text-transform: capitalize;
-  font-family: 'Helvetica Neue',helvetica,arial,sans-serif;
-  font-weight: bold;
+  font-family:'Open Sans','Segoe UI',Tahoma,sans-serif;
+  font-weight: 600;
+  font-size: 0.93em;
 }
 /* links at bottom of media nodes (add comments, add to favs) */
 ul.links.inline {
@@ -1056,8 +1111,15 @@ ul.links.inline {
 }
 
 .avplace,
-.avcollection{
-  font-size: 1em;
+.avcollection,
+.field-name-creator{
+  font-size: .82em;
+  font-style: italic;
+  font-family:'Open Sans','Segoe UI',Tahoma,sans-serif;
+}
+
+.field-name-creator{
+  margin-bottom:1rem;
 }
 
 .field-items-span ul {
@@ -1105,7 +1167,8 @@ ul.links.inline {
 }
 
 .field-collection-item-field-pbcore-description .pb-desc-label.langname {
-    font-size: 1.25rem;
+    font-size: 1.32rem;
+    font-weight: 500;
 }
 
 .page-node-add .node-form .media-field-description {
@@ -1144,8 +1207,8 @@ h4.node-desc-type {
   width: 14em;
   text-align: center;
   font-size: 0.62em;
-  font-family: 'museo-sans-700',helvetica,arial,sans-serif;
-  font-weight: bold;
+  font-family:'Open Sans','Segoe UI',Tahoma,sans-serif;
+  font-weight: 600;
 }
 
 /* play button on video player */
@@ -1215,7 +1278,9 @@ h4.node-desc-type {
 }
 
 @media screen and (min-width:600px) {
-
+  .shanti-filters .control-box-cell-header span{
+    visibility:visible;
+  }
 }
 
 @media screen and (min-width: 768px) {
@@ -1238,6 +1303,7 @@ h4.node-desc-type {
   .av-related-wrapper.col-xs-12{
     padding-left:15px;
     padding-right:15px;
+    font-family:'Open Sans','Segoe UI',Tahoma,sans-serif;
   }
   /* .av-main-transcript-section{
     padding-left: 1rem;
@@ -1246,6 +1312,14 @@ h4.node-desc-type {
     bottom: 0;
     top: 0;
   }*/
+
+  .fivestar-basic div.fivestar-widget .star, 
+  .fivestar-basic div.fivestar-widget .star a{
+    position: relative;
+    bottom: .15rem;
+    left: .3rem;
+    margin-right: .6rem;
+  }
 
   .av-main-video-section {
     width:100% !important;
@@ -1299,30 +1373,27 @@ h4.node-desc-type {
   }
 
   .shanti-filters .control-box-cell-pager {
-    margin-right: 0;
+      margin-right: 4rem;
     margin-top: 0.5rem;
   }
 
   .shanti-filters .control-box-cell-pager,
   .shanti-filters .control-box-cell-filters{
-    width:  33.333%;
+    width:  40%;
   }
 
-  .sidebar-second.not-front .shanti-filters .control-box-cell-pager{
-    width:  36%;
-  }
-    .sidebar-second.not-front .shanti-filters .control-box-cell-filters{
-      width:  40%;
-    }
-
-  .node-type-collection .shanti-filters .control-box-cell-pager,
-  .node-type-subcollection .shanti-filters .control-box-cell-pager {
+  .collections-page .shanti-filters .control-box-cell-pager {
         width: 33%;
    }
-        .node-type-collection .shanti-filters .control-box-cell-filters,
-        .node-type-subcollection .shanti-filters .control-box-cell-filters {
+        .collections-page .shanti-filters .control-box-cell-filters{
             width: 45%;
        }
+  .collections-page.not-front .shanti-filters .control-box-cell-pager{
+    width:  36%;
+  }
+    .collections-page.not-front .shanti-filters .control-box-cell-filters{
+      width:  40%;
+    }
 }
 
 @media (min-width:1100px) {}
@@ -1374,27 +1445,43 @@ h4.node-desc-type {
 * BEGIN - MAX-Width
 * --------------------
 */
+
+@media screen and (max-width: 600px) {
+
+  .shanti-filters .control-box-cell-header span{
+    visibility:collapse;
+  }
+}
+
+
+
 @media screen and (max-width: 768px) {
 
   .shanti-filters .control-box-cell-pager{
-    margin-top: -6.7rem;
+    margin-top: -5.9rem;
+    margin-right:3rem;
   }
-  .sidebar-second.not-front .shanti-filters .control-box-cell-pager{
+  .collections-page .shanti-filters .control-box-cell-pager{
     margin-top: -7.7rem;
   }
 
 
-  .page-collections-all.sidebar-second.not-front .shanti-filters .control-box-cell-pager{
+  .page-collections-all .shanti-filters .control-box-cell-pager{
     margin-top: -1rem;
   }
   .page-collections-all .shanti-filters table.pagerer{
     float:left;
   }
+
+  .collections-page .collections-content{
+    padding-right:0;
+    padding-left:0;
+  }
 }
 
 @media screen and (max-width: 991px) {
 
-  .sidebar-second.not-front .shanti-filters .control-box-cell-pager{
+  .collections-page .shanti-filters .control-box-cell-pager{
     margin-top: -4.6rem;
   }
 
@@ -1427,6 +1514,13 @@ h4.node-desc-type {
 
 
 
+
+
+
+
+.shanti-view-intro{
+  display:none;
+}
 
 
 

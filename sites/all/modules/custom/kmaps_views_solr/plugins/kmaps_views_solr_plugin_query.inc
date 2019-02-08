@@ -80,7 +80,6 @@ class kmaps_views_solr_plugin_query extends views_plugin_query {
 
     foreach ($solrObj->response->docs as $doc) {
       $row = new stdClass;
-
       //Populate fields
       $row->av_id = $doc->id;
       $row->av_title = $doc->title[0];
@@ -88,7 +87,7 @@ class kmaps_views_solr_plugin_query extends views_plugin_query {
       $row->summary = $doc->summary;
       $row->created_date = $doc->node_created;
       $row->collection = $doc->collection_title;
-      $row->creator = $doc->creator[0];
+      $row->creator = html_entity_decode($doc->creator[0]);
       $row->asset_type = $doc->asset_subtype;
       $row->language = $doc->language;
       $row->thumb = $doc->url_thumb;

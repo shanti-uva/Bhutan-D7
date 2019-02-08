@@ -96,11 +96,11 @@ function file_entity_file_update($file) {
   }
 
   if (module_exists('image') && file_entity_file_get_mimetype_type($file) == 'image' && $file->filesize && isset($file->original)) {
-    if (!isset($file->metadata)) {
+    if (!isset($file->metadata) || gettype($file->metadata) == 'string') {
       $file->metadata = array();
     }
 
-    if (!isset($file->original->metadata)) {
+    if (!isset($file->original->metadata) || gettype($file->original->metadata) == 'string') {
       if (!is_object($file->original)) {
         $file->original = new stdClass();
       }
@@ -110,13 +110,7 @@ function file_entity_file_update($file) {
     // If the file has changed dimensions or a new file has been uploaded,
     // update any image field reference to this file and flush image style
     // derivatives.
-    if (gettype($file->metadata) == 'string') {
-      $file->metadata = array();
-    }
     $file->metadata += array('width' => NULL, 'height' => NULL);
-    if (gettype($file->original->metadata) == 'string') {
-      $file->original->metadata = array();
-    }
     $file->original->metadata += array('width' => NULL, 'height' => NULL);
     if ($file->filesize != $file->original->filesize || $file->metadata['width'] != $file->original->metadata['width'] || $file->metadata['height'] != $file->original->metadata['height']) {
       _file_entity_update_image_field_dimensions($file);

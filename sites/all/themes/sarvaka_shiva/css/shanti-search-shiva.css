@@ -97,10 +97,8 @@ ul.shivanode-info li div {
   position: absolute;
   left: 2.9rem;
   top: 1rem;
-  font-weight: normal;
   letter-spacing:0.03rem;
   text-transform: capitalize;
-  font-family: 'museo-sans-500',helvetica,arial,sans-serif;
 }
 
 .extruder label.flyout-search-label span{

@@ -1,0 +1,11 @@
+name = Block I18n Example
+description = Example block with multilingual configuration.
+package = Multilingual - Internationalization
+core = 7.x
+
+
+; Information added by Drupal.org packaging script on 2018-10-13
+version = "7.x-1.2"
+core = "7.x"
+project = "block_i18n_config"
+datestamp = "1539440886"

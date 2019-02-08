@@ -35,6 +35,7 @@ function explore_menu_block_info() {
   return $blocks;
 }
 
+
 /**
  * display link for opening and closing explore menu (meant for Shanti Sarvaka theme)
  */

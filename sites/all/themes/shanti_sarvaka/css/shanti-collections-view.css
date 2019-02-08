@@ -45,6 +45,21 @@
 
 .field-type-text-with-summary{
   max-width:1100px !important;
+  font-family: 'EB Garamond', serif;
+  font-size: 1.18em;
+}
+.field-type-text-with-summary .show-more a{
+  font-size: .75em;
+  font-family: 'Open Sans','Segoe UI',Tahoma,sans-serif;
+  font-weight: 600;
+  font-style: italic;
+  margin-left: 1rem;
+  filter: alpha(opacity=70);
+  opacity: .7;
+}
+.field-type-text-with-summary .show-more a:after{
+  font-weight:normal;
+  opacity: .7;
 }
 
 
@@ -115,6 +130,7 @@
   padding-left:3rem;
   padding-right:3rem;
   margin-left:0;
+  font-size: 105%;
 }
 
 .collections-sidebar .shanticon-stack{
@@ -123,7 +139,6 @@
 
 .collections-sidebar,
 .collections-sidebar a:not(.btn-primary) {
-  font-family: 'Helvetica Neue',helvetica,arial,sans-serif;
   font-size:0.93em;
   letter-spacing: 0.0275rem;
   padding-left: .5rem;
@@ -140,11 +155,16 @@
   margin-left:1.5rem;
 }
 
+.collections-sidebar .field-type-shanti-kmaps-fields-default {
+  margin-left: 3.75rem;
+}
+
 .collections-sidebar h4 + a{
   margin-left: 3.1rem;
 }
 
-.collections-sidebar a:not(.btn-primary)::before{
+.collections-sidebar a:not(.btn-primary)::before,
+.collections-sidebar .field-type-shanti-kmaps-fields-default .field-item::before {
   content: '';
   width: 1rem;
   height: 1rem;
@@ -153,10 +173,10 @@
   display: inline-block;
   border-radius: 50%;
   background-clip: padding-box;
-  margin-right: 0.5rem;
-  margin-left: -2.2rem;
-  position: relative;
-  top: .05rem;
+  margin-right: 0.65rem;
+    margin-left: -2.2rem;
+    position: relative;
+    top: .1rem;
 }
 
 .collections-sidebar a:hover:not(.btn-primary)::before{
@@ -183,9 +203,10 @@
 
 .collections-sidebar h4{
   color: #333;
-  font-family: 'museo-sans-700', helvetica, arial, sans-serif;
+  font-family:'Open Sans','Segoe UI',Tahoma,sans-serif;
+  font-weight: 600;
   letter-spacing: 0.15rem;
-  font-size: 1em;
+  font-size: 1.06em;
   text-transform: uppercase;
   letter-spacing: 0.175rem;
   margin-bottom: 0.6rem;

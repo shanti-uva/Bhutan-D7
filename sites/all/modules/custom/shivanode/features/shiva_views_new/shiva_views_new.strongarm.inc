@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * shiva_views_new.strongarm.inc

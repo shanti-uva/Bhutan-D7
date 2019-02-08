@@ -9,6 +9,7 @@ function shanti_kmaps_typeahead_libraries_info()
         'files' => array(
             'js' => array(
                 'js/jquery.kmaps-typeahead.js', // main kmaps typeahead code
+                'js/jquery.kmaps-simple-typeahead.js', // new kmaps typeahead code for terms from Derik
                 'js/kmaps-util.js', // utility functions used by kmaps typeahead and kmaps tree
             ),
             'css' => array(

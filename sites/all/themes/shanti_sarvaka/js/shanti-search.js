@@ -301,7 +301,7 @@ Drupal.behaviors.searchPanelHeightKMaps = {
           // Search Results Panel and List Heights
           // hiding this to try using results script in Sarvaka
           $('#faceted-search-results').css('height', (view_height + 105) +'px'); // Results Panel Height: This will adjust the distance from the bottom of the results panel to the bottom of the browser - This should match the distance of the search flyout to bottom.
-          $('.search-results-list-wrapper, .search-results-node-preview').css('height', (view_height - 95) +'px'); // Results Scrollable List Height: This will adjust eh scrollable results list height - This should be about (1/8 in) above bottom of results list wrapper.
+          $('.search-results-list-wrapper, .search-results-node-preview').css('height', (view_height - 105) +'px'); // Results Scrollable List Height: This will adjust eh scrollable results list height - This should be about (1/8 in) above bottom of results list wrapper.
 
           if (DEBUG) {
             console.log("searchTabHeightKMaps()");

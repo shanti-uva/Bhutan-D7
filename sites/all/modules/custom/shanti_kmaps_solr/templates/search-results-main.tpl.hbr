@@ -137,8 +137,37 @@
                         <div class="results-node-more-details pop-content closeup place-open-{{extractId doc.uid}}" style="display:none;">
                           {{!-- > details-template doc --}}
                           {{> (choosetemplate doc.asset_type) doc}}
-                          <a data-toggle="collapse" data-target="#json-{{uid}}" class="results-node-classification">show json</a>
-                          <div id="json-{{uid}}" class="collapse">
+
+                          <div class="results-node-kmaps-related">
+                            {{#if doc.kmapid_strict_places.length}}
+                              <dl class="dl-horizontal">
+                                <dt>Related Places</dt>
+                                {{#each doc.kmapid_strict_places as |kmid i|}}
+                                  <dd>
+                                        <span class="shanti-kmaps-solr-facet-label no_label"
+                                              data-kmid="{{kmid}}">{{kmid}}</span>
+                                    ({{kmid}})
+                                  </dd>
+                                {{/each}}
+                              </dl>
+                            {{/if}}
+
+                            {{#if doc.kmapid_strict_subjects.length}}
+                              <dl class="dl-horizontal">
+                                <dt>Related Subjects</dt>
+                                {{#each doc.kmapid_strict_subjects as |kmid i|}}
+                                  <dd>
+                                          <span class="shanti-kmaps-solr-facet-label no_label"
+                                                data-kmid="{{kmid}}">{{kmid}}</span>
+                                    ({{kmid}})
+                                  </dd>
+                                {{/each}}
+                              </dl>
+                            {{/if}}
+                          </div>
+
+                            <div><a data-toggle="collapse" data-target="#json-{{uid}}" class="results-node-classification">show json</a></div>
+                          <div id="json-{{uid}}" class="collapse" style="clear: both">
                             <pre>
                               {{json doc}}
                             </pre>

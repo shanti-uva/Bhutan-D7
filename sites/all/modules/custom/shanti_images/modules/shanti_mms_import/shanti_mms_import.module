@@ -1,8 +1,10 @@
 <?php
 
-define('MMS_DEV', 'http://staging-mms.thlib.org/media_objects/'); // MMS dev is down. Use staging instead.
+define('MMS_DEV', 'http://dev-mms.thlib.org/media_objects/');
+define('MMS_STAGE', 'http://staging-mms.thlib.org/media_objects/');
 define('MMS_PROD', 'http://mms.thlib.org/media_objects/');
 define('CONV_LIMIT', 5000);
+define('MMS_CONV_MSG', 'mms_convert_msg');
 
 /**
  * Implement hook_menu
@@ -17,6 +19,14 @@ function shanti_mms_import_menu() {
         'page arguments' => array('shanti_mms_import_admin_form'),
         'access arguments' => array('administer shanti images'),
         'type' => MENU_LOCAL_TASK | MENU_NORMAL_ITEM,
+    );
+    $items['admin/shanti_images/import/json'] = array(
+        'title' => 'Shanti Images MMS JSON Import',
+        'description' => 'Import one MMS Image from JSON information',
+        'page callback' => 'shanti_mms_import_from_json',
+        'access callback' => TRUE,
+        #'access arguments' => array('administer shanti images'),
+        'type' => MENU_CALLBACK,
     );
     $items['mms-import/collections/autocomplete'] = array(
         'page callback' => 'shanti_mms_import_collections_autocomplete',
@@ -35,6 +45,11 @@ function shanti_mms_import_menu() {
 
 
 function shanti_mms_import_admin_form($form, &$form_state) {
+    // If messages from conversion have been set, we are returning to the form after conversion so display messages
+    $msgs = variable_get(MMS_CONV_MSG, array());
+    foreach ($msgs as $m) { drupal_set_message($m); }
+    variable_set(MMS_CONV_MSG, array());
+
     $form = array();
     
     $form['intro'] = array(
@@ -251,7 +266,7 @@ function shanti_mms_import_process_addition_data($datafile) {
  */
 function shanti_mms_import_admin_form_submit($form, &$form_state)
 {
-    global $publish;
+    //global $publish;
     //dpm($form_state, 'form state on submission');
     $mmsids = $form_state['values']['mmsids'];
     $mms_coll = $form_state['input']['mms_coll_id'];
@@ -321,14 +336,20 @@ function shanti_mms_import_finished($success, $results, $operations) {
         } else {
             $clnk = ': ';
         }
-        drupal_set_message(t('@count MMS records processed: @done converted, @failed not converted' . $clnk . ': ', array(
+
+        // Save result messages in variable to display when returning to form
+        // This is necessary because person can be running api calls from terminal using same credentials and these would get the messages
+        $result_msgs = array(
+            t('@count MMS records processed: @done converted, @failed not converted' . $clnk . ': ', array(
                                 '@count' => $total,
                                 '@done' => count($done),
                                 '@failed' => count($failed),
-                            )));
-        drupal_set_message('Data file is at: <a href="' . $turl . '" target="_blank">' . $tmpfile . '</a>.');
-        drupal_set_message('Conversion info is at: <a href="' . $turl2 . '" target="_blank">' . $tmpfile2 . '</a>.');
-        drupal_set_message('Move commands are at: <a href="' . $turl3 . '" target="_blank">' . $tmpfile3 . '</a>.');
+                            )),
+            'Data file is at: <a href="' . $turl . '" target="_blank">' . $tmpfile . '</a>.',
+            'Conversion info is at: <a href="' . $turl2 . '" target="_blank">' . $tmpfile2 . '</a>.',
+            'Move commands are at: <a href="' . $turl3 . '" target="_blank">' . $tmpfile3 . '</a>.');
+        variable_set(MMS_CONV_MSG, $result_msgs);
+
         if (!empty($operations[0][4])) {
             $collid = $operations[0][4];
             if (is_numeric($collid)) {
@@ -344,6 +365,43 @@ function shanti_mms_import_finished($success, $results, $operations) {
         drupal_set_message(t('An error occurred while processing @operation with arguments : @args', array('@operation' => $error_operation[0], '@args' => print_r($error_operation[0], TRUE))));
     }
 }
+
+
+/**
+ * Api endpoint to import one image via posted  JSON data
+ */
+function shanti_mms_import_from_json() {
+    $json = array();
+    if (user_access('administer shanti images')) {
+        $pstr = json_encode($_POST);
+        $json = $_POST;
+        $mmsid = $_POST['mmsid'];
+        $mmssource = $_POST['source'];
+        $defptgr = $_POST['photographer'];
+        $mmspublish = ($_POST['publish'] == 'True') ? TRUE : FALSE;
+        $collid = $_POST['coll'];
+        $mmsdata = _shanti_mms_import_get_xml($mmsid, $mmssource, $defptgr);  // MMS XML data is more complete than JSON
+        $node = shanti_mms_import_create_node($mmsdata, $mmspublish, $collid);
+        if (!isset($node->error)) {
+            $i3fid = array_shift($node->i3ffiles);
+            $json = array(
+                'mmsid' => $mmsid,
+                'nid' => $node->nid,
+                'i3fid' => $i3fid,
+                'title' => $node->title,
+                'durl' => drupal_get_path_alias('node/' . $node->nid),
+                'mmsurl' => _get_mms_base($mmssource) . $mmsid,
+                'status' => '200',
+                'msg' => 'success',
+            );
+        }
+    } else {
+        $json['status'] = '401';
+        $json['message'] = 'Authorization required';
+    }
+    drupal_json_output($json);
+}
+
 
 /**
  * A helper function to turn the array of results from the batch conversion into a CSV file.
@@ -542,7 +600,12 @@ function shanti_mms_import_create_node($data, $publish, $collid='', $admin_note=
             $title = "(Untitled)";
         }
     }
-    $node->title = html_entity_decode(strip_tags($title));
+
+    // Trim leading and following spaces from title for better alphabeticization.
+    $title = html_entity_decode($title); // Decode html entities first
+    $title = trim(strip_tags($title));  // do regular trim
+    $title = trim( $title, "\xC2\xA0\n" ); // Then trim off nbsp in unicode.
+    $node->title = $title;
 
     // No image used in creation anymore. All imported into IIIF directly
     $node->field_image = array();

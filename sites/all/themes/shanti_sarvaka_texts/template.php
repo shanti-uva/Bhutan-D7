@@ -126,6 +126,18 @@ function shanti_sarvaka_texts_preprocess_node(&$vars)
   }
 }
 
+function shanti_sarvaka_texts_views_pre_render($view) {
+    /*$view->result[0]->node_og_membership_nid  = "<div>12 items</div>";
+    foreach($view->result as &$row) {
+        $nid = $row->node_og_membership_nid;
+        $num_of_items = shanti_collections_get_items_in_collection($nid, 'count');
+        $row->node_og_membership_nid = t('@num items', array(
+            '@num' => $num_of_items,
+        ));
+    }
+    dpm($view->result[0], 'first row');*/
+}
+
 function shanti_sarvaka_texts_get_edit_widget($nid,$coll_id) {
     $node = node_load($nid);
     $lang = $node->language;

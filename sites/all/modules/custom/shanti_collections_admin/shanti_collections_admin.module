@@ -41,6 +41,14 @@ function shanti_collections_admin_menu()
             'access arguments'  => array('administer shanti_collections_admin'),
             'type'              => MENU_NORMAL_ITEM,
         ),
+        'shanti_collections_admin/convert/collection/%' => array(
+            'title' => 'Convert Collection to Subcollection',
+            'description'       => 'Specify views for Collections and Subcollections.',
+            'page callback'     => 'drupal_get_form',
+            'page arguments'    => array('shanti_collections_admin_convert_collection', 3),
+            'access arguments'  => array('edit own collection content'),
+            'type'              => MENU_LOCAL_TASK,
+        ),
     );
 }
 
@@ -50,6 +58,10 @@ function shanti_collections_admin_permission()
         'administer shanti_collections_admin' => array(
           'title' => t('Administer SHANTI Collections Admin'),
           'description' => t('Perform administration tasks for SHANTI Collections Admin.'),
+        ),
+        'convert shanti_collections' => array(
+            'title' => t('Convert between Shanti Collections and Subcollections'),
+            'description' => t('Allows user to convert any collection into a subcollection and vice versa'),
         ),
       );
 }
@@ -268,4 +280,215 @@ function shanti_collections_admin_get_collection_id_of_node($nid)
         $coll_id = $node->{$coll_field}[$lang][0]['target_id'];
     }
     return $coll_id;
+}
+
+/*
+function shanti_collections_admin_node_view_alter(&$build) {
+    dpm($build, 'build');
+    dpm($build['#node'], 'node');
+}
+
+function shanti_collections_admin_page_alter(&$page) {
+    dpm($page, 'paige');
+}
+*/
+
+/**
+ * Form function for converting collections into subcollections or vice versa.
+ * Called from the path {home}/shanti_collections_admin/convert/collection/{nid}
+ * Any user can convert their own collections into subcollections or vice versa
+ * But there is also a permission 'convert shanti_collections' which allows a user to do so with any (sub)collection
+ *
+ * @param $form
+ * @param $form_state
+ * @param $nid          - the nid of the collection to convert
+ * @return mixed
+ */
+function shanti_collections_admin_convert_collection($form, &$form_state, $nid) {
+    global $user;
+    if (empty($nid)) {
+        form_set_error('nid', t("No Node ID given in form function"));
+        return;
+    }
+    $node = node_load($nid);
+    $path = drupal_get_path_alias('node/' . $nid);
+    if ($node) {
+        if ($node->uid === $user->uid || user_access('convert shanti_collections')) {
+            $ntype = $node->type;
+            $msg = '';
+            if ($ntype == "collection") {
+                $msg = t('Are you sure you want to convert the collection, <strong>@title</strong> (@nid), into a subcollection?', array(
+                    '@title' => $node->title,
+                    '@nid' => $nid,
+                ));
+                if (count(shanti_collections_get_subcollections($node)) > 0) {
+                    drupal_set_message(t("You cannot convert a collection with child subcollections into a " .
+                        "subcollection. <br> You must first remove all child subcollections."), 'warning');
+                    drupal_goto($path);
+                }
+            } else if ($ntype == "subcollection") {
+                $msg = t('Are you sure you want to convert the subcollection, <strong>@title</strong> (@nid), into a collection?', array(
+                    '@title' => $node->title,
+                    '@nid' => $nid,
+                ));
+            } else {
+                drupal_set_message(t("A @nodetype cannot be converted into a collection",
+                    array('@nodetype' => $ntype)),
+                    'warning');
+                drupal_goto($path);
+            }
+
+            $form['message'] = array(
+                '#markup' => "<p>$msg</p>",
+            );
+
+            if ($ntype == 'collection') {
+                $form['parent'] = array(
+                    '#type' => 'select',
+                    '#title' => t("Parent Collection"),
+                    '#description' =>t("Select a parent collection for this one after it is converted to subcollection"),
+                    '#options' => _shanti_collections_admin_get_user_collections($nid),
+                );
+            }
+            $form['nid'] = array(
+                '#type' => 'hidden',
+                '#value' => $nid,
+            );
+            $form['cancel'] = array(
+                '#type' => 'button',
+                '#value' => t('Cancel'),
+            );
+            $form['submit'] = array(
+                '#type' => 'submit',
+                '#value' => 'Convert',
+            );
+            return $form;
+        } else {
+            drupal_set_message(t('You do not have permissions to perform that action.'), 'warning');
+            drupal_goto($path);
+        }
+    } else {
+        drupal_set_message(t("@n is not a valid node ID", array('@n' => $nid)), 'warning');
+        drupal_goto();
+    }
+}
+
+/**
+ * Function used to get either a list of user's collections to use as a new parent for a collection
+ * converted to subcollection. Or if the user has the 'convert shanti_collections' permission then
+ * it lists all collections. Removed the given node ID so a node cannot be made parent of itself.
+ *
+ * Called from the shanti_collections_admin_convert_collection form
+ *
+ * @param $nid
+ * @return array
+ */
+function _shanti_collections_admin_get_user_collections($nid) {
+    global $user;
+    // Get list of all user collections or if permissions all collections
+    $query = new EntityFieldQuery;
+    $query->entityCondition('entity_type', 'node')
+        ->propertyCondition('type', 'collection');
+    if(!user_access('convert shanti_collections')) {
+        $query->propertyCondition('uid', $user->uid);
+    }
+    $result = $query->execute();
+    $nids = array_keys($result['node']);
+
+    // Remove the collection to be converted from list of potential parents
+    $self_index = array_search($nid, $nids);
+    if ($self_index) {
+        unset($nids[$self_index]);
+    }
+
+    // Load all potential parents and create list of titles keyed on nid
+    $nodes = node_load_multiple($nids);
+    $options = array();
+    foreach ($nodes as $node) {
+        $options[$node->nid] = $node->title;
+    }
+    // Add an empty choice for top and sort
+    $options["0"] = '-- Choose a Parent --';
+    asort($options);
+    return $options;
+}
+
+function shanti_collections_admin_convert_collection_validate($form, &$form_state) {
+    global $user;
+    // Make sure an NID is given
+    if (empty($form_state['values']['nid'])) {
+        form_set_error('nid', t("No node id given"));
+    } else {
+        // Make sure the given NID is for a node of type collection or subcolection
+        $node = node_load($form_state['values']['nid']);
+        // Check if "Cancel" button was pressed
+        if (!empty($form_state['triggering_element']) && $form_state['triggering_element']['#id'] == 'edit-cancel') {
+            drupal_set_message('Collection conversion cancelled!');
+            drupal_goto(drupal_get_path_alias('node/' . $node->nid));
+        }
+        if ($node->type == 'collection') {
+            // If converting collection to subcollection, make sure a parent is given
+            if (empty($form_state['values']['parent']) || $form_state['values']['parent'] == 0) {
+                form_set_error('parent', t("You must choose a parent collection for this one to be placed under"));
+            } else {
+                // Make sure the parent itself is a collection
+                $parent = node_load($form_state['values']['parent']);
+                if ($parent->type != 'collection') {
+                    form_set_error('parent', t("The parent you have chosen is not a collection"));
+                }
+                // And that the user owns it or has permission to add subcollections
+                if ($parent->uid != $user->uid && !user_access('convert shanti_collections')) {
+                    form_set_error('parent', t("You do not have permissions to add subcollections to that parent collection"));
+                }
+            }
+        } elseif ($node->type == 'subcollection') {
+            // NO validation necessary here
+        } else {
+            form_set_error('nid', t("Node to be converted is not the proper type: collection, subcollection"));
+        }
+    }
+}
+
+function shanti_collections_admin_convert_collection_submit($form, &$form_state) {
+    if (empty($form_state['values']['nid'])) {
+        drupal_set_message(t('No node id was sent to the collection conversion routine. Cannot proceed'), 'warning');
+        return;
+    }
+    $nid = $form_state['values']['nid'];
+    $node = node_load($nid);
+    // Convert collection to subcollection
+    if ($node->type == 'collection') {
+        $node->type = 'subcollection';
+        $node->og_user_inheritance = array();
+        $node->og_user_permission_inheritance = array();
+        node_save($node);
+        $node->field_og_parent_collection_ref['und'][0]['target_id']   = $form_state['values']['parent'];
+        node_save($node);
+
+    // Convert subcollection to collection
+    } elseif ($node->type == 'subcollection') {
+        $node->field_og_parent_collection_ref = array();   // First remove value in og_parent_collection_ref table
+        node_save($node);
+        $node->og_user_inheritance = array(
+            'und' => array(
+                0 => array(
+                    'value' => 1,
+                ),
+            ),
+        );
+        $node->og_user_permission_inheritance = array(
+            'und' => array(
+                0 => array(
+                    'value' => 0,
+                ),
+            ),
+        );
+        $node->type = 'collection';  // Then change content type
+        node_save($node);
+    } else {
+        drupal_set_message(t("Cannot convert @type into a collection.", array('@type' => $node->type)), 'warning');
+    }
+
+    // TODO: Do we possibly need to update the alias????
+    drupal_goto(drupal_get_path_alias('/node/' . $nid));
 }

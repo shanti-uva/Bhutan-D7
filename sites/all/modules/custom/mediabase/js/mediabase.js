@@ -213,6 +213,8 @@
      Drupal.behaviors.mediabaseForms={
         attach: function(context){
 
+            var spinner = '<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>';
+
             // Hide Add Media Button after audio or video is added for MANU-4900
             var thumbimg = $('.page-node-add-audio .field-name-field-audio .kaltura_field_thumb img,' +
                 '.page-node-add-video .field-name-field-video .kaltura_field_thumb img');
@@ -237,6 +239,69 @@
                            par.append('<p class="lenlim small">A summary can be a maximum of 750 characters long.</p>');
                  }
             });
+
+            // Add confirmation to field collection delete buttons
+            // Trick here is that the button use ajax to perform the action.
+            // Using bootbox plugin to provide a dialog box and button classes to register confirmation
+            if ($('body').hasClass('page-node-edit')) {
+                $('.btn-delete.ajax-processed').each(function () {
+                    var btnid = $(this).attr('id');  // Get the button id
+                    var inputval = $(this).prevAll('.field-type-text').find('input').val();
+                    // Add a beforeserialize function to potentially interrupt AJAX call
+                    Drupal.ajax[btnid].beforeSerialize = function () {
+                        // If the button has the class "confirm-return" it is returning already from confirmation. Do not show dialog
+                        if (!$('#' + btnid).hasClass('action-confirmed')) {
+                            // Otherwise, use bootbox to show the dialog
+                            bootbox.trigid = btnid; // Save current button id with bootbox to access in callback
+                            // Get the value of the preceding input box for confirm dialog
+                            var btnnm = btnid.replace('edit-field', '').replace('en', '')
+                                .replace('und', '').replace('remove-button', '');
+                            btnnm = btnnm.replace(/\-/g, ' ');
+                            // Create confirm message
+                            var btnval = (inputval) ? '= “' + inputval + '”' : '';
+                            var msg = "Are you sure you want to remove this item: " + btnnm + btnval + "?";
+                            // Call bootbox confirm
+                            bootbox.confirm({
+                                message: msg,
+                                buttons: {
+                                    confirm: {
+                                        label: 'Yes',
+                                        className: 'btn btn-primary btbx-confirm'
+                                    },
+                                    cancel: {
+                                        label: 'No',
+                                        className: 'btn btn-primary btbx-cancel'
+                                    }
+                                },
+                                // The callback is the key function. Bootbox returns prior to the answer here.
+                                // So use the call back to set a special class on the button and retrigger
+                                callback: function (result) {
+                                    bootbox.hideAll(); // Hide the dialog box upon any button click
+                                    if (result == true) {  // if confirmed ...
+                                        // Get the current button ID and reset bootstrap variable
+                                        var btnid = '#' + bootbox.trigid;
+                                        bootbox.trigid = false;
+                                        // Add class to
+                                        $(btnid).addClass('action-confirmed');
+                                        $(btnid).trigger('mousedown');
+                                    }
+                                }
+                            });
+                        }
+                        // Only proceed with ajax if the button has the "action-confirmed" class
+                        if ($('#' + btnid).hasClass('action-confirmed')) {
+                            // Hide the trashcan icon and replace with a spinner
+                            $('#' + btnid).find('span.shanticon-trash').hide();
+                            $('#' + btnid).prepend(spinner);
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    };
+                });
+            }
+
+            // Context Not Document
             if (context !== document) {
                 // When uploader is used to add media, change body class to av-has-media
                 if ($("body.page-node").hasClass('av-no-media')) {
@@ -245,7 +310,35 @@
                         $("body.page-node").addClass('av-has-media');
                     }
                 }
-            } 
+
+                // Change submit button message when clicked
+                $('a[id^=submitBtn]').on('click', function () {
+                    $(this).append(spinner);
+                });
+
+            }
+
+            // context document
+            if (context === document) {
+                $('#edit-actions .form-submit').on('mousedown', function () {
+                    if ($(this).data('spinner') !== 'true') {
+                        $(this).append(spinner);
+                        $(this).data('spinner', 'true');
+                    }
+                });
+            }
+
+            // All contexts
+            // Add spinner to add more submit in edit form
+            $('.mb-av-form button.field-add-more-submit').on('mousedown', function(e) {
+                var span = $(this).children('span').eq(0);
+                if (span.data('spinner') !== 'true') {
+                    span.append(spinner);
+                    span.data('spinner', 'true');
+                }
+            });
+
+
         }
      };
      

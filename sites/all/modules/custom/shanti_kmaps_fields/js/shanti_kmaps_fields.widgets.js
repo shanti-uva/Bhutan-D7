@@ -7,35 +7,35 @@
     var S = {}; // Settings passed
     var submit_count = 0;
 
-// Debugging function get one of the global values above with current value, since this is closed scope
-window.getCurrentKmapsVar = function(vnm) { 
-    switch(vnm) {
-        case "d":
-            //console.log("returning dictionary", dictionary);
-            return dictionary;
-            break;
-        case "p":
-            //console.log("returning picked", picked);
-            return picked;
-            break;
-        case "t":
-            //console.log("returning ancestors", ancestor_tree);
-            return ancestor_tree;
-            break;
-        case "c":
-            //console.log("returning count", submit_count);
-            return submit_count;
-            break;
-        default:
-            //console.log("returning S", S);
-            return S;
-    }
-};
+    // Debugging function get one of the global values above with current value, since this is closed scope
+    window.getCurrentKmapsVar = function(vnm) {
+        switch(vnm) {
+            case "d":
+                //console.log("returning dictionary", dictionary);
+                return dictionary;
+                break;
+            case "p":
+                //console.log("returning picked", picked);
+                return picked;
+                break;
+            case "t":
+                //console.log("returning ancestors", ancestor_tree);
+                return ancestor_tree;
+                break;
+            case "c":
+                //console.log("returning count", submit_count);
+                return submit_count;
+                break;
+            default:
+                //console.log("returning S", S);
+                return S;
+        }
+    };
 
-// Debugging function to set picked value from command line, since this is closed scope
-window.shantiKmapsFieldsSetPicked = function(fn, val) {
-    picked[fn] = val;
-};
+    // Debugging function to set picked value from command line, since this is closed scope
+    window.shantiKmapsFieldsSetPicked = function(fn, val) {
+        picked[fn] = val;
+    };
 
     Drupal.behaviors.shantiKmapsFieldsTree = {
 
@@ -176,7 +176,7 @@ window.shantiKmapsFieldsSetPicked = function(fn, val) {
                 });
             });
 
-            // Turn inputs into typeahead pickers if required
+            // Turn inputs into regular typeahead pickers if required
             $('.field-widget-kmap-typeahead-picker').once('kmaps-fields').each(function () {
                 var $typeahead = $('.kmap-search-term', this);
                 var my_field = $typeahead.attr('id').replace('-search-term', '');
@@ -208,8 +208,68 @@ window.shantiKmapsFieldsSetPicked = function(fn, val) {
                         KMapsUtil.trackTypeaheadSelected($typeahead, picked[my_field]);
                         // 'false' prevents dropdown from automatically opening
                         $typeahead.kmapsTypeahead('setValue', search_key, false, max_terms * Math.floor(sel.index/max_terms)); // set search field back to what it was, including the start
+                        // Remove search string from field once value selected to allow for new search
+                        $('#' + my_field + '-search-term').val('');
                     }
                 );
+
+                $typeahead.on('typeahead:render', function() {
+                    $('.typeahead-popover').popover({trigger: "hover", delay: {"show": 0, "hide": 20}});
+                });
+            });
+
+            // Turn inputs into typeahead term tree pickers if required
+            $('.field-widget-kmap-typeahead-term-picker').once('kmaps-fields').each(function () {
+                var $typeahead = $('.kmap-search-term', this);
+                var my_field = $typeahead.attr('id').replace('-search-term', '');
+                var search_key = '';
+                var admin = settings.shanti_kmaps_admin;
+                var widget = settings.shanti_kmaps_fields[my_field];
+                //var root_kmapid = widget.root_kmapid ? widget.root_kmapid : widget.domain == 'subjects' ? admin.shanti_kmaps_admin_root_subjects_id : admin.shanti_kmaps_admin_root_places_id;
+                var max_terms = widget.term_limit == 0 ? 999 : widget.term_limit;
+                $typeahead.kmapsSimpleTypeahead({
+                    solr_index: admin.shanti_kmaps_admin_server_solr_terms,
+                    domain: widget.domain,
+                    autocomplete_field: 'name_autocomplete',
+                    search_fields: ['name_tibt'],
+                    max_terms: max_terms,
+                    min_chars: 0,
+                    pager: 'on',
+                    sort: '',
+                    fields: 'id,header,name*,ancestor*',
+                    menu: '',
+                    match_criterion: 'begins', // sortable header field
+                    case_sensitive: 'class',
+                    ignore_tree: false,
+                    templates: {},
+                    additional_filters: []
+                }).bind('typeahead:asyncrequest',
+                    function () {
+                        search_key = $typeahead.typeahead('val'); //get search term
+                        var fc = search_key.charCodeAt(0);
+                        if (fc > 3839 && fc < 4095) {
+                            console.log(search_key.charAt(0), " is Tibetan");
+                            console.log(this);
+                            console.log($typeahead);
+                            $(this).parents('.kmap-typeahead-picker').eq(0).addClass('tib');
+                        } else {
+                            $(this).parents('.kmap-typeahead-picker').eq(0).removeClass('tib');
+                        }
+                    }
+                ).bind('typeahead:select',
+                    function (ev, sel) {
+                        pickTypeaheadSuggestion(my_field, sel);
+                        KMapsUtil.trackTypeaheadSelected($typeahead, picked[my_field]);
+                        // 'false' prevents dropdown from automatically opening
+                        $typeahead.kmapsTypeahead('setValue', search_key, false, max_terms * Math.floor(sel.index/max_terms)); // set search field back to what it was, including the start
+                        // Remove search string from field once value selected to allow for new search
+                        $('#' + my_field + '-search-term').val('');
+                    }
+                );
+
+                $typeahead.on('typeahead:render', function() {
+                    $('.typeahead-popover').popover({trigger: "hover", delay: {"show": 0, "hide": 20}});
+                });
             });
 
             // Turn inputs into typeahead_tree pickers if required
@@ -470,11 +530,20 @@ window.shantiKmapsFieldsSetPicked = function(fn, val) {
     function pickTypeaheadSuggestion(my_field, suggestion) {
         var resultBox = $('#' + my_field + '-result-box');
         var split = suggestion.doc.id.split('-'), domain = split[0], id = split[1], kmap_id = 'F' + id; //split subjects-123
+        var pathstr = '';
+        var headstr = '';
+        if (typeof(suggestion.doc.ancestors) == 'undefined' && typeof(suggestion.doc['ancestors_tib.alpha']) != 'undefined') {
+            pathstr = '{{' + suggestion.doc['ancestors_tib.alpha'].join('}}{{') + '}}';
+            headstr = suggestion.doc['name_tibt'][0];
+        } else {
+            pathstr = '{{' + suggestion.doc.ancestors.join('}}{{') + '}}';
+            headstr = suggestion.doc.header;
+        }
         var item = {
             id: id,
             domain: domain,
-            header: suggestion.doc.header,
-            path: '{{' + suggestion.doc.ancestors.join('}}{{') + '}}'
+            header: headstr,
+            path: pathstr
         };
         if (!picked[my_field][kmap_id]) {
             picked[my_field][kmap_id] = item;

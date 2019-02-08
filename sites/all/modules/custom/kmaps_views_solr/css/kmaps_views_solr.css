@@ -34,6 +34,8 @@
   margin: 0.8rem 0 0 0;
   padding: 0;
   width: 20%;
+  font-size: 85%;
+  white-space:nowrap;
 }
 
 .shanti-filters .control-box-cell-header span {

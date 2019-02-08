@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * shanti_texts_features.strongarm.inc
@@ -101,6 +102,9 @@ function shanti_texts_features_strongarm() {
       ),
       'meta' => array(
         'custom_settings' => TRUE,
+      ),
+      'diff_standard' => array(
+        'custom_settings' => FALSE,
       ),
     ),
     'extra_fields' => array(

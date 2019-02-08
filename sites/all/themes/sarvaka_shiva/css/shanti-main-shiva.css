@@ -67,6 +67,13 @@
 /*** END - colors ***/
 
 
+
+
+
+.collections-sidebar h4{
+  font-weight: 400;
+}
+
 .page-title .icon{
   font-size: 140%;
   margin: 0.6rem 0.7rem 0.8rem 1.8rem !important;
@@ -171,6 +178,7 @@ fieldset.form-wrapper{
 .page-create .main-col legend,
 .page-explore .main-col legend{
   border-bottom-width: 0;
+      line-height: 3rem;
 }
 .page-create .main-col .fieldset-legend,
 .page-explore .main-col .fieldset-legend {
@@ -179,8 +187,6 @@ fieldset.form-wrapper{
   margin-right:1rem;
   letter-spacing: 0.015rem;
   font-size:1.44em;
-  font-weight: normal;
-  font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
   display:block;
   text-transform: uppercase;
   padding: .5rem 1rem .5rem 1.75rem;
@@ -294,7 +300,7 @@ fieldset.form-wrapper{
 
 .page-create .sn-create-link a {
   width: 100%;
-  margin-top: 2.3rem !important;
+  margin-top: 1.3rem !important;
   font-size: 1.5rem;
   font-weight: bold;
   color: #fff;
@@ -343,6 +349,7 @@ fieldset.form-wrapper{
 
 .sn-explore-list .shanti-thumbnail {
   max-width: 175px;
+  height: 17.5em;
 }
 
 .shanti-gallery2 .shanti-thumbnail,
@@ -366,9 +373,8 @@ fieldset.form-wrapper{
   text-align: center;
   margin: 0.5rem auto;
   color: #333;
-  font-weight: bold;
+  font-weight: 600;
   font-size: 1.44em;
-  font-family: 'museo-sans-500',helvetica,arial,sans-serif;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -414,6 +420,7 @@ fieldset.form-wrapper{
   margin: 0;
 }
 
+
 .shanti-thumbnail a.shanti-thumbnail-link {
   /*height: auto;
   background-color: white;*/
@@ -439,12 +446,12 @@ fieldset.form-wrapper{
   position: relative;
   top: 3.5rem;
 }
-
+/*
 .shanti-field-content,
 .shanti-field-created {
   color: #222;
-  font-family: 'droidserif',palatino,'Palatino Linotype',georgia,serif;
-}
+  font-family: 'EB Garamond',Garamond,Baskerville,'Baskerville Old Face','Hoefler Text','Times New Roman',serif;
+}*/
 /* thumbnail footer */
 .shanti-field-agent > span::before,
 .shanti-field-author span::before,
@@ -479,7 +486,7 @@ fieldset.form-wrapper{
 
 .shanti-field-type span::before {
   content: '\e63c' !important;
-  color: #111;
+  color: #444;
   margin-left: 0.04rem;
   font-size: 1.5em;
 }
@@ -490,15 +497,14 @@ fieldset.form-wrapper{
   top: 0.3rem;
   font-size: 140%;
 }
-
+/*
 .shanti-field-type span {
-  font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: 0.88em;
 }
-
+*/
 #sharetabs > h2 {
   width: 100%;
   text-align: center;
@@ -519,7 +525,7 @@ fieldset.form-wrapper{
 .view-id-shiva_collections_views .pager.top {
   margin-top: -25px;
 }
-
+/*
 .shanti-thumbnail .shanti-thumbnail-field.shanti-field-type{
   line-height: 1.62em;
   font-size: 1.18em;
@@ -528,9 +534,12 @@ fieldset.form-wrapper{
   line-height: 1.5em;
   font-size: 1.19em;
 }
-
+*/
 .view-shiva-collections-views .shanti-thumbnail .shanti-field-type span::before {
     content: '';
+    position: relative;
+    left: -0.15rem;
+    color: #666;
 }
 
 /**** The Popup share block ****/
@@ -758,7 +767,6 @@ body.html.visuals.page-node-share.lightbox-processed {
     top: -0.8rem;
     position: relative;
     font-size: 1.18em;
-    font-family: 'Helvetica Neue',helvetica, arial, sans-serif;
 }
 
 .vis-kmaps .field-type-shanti-kmaps-fields-default .field-label{
@@ -1067,7 +1075,6 @@ table.token-tree {
   line-height: 2em;
   font-size: 0.82em;
   letter-spacing: 0.06em;
-  font-family: 'museo-sans-500',helvetica,arial,sans-serif;
 }
 
 .kmap_search_term_button:hover {
@@ -1110,29 +1117,54 @@ table.token-tree {
   left:27rem; 
 }
 
+
+.field-name-field-image .btn.btn-primary.form-submit.btn-delete.btn-sm.btn-icon .icon::before{
+  position: relative;
+  top: -1.05rem;
+  left: -0.2rem;
+}
+
+.kmap-filter-box{
+  min-height: 3.5rem;
+}
+
+.kmap-filter-box button,
+.kmap-typeahead-picker button {
+  display:none !important;
+}
+
+
+
+
 .field-name-field-places-kmap .kmap-typeahead-picker{
   margin: 3rem 0 2rem;
 }
 
-.field-name-field-places-kmap .kmaps-tt-menu,
-.field-name-field-places-kmap .twitter-typeahead,
-.field-name-field-places-kmap .kmap-typeahead-picker input{
-  max-width: 40rem;
-}
 
-.field-name-field-subjects-kmap input.form-control.kmap-search-term,
-.field-name-field-places-kmap input.form-control.kmap-search-term{
+
+
+input.form-control.kmap-search-term,
+.field-name-field-language-kmap .kmap-search-term.form-control{
   max-width: 30rem;
 }
+
+
+.kmaps-tt-menu,
+.form-control.kmap-search-term,
+.field-name-field-places-kmap .twitter-typeahead,
+.field-name-field-places-kmap .form-control.kmap-search-term,
+.field-name-field-places-kmap input.form-control.kmap-search-term,
+.field-name-field-places-kmap .kmap-typeahead-picker input{
+  max-width: 88rem !important;
+}
+
+
+
 
 #field_places_kmap-typeahead-wrapper .kmaps-tt-menu .kmaps-tt-suggestion::before{
  position: relative;
  right:-1rem;
 }
-
-
-
-
 
 .kmap-typeahead-picker .searchreset{
   position: absolute;
@@ -1144,18 +1176,6 @@ table.token-tree {
   margin: 3rem 0 2rem;
 }
 
-.field-name-field-places-kmap .kmaps-tt-menu,
-.field-name-field-places-kmap .twitter-typeahead,
-.field-name-field-places-kmap .kmap-typeahead-picker input{
-  max-width: 40rem;
-}
-
-
-.field-name-field-subjects-kmap input.form-control.kmap-search-term,
-.field-name-field-places-kmap input.form-control.kmap-search-term{
-  max-width: 30rem;
-}
-
 
 
 #field_places_kmap-typeahead-wrapper .kmaps-tt-menu .kmaps-tt-suggestion::before{
@@ -1165,7 +1185,11 @@ table.token-tree {
 
 
 
-
+#field_subjects_kmap-typeahead-wrapper .form-control,
+#field_language_kmap-typeahead-wrapper .form-control,
+#field_places_kmap-typeahead-wrapper .form-control{
+  max-width: 40rem !important;
+}
 
 
 
@@ -1191,9 +1215,13 @@ table.token-tree {
 } /* outer col wrapper */
 
 
+.shanti-thumbnail-field.shanti-field-type span{
+    /*padding-left: 0;*/
+}
+
 
 .sidebar-second .btn.btn-icon span:last-child{
-  font-size:85%;
+  /* font-size:85%; */
 }
 
 
@@ -1226,7 +1254,10 @@ table.token-tree {
 }
 
 
-
+.page-node-add .form-item-body-und-0-format > label,
+.page-node-add .form-item-body-und-0-value > label{
+      font-size: 80%;
+}
 
 
 
@@ -1307,9 +1338,53 @@ article.main-col{
 }
 
 
+.node-type-shivanode .related-resources-popover{
+  font-family: 'Open Sans','Segoe UI',Tahoma,sans-serif;
+  font-weight: 400;
+}
 
+.node-type-shivanode .related-resources-popover .popover-title{
+  font-weight: 600;
+  color: #555;
+  line-height: 1.38em;
+}
 
+.node-type-shivanode .related-resources-popover .popover-body{
+  font-size: 1.06em;
+}
 
+.node-type-shivanode .related-resources-popover .popover-body .desc{
+  padding: 0 .75rem;
+}
 
+.node-type-shivanode .related-resources-popover .popover-body ul{
+  padding-left:1rem;
+  -webkit-margin-before: .25em;
+  -webkit-margin-after: .5em;
+  border-left: 4px solid #ddd;
+}
 
+.node-type-shivanode .related-resources-popover .popover-body ul li{
+  list-style-type: none; 
+  line-height: 1.88em;
+}
+
+.node-type-shivanode .related-resources-popover .popover-body ul li .icon{
+  font-size:1.18em;
+  margin-right:.5rem;
+}
+
+.node-type-shivanode .related-resources-popover .popover-body ul li .icon.shanticon-visuals{
+  font-size:1.32em;
+}
+
+.node-type-shivanode .related-resources-popover .popover-body ul li .icon:before{
+  position: relative;
+  top: .2rem;
+}
+
+.node-type-shivanode .related-resources-popover .popover-body ul li .icon.shanticon-visuals:before{
+  position: relative;
+  top: .3rem;
+}
 

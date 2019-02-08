@@ -7,6 +7,17 @@
 include_once 'shanti_collections.features.inc';
 
 /**
+ * Implements hook_node_load
+ *  - Add parent collection title to subcollection node in case the parent is private
+ */
+function shanti_collections_node_view($node, $view_mode, $langcode) {
+    if ($node->type == 'subcollection' && $view_mode == 'full') {
+        $parent = shanti_collections_get_parent_collection($node);
+        $node->parent_coll_title = $parent->title;
+    }
+}
+
+/**
  * Custom Code added by ndg8f (Nov. 12, 2016)
  * Add block with "Add Collection" button.
  */
@@ -60,6 +71,9 @@ function shanti_collections_add_collection_block() {
     return $block;
 }
 
+/***********  NODE FUNCTIONS ********************/
+
+
 /***********   UTILITY FUNCTIONS ******************/
 
 /**
@@ -67,9 +81,13 @@ function shanti_collections_add_collection_block() {
  */
 function shanti_collections_get_collection($node) {
     if (is_numeric($node)) {$node = node_load($node); }
-    $ew = entity_metadata_wrapper('node', $node);
-    $coll = $ew->field_og_collection_ref->value();
-    return $coll;
+    if ($node && isset($node->field_og_collection_ref)) {
+        $ew = entity_metadata_wrapper('node', $node);
+        $coll = $ew->field_og_collection_ref->value();
+        return $coll;
+    } else {
+        return FALSE;
+    }
 }
 
 /**
@@ -229,7 +247,7 @@ function shanti_collections_get_items_in_collection($coll = FALSE, $return = "co
  */
 function shanti_collections_form_alter(&$form, &$form_state, $form_id) {
     if (strstr($form_id, '_node_form')) {
-        // Only look at node forms
+        // Only look at node forms for groups
         if (og_is_group_type('node', $form['#bundle'])) {
             // If it is an existing group node edit form, add link to add users directly to group
             if (!empty($form['nid']["#value"])) {
@@ -257,6 +275,7 @@ function shanti_collections_admin_paths_alter(&$paths)
     // Make the add members form a sarvaka styled page
     $paths['group/*/*/admin/*'] = FALSE;
 }
+
 /**
  * Implements field_widget_form_alter
  *      If options are broken down into "Collections" and "Subcollections" than it sorts both subarrays
@@ -354,5 +373,47 @@ function shanti_collections_coll_items_access_update_finished($success, $results
         drupal_set_message("Successfully updated Solr Asset Index. $indct nodes indexed. $unind nodes removed.");
     } else {
         drupal_set_message("Could not update the Solr Asset Index upon collection change", 'warning');
+    }
+}
+
+/**
+ * Implements hook_node_access_records
+ *     -  Only called on node_save
+ *
+ * @param $node          - The node being accessed
+ * @return array $grants - The grants to return (if any)
+ */
+function shanti_collections_node_access_records_alter(&$grants, $node){
+    // If it is a subcollection set to public (0) ...
+    if ($node->type == 'subcollection' && $node->group_access['und'][0]['value'] == 0) {
+        // If it's parent is private (1) ...
+        $parent = shanti_collections_get_parent_collection($node);
+        //dpm($parent, 'parent in node acces rec');
+        if ($parent->group_access['und'][0]['value'] == 1) {
+            //dpm($grants, 'grants for subcoll: ' . $node->nid . ": " . $node->title);
+            $found = FALSE;
+            foreach($grants as &$grant) {
+                if ($grant['realm'] == 'all') {
+                    $grant['gid'] = 0;
+                    $grant['grant_view'] = 1;
+                    $grant['grant_update'] = 0;
+                    $grant['grant_delete'] = 0;
+                    $grant['priority'] = 0;
+                    $found = TRUE;
+                    break;
+                }
+            }
+            if (!$found) {
+                // Grant access to anonymous users to view the subcollection
+                $grants[] = array(
+                    'realm' => 'all',  // All realms
+                    'gid' => 0,        // Anonymous users
+                    'grant_view' => 1, // View only
+                    'grant_update' => 0,
+                    'grant_delete' => 0,
+                    'priority' => 0,
+                );
+            }
+        }
     }
 }

@@ -101,9 +101,9 @@ if ($node->type == 'subcollection') {
  	        <?php print render($content['body']); ?>
  	    </div>
 		<div>
-		    <h3>Items in this <?php echo $type; ?></h3>
+		    <h3>Images in this <?php echo $type; ?></h3>
 		    <?php if ($type == 'collection'):?>
-		    <p>The list below includes items from this Collection's Subcollections.</p>
+		    <p>The list below includes images from this Collection’s Subcollections.</p>
 		    <?php endif; ?>
 		    <?php
 		    if (!$collection_items_view) {
@@ -122,7 +122,7 @@ if ($node->type == 'subcollection') {
 
         <!-- Content creation buttons -->
         <?php foreach($ctypes as $ctype => $use): ?>
-            <?php if ($use && user_access("create $ctype content") && (og_is_member('node', $node->nid) || user_access("edit any $ctype content"))):?>
+           <?php if ($use && og_user_access('node', $node->nid, "create $ctype content")):?>
            <?php
                 $ctype = str_replace('_', '-', $ctype);
                 $ctype_label = str_replace('-', ' ', $ctype);
@@ -133,9 +133,23 @@ if ($node->type == 'subcollection') {
 
 	  	<!-- Parent Collection or Subcollections -->
 		<?php if ($type == 'collection'): ?>
-        <?php if (user_access('create subcollection content') && (og_is_member('node', $node->nid) || user_access('edit any collection content'))): ?>
-        <a type="button" class="btn btn-primary" href="/node/add/subcollection?<?php echo $og_parent_field;?>=<?php echo $node->nid;?>">Add Subcollection</a>
-        <?php endif; ?>
+            <?php if (user_access('create subcollection content') && (og_is_member('node', $node->nid) || user_access('edit any collection content'))): ?>
+            <a type="button" class="btn btn-primary" href="/node/add/subcollection?<?php echo $og_parent_field;?>=<?php echo $node->nid;?>">Add Subcollection</a>
+            <?php endif; ?>
+
+            <?php if (user_access('convert shanti_collections') && count(shanti_collections_get_subcollections($node)) == 0): ?>
+                <div class="coll-convert-link">
+                    <a type="button" class="btn btn-primary" href="/shanti_collections_admin/convert/collection/<?php echo $node->nid; ?>">
+                        Convert to Subcollection</a>
+                </div>
+            <?php endif; ?>
+        <?php else: ?>
+            <?php if (user_access('convert shanti_collections')): ?>
+                <div class="coll-convert-link">
+                    <a type="button" class="btn btn-primary" href="/shanti_collections_admin/convert/collection/<?php echo $node->nid; ?>">
+                        Convert to Collection</a>
+                </div>
+            <?php endif; ?>
         <?php endif; ?>
 
         <!-- General info -->
@@ -170,11 +184,22 @@ if ($node->type == 'subcollection') {
 		<?php else: ?>
 		<h4>Parent Collection</h4>
 		<div>
-		<?php
-		$content[$og_parent_field][0];
-		print render($content[$og_parent_field]);
-		?>
-		</div>
+            <?php
+            if (empty($content[$og_parent_field]) && isset($node->parent_coll_title)) {
+                print '<div class="field field-name-field-og-parent-collection-ref field-type-entityreference field-label-hidden">
+ 	                    <div class="field-items">
+   	                    <div class="field-item even">
+   	                        <a name="parentcoll" title="' . t('This collection is private') . '">' .
+                    $node->parent_coll_title .
+                    '</a>
+                              </div>
+                           </div>
+                   </div>';
+            } else {
+                print render($content[$og_parent_field]);
+            }
+            ?>
+        </div>
 		<?php endif; ?>
 
     <!-- Members -->

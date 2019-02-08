@@ -1,4 +1,4 @@
- <?php
+<?php
 
 /**
  * @file
@@ -101,10 +101,10 @@ if ($node->type == 'subcollection') {
  	        <?php print render($content['body']); ?>
  	    </div>
 		<div>
-		    <!--<h3>Items in this <?php echo $type; ?></h3>
+		    <h3>Sources in this <?php echo $type; ?></h3>
 		    <?php if ($type == 'collection'):?>
-		    <p>The list below includes items from this Collection's Subcollections.</p>
-		    <?php endif; ?>-->
+		    <p>The list below includes sources from this Collection’s Subcollections.</p>
+		    <?php endif; ?>
 		    <?php
 		    if (!$collection_items_view) {
 		        print "Please enter the view and display for the items view in the Collections Admin page.";
@@ -119,7 +119,7 @@ if ($node->type == 'subcollection') {
 
 		<!-- Content creation buttons -->
 		<?php foreach($ctypes as $ctype => $use): ?>
-		<?php if ($use && user_access("create $ctype content") && (og_is_member('node', $node->nid) || user_access("edit any $ctype content"))):?>
+		<?php if ($use && og_user_access('node', $node->nid, "create $ctype content")):?>
         <a class="btn btn-primary" href="/node/add/<?php echo $ctype;?>?<?php echo $og_field;?>=<?php echo $node->nid;?>">Add <?php echo $ctype;?></a>
 		<?php endif;?>
 		<?php  endforeach;?>

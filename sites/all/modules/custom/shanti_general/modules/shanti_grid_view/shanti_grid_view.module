@@ -323,6 +323,7 @@ function shanti_grid_view_views_api() {
  */
 function shanti_grid_view_views_pre_render(&$view) {
     global $base_root, $base_path;
+
     $is_dev = (strstr($base_root, '.dd') || strstr($base_root, '-dev')) ? TRUE : FALSE;
     if (isset($view->style_plugin->plugin_name) && $view->style_plugin->plugin_name == 'shanti_grid_view') {
         //dpm($view->current_display, $view->name);
@@ -350,13 +351,16 @@ function shanti_grid_view_views_pre_render(&$view) {
 
         // Determine which kind of grid view it is based on settings
         if ($view->style_options['iiif_view'] == TRUE) {
+
             // IIIF view is meant to work with Shanti Images module
             // Pass on all settings to Drupal JS
             $settings['entity_type'] = 'node';
             $settings['grid_image_size'] = $view->style_options['iiif_options']['iiif_thumb_size'];
             $settings['popdown_image_size'] = $view->style_options['iiif_options']['iiif_pd_size'];
+            $settings['iiif_full_size'] = $view->style_options['iiif_options']['iiif_full_size'];
             // Same syntax: https://iiif-test.lib.virginia.edu/mandala/__FNAME__/full/!__SIZE__,__SIZE__/0/default.jpg
             $settings['url_for_size'] = variable_get('shanti_images_view_url','https://iiif.lib.virginia.edu') .
+                  variable_get('shanti_images_view_path', '/mandala/') .
                   $view->style_options['iiif_options']['iiif_url_syntax'];
 
             // Create imgdata array from view results
@@ -367,12 +371,25 @@ function shanti_grid_view_views_pre_render(&$view) {
             ',"aspectRatio":' . $ratio . ',"rotation":"' . $rotation . '","nid":"' . $eid . '","path":"'
              */
 
+            $lgimgsz = (!empty($settings['iiif_full_size'])) ? $settings['iiif_full_size'] : 1200;
+            if (substr($lgimgsz,0, 1) != '!') {
+                if (!strpos($settings['url_for_size'], '!')) {
+                    $lgimgsz = '!' . $lgimgsz;
+                }
+            }
+            if (!strpos($settings['url_for_size'], ',')) {
+                if (!strpos($lgimgsz, ',')) {
+                    $lgimgsz .= ',';
+                }
+            }
+
             if ($view->base_table == 'shanti_images') {
                 $ct = 0;
+                //watchdog('shanti grid view', json_encode($view->result[0]->field_field_image_rotation));
                 foreach ($view->result as $rn => &$item) {
                     $data = new stdClass();
                     $data->nid = $item->node_shanti_images_nid;
-                    $data->title = $item->node_shanti_images_title;
+                    $data->title = _shanti_grid_view_truncate($item->node_shanti_images_title);
                     $data->filename = $item->shanti_images_i3fid;
                     $width = $item->shanti_images_width;
                     $height = $item->shanti_images_height;
@@ -386,7 +403,13 @@ function shanti_grid_view_views_pre_render(&$view) {
                     } else {
                         $data->rotation = 0;
                     }
-                    $lgurl = str_replace('__FNAME__', $data->filename, str_replace('__SIZE__', '1500', $settings['url_for_size']));
+                    $lgurl = str_replace('__FNAME__', $data->filename, str_replace('__SIZE__', $lgimgsz, $settings['url_for_size']));
+                    if ($data->rotation > 0) {
+                      $lgurl = str_replace('/0/default', "/{$data->rotation}/default", $lgurl);
+                      if ($data->rotation / 90 % 2) {
+                        $data->aspectRatio = 1 / $data->aspectRatio;
+                      }
+                    }
                     if ($is_dev && preg_match('/shanti-image(-stage)?-\d+/', $data->filename)) {
                         $lgurl = str_replace('-test', '', $lgurl);
                     }
@@ -400,7 +423,7 @@ function shanti_grid_view_views_pre_render(&$view) {
                     $n = 0;
                     $data = json_decode($item->{$imgfield}[$n]['rendered']['#markup']); // decode json object to add more fields
                     $lgimg = str_replace('__FNAME__', $data->filename, $settings['url_for_size']);
-                    $lgimg = str_replace('__SIZE__', '1500', $lgimg);
+                    $lgimg = str_replace('__SIZE__', $lgimgsz, $lgimg);
                     if ($is_dev && preg_match('/shanti-image(-stage)?-\d+/', $data->filename)) {
                         $lgimg = str_replace('-test', '', $lgimg);
                     }
@@ -430,7 +453,7 @@ function shanti_grid_view_views_pre_render(&$view) {
               $ct++;
               $imgobj = new stdClass();
               $imgobj->nid = $item->nid;
-              $imgobj->title = $item->node_title;
+              $imgobj->title = _shanti_grid_view_truncate($item->node_title);
               $thumb = $item->{$thumb_field_name}[0]['raw'];
               $imgobj->aspectRatio = $thumb['width'] / $thumb['height'];
               if ($imgobj->aspectRatio === FALSE) {
@@ -454,7 +477,7 @@ function shanti_grid_view_views_pre_render(&$view) {
                 $n = 0;
                 $imgobj = new stdClass();
                 $imgobj->filename = $item->fid;
-                $imgobj->title = $item->file_managed_filename;
+                $imgobj->title = _shanti_grid_view_truncate($item->file_managed_filename);
                 $imgurl = shanti_grid_view_imagefile_url($item->fid, '400', 'url');
                 $imgpath = str_replace($base_root . $base_path, '', $imgurl);
                 $imginfo = image_get_info($imgpath);
@@ -507,7 +530,7 @@ function shanti_grid_view_views_pre_render(&$view) {
               $imgobj = new stdClass();
               $imgobj->nid = $item->{$id_field_name};
               $imgobj->ppdpath = str_replace('__ID__', $imgobj->nid, $ppd_path);
-              $imgobj->title = $item->{$title_field_name};
+              $imgobj->title = _shanti_grid_view_truncate($item->{$title_field_name});
               $thumb = $item->{$thumb_field_name};
               $width = $item->{$thumb_width_field};
               if (strstr($width, 'x')) {
@@ -566,6 +589,15 @@ function shanti_grid_view_views_pre_render(&$view) {
         }
     }
 }
+
+function _shanti_grid_view_truncate($title) {
+    if (strlen($title) > 50) {
+        $trunclen = strpos($title, ' ', 45);
+        $title = substr($title, 0, $trunclen) . '...';
+    }
+    return $title;
+}
+
 
 /**
  * Stores gallery state in session variable to be used by image page for carousel of thumbs

@@ -3,16 +3,20 @@
 define('SHANTI_KMAPS_ADMIN_SERVICE', shanti_kmaps_admin_get_service_name());
 define('SHANTI_KMAPS_ADMIN_SERVER_SUBJECTS', 'http://dev-subjects.kmaps.virginia.edu');
 define('SHANTI_KMAPS_ADMIN_SERVER_PLACES', 'http://dev-places.kmaps.virginia.edu');
-define('SHANTI_KMAPS_ADMIN_SERVER_SUBJECTS_EXPLORER', 'http://badger.drupal-dev.shanti.virginia.edu/subjects/__KMAPID__/overview/nojs');
-define('SHANTI_KMAPS_ADMIN_SERVER_PLACES_EXPLORER', 'http://badger.drupal-dev.shanti.virginia.edu/places/__KMAPID__/overview/nojs');
-define('SHANTI_KMAPS_ADMIN_SERVER_SOLR', 'http://kidx.shanti.virginia.edu/solr/kmindex-dev');
-define('SHANTI_KMAPS_ADMIN_SERVER_SOLR_TERMS', 'http://kidx.shanti.virginia.edu/solr/termindex-dev');
+define('SHANTI_KMAPS_ADMIN_SERVER_TERMS', 'http://dev-terms.kmaps.virginia.edu');
+define('SHANTI_KMAPS_ADMIN_SERVER_SUBJECTS_EXPLORER', 'https://mandala-dev.shanti.virginia.edu/subjects/__KMAPID__/overview/nojs');
+define('SHANTI_KMAPS_ADMIN_SERVER_PLACES_EXPLORER', 'https://mandala-dev.shanti.virginia.edu/__KMAPID__/overview/nojs');
+define('SHANTI_KMAPS_ADMIN_SERVER_TERMS_EXPLORER', 'https://mandala-dev.shanti.virginia.edu/terms/__KMAPID__/nojs');
+define('SHANTI_KMAPS_ADMIN_SERVER_SOLR', 'https://ss251856-us-east-1-aws.measuredsearch.com/solr/kmassets_dev');
+define('SHANTI_KMAPS_ADMIN_SERVER_SOLR_TERMS', 'https://ss251856-us-east-1-aws.measuredsearch.com/solr/kmterms_dev');
 define('SHANTI_KMAPS_ADMIN_PATH', drupal_get_path('module', 'shanti_kmaps_admin'));
 define('SHANTI_KMAPS_ADMIN_ASSET_TYPES', 'texts,images,audio-video,visuals,sources,subjects,places,terms,maps,agents,events');
 define('SHANTI_KMAPS_ADMIN_ROOT_SUBJECTS_ID', '');
 define('SHANTI_KMAPS_ADMIN_ROOT_PLACES_ID', '');
+define('SHANTI_KMAPS_ADMIN_ROOT_TERMS_ID', '');
 define('SHANTI_KMAPS_ADMIN_ROOT_SUBJECTS_PATH', '/');
 define('SHANTI_KMAPS_ADMIN_ROOT_PLACES_PATH', '/');
+define('SHANTI_KMAPS_ADMIN_ROOT_TERMS_PATH', '/');
 
 function shanti_kmaps_admin_menu()
 {
@@ -71,6 +75,15 @@ function shanti_kmaps_admin_admin()
     '#description' => t('The server used to retrieve data for KMap place terms. <br/>Do not include an end slash.'),
     '#required' => TRUE,
   );
+  $form['shanti_kmaps_admin_server_terms'] = array(
+    '#type' => 'textfield',
+    '#title' => t('KMaps Terms Server'),
+    '#default_value' => variable_get('shanti_kmaps_admin_server_terms', SHANTI_KMAPS_ADMIN_SERVER_TERMS),
+    '#size' => 60,
+    '#maxlength' => 255,
+    '#description' => t('The server used to retrieve data for KMap place terms. <br/>Do not include an end slash.'),
+    '#required' => TRUE,
+  );
   $form['shanti_kmaps_admin_root_subjects_id'] = array(
     '#type' => 'textfield',
     '#title' => t('Root KMaps Subject IDs'),
@@ -110,6 +123,27 @@ function shanti_kmaps_admin_admin()
     '#description' => t("Filter by root places id."),
     '#required' => FALSE,
   );
+
+  $form['shanti_kmaps_admin_root_terms_id'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Root KMaps Term IDs'),
+    '#default_value' => variable_get('shanti_kmaps_admin_root_terms_id', SHANTI_KMAPS_ADMIN_ROOT_TERMS_ID),
+    '#size' => 60,
+    '#maxlength' => 255,
+    '#description' => t("The root terms ID for this site.
+      You may enter a list of IDs separated by whitespace.
+      If you leave this empty, then all places will be available."),
+    '#required' => FALSE,
+  );
+
+  $form['shanti_kmaps_admin_root_terms_filter_enabled'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Filter by Terms Root'),
+    '#default_value' => variable_get('shanti_kmaps_admin_root_terms_filter_enabled', 0),
+    '#description' => t("Filter by root terms id."),
+    '#required' => FALSE,
+  );
+
   $form['shanti_kmaps_admin_root_subjects_path'] = array(
     '#type' => 'hidden',
     '#required' => FALSE,
@@ -118,6 +152,11 @@ function shanti_kmaps_admin_admin()
     '#type' => 'hidden',
     '#required' => FALSE,
   );
+  $form['shanti_kmaps_admin_root_terms_path'] = array(
+    '#type' => 'hidden',
+    '#required' => FALSE,
+  );
+
   $form['shanti_kmaps_admin_server_subjects_explorer'] = array(
     '#type' => 'textfield',
     '#title' => t('KMaps Subjects Explorer'),
@@ -137,6 +176,15 @@ function shanti_kmaps_admin_admin()
     '#size' => 60,
     '#maxlength' => 255,
     '#description' => t('The site used to view and explore KMap place terms in the SHANTI KMap Solr Index. <br/>Be sure to use the special string <b>__KMAP__</b> in the URL (with two underscores before and after the uppercase word "KMAP") to specify where the numeric KMap ID actually goes in the URL. <br/>Do not include an end slash.'),
+    '#required' => TRUE,
+  );
+  $form['shanti_kmaps_admin_server_terms_explorer'] = array(
+    '#type' => 'textfield',
+    '#title' => t('KMaps Terms Explorer'),
+    '#default_value' => variable_get('shanti_kmaps_admin_server_terms_explorer', SHANTI_KMAPS_ADMIN_SERVER_TERMS_EXPLORER),
+    '#size' => 60,
+    '#maxlength' => 255,
+    '#description' => t('The site used to view and explore KMap terms entries in the SHANTI KMap Solr Index. <br/>Be sure to use the special string <b>__KMAP__</b> in the URL (with two underscores before and after the uppercase word "KMAP") to specify where the numeric KMap ID actually goes in the URL. <br/>Do not include an end slash.'),
     '#required' => TRUE,
   );
   $form['shanti_kmaps_admin_solr_username'] = array(
