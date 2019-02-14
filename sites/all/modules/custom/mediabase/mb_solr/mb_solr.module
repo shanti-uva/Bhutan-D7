@@ -604,21 +604,7 @@ function mb_solr_make_teaser($entity, $coll = FALSE) {
  */
 
 function mb_solr_node_view($node, $view_mode, $langcode) {
-    /* Commenting out unnecessary code (release 1.0: 2017-03-10, MANU-3542)
-	if($node->type == 'collection' && $view_mode == 'full') {
-	    watchdog('mb_solr', 'In collection node view returning!!');
-        return;
-		$alias = str_replace('collection/', '', drupal_get_path_alias(current_path()));
-		if(strpos($_SERVER['HTTP_REFERER'], 'node/add/collection') > -1) { return; } // prevent solr error
-		module_load_include('inc','apachesolr','apachesolr_search.pages');
-		$search_page = apachesolr_search_custom_page('collection_home','', $alias);
-		$node->content['collcontent'] = array(
-			'#markup' => theme('mb_solr_results', array('results' => $search_page['search_results'], 'node' => $node)),
-			'#weight' => 45,  // set high weight so it appears after the body's description
-		);
-	} else
-	*/
-	if($view_mode == 'full') {
+	if (in_array($node->type, array('audio', 'video')) && $view_mode == 'full') {
 	    // This is necessary for the more like this tab.
 	    module_load_include('inc','apachesolr','apachesolr_search.pages');
 	    $cpage = apachesolr_search_custom_page('core_search');

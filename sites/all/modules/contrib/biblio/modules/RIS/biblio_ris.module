@@ -353,18 +353,14 @@ function _biblio_ris_parse_line($tag, $data, $node, &$unmapped) {
       }
       break;
     default :
-        if (!empty($data)) {
-            if ($field = _biblio_ris_field_map($tag)) {
-                if (isset($node->{$field})) {
-                    $node->{$field} .= $data;
-                } else {
-                    $node->{$field} = $data;
-                }
-
-            } else if (!in_array($tag, $unmapped)) {
-                $unmapped[] = $tag;
-            }
+      if ($field = _biblio_ris_field_map($tag)) {
+        $node->$field .= $data;
+      }
+      else {
+        if (!in_array($tag, $unmapped)) {
+          $unmapped[] = $tag;
         }
+      }
   }
 }
 

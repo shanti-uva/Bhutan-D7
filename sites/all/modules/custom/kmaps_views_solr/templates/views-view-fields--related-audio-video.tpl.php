@@ -65,7 +65,7 @@
           
     <?php if(!empty($fields['location'])): ?>
       <div class="shanti-thumbnail-field shanti-field-place">
-        <span class="shanti-field-content"><?php print $fields['location']->content ?></span>
+        <span class="shanti-field-content"><?php print explode('-', $fields['location']->content)[0] ?></span>
       </div>
     <?php endif; ?>
 

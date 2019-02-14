@@ -92,9 +92,7 @@ function mb_metadata_validate_title($element, &$form_state) {
 * Customize audio video node views 
 **/
 function mb_metadata_node_view($node) {
-   switch ($node->type) {
-   case 'video':
-   case 'audio':
+   if (in_array($node->type, array('audio', 'video'))) {
       //$node->content['field_rating']['#weight'] = 0;
       // add mediabase id to media item display
       add_mediabase_id($node);

@@ -1290,6 +1290,7 @@ function _shanti_kmaps_fields_commit_solr_update($debug = FALSE)
 function shanti_kmaps_fields_get_all_counts_by_kmapid($domain, $kid) {
     $kme_url = variable_get("shanti_kmaps_admin_server_{$domain}_explorer", FALSE);
     $kme_url = str_replace('__KMAPID__', $kid, $kme_url);
+
     if ($kme_url) {
         // The call to Mandala API .. /mandala/popover/populate/{$domain}/{$kid} gets related assets, subjects, and places
         // Just get the protocol/domain part of Mandala url
@@ -1304,6 +1305,7 @@ function shanti_kmaps_fields_get_all_counts_by_kmapid($domain, $kid) {
         $scontext = stream_context_create($context);
         $json = file_get_contents($infourl, false, $scontext);
         $jobj = json_decode($json, TRUE);
+
         // Iterate through each type and create info array
         $info = array(
             // initialize subjects because count is sum of subjects and feature types
@@ -1312,34 +1314,52 @@ function shanti_kmaps_fields_get_all_counts_by_kmapid($domain, $kid) {
                 'count' => 0,
             ),
         );
-        foreach ($jobj['related_info'] as $n => $kmapcnt) {
+        if (is_array($jobj['related_info'])) {
+          foreach ($jobj['related_info'] as $n => $kmapcnt) {
             $type = $kmapcnt['groupValue'];
             $cnt = $kmapcnt['doclist']['numFound'];
 
             // combine feature types and subjects
-            if($type == 'feature_types' || $type == 'related_subjects') {
-                $info['subjects']['count'] += $cnt;
-            // Find related places but call places (subjects uses 'places' for key, places uses 'related_places')
-            } elseif ($type == 'places' || $type == 'related_places' ) {
-                $info['places'] = array(
-                    'href' => str_replace('overview', 'places', $kme_url),
-                    'count' => $cnt,
-                );
-            // Find picture but call photos
-            } elseif ($type == 'picture') {
-                $info['images'] = array(
-                    'href' => str_replace('overview', 'images', $kme_url),
-                    'count' => $cnt,
-                );
-            // Use type-name as label for av, images, sources, texts, and visuals
-            } elseif (in_array($type, array('audio-video', 'images', 'sources', 'texts', 'visuals'))) {
-                $info[$type] = array(
-                    'href' => str_replace('overview', $type, $kme_url),
-                    'count' => $cnt,
-                );
+            if ($type == 'feature_types' || $type == 'related_subjects') {
+              $info['subjects']['count'] += $cnt;
+              // Find related places but call places (subjects uses 'places' for key, places uses 'related_places')
             }
+            elseif ($type == 'places' || $type == 'related_places') {
+              $info['places'] = array(
+                'href' => str_replace('overview', 'places', $kme_url),
+                'count' => $cnt,
+              );
+              // Find picture but call photos
+            }
+            elseif ($type == 'picture') {
+              $info['images'] = array(
+                'href' => str_replace('overview', 'images', $kme_url),
+                'count' => $cnt,
+              );
+              // Use type-name as label for av, images, sources, texts, and visuals
+            }
+            elseif (in_array($type, array(
+              'audio-video',
+              'images',
+              'sources',
+              'texts',
+              'visuals'
+            ))) {
+              if (strstr($kme_url, 'overview')) {
+                $info[$type] = array(
+                  'href' => str_replace('overview', $type, $kme_url),
+                  'count' => $cnt,
+                );
+              }
+              else {
+                $info[$type] = array(
+                  'href' => str_replace('/nojs', "/{$type}/nojs", $kme_url),
+                  'count' => $cnt,
+                );
+              }
+            }
+          }
         }
-
         if ($info['subjects']['count'] == 0) { unset($info['subjects']); }
         return $info;
     }
@@ -1372,12 +1392,10 @@ function shanti_kmaps_fields_get_assets_for_kmapid($kmap_domain, $kmap_id)
     $solr_request = drupal_http_request($solr_url);
     $solr_response = drupal_json_decode($solr_request->data);
     if (variable_get('shanti_kmaps_admin_debug_mode')) {
-        drupal_set_message(t("[0] Solr query for related assets: ".$solr_url), 'status', FALSE);
         if (function_exists('dpm')) {
             dpm($solr_request, 'request0');
         } else {
             $msg = print_r($solr_request, TRUE);
-            drupal_set_message($msg, 'status', FALSE);  $asset_types[] = 'picture';
         }
     }
     foreach($solr_response['grouped']['asset_type']['groups'] as $group) {
@@ -1447,21 +1465,21 @@ function shanti_kmaps_fields_get_related_terms_for_kmapid($kmap_domain, $kmap_id
 
     if (variable_get('shanti_kmaps_admin_debug_mode')) {
         # Case 1
-        drupal_set_message(t("[1] Solr query for related places and subjects: $solr_query"), 'status', FALSE);
+        //drupal_set_message(t("[1] Solr query for related places and subjects: $solr_query"), 'status', FALSE);
         if (function_exists('dpm')) {
             dpm($request,'request1');
         } else {
             $msg  = print_r($request, TRUE);
-            drupal_set_message($msg, 'status', FALSE);
+            //drupal_set_message($msg, 'status', FALSE);
         }
         # Case 2
         if ($kmap_domain == 'subjects') {
-            drupal_set_message(t("[2] Solr query for related places of a subject: $solr_query2"), 'status', FALSE);
+            //drupal_set_message(t("[2] Solr query for related places of a subject: $solr_query2"), 'status', FALSE);
             if (function_exists('dpm')) {
                 dpm($request2,'request2');
             } else {
                 $msg  = print_r($request2, TRUE);
-                drupal_set_message($msg, 'status', FALSE);
+                //drupal_set_message($msg, 'status', FALSE);
             }
         }
     }
@@ -1636,7 +1654,6 @@ function shanti_kmaps_fields_field_formatter_view($entity_type, $entity, $field,
  * @param $entity_type : the type of entity the field is associated for. (This does not appear to be used)
  */
 function shanti_kmaps_fields_get_popover_array($domain, $kid, $entity_type = FALSE) {
-
         $kinfo = _shanti_kmaps_fields_kmaps_get_info($domain, $kid);
         $kdoc = $kinfo['response']['docs'][0];
 
@@ -1645,7 +1662,8 @@ function shanti_kmaps_fields_get_popover_array($domain, $kid, $entity_type = FAL
 
         // Add Term Specific information to the popover, use Tibetan header, and add subject types
         if ($domain == 'terms') {
-          $predesc = array($kdoc['header']);
+          $predesc = array();
+          $head2 = '<div class="other"><strong>Wylie: </strong>' . $kdoc['header'] . '</div>';
           $kdoc['header'] = $kdoc['name_tibt'][0];
           $prefix  = ' ';
           foreach ($kdoc['associated_subjects'] as $n => $subj_name) {
@@ -1653,8 +1671,8 @@ function shanti_kmaps_fields_get_popover_array($domain, $kid, $entity_type = FAL
             $predesc[] = '<a href="' . $type_url . '" target="_blank">' . $subj_name . '</a>';
           }
           if (!empty($predesc)) {
-            $prestr = implode(', ', $predesc);
-            $prefix .= '</br>' . $prestr . '</br></br>';
+            $prestr = '<div class="termtypes">' . implode(', ', $predesc) . '</div>';
+            $prefix .= $head2 . $prestr ;
           }
           $desc = $prefix . $desc;
         }
@@ -1690,9 +1708,9 @@ function shanti_kmaps_fields_get_popover_array($domain, $kid, $entity_type = FAL
         // Link to full record on Mandala
         $external_url = str_replace('__KMAPID__', $kid, variable_get('shanti_kmaps_admin_server_' . $domain . '_explorer'));
         $links['Full Entry'] = array('icon' => 'link-external', 'href' => $external_url, 'external' => TRUE);
-
         // Get all counts (terms and assets) by using Mandala API URL (new way)
         $external_links = shanti_kmaps_fields_get_all_counts_by_kmapid($domain, $kid);
+
         foreach ($external_links as $atype => $ainfo) {
             if (strtolower($atype) == 'images') {
                 $ainfo['href'] = str_replace('/images/', '/photos/', $ainfo['href']);

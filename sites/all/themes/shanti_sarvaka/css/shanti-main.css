@@ -957,6 +957,7 @@ div.contextual-links-wrapper{
 
 /* this no-name icon class is on the KB knowledge Base */
 .collections ul .icon.shanticon-:before,
+.collections ul .icon.shanticon-docs:before,
 .collections ul .icon.shanticon-logo-shanti:before{
   content: '\f059'; /* question mark */
     content: '\f05a'; /* info icon circle */
@@ -1890,24 +1891,29 @@ div.contextual-links-wrapper{
   color:#333;
 }
 
-.related-resources-popover .parents {
+.related-resources-popover .parents,
+.related-resources-popover .other
+{
   line-height: 1em;
   margin-top:0.75rem;
 }
 
-.related-resources-popover .parents p {
+.related-resources-popover .parents p,
+.related-resources-popover .other p{
   line-height:1.12em;
   margin-bottom: 0;
 }
 
-.related-resources-popover .parents strong {
+.related-resources-popover .parents strong,
+.related-resources-popover .other strong{
     color: #555;
     font-size: .93em;
     letter-spacing: 0.0275rem;
     margin-top: -0.12em;
 }
 
-.related-resources-popover .parents strong::after {
+.related-resources-popover .parents strong::after,
+.related-resources-popover .other strong::after {
   content: ':';
   margin-right: 0.18em;
 }
@@ -1932,6 +1938,10 @@ div.contextual-links-wrapper{
 .related-resources-popover .parents a:hover,
 .related-resources-popover .parents a:active {
   color: #cf2f1e;
+}
+
+.related-resources-popover .termtypes {
+  margin: 0.5em auto;
 }
 
 .popover-footer {

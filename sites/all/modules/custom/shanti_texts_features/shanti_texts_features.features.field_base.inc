@@ -613,6 +613,27 @@ $entity_field[0][\'value\'] = $mlid;',
     'type' => 'shanti_kmaps_fields_default',
   );
 
+  // Exported field_base: 'field_language_kmaps'.
+  $field_bases['field_language_kmaps'] = array(
+    'active' => 1,
+    'cardinality' => 1,
+    'deleted' => 0,
+    'entity_types' => array(),
+    'field_name' => 'field_language_kmaps',
+    'indexes' => array(
+      'id' => array(
+        0 => 'id',
+      ),
+    ),
+    'locked' => 0,
+    'module' => 'shanti_kmaps_fields',
+    'settings' => array(
+      'kmap_domain' => 'subjects',
+    ),
+    'translatable' => 0,
+    'type' => 'shanti_kmaps_fields_default',
+  );
+
   // Exported field_base: 'field_pdf_version'.
   $field_bases['field_pdf_version'] = array(
     'active' => 1,
@@ -637,6 +658,27 @@ $entity_field[0][\'value\'] = $mlid;',
     ),
     'translatable' => 0,
     'type' => 'file',
+  );
+
+  // Exported field_base: 'field_terms_kmaps'.
+  $field_bases['field_terms_kmaps'] = array(
+    'active' => 1,
+    'cardinality' => -1,
+    'deleted' => 0,
+    'entity_types' => array(),
+    'field_name' => 'field_terms_kmaps',
+    'indexes' => array(
+      'id' => array(
+        0 => 'id',
+      ),
+    ),
+    'locked' => 0,
+    'module' => 'shanti_kmaps_fields',
+    'settings' => array(
+      'kmap_domain' => 'terms',
+    ),
+    'translatable' => 0,
+    'type' => 'shanti_kmaps_fields_default',
   );
 
   return $field_bases;

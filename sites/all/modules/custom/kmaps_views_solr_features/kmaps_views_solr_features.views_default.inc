@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * kmaps_views_solr_features.views_default.inc
@@ -176,6 +177,18 @@ function kmaps_views_solr_features_views_default_views() {
   $handler->display->display_options['fields']['html_url']['field'] = 'html_url';
   $handler->display->display_options['fields']['html_url']['label'] = '';
   $handler->display->display_options['fields']['html_url']['element_label_colon'] = FALSE;
+  /* Field: Audio-Video Group: Duration */
+  $handler->display->display_options['fields']['duration']['id'] = 'duration';
+  $handler->display->display_options['fields']['duration']['table'] = 'kmaps_views_solr';
+  $handler->display->display_options['fields']['duration']['field'] = 'duration';
+  $handler->display->display_options['fields']['duration']['label'] = '';
+  $handler->display->display_options['fields']['duration']['element_label_colon'] = FALSE;
+  /* Field: Audio-Video Group: Location */
+  $handler->display->display_options['fields']['location']['id'] = 'location';
+  $handler->display->display_options['fields']['location']['table'] = 'kmaps_views_solr';
+  $handler->display->display_options['fields']['location']['field'] = 'location';
+  $handler->display->display_options['fields']['location']['label'] = '';
+  $handler->display->display_options['fields']['location']['element_label_colon'] = FALSE;
   /* Sort criterion: Audio-Video Group: Create Date */
   $handler->display->display_options['sorts']['created_date']['id'] = 'created_date';
   $handler->display->display_options['sorts']['created_date']['table'] = 'kmaps_views_solr';
@@ -183,18 +196,6 @@ function kmaps_views_solr_features_views_default_views() {
   $handler->display->display_options['sorts']['created_date']['order'] = 'DESC';
   $handler->display->display_options['sorts']['created_date']['exposed'] = TRUE;
   $handler->display->display_options['sorts']['created_date']['expose']['label'] = 'Post date';
-  /* Sort criterion: Audio-Video Group: Title */
-  $handler->display->display_options['sorts']['av_title']['id'] = 'av_title';
-  $handler->display->display_options['sorts']['av_title']['table'] = 'kmaps_views_solr';
-  $handler->display->display_options['sorts']['av_title']['field'] = 'av_title';
-  $handler->display->display_options['sorts']['av_title']['exposed'] = TRUE;
-  $handler->display->display_options['sorts']['av_title']['expose']['label'] = 'Title';
-  /* Sort criterion: Audio-Video Group: Creator */
-  $handler->display->display_options['sorts']['creator']['id'] = 'creator';
-  $handler->display->display_options['sorts']['creator']['table'] = 'kmaps_views_solr';
-  $handler->display->display_options['sorts']['creator']['field'] = 'creator';
-  $handler->display->display_options['sorts']['creator']['exposed'] = TRUE;
-  $handler->display->display_options['sorts']['creator']['expose']['label'] = 'Creator';
   /* Filter criterion: Audio-Video Group: Asset Type */
   $handler->display->display_options['filters']['asset_type']['id'] = 'asset_type';
   $handler->display->display_options['filters']['asset_type']['table'] = 'kmaps_views_solr';
@@ -998,30 +999,12 @@ description|GVDESC ',
   $handler->display->display_options['sorts']['created_date']['field'] = 'created_date';
   $handler->display->display_options['sorts']['created_date']['exposed'] = TRUE;
   $handler->display->display_options['sorts']['created_date']['expose']['label'] = 'Post date';
-  /* Filter criterion: Broken/missing handler */
-  $handler->display->display_options['filters']['asset_subtype']['id'] = 'asset_subtype';
-  $handler->display->display_options['filters']['asset_subtype']['table'] = 'kmaps_views_solr_visuals';
-  $handler->display->display_options['filters']['asset_subtype']['field'] = 'asset_subtype';
-  $handler->display->display_options['filters']['asset_subtype']['value'] = array(
-    'Graph:Chord' => 'Graph:Chord',
-    'Timeline' => 'Timeline',
-    'Chart:AreaChart' => 'Chart:AreaChart',
-    'Word Cloud' => 'Word Cloud',
-  );
-  $handler->display->display_options['filters']['asset_subtype']['exposed'] = TRUE;
-  $handler->display->display_options['filters']['asset_subtype']['expose']['operator_id'] = 'asset_subtype_op';
-  $handler->display->display_options['filters']['asset_subtype']['expose']['operator'] = 'asset_subtype_op';
-  $handler->display->display_options['filters']['asset_subtype']['expose']['identifier'] = 'asset_subtype';
-  $handler->display->display_options['filters']['asset_subtype']['expose']['remember_roles'] = array(
-    2 => '2',
-    1 => 0,
-    3 => 0,
-  );
   /* Filter criterion: Visuals Group: Title */
   $handler->display->display_options['filters']['visuals_title']['id'] = 'visuals_title';
   $handler->display->display_options['filters']['visuals_title']['table'] = 'kmaps_views_solr_visuals';
   $handler->display->display_options['filters']['visuals_title']['field'] = 'visuals_title';
   $handler->display->display_options['filters']['visuals_title']['operator'] = 'contains';
+  $handler->display->display_options['filters']['visuals_title']['group'] = 1;
   $handler->display->display_options['filters']['visuals_title']['exposed'] = TRUE;
   $handler->display->display_options['filters']['visuals_title']['expose']['operator_id'] = 'visuals_title_op';
   $handler->display->display_options['filters']['visuals_title']['expose']['operator'] = 'visuals_title_op';

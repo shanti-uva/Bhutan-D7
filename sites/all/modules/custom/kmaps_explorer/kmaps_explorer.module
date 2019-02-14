@@ -2605,11 +2605,45 @@ function kmaps_explorer_terms_node_nosidebar_universal($type = 'ajax', $termId) 
   $related_names = array_filter($dict_data, function($k) {
     return $k->block_child_type == 'related_names';
   });
+
+  //Get data for Terms details tab
+  // Step 1: Get all associated subject ids
+  $assoc_subject_ids = [];
+  foreach(get_object_vars($term_data) as $key => $value) {
+    if (preg_match('/associated_subject_(\d+)_ls/', $key, $matches)) {
+      array_push($assoc_subject_ids, $matches[1]);
+    }
+  }
+  //Add prefix to all elements in the array
+  $assoc_subject_ids = array_map(function($item){ return 'subjects-' . $item;}, $assoc_subject_ids);
+  //Get data for the associated subjects only getting their headers.
+  $assoc_subj_url = variable_get('shanti_kmaps_admin_server_solr_terms', SHANTI_KMAPS_ADMIN_SERVER_SOLR_TERMS);
+  $assoc_subj_url .= '/select?q=id:(';
+  $assoc_subj_url .= implode('%20OR%20', $assoc_subject_ids);
+  $assoc_subj_url .= ')&fl=id,header&indent=true&wt=json';
+
+  $assoc_subj_response = [];
+  if (count($assoc_subject_ids) > 0) {
+    $assoc_subj_cache = save_to_cache('assoc_subj_data', $asset, $termId, $assoc_subj_url);
+    $assoc_subj_data = json_decode($assoc_subj_cache);
+    $assoc_subj_response = (intval($assoc_subj_data->response->numFound) > 0) ? $assoc_subj_data->response->docs: new stdClass();
+  }
+  //Create the response object to use for the terms details page.
+  $assoc_subjects = [];
+  foreach($assoc_subj_response as $response) {
+    $id = explode('-', $response->id)[1];
+    $assoc_subjects[$term_data->{'associated_subject_' . $id . '_ls'}[0]] = array(
+      'header' => $response->header,
+      'subject' => $term_data->{'associated_subject_' . $id . '_ss'}[0]
+    );
+  }
+
   $output = theme('kmaps_explorer_terms_individual_node', array(
     'term_data' => $term_data,
     'dict_data' => $related_dict,
     'names_data' => $related_names,
     'definitions' => $definitions,
+    'assoc_subjects' => $assoc_subjects,
   ));
 
   if ($type == 'ajax') {
@@ -3218,6 +3252,7 @@ function kmaps_explorer_get_popover_data($app, $kid) {
   $url1 = '';
   $url2 = '';
   $nodeURL = '';
+
   if($app == 'places') {
     $nodeURL = variable_get('shanti_kmaps_admin_server_solr_terms', SHANTI_KMAPS_ADMIN_SERVER_SOLR_TERMS);
     $nodeURL .= '/select?q=uid:places-';
@@ -3321,6 +3356,19 @@ function kmaps_explorer_get_popover_data($app, $kid) {
     $url2 .= $kid;
     $url2 .= '&fq=&start=0&facets=on&group=true&group.field=asset_type&group.facet=true&group.ngroups=true&group.limit=0&wt=json';
 
+  } elseif ($app == 'terms') {
+      $data_array1 = array();
+      $nodeURL = variable_get('shanti_kmaps_admin_server_solr_terms', SHANTI_KMAPS_ADMIN_SERVER_SOLR_TERMS);
+      $nodeURL .= '/select?q=uid:terms-';
+      $nodeURL .= $kid;
+      $nodeURL .= '&wt=json';
+
+      $url2 = variable_get('shanti_kmaps_admin_server_solr', SHANTI_KMAPS_ADMIN_SERVER_SOLR);
+      $url2 .= '/select?q=kmapid:terms-';
+      $url2 .= $kid;
+      $url2 .= '&fq=&start=0&facets=on&group=true&group.field=asset_type&group.facet=true&group.ngroups=true&group.limit=0&wt=json';
+
+
   }
 
   $node_cache = save_to_cache('json', $app, $kid, $nodeURL);
@@ -3333,11 +3381,9 @@ function kmaps_explorer_get_popover_data($app, $kid) {
   if ($data2->grouped->asset_type->groups) {
     $data_array2 = $data2->grouped->asset_type->groups;
   }
-
   $data = new stdClass();
   $data->node = $node_data->response->docs[0];
   $data->related_info = array_merge($data_array1, $data_array2);
-
   drupal_json_output($data);
 }
 

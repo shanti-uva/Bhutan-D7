@@ -139,16 +139,18 @@
                 <div class="row">
                     <div class="col-xs-12">
                         <dl>
-                            <dt>Phoneme:</dt>
-                            <dd class="related_subject">
-                                <a href="<?php echo $base_url ?>/subjects/<?php echo $term_data->associated_subject_ids[0] ?>/overview/nojs"><?php echo $term_data->associated_subjects[0] ?></a>
-                                <span class="popover-kmaps" data-app="subjects"
-                                      data-id="<?php echo $term_data->associated_subject_ids[0] ?>" rel="popover"
-                                      data-original-title="" title="">
-                                    <span class="popover-kmaps-tip"></span>
-                                    <span class="icon shanticon-menu3"></span>
-                                </span>
-                            </dd>
+                            <?php foreach($assoc_subjects as $id => $subject): ?>
+                                <dt><?php echo $subject['header']; ?>:</dt>
+                                <dd class="related_subject">
+                                    <a href="<?php echo $base_url ?>/subjects/<?php echo $id ?>/overview/nojs"><?php echo $subject['subject'] ?></a>
+                                    <span class="popover-kmaps" data-app="subjects"
+                                          data-id="<?php echo $id ?>" rel="popover"
+                                          data-original-title="" title="">
+                                        <span class="popover-kmaps-tip"></span>
+                                        <span class="icon shanticon-menu3"></span>
+                                    </span>
+                                </dd>
+                            <?php endforeach; ?>
                         </dl>
                     </div>
                 </div>

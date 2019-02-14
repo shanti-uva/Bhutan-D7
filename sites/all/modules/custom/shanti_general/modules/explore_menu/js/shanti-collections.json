@@ -5,14 +5,15 @@
 	"links": {
 		"generic": [
 			{"class": "overview", "text": "Home", "href": "HOSTNAME/"},
-			{"class": "subjects", "text": "Subjects", "href": "HOSTNAME/subjects"},
-			{"class": "places", "text": "Places", "href": "HOSTNAME/places"},
-			{"class": "texts", "text": "Texts", "href": "HOSTNAME/"},
-			{"class": "logo-shanti", "text": "Help", "href": "https://wiki.shanti.virginia.edu/display/KB/Mandala+Suite+of+Tools"},
-			{"class": "sources", "text": "Sources", "href": "HOSTNAME/"},
 			{"class": "audio-video", "text": "Audio-Video", "href": "HOSTNAME/"},
 			{"class": "images", "text": "Images", "href": "HOSTNAME/"},
-			{"class": "visuals", "text": "Visuals", "href": "HOSTNAME/"}
+			{"class": "texts", "text": "Texts", "href": "HOSTNAME/"},
+			{"class": "sources", "text": "Sources", "href": "HOSTNAME/"},
+			{"class": "visuals", "text": "Visuals", "href": "HOSTNAME/"},
+			{"class": "places", "text": "Places", "href": "HOSTNAME/places"},
+			{"class": "subjects", "text": "Subjects", "href": "HOSTNAME/subjects"},
+			{"class": "terms", "text": "Terms", "href": "HOSTNAME/terms"},
+			{"class": "docs", "text": "Documentation", "href": "https://wiki.shanti.virginia.edu/x/GC3HAg"}
 		]
 	}
 }

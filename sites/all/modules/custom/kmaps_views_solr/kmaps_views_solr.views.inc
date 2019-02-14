@@ -138,6 +138,22 @@ function kmaps_views_solr_views_data() {
       'handler' => 'kmaps_views_solr_handler_field',
     ),
   );
-  
+
+  $data['kmaps_views_solr']['duration'] = array(
+    'title' => t('Duration'),
+    'help' => t('Duration of AV asset'),
+    'field' => array(
+      'handler' => 'kmaps_views_solr_handler_field',
+    ),
+  );
+
+  $data['kmaps_views_solr']['location'] = array(
+    'title' => t('Location'),
+    'help' => t('Location of AV asset'),
+    'field' => array(
+      'handler' => 'kmaps_views_solr_handler_field',
+    ),
+  );
+
   return $data;
 }

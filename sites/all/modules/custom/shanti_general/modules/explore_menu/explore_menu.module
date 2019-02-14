@@ -274,7 +274,7 @@ function  explore_menu_update_links($domain = 'prod') {
     $msg = "";
     $ct = 0;
 
-    $mandala_sites = array('overview', 'subjects', 'places');
+    $mandala_sites = array('overview', 'subjects', 'places', 'terms');
 
     // Iterate through links in JSON file
     foreach ($linkdata as $n => $link) {

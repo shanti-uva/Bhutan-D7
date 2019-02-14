@@ -33,8 +33,8 @@ class kmaps_views_solr_plugin_query extends views_plugin_query {
       //Make sure only single space betweeen words
       $search = preg_replace('/\s+/', ' ', $search);
       $search_array = explode(' ', $search);
-      $search = implode('%20AND%20', $search_array);
-      $solrURL .= '%20AND%20title:' . '%28' . $search . '%29';
+      $search = implode('*%20AND%20*', $search_array);
+      $solrURL .= '%20AND%20title:(*' . $search . '*)';
     }
     //Sorting
     if (!empty($view->exposed_input['sort_bef_combine'])) {
@@ -65,7 +65,6 @@ class kmaps_views_solr_plugin_query extends views_plugin_query {
     }
 
     $solrURL .= '&rows=' . $items_per_page . '&start=' . ($current_page * $items_per_page) . '&wt=json';
-
     $related_solr = save_to_cache('audio-video' . $app . $kid, $app, $kid, $solrURL);
     $solrObj = json_decode($related_solr);
 
@@ -93,6 +92,8 @@ class kmaps_views_solr_plugin_query extends views_plugin_query {
       $row->thumb = $doc->url_thumb;
       $row->ajax_url = $doc->url_ajax;
       $row->html_url = $doc->url_html;
+      $row->duration = $doc->duration_s;
+      $row->location = strpos($doc->collection_title, 'Bhutan') ? 'Bhutan-427' : '';
 
       $view->result[] = $row;
     }
