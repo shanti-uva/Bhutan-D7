@@ -213,7 +213,7 @@ function kmaps_explorer_menu()
         'title' => 'Subjects',
         'description' => 'Creates a callback that shows audio-video in subjects via ajax',
         'page callback' => 'kmaps_explorer_subjects_audio_video',
-        'page arguments' => array(3, 1, 'subject'),
+        'page arguments' => array(3, 1, 'subjects'),
         'access arguments' => TRUE,
         'access callback' => TRUE,
     );
@@ -222,7 +222,7 @@ function kmaps_explorer_menu()
         'title' => 'Places',
         'description' => 'Creates a callback that shows audio-video in places via ajax',
         'page callback' => 'kmaps_explorer_subjects_audio_video', //using same function as in subjects.
-        'page arguments' => array(3, 1, 'place'),
+        'page arguments' => array(3, 1, 'places'),
         'access arguments' => TRUE,
         'access callback' => TRUE,
     );
@@ -231,7 +231,7 @@ function kmaps_explorer_menu()
         'title' => 'Subjects',
         'description' => 'Creates a callback that shows individual audio-video nodes',
         'page callback' => 'kmaps_explorer_audio_video_node', //using same function for both places and subjects.
-        'page arguments' => array(4, 1, 3, 'subject'),
+        'page arguments' => array(4, 1, 3, 'subjects'),
         'access arguments' => TRUE,
         'access callback' => TRUE,
     );
@@ -2277,15 +2277,15 @@ function kmaps_explorer_subjects_audio_video($type = 'ajax', $id, $app, $page_nu
     $data_shuffle = &drupal_static('kmaps_explorer_data');
     $data_shuffle['asset'] = 'audio-video';
 
-    $setup = kmaps_explorer_setup_page($id, $app . 's', 'audio_video');
+    $setup = kmaps_explorer_setup_page($id, $app, 'audio_video');
 
     $output = '<h4>' . 'Audio-Video Related to ' . $data_shuffle['node_title'] . '</h4>';
 
-    $output .= views_embed_view('related_audio_video', 'audio_video_block', $app . 's', $id);
+    $output .= views_embed_view('related_audio_video', 'audio_video_block', $app, $id);
 
     if ($type == 'ajax') {
         $commands = array();
-        $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . $app . 's/' . $id . '/audio-video/nojs');
+        $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . $app . '/' . $id . '/audio-video/nojs');
         $page = array('#type' => 'ajax', '#commands' => $commands);
 
         if ($subpage) {
