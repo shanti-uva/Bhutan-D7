@@ -36,8 +36,8 @@ class kmaps_views_solr_texts_plugin_query extends views_plugin_query {
       //Make sure only single space betweeen words
       $search = preg_replace('/\s+/', ' ', $search);
       $search_array = explode(' ', $search);
-      $search = implode('%20AND%20', $search_array);
-      $solrURL .= '%20AND%20title:' . '%28' . $search . '%29';
+      $search = implode('*%20AND%20*', $search_array);
+      $solrURL .= '%20AND%20title:(*' . $search . '*)';
     }
     //Sorting
     if (!empty($view->exposed_input['sort_bef_combine'])) {

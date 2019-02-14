@@ -588,22 +588,6 @@ function mediabase_node_view($node, $view_mode, $langcode)
         }
       }
     }
-
-    // Add metadata to audio/video nodes
-    /* Removed for speed issue testing: 2014-09-10
-        if(!empty($node->thumbnail_url)) {
-            // Add an og:image meta tag for sharing
-            // <meta property="og:image" content="http://davidwalsh.name/wp-content/themes/klass/img/facebooklogo.png"/>
-            $element = array(
-              '#tag' => 'meta', // The #tag is the html tag - <link />
-              '#attributes' => array( // Set up an array of attributes inside the tag
-                'property' => 'og:image',
-                'content' => $node->thumbnail_url,
-              ),
-            );
-            drupal_add_html_head($element, 'meta_og_image');
-        }
-        */
   }
 }
 

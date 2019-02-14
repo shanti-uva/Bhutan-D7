@@ -53,7 +53,7 @@ function shanti_texts_features_field_group_info() {
     'children' => array(
       0 => 'field_book_content',
       1 => 'field_dc_lang_code',
-      2 => 'field_language_kmap',
+      2 => 'field_language_kmaps',
     ),
     'format_type' => 'tab',
     'format_settings' => array(
@@ -149,6 +149,7 @@ function shanti_texts_features_field_group_info() {
     'children' => array(
       0 => 'field_kmap_places',
       1 => 'field_kmap_term',
+      2 => 'field_terms_kmaps',
     ),
     'format_type' => 'tab',
     'format_settings' => array(

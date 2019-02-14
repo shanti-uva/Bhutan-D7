@@ -221,7 +221,7 @@ function biblio_import_form_submit($form, & $form_state) {
   $validators['file_validate_extensions'] = array();
   $validators['file_validate_extensions'][0] = $extensions;
   if ($form_state['values']['op'] == t('Import') && isset ($form_state['values']['filetype'])) {
-    if ($import_file = file_save_upload('biblio_import_file', $validators, 'public://')) {
+    if ($import_file = file_save_upload('biblio_import_file', $validators)) {
       if ($form_state['values']['batch_process'] == 1) {
         $batch_proc = TRUE;  // we will use batch import for larger files.
       }
@@ -351,8 +351,6 @@ function biblio_import_batch_finished($success, $results, $operations) {
   db_delete('biblio_import_cache')
     ->condition('session_id', $results['session_id'])
     ->execute();
-    
-  file_delete($results['file']);
 }
 
 function biblio_import_finalize($success, $results) {

@@ -23,39 +23,65 @@ function bulk_image_import_api_get() {
 }
 
 function bulk_image_import_api_post() {
-  $meta = array();
-  $collection_id = 0;
-  foreach($_POST as $key => $value) {
-    if($key === 'CollectionId') {
-      $collection_id = $value;
-      continue;
-    }
-    $meta[$key] = $value;
-  }
-  $tid = db_insert('bulk_image_import_task')
-       ->fields(array(
-         'meta_data' => json_encode($meta),
-         'catalog' => $meta['Catalog'],
-         'filename' => $meta['Filename']
-       ))
-       ->execute();
-  $node = bulk_image_import_map_meta_to_node($meta);
-  db_query('UPDATE bulk_image_import_task SET node_id = :nid WHERE tid = :tid', array(
-    'nid' => $node->nid,
-    'tid' => $tid
-  ));
-  if ($collection_id != 0) {
-    $node->field_og_collection_ref['und'][0]['target_id'] = $collection_id;
-  }
-  node_save($node);
   $data = file_get_contents($_FILES['file']['tmp_name']);
   $file = file_save_data($data, 'temporary://'.$_FILES['file']['name'], FILE_EXISTS_REPLACE);
+  $node = null;
+  $width = 0;
+  $height = 0;
+
+  if(isset($_POST['repair']) && $_POST['repair']) {
+    $nid = $_POST['nid'];
+    $node = node_load($nid);
+    watchdog('shanti_images_bulk_image_import', 'Attempting to repair node: @title (@nid)', array(
+      '@title' => $node->title,
+      '@nid' => $node->nid
+    ));
+    if($node) {
+      $siobj = _shanti_images_get_node_image($node);
+    }
+    else {
+      drupal_exit();
+      return;
+    }
+    if (isset($siobj)) {
+      _shanti_images_delete_record($siobj->getID());
+    }
+  } else {
+    $meta = array();
+    $collection_id = 0;
+    foreach($_POST as $key => $value) {
+      if($key === 'CollectionId') {
+        $collection_id = $value;
+        continue;
+      }
+      $meta[$key] = $value;
+    }
+    $tid = db_insert('bulk_image_import_task')
+         ->fields(array(
+           'meta_data' => json_encode($meta),
+           'catalog' => $meta['Catalog'],
+           'filename' => $meta['Filename']
+         ))
+         ->execute();
+    $node = bulk_image_import_map_meta_to_node($meta);
+    db_query('UPDATE bulk_image_import_task SET node_id = :nid WHERE tid = :tid', array(
+      'nid' => $node->nid,
+      'tid' => $tid
+    ));
+    if ($collection_id != 0) {
+      $node->field_og_collection_ref['und'][0]['target_id'] = $collection_id;
+    }
+    node_save($node);
+    $width = (integer) $meta['Width'];
+    $height = (integer) $meta['Height'];
+  }
+
   $siid = _shanti_images_create_record(
     $node->nid,
     $file->fid,
     $file->filename,
-    (integer) $meta['Width'],
-    (integer) $meta['Height']
+    $width,
+    $height
   );
   $res = shanti_images_upload_iiif($node->nid, $file->fid, $siid);
   if (!$res) {

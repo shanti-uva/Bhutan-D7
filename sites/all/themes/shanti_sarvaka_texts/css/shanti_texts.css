@@ -783,9 +783,16 @@ display: block;
   right: 0.2rem;
 }
 
+#shanti-texts-sidebar #shanti-texts-meta .text-visibility-0 .text-val {
+  display: none;
+}
 
+#shanti-texts-sidebar #shanti-texts-meta .text-visibility-1 .group-val,
+#shanti-texts-sidebar #shanti-texts-meta .text-visibility-2 .group-val {
+  display: none;
+}
 
-/* FROM COLLECTIONS PANEL */
+  /* FROM COLLECTIONS PANEL */
 .shanti-collection-page .shanti-collection-body {
   margin-top: -1rem;
 }

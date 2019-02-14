@@ -183,8 +183,10 @@
                 var search_key = '';
                 var admin = settings.shanti_kmaps_admin;
                 var widget = settings.shanti_kmaps_fields[my_field];
-                var root_kmapid = widget.root_kmapid ? widget.root_kmapid : widget.domain == 'subjects' ? admin.shanti_kmaps_admin_root_subjects_id : admin.shanti_kmaps_admin_root_places_id;
+                //var root_kmapid = widget.root_kmapid ? widget.root_kmapid : widget.domain == 'subjects' ? admin.shanti_kmaps_admin_root_subjects_id : admin.shanti_kmaps_admin_root_places_id;
+                var root_kmapid = widget.root_kmapid ? widget.root_kmapid : false;
                 var max_terms = widget.term_limit == 0 ? 999 : widget.term_limit;
+                /*
                 $typeahead.kmapsTypeahead({
                     term_index: admin.shanti_kmaps_admin_server_solr_terms,
                     domain: widget.domain,
@@ -198,7 +200,32 @@
                     empty_sort: 'header_ssort ASC', // sortable header field
                     selected: 'class',
                     filters: admin.shanti_kmaps_admin_solr_filter_query ? admin.shanti_kmaps_admin_solr_filter_query : ''
-                }).bind('typeahead:asyncrequest',
+                })
+                 */
+                var filters = [];
+                if (admin.shanti_kmaps_admin_solr_filter_query) {
+                    filters.push(admin.shanti_kmaps_admin_solr_filter_query);
+                }
+                if (root_kmapid) {
+                    filters.push('ancestor_ids_generic:(' + root_kmapid + ')');
+                }
+                $typeahead.kmapsSimpleTypeahead({
+                    solr_index: admin.shanti_kmaps_admin_server_solr_terms,
+                    domain: widget.domain,
+                    autocomplete_field: 'name_autocomplete',
+                    //search_fields: ['name_tibt'],
+                    max_terms: max_terms,
+                    min_chars: 0,
+                    pager: 'on',
+                    fields: '*',
+                    menu: '',
+                    sort: 'header_ssort asc',
+                    match_criterion: 'begins', // sortable header field
+                    case_sensitive: false,
+                    ignore_tree: false,
+                    templates: {},
+                    additional_filters: filters
+                }) .bind('typeahead:asyncrequest',
                     function () {
                         search_key = $typeahead.typeahead('val'); //get search term
                     }
@@ -235,7 +262,7 @@
                     max_terms: max_terms,
                     min_chars: 0,
                     pager: 'on',
-                    sort: '',
+                    sort: 'header_ssort asc',
                     fields: 'id,header,name*,ancestor*',
                     menu: '',
                     match_criterion: 'begins', // sortable header field

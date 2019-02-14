@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * kmaps_views_solr_features.strongarm.inc

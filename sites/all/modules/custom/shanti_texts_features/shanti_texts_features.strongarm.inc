@@ -184,6 +184,8 @@ function shanti_texts_features_strongarm() {
     'shanti_sarvaka_shanti_site' => 1,
     'shanti_sarvaka_show_login_link' => 1,
     'shanti_sarvaka_flyout_open' => 0,
+    'shanti_sarvaka_replace_broken_images' => 1,
+    'shanti_sarvaka_varnish_exceptions' => '',
     'shanti_sarvaka_use_admin_site_title' => 0,
     'shanti_sarvaka_default_title' => 'Texts',
     'shanti_sarvaka_prefix_default_title' => 0,

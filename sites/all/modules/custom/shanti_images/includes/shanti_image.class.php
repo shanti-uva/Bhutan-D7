@@ -254,6 +254,9 @@ class ShantiImage
         $server = variable_get('shanti_images_view_url', 'https://iiif.lib.virginia.edu');
         $servpath = variable_get('shanti_images_view_path', '/mandala/');
         $url = $server . $servpath . $fname . '/' . $crop . '/';
+        if (strstr($url, '-test') && preg_match('/shanti-image-\d+/', $fname, $mtch)) {
+          $url = str_replace('-test', '', $url);
+        }
         $dimensions = "{$width},{$height}";
         if (empty($width) && empty($height)) {
             $dimensions = "full";
