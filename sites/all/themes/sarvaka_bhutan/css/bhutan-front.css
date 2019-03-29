@@ -238,7 +238,7 @@
 
 	.grid-textbox{
 		position: absolute;
-		left: 58%;
+		left: 50%;
 	}
 }
 
@@ -246,6 +246,6 @@
 
 	.grid-textbox{
 		position: absolute;
-		left: 50%;
+		left: 58%;
 	}
 }
