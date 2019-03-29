@@ -242,4 +242,10 @@
 	}
 }
 
+@media screen and (min-width: 992px){
 
+	.grid-textbox{
+		position: absolute;
+		left: 50%;
+	}
+}
