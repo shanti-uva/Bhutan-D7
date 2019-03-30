@@ -12,7 +12,7 @@ article ul ul,
 article ul ul ul,
 article ul ul ul ul { -webkit-margin-before: 0; margin-top:0;}
 .navbar-header{ padding-left:1rem;}
-.navbar-header .navbar-brand{ line-height: 2.25em;}
+.navbar-header .navbar-brand{ line-height: 2.25em; height:42px; width:225px;}
 .site-logo{ width:500px; height:40px; position:relative; top:0rem;}
 .site-title{ display:none !important;}
 
@@ -196,7 +196,7 @@ article ul ul ul ul { -webkit-margin-before: 0; margin-top:0;}
 }
 
 .footer .views-field img.img-responsive{
-  margin: 1.6rem 4rem 0 0;
+  margin: 1.6rem 4rem 1rem 0;
   width: auto;
   float: left;
   opacity:.8;
@@ -204,13 +204,13 @@ article ul ul ul ul { -webkit-margin-before: 0; margin-top:0;}
 
 .footer .views-row-1 .views-field img.img-responsive{ /*------ arcadia */ 
   height: 33px;
-  opacity: 0.70;
+  opacity: 0.75;
 }
 
 .footer .views-row-2 .views-field img.img-responsive{ /*----- shejun */
   height: 47px;
   margin-top: 0.4rem;
-  opacity: 0.8;
+  opacity: 0.85;
 }
 
 .footer .views-row-3 .views-field img.img-responsive{ /*------ tibet center */
@@ -246,7 +246,16 @@ article ul ul ul ul { -webkit-margin-before: 0; margin-top:0;}
 
 
 
-@media screen and (max-width: 630px) {
+
+
+@media screen and (max-width: 993px) {
+  
+  .view-resources.btn-default{ display:inline-block !important;}
+  .page-sponsors .view-resources.btn-default{ display:none !important;}
+}
+
+
+@media screen and (max-width: 650px) {
 
   .footer .view-sponsor-logos{
     left:0;
@@ -255,14 +264,33 @@ article ul ul ul ul { -webkit-margin-before: 0; margin-top:0;}
 
   .footer .view-sponsor-logos .views-row{
     float:left;
+    margin-left: 50%;
+    position: relative;
+    left: -115px;
+    width:100%;
+  }
+
+  .footer .view-sponsor-logos .views-row.views-row-1{
+    position: relative;
+    left: -75px;
+  }
+
+  .footer .view-sponsor-logos .views-row.views-row-2{
+    position: relative;
+    left: -76px;
+  }
+
+  .footer .views-row-2 .views-field img.img-responsive{
+    margin-top:0;
+  }
+
+  .footer .views-row-3 .views-field img.img-responsive{
+    margin-bottom: 1rem;
   }
 }
 
-@media screen and (max-width: 993px) {
-	
-	.view-resources.btn-default{ display:inline-block !important;}
-	.page-sponsors .view-resources.btn-default{ display:none !important;}
-}
+
+
 
 
 
@@ -310,6 +338,11 @@ article ul ul ul ul { -webkit-margin-before: 0; margin-top:0;}
 
   .menu-toggle {
     display: inline-block;
+  }
+
+  .navbar-header .navbar-brand{
+    width: 460px;
+    height: 42px;
   }
 }
 
@@ -435,7 +468,7 @@ h1.navbar-header{
 }
 
 
-@media screen and (min-width: 768px){
+@media screen and (min-width: 650px){
 
   h1.navbar-header{
     background-image: url(../images/banners/bhutan-banner-logotext.png);
