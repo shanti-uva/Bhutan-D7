@@ -9,8 +9,8 @@
 
     <h1 class="navbar-header<?php if(!$variables['shanti_site']) { print " default"; } ?>">
       <a href="<?php print $variables['home_url']; ?>" class="navbar-brand" title="<?php print $site_name; ?> Homepage">
-        <span class="logo"><img src="<?php print $logo; ?>" class="site-logo" /></span> 
-        <span class="site-title"><?php print $site_name; ?></span>
+        <span class="logo"><img src="<?php print $logo; ?>" class="site-logo" rel="<?php print $site_name; ?>"/></span> 
+        <span class="site-title sr-only"><?php print $site_name; ?></span>
       </a>
     </h1>
 

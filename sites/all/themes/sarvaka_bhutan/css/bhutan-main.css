@@ -173,6 +173,7 @@ article ul ul ul ul { -webkit-margin-before: 0; margin-top:0;}
 .footer{
   height: auto;
   padding-top: 5px;
+  padding-bottom:0;
   float:left;
   border-bottom: 2rem solid #000 !important;
 }
@@ -355,13 +356,6 @@ article ul ul ul ul { -webkit-margin-before: 0; margin-top:0;}
 }
 
 
-@media all and (orientation:portrait) {
-}
-
-@media all and (orientation:landscape) {
-}
-
-
 
 
 .node-type-shanti-image.in-frame #fsslider,
@@ -461,9 +455,9 @@ article ul ul ul ul { -webkit-margin-before: 0; margin-top:0;}
 
 h1.navbar-header{
     background-image: url(../images/banners/bhutan-banner-logotext-mobi.png);
-    background-position: top 0.1rem left .5rem;
-    background-size: 210px;
-    width: 225px;
+    background-position: top -0.1rem left 1rem;
+    background-size: 220px;
+    width: 250px;
     background-repeat: no-repeat;
 }
 
@@ -472,9 +466,9 @@ h1.navbar-header{
 
   h1.navbar-header{
     background-image: url(../images/banners/bhutan-banner-logotext.png);
-    background-position: top 0.1rem left .5rem;
-    background-size: 445px;
-    width: 460px;
+    background-position: top -.1rem left 1rem;
+    background-size: 490px;
+    width: 500px;
   }
 }
 
