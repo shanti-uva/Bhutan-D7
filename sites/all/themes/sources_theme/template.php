@@ -42,6 +42,10 @@ function sources_theme_breadcrumb(&$bcs) {
       $bc = l($gnode->title, 'node/' . $gid);
       array_splice($bcs['breadcrumb'], 1, 0, array($bc));
     }
+    if (strpos($obj->type, 'collection') > -1) {
+        $colllink = '<a href="/collections/all">' . t("Collections") . '</a>';
+        array_splice($bcs['breadcrumb'], 1, 0, array($colllink));
+    }
   }
   $bchtml = sources_views_custom_breadcrumbs();
   if ($bchtml == "<ol class='breadcrumb'><li><a href='#' term_id='all'>Sources:</a></li><li><a href='#' term_id='0'></a><span class=\"icon shanticon-arrow3-right\"></span></li></ol>") {
@@ -79,12 +83,16 @@ function sources_theme_preprocess_node(&$vars) {
     //dpm($vars, 'in pp node');
     $type = $vars['type'];
     $mode = $vars['view_mode'];
+    // For collections or subcollections
     if (strstr($type,'collection')) {
+        // If biblio permission "import from file" is given and the biblio_import_mods module is on
         if (user_access('import from file') && module_exists('biblio_import_mods')) {
             $nid = $vars['nid'];
             $mycolls = biblio_import_mods_collections_list_options();
             $mycolls = array_keys($mycolls);
-            if (in_array($nid, $mycolls)) {
+            // Only allow users to import into their own collections unless they have 'administer biblio bulkimport' privileges
+            // See biblio_import_mods_permission()
+            if (in_array($nid, $mycolls) || user_access('administer biblio bulkimport')) {
                 $vars['import_url'] = '/biblio/import?collection=' . $nid;
             }
         }
@@ -224,7 +232,7 @@ function sources_theme_preprocess_views_view_fields(&$vars) {
     $updated_query_string_parameters = sources_theme_get_updated_query_string_parameters($vars);
     $publication_format = sources_theme_get_publication_type($vars);
     $source_title_info = sources_theme_get_source_title_info($publication_year, $publication_format);
-    $custom_title_link_wrapper_prefix = '<div class="source-icon-' . $publication_format . ' title-link-container"><span class="icon shanticon-sources"></span><span class="fa fa-plus"></span>';
+    $custom_title_link_wrapper_prefix = '<div class="source-icon-' . $publication_format . ' title-link-container"><span class="icon shanticon-sources"></span><span class="icon shanticon-plus"></span>';
     $custom_title_link_wrapper_suffix = '</div>';
     //Display custom views field output based on current views display.
     $link = '';

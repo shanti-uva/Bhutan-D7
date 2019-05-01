@@ -147,7 +147,20 @@ Drupal.behaviors.shanti_sarvaka_flyoutinit = {
             if ($(window).width() >= 992) {
                 var flyout_status = $.cookie('flyout_status');
                 if (!$.cookie('flyout_status') || $.cookie('flyout_status') == 'open') {
-                    setTimeout( function() { $('#search-flyout').openMbExtruder(); }, 300);
+                    var tabnum = -1;
+                    if ($('body').hasClass('page-places')) {
+                        tabnum = 1;
+                    } else if ($('body').hasClass('page-subjects')) {
+                        tabnum = 2;
+                    } else if ($('body').hasClass('page-terms')) {
+                        tabnum = 3;
+                    }
+                    setTimeout( function() {
+                        if (tabnum > -1) {
+                            $('.shanti-kmaps-faceted-search-kmaps-' + tabnum + ' a').click();
+                        }
+                        $('#search-flyout').openMbExtruder();
+                    }, 800);
                 }
             }
         }
@@ -301,7 +314,7 @@ Drupal.behaviors.searchPanelHeightKMaps = {
           // Search Results Panel and List Heights
           // hiding this to try using results script in Sarvaka
           $('#faceted-search-results').css('height', (view_height + 105) +'px'); // Results Panel Height: This will adjust the distance from the bottom of the results panel to the bottom of the browser - This should match the distance of the search flyout to bottom.
-          $('.search-results-list-wrapper, .search-results-node-preview').css('height', (view_height - 105) +'px'); // Results Scrollable List Height: This will adjust eh scrollable results list height - This should be about (1/8 in) above bottom of results list wrapper.
+          $('.search-results-list-wrapper, .search-results-node-preview').css('height', (view_height - 80) +'px'); // Results Scrollable List Height: This will adjust eh scrollable results list height - This should be about (1/8 in) above bottom of results list wrapper.
 
           if (DEBUG) {
             console.log("searchTabHeightKMaps()");
@@ -312,9 +325,9 @@ Drupal.behaviors.searchPanelHeightKMaps = {
             console.log("kmap-filter-box height: " + $filterbox_height);
             console.log("nav-tab height: " + $navtab_height);
             console.log("view-section height: " + $viewsection_height);
-            console.log(" tab-content height: " + $('.tab-content').height());
-            console.log(" tab-pane height: " + $('.tab-pane').height());
-            console.log(" km-facet-div > div: " + $('.km-facet-div > div').height());
+            console.log("tab-content height: " + $('.tab-content').height());
+            console.log("tab-pane height: " + $('.tab-pane').height());
+            console.log("km-facet-div > div: " + $('.km-facet-div > div').height());
             console.groupEnd();
           }
 

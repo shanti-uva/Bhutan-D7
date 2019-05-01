@@ -47,7 +47,6 @@
             if (typeof(settings.shanti_images) == 'undefined') { dsetimg = false; }
             if (context == document) {
                 var debug = (dsetimg.debug) ? true : false;
-
                 if ($('body').is('.node-type-shanti-image')) {
                     if (dsetimg && typeof(dsetimg.addimages) != 'undefined') {
                         if (dsetimg.addimages) {
@@ -57,13 +56,14 @@
                                     'width': '100%',
                                     'text-align':'center'
                                 });
-                                $('#fsslider .flex-active-slide').css('min-height', '270px');
+                                $('#fsslider .flex-active-slide').css('min-height', '42rem');
                                 $('#fsslider .flex-active-slide img').hide();
                                }, 300);
                             var imageshowing = false;
                             dsetimg.warning = function(e) { (e || window.event).returnValue = true; return true;};
                             if (debug) { console.log('addimage array:', JSON.stringify(dsetimg.addimages)); }
                             for(var n in dsetimg.addimages) {
+
                                 window.addEventListener('beforeunload',  dsetimg.warning);
                                 var item = dsetimg.addimages[n];
                                 var url = Drupal.settings.basePath + 'image/upload/' + item.nid + '/' + item.fid + '/' +
@@ -102,6 +102,7 @@
                 $('.btn-delete.ajax-processed').each(function () {
                     var btnid = $(this).attr('id');  // Get the button id
                     var inputval = $(this).prevAll('.field-type-text').find('input').val();
+                    if ($(this).parents('#edit-field-image-agents').length > 0) { return true; } // return false breaks the each loop. return true is like a continue
                     // Add a beforeserialize function to potentially interrupt AJAX call
                     Drupal.ajax[btnid].beforeSerialize = function () {
                         // If the button has the class "confirm-return" it is returning already from confirmation. Do not show dialog

@@ -93,6 +93,18 @@
     font-size: 1.2rem;
 }
 
+/** KMaps in image node edit **/
+/** Hide the remnants of the clear button in places facets as is unnecessary **/
+.field-name-field-places .kmap-filter .kmfaceted-list-clear {
+    display: none;
+}
+
+/** Hide field for keywords as this is not a kmaps field (not deleting because someone may have already entered data) **/
+/** TODO: Check if data entered here. If so move it to note, and delete field **/
+.page-node-edit.node-type-shanti-image .field-name-field-keywords {
+    display: none;
+}
+
 /** Show Progress Bar in node form
 .form-managed-file .image-widget-data div.ajax-progress-bar {
     display: block !important;

@@ -15,6 +15,12 @@ function biblio_import_mods_permission() {
             'description' => t('Add New Fields for Mapping to an Existing Biblio Import Format'),
             'restrict access' => TRUE,
         ),
+
+        'administer biblio bulkimport' => array(
+          'title' => t('Bulk import sources'),
+          'description' => t('Allow user to bulk import sources to any collection'),
+          'restrict access' => TRUE,
+        ),
     );
 }
 
@@ -182,13 +188,19 @@ function biblio_import_mods_collections_list_options($userid=NULL) {
     $selected_user = $user;
   }
 
-  $user_groups = og_get_groups_by_user($selected_user);
-  if (empty($user_groups['node'])) {
-    return array();
+  if (user_access('administer biblio bulkimport')) {
+    // If user can administer biblio import, show all collections
+    $result = db_query("SELECT {title, nid} FROM {node} WHERE type IN ('collection', 'subcollection') ORDER BY {title}");
+  } else {
+    // Otherwise, only show user's groups (need to use og_subgroup version to get inherited groups)
+    $user_groups = og_subgroup_user_groups_load($selected_user, FALSE); //og_get_groups_by_user($selected_user);
+    if (empty($user_groups['node'])) {
+      return array();
+    }
+    $result = db_query("SELECT {title, nid} FROM {node} WHERE type IN ('collection', 'subcollection') AND nid in (:nids) ORDER BY {title}", array(
+      ':nids' => array_values($user_groups['node'])
+    ));
   }
-  $result = db_query("SELECT {title, nid} FROM {node} WHERE type IN ('collection', 'subcollection') AND nid in (:nids) ORDER BY {title}", array(
-    ':nids' => array_values($user_groups['node'])
-  ));
   $matches = array();
   foreach ($result as $collection) {
     $matches[$collection->nid] = "$collection->title ($collection->nid)";

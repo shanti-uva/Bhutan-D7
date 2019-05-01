@@ -280,7 +280,7 @@ function  explore_menu_update_links($domain = 'prod') {
     foreach ($linkdata as $n => $link) {
         if (!isset($link->disabled) || $link->disabled == FALSE) {
             $site = $link->class;
-            if ($site == 'logo-shanti') {  // logo-shanti is wiki link use URL in JSON
+            if ($site == 'docs') {  // 'docs' are documentation. User full href to go to doc site
                 $url = $link->href;
             } elseif (in_array($site, $mandala_sites)) { // If its a mandala site base is "mandala"
                 $url = str_replace('BASESITE', 'mandala', $url_pattern);

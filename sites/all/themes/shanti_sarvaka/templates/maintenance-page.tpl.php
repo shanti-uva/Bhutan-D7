@@ -105,7 +105,7 @@
            <div>
              <header role="banner">
                 <h1 class="page-title"><?php 
-                echo $site_slogan . ": " . $title; ?> <span class="fa fa-wrench"></span></span>
+                echo $site_slogan . ": " . $title; ?> <span class="icon shanticon-gear"></span></span>
                 </h1>
               </header>
               

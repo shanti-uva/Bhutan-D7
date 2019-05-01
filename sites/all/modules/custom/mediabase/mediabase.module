@@ -689,3 +689,24 @@ function mediabase_site_environment()
     }
   }
 }
+
+function mediabase_views_natural_sort_get_entry_types() {
+  return array(
+    array(
+      'entity_type' => 'node',
+      'field' => 'title',
+      'module' => 'mediabase',
+    ),
+  );
+}
+
+function mediabase_views_natural_sort_transformations_alter(array &$transformations, array $index_entry) {
+  $transformations[] = 'mediabase_strip_initial_garbage';
+}
+
+function mediabase_strip_initial_garbage($string) {
+    $string = trim($string);
+    $pattern = '/^[\:\-\[\]\(\)\_]+\s+/';
+    $string = preg_replace($pattern, '', $string);
+    return $string;
+}

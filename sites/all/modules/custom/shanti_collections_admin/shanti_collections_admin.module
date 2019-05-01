@@ -278,6 +278,8 @@ function shanti_collections_admin_get_collection_id_of_node($nid)
     $coll_field = variable_get('shanti_collections_admin_collection_field');
     if (isset($node->{$coll_field}[$lang][0]['target_id'])) {
         $coll_id = $node->{$coll_field}[$lang][0]['target_id'];
+    } elseif (isset($node->{$coll_field}[LANGUAGE_NONE][0]['target_id'])) {
+        $coll_id = $node->{$coll_field}[LANGUAGE_NONE][0]['target_id'];
     }
     return $coll_id;
 }

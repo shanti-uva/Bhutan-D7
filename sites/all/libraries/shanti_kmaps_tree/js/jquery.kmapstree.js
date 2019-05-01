@@ -226,82 +226,146 @@
                 },
 
                 postProcess: function (event, data) {
-                    log("postProcess!");
-                    data.result = [];
+                  log("postProcess!");
+                  data.result = [];
 
-                    var docs = data.response.response.docs;
-                    var facet_counts = data.response.facet_counts.facet_fields.ancestor_id_path;
-                    var rootbin = {};
-                    var countbin = {};
+                  if (DEBUG) {
+                    console.error("FACET COUNTS");
+                    console.dir(data.response);
+                  }
+                  var ancestorField = "ancestor_id_path";
 
-                    docs.sort(function (a, b) {
-                        var aName = a.ancestor_id_path.toLowerCase();
-                        var bName = b.ancestor_id_path.toLowerCase();
-                        return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
-                    });
+                  if (data.response.facet_counts.facet_fields["ancestor_id_tib.alpha_path"]) {
+                    ancestorField = "ancestor_id_tib.alpha_path";
+                  }
 
-                    for (var i = 0; i < facet_counts.length; i += 2) {
-                        var path = facet_counts[i];
-                        var count = facet_counts[i + 1];
-                        countbin[path] = (count - 1);
+                  var docs = data.response.response.docs;
+                  var facet_counts = data.response.facet_counts.facet_fields[ancestorField];
+                  var rootbin = {};
+                  var countbin = {};
+
+                  if (DEBUG) {
+                    console.error("FLOOPY");
+                    console.dir(docs);
+                  }
+
+                  for (var i = 0; i < facet_counts.length; i += 2) {
+                    var path = facet_counts[i];
+                    var count = facet_counts[i + 1];
+                    countbin[path] = (count - 1);
+                  }
+
+                  for (var i = 0; i < docs.length; i++) {
+                    var doc = docs[i];
+
+
+                    // console.dir(doc);
+
+                    var ancestorIdPath = docs[i][ancestorField];
+
+                    // if (doc['ancestor_id_tib.alpha_path']) {
+                    //   ancestorIdPath = doc['ancestor_id_tib.alpha_path'];
+                    // }
+
+                    var ancestors = docs[i].ancestors;
+                    if (doc['ancestors_tib.alpha']) {
+                      ancestors = doc['ancestors_tib.alpha'];
                     }
 
-                    for (var i = 0; i < docs.length; i++) {
-                        var doc = docs[i];
-                        var ancestorIdPath = docs[i].ancestor_id_path;
-                        var ancestors = docs[i].ancestors;
-                        var parentIdPath = ancestorIdPath.split('/');
-                        var localId = ancestorIdPath;
+                    if (DEBUG) console.log("ancestorIdPath " + ancestorIdPath);
 
-                        if (parentIdPath && parentIdPath.length != 0) {
-                            localId = parentIdPath.pop();
-                        } else {
-                            parentIdPath = [];
-                            localId = "";
-                        }
+                    var parentIdPath = ancestorIdPath.split('/');
+                    var localId = ancestorIdPath;
 
-                        var caption = (docs[i]['caption_eng'] && $.isArray(docs[i]['caption_eng'])) ? docs[i]['caption_eng'][0] : null;
-                        var displayPath = (ancestors) ? ancestors.join("/") : "";
-                        var parentPath = (parentIdPath) ? parentIdPath.join("/") : "";
-                        var n =
-                            {
-                                key: localId,
-                                title: doc.header,
-                                parent: parentPath,
-                                path: ancestorIdPath,
-                                displayPath: displayPath,
-                                caption: caption,
-                                level: doc.level_i,
-                                lazy: (countbin[ancestorIdPath]) ? true : false,
-                            };
-
-                        rootbin[ancestorIdPath] = n;  // save for later
+                    if (parentIdPath && parentIdPath.length != 0) {
+                      localId = parentIdPath.pop();
+                    }
+                    else {
+                      parentIdPath = [];
+                      localId = "";
                     }
 
+                    var caption = (docs[i]['caption_eng'] && $.isArray(docs[i]['caption_eng'])) ? docs[i]['caption_eng'][0] : null;
+                    var displayPath = (ancestors) ? ancestors.join("/") : "";
+                    var parentPath = (parentIdPath) ? parentIdPath.join("/") : "";
 
-                    //if (DEBUG) console.log("ROOT BIN");
-                    //if (DEBUG) console.log(JSON.stringify(rootbin));
-                    var props = Object.getOwnPropertyNames(rootbin);
-                    for (var i = 0; i < props.length; i++) {
-                        var node = rootbin[props[i]];
-                        if (DEBUG) console.log("node: " + node.path + "  parent:" + node.parent);
+                    // console.log("BLOOKY: " + JSON.stringify(doc, undefined, 2));
 
-                        if (rootbin[node.parent]) {
-                            var p = rootbin[node.parent];
-                            if (!p.children) {
-                                p.children = []
-                            }
-                            p.children.push(node);
-                            p.lazy = false;
-                            delete rootbin[props[i]];
-                        }
+                    // kludge for supporting terms
+                    // need to refactor or need to use newer kmaps_relationship_tree
+                    if (doc["level_tib.alpha_i"]) {
+                      doc.level_i = doc["level_tib.alpha_i"];
                     }
-                    var x = Object.getOwnPropertyNames(rootbin);
-                    for (var i = 0; i < x.length; i++) {
-                        data.result.push(rootbin[x[i]]);
+
+                    var position = doc.position_i;
+                    if (!position && doc.header) {
+                      position = doc.header;
                     }
-                    if (DEBUG) console.dir({log: "result", "data": data.result});
-                    //data.result.sortChildren();
+
+                    var n =
+                      {
+                        key: localId,
+                        title: doc.header,
+                        parent: parentPath,
+                        path: ancestorIdPath,
+                        displayPath: displayPath,
+                        caption: caption,
+                        position: position,
+                        level: doc.level_i,
+                        lazy: (countbin[ancestorIdPath]) ? true : false,
+                      };
+
+                    rootbin[ancestorIdPath] = n;  // save for later
+                  }
+
+
+                  //if (DEBUG) console.log("ROOT BIN");
+                  //if (DEBUG) console.log(JSON.stringify(rootbin));
+                  var props = Object.getOwnPropertyNames(rootbin);
+                  for (var i = 0; i < props.length; i++) {
+                    var node = rootbin[props[i]];
+                    if (DEBUG) console.log("node: " + node.path + "  parent:" + node.parent);
+
+                    if (rootbin[node.parent]) {
+                      var p = rootbin[node.parent];
+                      if (!p.children) {
+                        p.children = [];
+                      }
+                      p.children.push(node);
+                      p.lazy = false;
+                      delete rootbin[props[i]];
+                    }
+                  }
+                  var x = Object.getOwnPropertyNames(rootbin);
+                  for (var i = 0; i < x.length; i++) {
+                    data.result.push(rootbin[x[i]]);
+                  }
+                  if (DEBUG) console.dir({log: "result", "data": data.result});
+
+                  var sorty = function (aaaa, bbbb) {
+
+                    if (DEBUG) {
+                      console.log("comparing aaaa : " + aaaa.position);
+                      console.log("comparing bbbb : " + bbbb.position);
+                    };
+
+                    if (aaaa.position > bbbb.position) {
+                      return 1;
+                    }
+                    else if (aaaa.position < bbbb.position) {
+                      return -1;
+                    }
+                    else {
+                      return 0;
+                    }
+                  };
+
+                  data.result.sort(sorty, false);
+
+
+                  if (DEBUG) console.dir({log: "result post sort", "data": data.result});
+
+
                 },
 
                 lazyLoad: function (event, data) {
@@ -369,7 +433,7 @@
                     } else {
                         if (plugin.settings.expand_path) {
                             /* if (DEBUG) */
-                            console.log("Auto-expandeing expand_path = " + plugin.settings.expand_path);
+                            console.log("Auto-expanding expand_path = " + plugin.settings.expand_path);
                             $(event.target).fancytree('getTree').loadKeyPath(plugin.settings.expand_path, function (x) {
                                 if (typeof(x.setExpanded) === "function") {
                                     x.setExpanded(true);
@@ -408,7 +472,6 @@
                   if (DEBUG) {
                     console.error("EVENT: loadChildren");
                   }
-                  ctx.node.sortChildren(null, true);
 
                   if (plugin.settings.selectMode === 3) {
                     // Fix the selection state of children of checked items
@@ -512,14 +575,6 @@
                     // Use in-memory semaphor?
                     // Use dom-attached semaphor  ala jQuery
                     // Use timestamp?
-
-
-
-
-
-
-
-
 
 
                     var hashcode = hashCode(countsUrl);
@@ -810,17 +865,27 @@
                 path = "*";
             }
 
-            var fieldList = [
+            var levelField = "level_i";
+            var ancestorField = "ancestor_id_path";
+            if (type === "terms") {
+              levelField = "level_tib.alpha_i";
+              ancestorField = "ancestor_id_tib.alpha_path";
+            }
+
+          if (DEBUG) console.error("Using levelField = " + levelField + " type = " + type);
+
+          var fieldList = [
                 "header",
                 "id",
                 "ancestor*",
                 "caption_eng",
-                "level_i"
+                "position*",
+                levelField
             ].join(",");
 
             var result =
                 termIndexRoot + "/select?" +
-                "df=ancestor_id_path" +
+                "df=" + ancestorField+
                 "&q=" + path +
                 "&wt=json" +
                 "&indent=true" +
@@ -830,22 +895,24 @@
                 "&indent=true" +
 
                 "&fq=tree:" + type +
-                "&fq=level_i:[" + lvla + "+TO+" + (lvlb + 1) + "]" +
-                "&fq={!tag=hoot}level_i:[" + lvla + "+TO+" + lvlb + "]" +
+                "&fq=" + levelField + ":[" + lvla + "+TO+" + (lvlb + 1) + "]" +
+                "&fq={!tag=hoot}" + levelField + ":[" + lvla + "+TO+" + lvlb + "]" +
 
                 "&facet.mincount=2" +
                 "&facet.limit=-1" +
-                "&sort=level_i+ASC" +
-                "&facet.sort=ancestor_id_path" +
-                "&facet.field={!ex=hoot}ancestor_id_path" +
+              "&sort=" + levelField + "+ASC" +
+                "&sort=position_i+asc" +
+               "&sort=header+asc" +
+
+                "&facet.sort=" + ancestorField +"+ASC" +
+                "&facet.field={!ex=hoot}" + ancestorField +
 
                 "&wt=json" +
                 "&json.wrf=?" +
-
                 "&rows=" + SOLR_ROW_LIMIT;
 
             if (DEBUG) {
-                console.log("buildQuery():SOLR QUERY=" + result)
+                console.log("buildQuery():SOLR QUERY=" + result);
             }
 
             return result;

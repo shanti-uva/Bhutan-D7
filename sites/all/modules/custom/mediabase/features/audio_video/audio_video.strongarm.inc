@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * audio_video.strongarm.inc
@@ -187,10 +188,13 @@ function audio_video_strongarm() {
           'weight' => '0',
         ),
         'path' => array(
-          'weight' => '11',
+          'weight' => '9',
         ),
         'flag' => array(
-          'weight' => '10',
+          'weight' => '6',
+        ),
+        'redirect' => array(
+          'weight' => '11',
         ),
       ),
       'display' => array(),
@@ -239,6 +243,9 @@ function audio_video_strongarm() {
         ),
         'flag' => array(
           'weight' => '10',
+        ),
+        'redirect' => array(
+          'weight' => '30',
         ),
       ),
       'display' => array(),

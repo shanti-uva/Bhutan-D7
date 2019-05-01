@@ -112,6 +112,15 @@
                      <a class="vis-kmaps-close"><span class="icon shanticon-close2"></span></a>
                      <?php print render($content['field_places_kmap']); ?></div>
              <?php endif; ?>
+
+             <?php if (!empty($content['field_terms_kmap'])): ?>
+                 <div class="vis-terms" title="Click to view Terms Kmaps">
+                     <a class="vis-kmaps-show-link"><span class="icon shanticon-terms show-link"></span> </a>
+                 </div>
+                 <div class="kmap-content vis-terms" style="display:none;">
+                     <a class="vis-kmaps-close"><span class="icon shanticon-close2"></span></a>
+                     <?php print render($content['field_terms_kmap']); ?></div>
+             <?php endif; ?>
          </div>
          <?php if (!$isprivate): ?>
              <div class="vis-infoshare share-link">

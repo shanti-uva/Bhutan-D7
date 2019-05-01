@@ -377,8 +377,15 @@
     attach: function (context, settings) {
 
       $('.popover-link', context).each(function () {
-        var content = $(this).next('div.popover').html();
-        var title = $(this).next('div.popover').attr('data-title');
+        // adding .parent() because needed to wrap term and popover icon in span.kmap-tag-group
+        // to prevent line break between term and popover icon
+        var content = $(this).parent().next('div.popover').html();
+        var title = $(this).parent().next('div.popover').attr('data-title');
+        // to account for other/older instances where there is no kmap-tag-group
+        if ($(this).parent().next('div.popover').length === 0 && $(this).next('div.popover').length > 0) {
+          content = $(this).next('div.popover').html();
+          title = $(this).next('div.popover').attr('data-title');
+        }
         $(this).popover({'title': title, 'content': content});
       });
       $('div.popover', context).remove(); // remove hidden popover content once they have all been initialized
@@ -528,6 +535,10 @@
         // Call the layout function.
         handler.wookmark(options);
       });
+      /* set active class for displaying loading spinner */
+      $('.shanti-thumbnail-link').click(function() {
+        $(this).parents('.shanti-thumbnail').addClass('active');
+      }); 
   }
   };
 
@@ -691,7 +702,7 @@
   Drupal.behaviors.shantiSarvakaMbTranscriptLanguageDropdownIcon = {
     attach: function (context, settings) {
       if (context == window.document) {
-        $('.transcript-options button.selectpicker span:first-child').replaceWith('<span class="fa fa-comments-o"></span>');
+        $('.transcript-options button.selectpicker span:first-child').replaceWith('<span class="icon shanticon-comments-o"></span>');
         //$('.transcript-options .filter-option').replaceWith('<span class="fa fa-comments-o"></span>');
       }
     }

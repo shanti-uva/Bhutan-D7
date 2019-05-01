@@ -69,8 +69,12 @@
 /* END theme colors */
 
 
-
-
+/* temp fix for sidebar menu of text reader */
+.popover-link .icon{
+    font-size: 0.8rem;
+    position: relative;
+    bottom: 0.04rem;
+}
 
 
 .carousel{
@@ -78,15 +82,13 @@
     border: 1px solid #ccc;
 }
 
-.page-home .carousel-title .shanticon-stack:before{
-  content: '\e637';
+.carousel-title .shanticon-stack:before{
+  content: '\e636' !important;
   position: relative;
   top: .4rem;
   color:#8c48a1;
   opacity:.8;
 }
-
-
 
 
 .nav-tabs.nav-justified>li{
@@ -101,26 +103,18 @@
 body:not(.front) article.main-col{
   padding: 1.7rem 1.5rem 0;
 }
-
 .node-type-book article.main-col{
   max-width: 1400px !important;
 }
-
-
-
 .page-mycontent article.main-col,
-.node-type-collection article.main-col,
-.node-type-subcollection article.main-col,
-.page-collections-all article.main-col{
+.page-collections article.main-col,
+.collection-page article.main-col{
   max-width: 1250px !important;
 }
-
 .node-type-collection article.main-col,
 .node-type-subcollection article.main-col{
-  max-width: 1150px !important;
+  max-width: 1600px !important;
 }
-
-
 .page-node-edit.no-sidebars .main-content article.main-col{
   max-width:1200px !important;
 }
@@ -249,11 +243,17 @@ body:not(.front) article.main-col{
   border-top: 3px solid #a066c0;
   box-shadow: 0 0 8px #ccc;
   position: relative;
+  color:#111;
 }
 
 .view-text-collections .views-row,
 .view-text-collections-by-users .views-row {
   height: 123px;
+}
+
+.view-text-collections .views-field-type{
+  text-transform:uppercase;
+      padding-bottom: .2rem !important;
 }
 
 .view-text-collections .views-field-type,
@@ -266,7 +266,9 @@ body:not(.front) article.main-col{
 .view-text-collections-by-users .views-field-php {
   padding-top: 3px;
 }
-
+.view-text-collections .views-field-body{
+  padding-bottom:.7rem;
+}
 .view-text-collections .views-field-body,
 .view-text-collections-by-users .views-field-body {
   clear: both;
@@ -274,7 +276,9 @@ body:not(.front) article.main-col{
 
 .view-text-collections .views-field-field-og-parent-collection-ref {
   clear: both;
-  margin-top: -5px;
+  /*margin-top: -5px;*/
+  position: absolute;
+    bottom: .2rem;
 }
 
 .views-row .views-field.empty::before{
@@ -288,7 +292,7 @@ body:not(.front) article.main-col{
   line-height: 1.12em;
   margin: 0;
   width: 100%;
-  padding: .2rem 0 0.1rem .5rem;
+  padding: .2rem 0 0.1rem 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -311,7 +315,7 @@ body:not(.front) article.main-col{
   right: 0;
   top: 0;
   width: 3.3rem;
-  height: 3.3rem;
+  height: 3.1rem;
   background: #8856a3;
       text-align: center;
 }
@@ -325,6 +329,11 @@ body:not(.front) article.main-col{
   position: relative;
     top: .45rem;
     left: .1rem;
+}
+
+.views-field-title h3 .icon.shanticon-stack::before{
+  content:'\e633';
+  font-family:'shanticon';
 }
 
 .views-field-field-general-featured-image img {
@@ -373,15 +382,14 @@ body:not(.front) article.main-col{
 
 .views-field.views-field-title{
   border-bottom: 1px solid #ccc;
-  padding: 0 .5rem .25rem;
-  margin: 0 3.2rem 0 .3rem;
-    margin: 0 2rem 0 0;
+  padding:0 0rem .25rem .9rem;
+  margin:0 3.5rem 0 0;
 }
 
 .views-field.views-field-title-1 a::before,
 .views-field-field-og-collection-ref a::before,
 .views-field-field-og-parent-collection-ref a::before{
-  content: "\e634";
+  content: "\e633";
   font-family: 'shanticon';
   speak: none;
   font-style: normal;
@@ -681,7 +689,7 @@ body:not(.front) article.main-col{
 
 /* temp fix for features */
 .page-collections .views-field{
-  padding: 0 0.5rem 0.5rem;
+  padding: 0 0.5rem 0.5rem 1rem;
 }
 
 .page-collections .views-field.views-field-title{
@@ -714,6 +722,38 @@ body:not(.front) article.main-col{
       margin-top: 1.5rem;
 }
 
+/*
+.texts.page-node-add.no-sidebars .tab-pane.main-col,
+.texts.page-node-edit.no-sidebars .tab-pane.main-col,
+.texts.page-node-group.no-sidebars .tab-panel.main-col {
+  max-width: 95% !important;
+}
+*/
+
+.form-item.form-type-checkbox.form-item-delchild label div {
+  margin-right: 6px;
+}
 
 
+
+/* For now, this corrects a bug in the main menu on this Texts site */
+
+.menu-main .levelHolderClass.rtl .backItemClass .fa.fa-angle-left {
+  position: relative;
+  top: -0.45rem;
+}
+.menu-main .levelHolderClass.rtl .fa.fa-angle-right{
+  position: relative;
+  top: 1.2rem;
+}
+
+
+
+
+#tsp-diabled {
+  margin: 1rem 3rem;
+  color: #bd4444;
+  font-style: italic;
+  text-transform: none;
+}
 

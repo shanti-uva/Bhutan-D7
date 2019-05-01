@@ -18,30 +18,30 @@
 .nav-tabs.nav-justified>li.active>a:hover,
 .shanti-thumbnail-image.shanti-field-visuals .icon {
   /* background-color: #c4be28 !important; */
-  background-color: #b5953b !important;
+  background-color: #ad8a28 !important;
 }
 /* darker shades below are used to better define details */
 .bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a .check-mark,
 .bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a:active .check-mark,
 .main-content .selectpicker .caret::before,
 .view-section .nav-tabs>li.active>a, 
-.view-section .nav-tabs>li.active>a:hover, 
-.view-section .nav-tabs>li.active>a:active,
+/*.view-section .nav-tabs>li.active>a:hover, 
+.view-section .nav-tabs>li.active>a:active,*/ 
 .view-section .fancytree-container .glyphicon,
 .view-section .fancytree-container .fancytree-node:hover > .glyphicon,
 .view-section .fancytree-container .fancytree-node:active > .glyphicon,
 .view-section .fancytree-node.fancytree-active > .glyphicon,
 .view-section .fancytree-node.fancytree-selected > .glyphicon {
   /* color: rgb(196,190,40) !important; */
-  color: #b5953b !important;
+  color: #ad8a28 !important;
 }
 
 .nav-tabs.nav-justified>li.active {
-  border-top-color: #b5953b !important;
+  border-top-color: #ad8a28 !important;
 }
 /*
 .ui-resizable-handle.ui-resizable-w,
-.ui-resizable-handle.ui-resizable-w:hover { border-color: #b5953b transparent transparent transparent; }
+.ui-resizable-handle.ui-resizable-w:hover { border-color: #ad8a28 transparent transparent transparent; }
 .ui-resizable-handle.ui-resizable-w:active { border-color: transparent; ---- reset --- }
 */
 @media screen and (min-width: 500px) {
@@ -52,7 +52,7 @@
 
 @media screen and (min-width: 768px) {
   .nav-tabs.nav-justified>li.active::before {
-    color: #b5953b !important;
+    color: #ad8a28 !important;
   }
 }
 
@@ -64,7 +64,12 @@
  *  END Sarvaka subtheme colors 
  */
 
-
+/*
+.navbar-default .navbar-nav>li a,
+.results-node-kmaps-related .dl-horizontal dt{
+  font-weight:400;
+}
+*/
 
 /* adjust list item in sidebar collections page */
 .sidebar-second.sidebar-offcanvas .view-collection-members ul li a{
@@ -127,7 +132,8 @@
   padding-top: 10px;
 }
 
-.view-all-image-gallery .view-header, .view-collections .view-header {
+.view-all-image-gallery .view-header, 
+.view-collections .view-header {
   float: left;
   margin-top: 1rem;
 }
@@ -161,8 +167,10 @@
       display:none;
 }
 
-.view-collections .view-header, .view-collections .view-filters, .view-collections .view-filters + .pagerer {
-  margin-top: -30px;
+.view-collections .view-header, 
+.view-collections .view-filters, 
+.view-collections .view-filters + .pagerer {
+  margin-top: -32px;
 }
 
 .view-collections .view-filters {
@@ -179,12 +187,14 @@
   opacity: .9;
 }
 
-.images.front table.pagerer{
+
+
+.view-all-image-gallery table.pagerer:last-of-type{
+  margin-top:3rem;
+}
+.images .view-all-image-gallery table.pagerer:first-of-type{
   margin-top:1rem;
 }
-
-
-
 
 
 /**
@@ -444,7 +454,7 @@
   left: -50px;
   width: 50px;
   height: .3rem;
-  background-color: #b5953b;
+  background-color: #ad8a28;
   animation: zloading 1.5s linear infinite;
 }
 
@@ -467,49 +477,6 @@
 
 
 
-
-
-/*-------------------------*/
-/*======== max-width ======*/
-/*-------------------------*/
-@media screen and (max-width: 992px) {
-}
-
-@media screen and (max-width: 600px) {
-}
-
-@media screen and (max-width: 991px) {}
-
-
-/*--------------------------*/
-/*======== min-width =======*/
-/*--------------------------*/
-@media screen and (min-width: 768px) {}
-
-@media screen and (min-width: 992px) {}
-
-@media screen and (min-width: 1150px) {}
-
-
-
-
-
-
-
-
-
-/* testing */
-
-/*
-article.main-col{
-  max-width: 100% !important;
-  padding-top: .5rem;
-}
-
-.front article.main-col{
-  max-width: 1600 !important;
-}
-*/
 
 
 @media screen and (min-width: 1170px) {
@@ -560,27 +527,23 @@ article.main-col{
 @media (min-width:1900px) {
 
     .collection-page .collections-content.col-md-9 {
-      width:83%;
+      width:78%;
     }
 }
 
 @media (min-width:2100px) {
 
     .collection-page .collections-content.col-md-9 {
-      width:84%;
+      width:80%;
     }
 }
 
 @media (min-width:2200px) {
 
     .collection-page .collections-content.col-md-9 {
-      width:85%;
+      /*width:85%;*/
     }
 }
-
-
-
-
 
 
 
@@ -591,8 +554,6 @@ article.main-col{
   padding-left:0;
 
 }
-
-
 
 
 
@@ -618,37 +579,9 @@ article.main-col{
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-.collection-page article.main-col,
-.front.images article.main-col{
-  padding-right: 1.5rem;
-  padding-left: 1.5rem;
+.shanti-thumbnail-info .body-wrap .shanti-field-title a{
+  color:#505050;
 }
-*/
-
-
-
-
-
-
 
 
 
@@ -767,7 +700,7 @@ article.main-col{
 --------- Shanti Image View Styles ------------ 
 .node-shanti-image.full div#sd-div { 
     height: 650px; 
-    border: 2px inset #b5953b; 
+    border: 2px inset #ad8a28; 
     padding: 4px; 
 }
 

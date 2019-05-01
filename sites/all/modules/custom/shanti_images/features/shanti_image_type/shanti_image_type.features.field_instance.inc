@@ -939,13 +939,13 @@ function shanti_image_type_field_default_field_instances() {
         'module' => 'shanti_image_type',
         'settings' => array(),
         'type' => 'shanti_image_notes_formatter',
-        'weight' => 27,
+        'weight' => 28,
       ),
       'grid_details' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 11,
+        'weight' => 36,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -1020,13 +1020,13 @@ function shanti_image_type_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 32,
       ),
       'grid_details' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 13,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -1057,7 +1057,7 @@ function shanti_image_type_field_default_field_instances() {
       'module' => 'number',
       'settings' => array(),
       'type' => 'number',
-      'weight' => 27,
+      'weight' => 28,
     ),
   );
 
@@ -1079,13 +1079,13 @@ function shanti_image_type_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 48,
       ),
       'grid_details' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 12,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -1115,7 +1115,7 @@ function shanti_image_type_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 18,
+      'weight' => 19,
     ),
   );
 
@@ -1138,13 +1138,13 @@ function shanti_image_type_field_default_field_instances() {
         'module' => 'shanti_image_type',
         'settings' => array(),
         'type' => 'shanti_image_notes_formatter',
-        'weight' => 10,
+        'weight' => 11,
       ),
       'grid_details' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 27,
+        'weight' => 51,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -1192,7 +1192,7 @@ function shanti_image_type_field_default_field_instances() {
         'rows' => 5,
       ),
       'type' => 'text_textarea',
-      'weight' => 34,
+      'weight' => 38,
     ),
   );
 
@@ -1229,13 +1229,13 @@ function shanti_image_type_field_default_field_instances() {
           'show_remaining_days' => FALSE,
         ),
         'type' => 'date_default',
-        'weight' => 23,
+        'weight' => 24,
       ),
       'grid_details' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 28,
+        'weight' => 52,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -1316,13 +1316,13 @@ function shanti_image_type_field_default_field_instances() {
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
-        'weight' => 22,
+        'weight' => 23,
       ),
       'grid_details' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 26,
+        'weight' => 50,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -1394,13 +1394,13 @@ function shanti_image_type_field_default_field_instances() {
         'module' => 'shanti_image_type',
         'settings' => array(),
         'type' => 'shanti_image_notes_formatter',
-        'weight' => 25,
+        'weight' => 26,
       ),
       'grid_details' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 25,
+        'weight' => 49,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -1471,13 +1471,13 @@ function shanti_image_type_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 47,
       ),
       'grid_details' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 11,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -1538,13 +1538,13 @@ function shanti_image_type_field_default_field_instances() {
           'view_mode' => 'teaser',
         ),
         'type' => 'entityreference_entity_view',
-        'weight' => 9,
+        'weight' => 10,
       ),
       'grid_details' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 19,
+        'weight' => 43,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -1616,7 +1616,7 @@ function shanti_image_type_field_default_field_instances() {
         ),
       ),
       'type' => 'inline_entity_form',
-      'weight' => 32,
+      'weight' => 36,
     ),
   );
 
@@ -1638,13 +1638,13 @@ function shanti_image_type_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 46,
       ),
       'grid_details' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 10,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -1674,7 +1674,7 @@ function shanti_image_type_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 28,
+      'weight' => 29,
     ),
   );
 
@@ -1701,13 +1701,13 @@ function shanti_image_type_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 45,
       ),
       'grid_details' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 9,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -1738,7 +1738,7 @@ function shanti_image_type_field_default_field_instances() {
       'module' => 'number',
       'settings' => array(),
       'type' => 'number',
-      'weight' => 21,
+      'weight' => 22,
     ),
   );
 
@@ -1760,13 +1760,13 @@ function shanti_image_type_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 44,
       ),
       'grid_details' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 8,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -1796,7 +1796,7 @@ function shanti_image_type_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 33,
+      'weight' => 34,
     ),
   );
 
@@ -1836,7 +1836,7 @@ Please note the uploaded image will be converted and saved in a more compact for
         'label' => 'hidden',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 9,
+        'weight' => 34,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -1930,7 +1930,7 @@ Please note the uploaded image will be converted and saved in a more compact for
           'view_mode' => 'teaser',
         ),
         'type' => 'entityreference_entity_view',
-        'weight' => 8,
+        'weight' => 9,
       ),
       'grid_details' => array(
         'label' => 'hidden',
@@ -1996,7 +1996,7 @@ Please note the uploaded image will be converted and saved in a more compact for
       'settings' => array(
         'fields' => array(),
         'type_settings' => array(
-          'allow_clone' => 1,
+          'allow_clone' => 0,
           'allow_existing' => 0,
           'allow_new' => 1,
           'delete_references' => 1,
@@ -2030,13 +2030,13 @@ Please note the uploaded image will be converted and saved in a more compact for
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
-        'weight' => 16,
+        'weight' => 17,
       ),
       'grid_details' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 23,
+        'weight' => 47,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -2085,7 +2085,7 @@ Please note the uploaded image will be converted and saved in a more compact for
         'size' => 80,
       ),
       'type' => 'text_textfield',
-      'weight' => 14,
+      'weight' => 15,
     ),
   );
 
@@ -2112,13 +2112,13 @@ Please note the uploaded image will be converted and saved in a more compact for
         'module' => 'list',
         'settings' => array(),
         'type' => 'list_default',
-        'weight' => 14,
+        'weight' => 15,
       ),
       'grid_details' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 24,
+        'weight' => 48,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -2165,7 +2165,7 @@ Please note the uploaded image will be converted and saved in a more compact for
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_select',
-      'weight' => 12,
+      'weight' => 13,
     ),
   );
 
@@ -2196,7 +2196,7 @@ Please note the uploaded image will be converted and saved in a more compact for
           'view_mode' => 'teaser',
         ),
         'type' => 'entityreference_entity_view',
-        'weight' => 7,
+        'weight' => 8,
       ),
       'grid_details' => array(
         'label' => 'hidden',
@@ -2298,7 +2298,7 @@ Please note the uploaded image will be converted and saved in a more compact for
     'bundle' => 'shanti_image',
     'default_value' => array(
       0 => array(
-        'value' => 0,
+        'value' => 1,
       ),
     ),
     'deleted' => 0,
@@ -2316,13 +2316,13 @@ Please note the uploaded image will be converted and saved in a more compact for
         'module' => 'list',
         'settings' => array(),
         'type' => 'list_default',
-        'weight' => 11,
+        'weight' => 12,
       ),
       'grid_details' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 30,
+        'weight' => 53,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -2393,13 +2393,13 @@ Please note the uploaded image will be converted and saved in a more compact for
         'module' => 'shanti_image_type',
         'settings' => array(),
         'type' => 'shanti_image_notes_formatter',
-        'weight' => 18,
+        'weight' => 19,
       ),
       'grid_details' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 33,
+        'weight' => 56,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -2448,7 +2448,7 @@ Please note the uploaded image will be converted and saved in a more compact for
         'rows' => 5,
       ),
       'type' => 'text_textarea',
-      'weight' => 16,
+      'weight' => 17,
     ),
   );
 
@@ -2471,13 +2471,13 @@ Please note the uploaded image will be converted and saved in a more compact for
         'module' => 'shanti_image_type',
         'settings' => array(),
         'type' => 'shanti_image_notes_formatter',
-        'weight' => 17,
+        'weight' => 18,
       ),
       'grid_details' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 35,
+        'weight' => 58,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -2526,7 +2526,7 @@ Please note the uploaded image will be converted and saved in a more compact for
         'rows' => 5,
       ),
       'type' => 'text_textarea',
-      'weight' => 15,
+      'weight' => 16,
     ),
   );
 
@@ -2549,13 +2549,13 @@ Please note the uploaded image will be converted and saved in a more compact for
         'module' => 'shanti_image_type',
         'settings' => array(),
         'type' => 'shanti_image_notes_formatter',
-        'weight' => 20,
+        'weight' => 21,
       ),
       'grid_details' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 34,
+        'weight' => 57,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -2630,13 +2630,13 @@ Please note the uploaded image will be converted and saved in a more compact for
         'module' => 'list',
         'settings' => array(),
         'type' => 'list_default',
-        'weight' => 15,
+        'weight' => 16,
       ),
       'grid_details' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 32,
+        'weight' => 55,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -2683,7 +2683,7 @@ Please note the uploaded image will be converted and saved in a more compact for
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_select',
-      'weight' => 11,
+      'weight' => 12,
     ),
   );
 
@@ -2710,13 +2710,13 @@ Please note the uploaded image will be converted and saved in a more compact for
         'module' => 'list',
         'settings' => array(),
         'type' => 'list_default',
-        'weight' => 12,
+        'weight' => 13,
       ),
       'grid_details' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 31,
+        'weight' => 54,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -2796,7 +2796,7 @@ Please note the uploaded image will be converted and saved in a more compact for
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 22,
+        'weight' => 46,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -2870,13 +2870,13 @@ Please note the uploaded image will be converted and saved in a more compact for
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 43,
       ),
       'grid_details' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 28,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -2929,13 +2929,13 @@ Please note the uploaded image will be converted and saved in a more compact for
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 42,
       ),
       'grid_details' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 6,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -2990,13 +2990,13 @@ Please note the uploaded image will be converted and saved in a more compact for
         'module' => 'shanti_kmaps_fields',
         'settings' => array(),
         'type' => 'kmap_popover_formatter',
-        'weight' => 6,
+        'weight' => 7,
       ),
       'grid_details' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 14,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -3028,7 +3028,71 @@ Please note the uploaded image will be converted and saved in a more compact for
       'module' => 'shanti_kmaps_fields',
       'settings' => array(),
       'type' => 'kmap_typeahead_picker',
-      'weight' => 31,
+      'weight' => 32,
+    ),
+  );
+
+  // Exported field_instance: 'node-shanti_image-field_kmap_terms'.
+  $field_instances['node-shanti_image-field_kmap_terms'] = array(
+    'bundle' => 'shanti_image',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'shanti_kmaps_fields',
+        'settings' => array(
+          'target' => '_blank',
+        ),
+        'type' => 'kmap_default_formatter',
+        'weight' => 52,
+      ),
+      'full' => array(
+        'label' => 'hidden',
+        'module' => 'shanti_kmaps_fields',
+        'settings' => array(),
+        'type' => 'kmap_popover_formatter',
+        'weight' => 6,
+      ),
+      'grid_details' => array(
+        'label' => 'hidden',
+        'module' => 'shanti_kmaps_fields',
+        'settings' => array(),
+        'type' => 'kmap_popover_formatter',
+        'weight' => 5,
+      ),
+      'node_teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_kmap_terms',
+    'label' => 'Terms',
+    'required' => 0,
+    'settings' => array(
+      'kmap_term_limit' => 100,
+      'search_filters' => array(),
+      'search_root_kmap_path' => '',
+      'search_root_kmapid' => '',
+      'search_view' => '',
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 0,
+      'module' => 'shanti_kmaps_fields',
+      'settings' => array(),
+      'type' => 'kmap_typeahead_term_picker',
+      'weight' => 35,
     ),
   );
 
@@ -3050,13 +3114,13 @@ Please note the uploaded image will be converted and saved in a more compact for
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 41,
       ),
       'grid_details' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 21,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -3086,7 +3150,7 @@ Please note the uploaded image will be converted and saved in a more compact for
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 25,
+      'weight' => 26,
     ),
   );
 
@@ -3108,13 +3172,13 @@ Please note the uploaded image will be converted and saved in a more compact for
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 40,
       ),
       'grid_details' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 17,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -3144,7 +3208,7 @@ Please note the uploaded image will be converted and saved in a more compact for
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 23,
+      'weight' => 24,
     ),
   );
 
@@ -3179,13 +3243,13 @@ Please note the uploaded image will be converted and saved in a more compact for
           'trim_length' => 120,
         ),
         'type' => 'url_default',
-        'weight' => 24,
+        'weight' => 25,
       ),
       'grid_details' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 20,
+        'weight' => 44,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -3260,13 +3324,13 @@ Please note the uploaded image will be converted and saved in a more compact for
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 39,
       ),
       'grid_details' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 18,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -3296,7 +3360,7 @@ Please note the uploaded image will be converted and saved in a more compact for
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 20,
+      'weight' => 21,
     ),
   );
 
@@ -3318,13 +3382,13 @@ Please note the uploaded image will be converted and saved in a more compact for
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 38,
       ),
       'grid_details' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 19,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -3354,7 +3418,7 @@ Please note the uploaded image will be converted and saved in a more compact for
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 26,
+      'weight' => 27,
     ),
   );
 
@@ -3376,13 +3440,13 @@ Please note the uploaded image will be converted and saved in a more compact for
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 30,
       ),
       'grid_details' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 7,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -3412,7 +3476,7 @@ Please note the uploaded image will be converted and saved in a more compact for
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 19,
+      'weight' => 20,
     ),
   );
 
@@ -3434,13 +3498,13 @@ Please note the uploaded image will be converted and saved in a more compact for
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 37,
       ),
       'grid_details' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 20,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -3467,7 +3531,7 @@ Please note the uploaded image will be converted and saved in a more compact for
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_buttons',
-      'weight' => 24,
+      'weight' => 25,
     ),
   );
 
@@ -3598,13 +3662,13 @@ Please note the uploaded image will be converted and saved in a more compact for
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 36,
       ),
       'grid_details' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 22,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -3656,13 +3720,13 @@ Please note the uploaded image will be converted and saved in a more compact for
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 30,
+        'weight' => 52,
       ),
       'grid_details' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 16,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -3715,13 +3779,13 @@ Please note the uploaded image will be converted and saved in a more compact for
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
-        'weight' => 19,
+        'weight' => 20,
       ),
       'grid_details' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 15,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -3751,7 +3815,7 @@ Please note the uploaded image will be converted and saved in a more compact for
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 33,
+      'weight' => 37,
     ),
   );
 
@@ -3774,13 +3838,13 @@ Please note the uploaded image will be converted and saved in a more compact for
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
-        'weight' => 13,
+        'weight' => 14,
       ),
       'grid_details' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 21,
+        'weight' => 45,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -3830,14 +3894,14 @@ Please note the uploaded image will be converted and saved in a more compact for
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 13,
+      'weight' => 14,
     ),
   );
 
   // Exported field_instance: 'node-shanti_image-field_places'.
   $field_instances['node-shanti_image-field_places'] = array(
     'bundle' => 'shanti_image',
-    'default_value' => array(),
+    'default_value' => NULL,
     'deleted' => 0,
     'description' => '',
     'display' => array(
@@ -3902,8 +3966,8 @@ Please note the uploaded image will be converted and saved in a more compact for
     'settings' => array(
       'kmap_term_limit' => 100,
       'search_filters' => array(
-        'associated_subject' => 0,
-        'feature_type' => 0,
+        'associated_subject' => 'associated_subject',
+        'feature_type' => 'feature_type',
       ),
       'search_root_kmap_path' => '',
       'search_root_kmapid' => '',
@@ -3915,7 +3979,7 @@ Please note the uploaded image will be converted and saved in a more compact for
       'module' => 'shanti_kmaps_fields',
       'settings' => array(),
       'type' => 'kmap_typeahead_picker',
-      'weight' => 30,
+      'weight' => 34,
     ),
   );
 
@@ -3937,13 +4001,13 @@ Please note the uploaded image will be converted and saved in a more compact for
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 35,
       ),
       'grid_details' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 23,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -3973,7 +4037,7 @@ Please note the uploaded image will be converted and saved in a more compact for
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 34,
+      'weight' => 35,
     ),
   );
 
@@ -3995,13 +4059,13 @@ Please note the uploaded image will be converted and saved in a more compact for
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 34,
       ),
       'grid_details' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 24,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -4054,13 +4118,13 @@ Please note the uploaded image will be converted and saved in a more compact for
         'module' => 'shanti_image_type',
         'settings' => array(),
         'type' => 'shanti_image_notes_formatter',
-        'weight' => 26,
+        'weight' => 27,
       ),
       'grid_details' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 10,
+        'weight' => 35,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -4108,7 +4172,7 @@ Please note the uploaded image will be converted and saved in a more compact for
         'rows' => 5,
       ),
       'type' => 'text_textarea',
-      'weight' => 99,
+      'weight' => 100,
     ),
   );
 
@@ -4130,13 +4194,13 @@ Please note the uploaded image will be converted and saved in a more compact for
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 33,
       ),
       'grid_details' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 25,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -4166,7 +4230,7 @@ Please note the uploaded image will be converted and saved in a more compact for
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 22,
+      'weight' => 23,
     ),
   );
 
@@ -4188,13 +4252,13 @@ Please note the uploaded image will be converted and saved in a more compact for
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 29,
       ),
       'grid_details' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 26,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -4246,13 +4310,13 @@ Please note the uploaded image will be converted and saved in a more compact for
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 31,
       ),
       'grid_details' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 27,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -4282,7 +4346,7 @@ Please note the uploaded image will be converted and saved in a more compact for
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 32,
+      'weight' => 33,
     ),
   );
 
@@ -4366,7 +4430,7 @@ Please note the uploaded image will be converted and saved in a more compact for
       'module' => 'shanti_kmaps_fields',
       'settings' => array(),
       'type' => 'kmap_typeahead_picker',
-      'weight' => 29,
+      'weight' => 33,
     ),
   );
 
@@ -4389,13 +4453,13 @@ Please note the uploaded image will be converted and saved in a more compact for
         'module' => 'shanti_image_type',
         'settings' => array(),
         'type' => 'shanti_image_notes_formatter',
-        'weight' => 21,
+        'weight' => 22,
       ),
       'grid_details' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 13,
+        'weight' => 37,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -4443,7 +4507,7 @@ Please note the uploaded image will be converted and saved in a more compact for
         'rows' => 5,
       ),
       'type' => 'text_textarea',
-      'weight' => 17,
+      'weight' => 18,
     ),
   );
 
@@ -4476,7 +4540,7 @@ Please note the uploaded image will be converted and saved in a more compact for
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 14,
+        'weight' => 38,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -4610,6 +4674,7 @@ Please note the uploaded image will be converted and saved in a more compact for
   t('Subjects');
   t('Summary');
   t('Technical Notes');
+  t('Terms');
   t('The message that appears under “Copyright © #### by __________.”');
   t('Type');
   t('Upload the image for this record but <em>only upload images to which you have the proper rights</em>! <br/>

@@ -1,0 +1,16 @@
+diff --git a/docroot/sites/all/modules/contrib/biblio/includes/biblio.import.export.inc b/docroot/sites/all/modules/contrib/biblio/includes/biblio.import.export.inc
+index f50ea7ffa..aff5193d5 100644
+--- a/docroot/sites/all/modules/contrib/biblio/includes/biblio.import.export.inc
++++ b/docroot/sites/all/modules/contrib/biblio/includes/biblio.import.export.inc
+@@ -670,9 +670,9 @@ function biblio_save_node_validate($node) {
+   if (empty($schema)) {
+     $schema['biblio'] = drupal_get_schema('biblio');
+   }
+-  if (isset($node->title) && strlen($node->title) > 255) {
++  if (isset($node->title) && strlen($node->title) > 8000) {
+     $error['title'] = $node->title;
+-    $node->title = substr($node->title, 0, 255);
++    $node->title = substr($node->title, 0, 8000);
+   }
+   if (isset($node->biblio_keywords) && is_array($node->biblio_keywords)) {
+     foreach ($node->biblio_keywords as $key => $word) {

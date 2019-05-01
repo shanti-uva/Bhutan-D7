@@ -10,7 +10,7 @@ $edit_widget = shanti_sarvaka_texts_get_edit_widget($variables['nid'],$coll_id);
         <?php print views_embed_view('single_text_body','panel_pane_default',$bid); ?>
     </div>
     <div id="shanti-texts-sidebar" role="tabpanel" class="col-xs-12 col-md-4">
-        <button class="fullview fa fa-expand" href="#"></button>
+        <button class="fullview icon shanticon-expand" href="#"></button>
         <ul id="shanti-texts-sidebar-tabs" class="nav nav-tabs nav-justified" role="tablist">
             <li class="first" role="presentation">
                 <a aria-expanded="true" data-toggle="tab" href="#shanti-texts-toc" role="tab">Contents</a>

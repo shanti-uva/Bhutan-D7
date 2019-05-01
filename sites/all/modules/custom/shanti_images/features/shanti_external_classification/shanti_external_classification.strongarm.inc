@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * shanti_external_classification.strongarm.inc
@@ -62,6 +63,13 @@ function shanti_external_classification_strongarm() {
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'diff_enable_revisions_page_node_external_classification';
+  $strongarm->value = 1;
+  $export['diff_enable_revisions_page_node_external_classification'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'diff_enable_revisions_page_node_external_classification_scheme';
   $strongarm->value = 1;
   $export['diff_enable_revisions_page_node_external_classification_scheme'] = $strongarm;
@@ -69,9 +77,23 @@ function shanti_external_classification_strongarm() {
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'diff_show_preview_changes_node_external_classification';
+  $strongarm->value = 1;
+  $export['diff_show_preview_changes_node_external_classification'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'diff_show_preview_changes_node_external_classification_scheme';
   $strongarm->value = 1;
   $export['diff_show_preview_changes_node_external_classification_scheme'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'diff_view_mode_preview_node_external_classification';
+  $strongarm->value = 'full';
+  $export['diff_view_mode_preview_node_external_classification'] = $strongarm;
 
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */

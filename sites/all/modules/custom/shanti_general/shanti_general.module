@@ -51,6 +51,9 @@ function shanti_general_is_public($node) {
     if (is_numeric($node)) { $node = node_load($node); }
     if ($node) {
         $ew = entity_metadata_wrapper('node', $node);
+        if ($node->type == 'shivanode' && $ew->shivanode_access->value() != 4) {
+            return FALSE;
+        }
         // For Regular conten nodes
         if (isset($ew->group_content_access)) {
             $gca = $ew->group_content_access->value();

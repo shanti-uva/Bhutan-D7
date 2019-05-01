@@ -793,11 +793,16 @@ function shanti_images_get_license_title($license_url) {
          // If there are new or updated images, then add these to the settings (see _shanti_images_process_image_files
          // which is called from both hook_node_insert and _update so they can be pushed to the IIIF server
          // through AJAX call See shanti_images.js Drupal.behaviors.shanti_images_add_images
+         if (variable_get('shanti_images_debug', FALSE)) {
+             watchdog('shanti image', "Session: " . json_encode($_SESSION));
+         }
          $images_to_add = (!empty($_SESSION['image_files_to_add'])) ? $_SESSION['image_files_to_add'] : FALSE;
          if ($images_to_add) {
              $settings['shanti_images']['addimages'] = $images_to_add;
              $_SESSION['image_files_to_add'] = FALSE;
          }
+
+
           drupal_add_js($settings, 'setting');
 
          // Agent name
@@ -1032,9 +1037,15 @@ function shanti_images_image_download($imgnm, $width) {
   */
  function shanti_images_node_insert($node) {
     //module_load_include('inc', 'shanti_images', 'includes/shanti_images');
+
     if ($node->type == 'shanti_image') {
        $files_to_add = _shanti_images_process_image_files($node);
-       $_SESSION['image_files_to_add'] = $files_to_add;
+       if (!empty($files_to_add)) {
+           if (variable_get('shanti_images_debug', FALSE)) {
+               watchdog('shanti image', "Files to add (insert): " . json_encode($files_to_add));
+           }
+           $_SESSION['image_files_to_add'] = $files_to_add;
+       }
     } elseif ($node->type == 'image_agent') {
         _shanti_image_process_dates($node);
     }
@@ -1047,7 +1058,12 @@ function shanti_images_image_download($imgnm, $width) {
      //module_load_include('inc', 'shanti_images', 'includes/shanti_images');
      if ($node->type == 'shanti_image') {
         $files_to_add = _shanti_images_process_image_files($node);
-        $_SESSION['image_files_to_add'] = $files_to_add;
+        if (!empty($files_to_add)) {
+            if (variable_get('shanti_images_debug', FALSE)) {
+                watchdog('shanti image', "Files to add (update): " . json_encode($files_to_add));
+            }
+            $_SESSION['image_files_to_add'] = $files_to_add;
+        }
      } elseif ($node->type == 'image_agent') {
          _shanti_image_process_dates($node);
      }
@@ -1238,7 +1254,7 @@ function shanti_images_search_api_solr_search_results_alter(array &$results, Sea
  *   Goes through entity references assigned in the Solr index field mapping on the Shanti Image content type page
  *   Turns NIDs into text strings for agents and descriptions
  **/
-function shanti_images_kmaps_fields_solr_doc_alter(&$solrdoc) {
+    function shanti_images_kmaps_fields_solr_doc_alter(&$solrdoc) {
    foreach ($solrdoc as $m => &$sdoc) {
        // Do Agents
        // Assign the Agent node references to the creator in the set up page /admin/structure/types/manage/shanti_image
@@ -1307,6 +1323,13 @@ function shanti_images_kmaps_fields_solr_doc_alter(&$solrdoc) {
            watchdog('shanti_images', "Cannot get shanti image record for node {$sdoc['id']}");
        }
    }
+    // Remove any solrdocs that have -none/ in their thumb_url
+    // TODO: Add to cron task to try and reindex ???
+    foreach ($solrdoc as $m => &$sdoc) {
+        if (strstr($sdoc['url_thumb'], '-none/')) {
+            unset($solrdoc[$m]);
+        }
+    }
 }
 
 

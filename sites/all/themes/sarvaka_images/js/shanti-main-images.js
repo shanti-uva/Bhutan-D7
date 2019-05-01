@@ -5,7 +5,7 @@
           if (context == document) {
 
             // Call image page init if it is an image page
-            if ($('body').hasClass('node-type-shanti-image') && !$('body').hasClass('.page-node-edit')) {
+            if ($('body').hasClass('node-type-shanti-image') && !$('body').hasClass('page-node-edit')) {
               shanti_images_pages_init(settings);
             }
 
@@ -322,18 +322,16 @@
             $('.preloading-horizontal,.image-preloading-text').css('display','block');
           });
 
-
           // wraps flexslideshow image w/anchor element, and displays icon for expand in center of image
           $('#fsslider .flex-active-slide img').parent().wrap('<a href="#" class="pswp-link" title="Fullscreen Image Viewer"></a>');
           $('#fsslider .flex-active-slide  .pswp-link').hover(function () {
-              $(this).prepend('<span class="fa fa-arrows-alt"></span>');
-              $('#fsslider .fa-arrows-alt').fadeIn(5000);
+              $(this).prepend('<span class="icon shanticon-arrows-alt"></span>');
+              $('#fsslider .shanticon-arrows-alt').fadeIn(5000);
             },
             function () {
-              $('#fsslider .fa-arrows-alt').remove();
+              $('#fsslider .shanticon-arrows-alt').remove();
             }
           );
-
    }
 
    function shanti_images_page_load_carousel(settings) {
@@ -444,6 +442,11 @@
           });
       }
       $('.kmap-items').fadeIn();
+
+      /* set active class for displaying loading spinner */
+      $('.ppd-details-inner .view-btn').click(function() {
+        $(this).addClass('spinner-loader');
+      });
    }
    
    /** 
@@ -486,7 +489,7 @@
 
         // Initializes and opens PhotoSwipe
         var gallery = new PhotoSwipe( pswpElement, PhotoSwipeUI_Default, items, options);
-        gallery.listen('close', function() { $('#pswpdiv').hide(); });
+       // gallery.listen('close', function() { $('#pswpdiv').hide(); }); # This line breaks firefox.
         gallery.init();
     }
     

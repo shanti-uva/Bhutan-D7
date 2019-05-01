@@ -688,6 +688,11 @@
           }
           try {
             this.state.filters = options.defaultFilterState;
+            if (options.loadedFromURL) {
+              // if loaded from URL then assume the state should be considered "not changed".
+              console.log("state loaded from URL: assumed not changed");
+              this.state.lastStateJSON = JSON.stringify(options.defaultFilterState);
+            }
           } catch (err) {
             console.error("Error restoring filterState. (" + err + "). Ignoring. ");
             console.log("options.defaultFilterState: " + JSON.stringify(options.defaultFilterState));
@@ -763,6 +768,10 @@
             console.dir(error);
             console.dir({ state: self.state });
             console.error("rejecting promise...");
+
+            console.dir(deferred);
+            console.log("deferred state: " + deferred.state());
+
             deferred.reject(self);
           }
 
@@ -779,6 +788,7 @@
             // TODO: ys2n: if there is any url state-storing to be done it could be done here.
 
             if (self.settings.afterSearch !== null && $.type(self.settings.afterSearch) === "function") {
+              if (DEBUG) console.error("Calling AfterSearch");
               self.settings.afterSearch(self.state);
               // if (DEBUG) console.error("AFTERSEARCH!");
             }
@@ -788,6 +798,11 @@
       } catch (err) {
         console.error("ERROR:" + err);
         deferred.reject(self);
+        if (self.settings.afterError !== null && $.type(self.settings.afterError) === "function") {
+          console.error("Calling AfterError");
+          self.settings.afterError(self.state);
+          // if (DEBUG) console.error("AFTERSEARCH!");
+        }
       }
 
       return deferred.promise();
@@ -836,7 +851,7 @@
         // if ($.inArray("texts", asset_types) > -1){ asset_types.push("document"); }
         // if ($.inArray("audio-video", asset_types) > -1 ) { asset_types.push("video"); }
         // if ($.inArray("sources", asset_types) > -1 ) { asset_types.push("onlineresource"); }
-        if ($.inArray("all", asset_types) > -1 || asset_types.length === 0 ) { asset_types = [ "all","subjects","places","images","audio-video","texts","sources","visuals" ]; }
+        if ($.inArray("all", asset_types) > -1 || asset_types.length === 0 ) { asset_types = [ "all","subjects","terms","places","images","audio-video","texts","sources","visuals" ]; }
         asset_types = asset_types.join(" ");
 
       }
@@ -1201,7 +1216,7 @@
       } else if ( typeof showAssetTypes === "string" && showAssetTypes.length > 0 ) {
         assetTypeList = showAssetTypes.split(/\s+/);
       } else if ( showAssetTypes === "" ) {
-        assetTypeList = [ "all","places", "subjects", "audio-video", "images", "sources", "texts", "visuals" ];
+        assetTypeList = [ "all","places", "subjects", "terms", "audio-video", "images", "sources", "texts", "visuals" ];
       }
 
       if (assetTypeList !== null) {
@@ -1210,7 +1225,7 @@
       }
 
       if (!assetTypeList || assetTypeList === null || assetTypeList.length === 0 ) {
-        assetTypeList = [ "all","places", "subjects", "audio-video", "images", "sources", "texts", "visuals" ];
+        assetTypeList = [ "all","places", "subjects", "terms", "audio-video", "images", "sources", "texts", "visuals" ];
       }
       if (DEBUG)  { console.error("assetTypeList = " + JSON.stringify(assetTypeList)); }
 
@@ -1371,24 +1386,40 @@
       }
 
       var assetMatch = "";
-      var kmapsMatch = "";
+      // var kmapsMatch = "";
+      var xact = "";
+      // if (xact.search(' ') && xact.charAt(0) != '"') {
+      //     xact = '"' + xact + '"';
+      // }
+      var starts = "";
+      var slashy = "";
+      var search = "";
+
       // var kmapsMatchQuery = "";
       if (fqhash.searchString) {
         if (fqhash.searchString !== TEXT_SEARCH_FIELD + ":*")  {
-          var search = fqhash.searchString.split(':')[1];
-          var xact = search.replace(/\*/g,"");
-          if (xact.search(' ') && xact.charAt(0) != '"') {
-              xact = '"' + xact + '"';
-          }
+          search = fqhash.searchString.split(':')[1];
 
           // improve "exact matching" sub-strings
           search = search.replace(/\ /g ,'\\ ');
-          assetMatch = "title:" + xact + "^100" +
-            " names_txt:" + xact + "^90" +
-            " title:"+search+ "^10" +
-            " caption:"+search +
-            " summary:"+ search +
-            " names_txt:"+ search +"^9" ;
+          xact = search.replace(/\*/g,"");
+
+          // if (xact.search(' ') && xact.charAt(0) != '"') {
+          //     xact = '"' + xact + '"';
+          // }
+          starts = xact+"*";
+          slashy = xact+"/";
+
+          // SOLR weighted query
+          assetMatch = "title:${xact}^100" +
+            "title:${slashy}^100" +
+            " names_txt:${xact}^90" +
+            " title:${starts}^80" +
+            " names_txt:${starts}^70" +
+            " title:${search}^10" +
+            " caption:${search}" +
+            " summary:${search}" +
+            " names_txt:${search} " ;
           // kmapsMatch = "{!join from=uid_i to=kmapid_is score=none v=$kmapsMatch}";
           var qSearch = fqhash.searchString;
           if (search.search(' ') > -1 && search.charAt(0) != '"') {
@@ -1417,7 +1448,11 @@
       var assetQueryClause = (assetMatch)?"( " + assetMatch + " )":"*:*";
 
       var fqlist_full = [ assetTypeFilter ];
-      fqlist_full.push ("-asset_type:(terms picture document video)");
+      fqlist_full.push ("-asset_type:(picture document video)");
+
+
+      fqlist_full.push ("-kmapid_strict:(subjects-9311 subjects-9312 subjects-9313 subjects-9314)");
+
 
       if(cf.assetFilterQuery && cf.assetFilterQuery.length > 0) {
         for (var i = 0; i < cf.assetFilterQuery.length; i++) {
@@ -1454,14 +1489,24 @@
         "hl.fragsize":0,
         "hl.tag.pre":"<mark>",
         "hl.tag.post":"</mark>",
-        "echoParams":"explicit"
+        "echoParams":"explicit",
+        "xact":xact,
+        "starts":starts,
+        "search":search,
+        "slashy":slashy
        };
 
       // if (assetQlist.length > 0) {
       //   requestParams.fq = assetQlist;
       // }
 
-      if (DEBUG) console.log(JSON.stringify({ "REQUEST PARAMS" : requestParams }, undefined, 2));
+
+
+      if (DEBUG) {
+        console.log("ASSET QUERY CLAUSE: " + assetQueryClause);
+        console.log("FQ LIST: " + JSON.stringify(fqlist_full));
+        console.log(JSON.stringify({ "REQUEST PARAMS" : requestParams }, undefined, 2));
+      }
 
 
       try {
@@ -1912,7 +1957,7 @@
     // utility
     updateKmapLabels: function(requested_kids, callback) {
 
-      var DEBUG = true;
+      var DEBUG = false;
 
       var self = this;
       var cf = self.getConfig();

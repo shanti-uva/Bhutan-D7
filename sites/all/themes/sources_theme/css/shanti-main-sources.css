@@ -28,20 +28,20 @@
 .carousel-indicators li.active,
 .ui-resizable-handle.ui-resizable-nw.active,
 .ui-resizable-handle.ui-resizable-nw:active {
-  background: #6f69ae !important;
+  background: #5a57ad !important;
 }
 .ui-fancytree li a,
 .custom-sort-container .selectpicker>li.selected>a .check-mark,
 .custom-sort-container .selectpicker>li>a:hover .check-mark,
 .page-sources-search .views-row .shanticon-essays,
-.view-section .nav-tabs>li.active>a,
+/*.view-section .nav-tabs>li.active>a,
 .view-section .nav-tabs>li.active>a:hover,
 .view-section .nav-tabs>li.active>a:active,
 .view-section .fancytree-container .glyphicon,
 .view-section .fancytree-container .fancytree-node:hover > .glyphicon,
 .view-section .fancytree-container .fancytree-node:active > .glyphicon,
 .view-section .fancytree-node.fancytree-active > .glyphicon,
-.view-section .fancytree-node.fancytree-selected > .glyphicon,
+.view-section .fancytree-node.fancytree-selected > .glyphicon,*/
 .selectpicker .caret::before,
 .page-home .taxonomy-list-tree .fancytree-container .glyphicon,
 .page-sources-search .views-field-field-zotero-tags ul::before,
@@ -49,14 +49,14 @@
 .node-biblio-form .bootstrap-select.show-tick .dropdown-menu li.selected>a:hover .glyphicon-ok,
 .node-biblio-form .bootstrap-select.show-tick .dropdown-menu li.selected>a .glyphicon-ok,
 .page-sources-search .views-field-biblio-abst-e .field-content:not(:empty)::before {
-  color: #6f69ae !important;
+  color: #5a57ad !important;
 }
-
+/*
 .nav-tabs.nav-justified>li.active,
-.view-section .nav-tabs > li.active > a { border-top-color: #6f69ae !important; }
-
+.view-section .nav-tabs > li.active > a { border-top-color: #5a57ad !important; }
+*/
 .carousel-indicators li:hover,
-.carousel-indicators li.active{ border-color:#6f69ae; }
+.carousel-indicators li.active{ border-color:#5a57ad; }
 
 .carousel-indicators li:hover, .carousel-indicators li.active,
 .kmaps-tt-suggestion:hover:not(.kmaps-tt-selected)::before,
@@ -64,8 +64,8 @@
 .node-biblio-form .bootstrap-select.btn-group .dropdown-menu li>a:hover::before,
 .node-biblio-form .bootstrap-select.btn-group .dropdown-menu li.selected>a::before,
 .node-biblio-form .bootstrap-select.btn-group .dropdown-menu li.disabled>a::before{
-  border-color: #6f69ae;
-  background-color: #6f69ae !important;
+  border-color: #5a57ad;
+  background-color: #5a57ad !important;
 }
 /*
 .ui-resizable-handle.ui-resizable-w,
@@ -73,9 +73,9 @@
 .ui-resizable-handle.ui-resizable-w:active { border-color: #645F9D transparent transparent transparent; } */
 
 @media screen and (min-width: 500px) {
-  .navbar-header .site-slogan{ color: #6f69ae !important; } /* Darker shade for banner site-slogan text */
+  .navbar-header .site-slogan{ color: #5a57ad !important; } /* Darker shade for banner site-slogan text */
   .navbar-brand:hover .site-slogan{ color: #555 !important; }
-  .navbar-header:active .site-slogan{ color: #6f69ae !important; }
+  .navbar-header:active .site-slogan{ color: #5a57ad !important; }
 }
 
 @media screen and (min-width: 768px) {
@@ -88,8 +88,6 @@
 ::selection { background: #E1CA7A !important; color:blue !important;}
 
 /*** END - colors ***/
-
-
 
 
 
@@ -143,18 +141,45 @@ article.main-col li a.active{
 
 
 /* testing white background */
+
+.node-type-collection .collections-content,
+.node-type-biblio .content .source-full,
+.page-biblio div#block-system-main.block.block-system,
+.page-collections div#block-system-main.block.block-system,
 .page-sources-search div#block-system-main.block.block-system,
-.page-sources-search-biblio div#block-system-main.block.block-system,
-.node-type-biblio .content .source-full {
-  float: none;
+.page-sources-search-biblio div#block-system-main.block.block-system {
+  /*float: none;*/
   background: #fff;
   box-shadow: inset 0 0 0.5rem 0.05rem rgba(0, 0, 0, 0.35);
   border-radius: 2px;
   padding-top: 2rem;
+  margin-bottom: 10rem;
   padding-bottom: 5.5rem;
-  margin-bottom: 5rem;
 }
 
+.node-type-biblio .content .source-full,
+.node-type-collection .collections-content,
+.page-biblio div#block-system-main.block.block-system,
+.page-collections div#block-system-main.block.block-system{
+  padding: 3rem 4rem 6rem;
+}
+
+.page-biblio .biblio-entry{
+  margin: 1rem;
+}
+
+.page-biblio .biblio-export{
+  margin-top: -3rem;
+  margin-right: 2rem;
+}
+
+table.pagerer{
+  margin: 0 0 2rem;
+    margin: 2rem 0;
+}
+.view-collection-sources > table.pagerer{
+  margin: 2rem 0 0;  
+}
 
 /* testing white background */
 .node-type-collection div.panel-pane.pane-php.pane-1{
@@ -218,7 +243,7 @@ article.main-col li a.active{
 }
 
 .page-home .carousel-title .shanticon-stack:before{
-  content: '\e632';
+  content: '\e631' !important;
       color: #6e65cc;
 }
 
@@ -469,17 +494,11 @@ article.main-col li a.active{
   max-width: 100%;
 }
 
-.page-sources-search .views-field-biblio-authors,
-.node-type-biblio .content .source-full .source-field-authors {
+.page-sources-search .views-field-biblio-authors {
   font-size: 1.32em;
   overflow: visible;
   padding: .5rem .5rem 0 4.85rem;
   float:left;
-}
-
-.node-type-biblio .content .source-full .source-field-authors{
-  font-size: 1.18em;
-  float:none;
 }
 
 .page-sources-search .views-field-biblio-authors:empty{
@@ -492,9 +511,10 @@ article.main-col li a.active{
 }
 
 .node-type-biblio .content .source-full .source-field-authors {
-  padding: 0 0 3rem 1.5rem;
-  margin-bottom: 2rem;
+  padding: 0.5rem 0 5rem 1.5rem;
   margin-right: 1rem;
+  font-size: 1.18em;
+  float:none;
 }
 
 .page-sources-search .views-field-biblio-authors ul,
@@ -517,14 +537,18 @@ article.main-col li a.active{
   width: 16px;
   height: 16px;
   display: inline-block;
-    position: relative;
-      top: 0.1rem;
-    font-family: 'shanticon';
-    font-size: 1.56rem;
-    color: #6e65cc;
-    float: left;
-    margin-left: -2rem;
-    margin-right: 1rem;
+  position: relative;
+    top: 0.1rem;
+  font-family: 'shanticon';
+  font-size: 1.56rem;
+  color: #6e65cc;
+  float: left;
+  margin-left: -1.8rem;
+  margin-right: .7rem;
+}
+.node-type-biblio .content .source-full .source-field-authors ul li:first-child::before{
+  position: relative;
+  top: -0.1rem;
 }
 
 .page-sources-search .views-field-biblio-authors ul:empty{
@@ -638,12 +662,12 @@ article.main-col li a.active{
 }
 
 .page-sources-search .views-field-biblio-abst-e .field-content:not(:empty)::before{
-  content: "\f0f6";
+  content: "\e678";
   width: 24px;
-  height: 24px;
+  height: 28px;
   display: inline-block;
   position: relative;
-  font-family: 'FontAwesome';
+  font-family: 'shanticon';
   font-size: 1.68rem;
   color: #6e65cc;
   margin-right: 0rem;
@@ -666,18 +690,18 @@ article.main-col li a.active{
 }
 
 .page-sources-search .views-field-field-zotero-tags ul::before{
-  content: "\f02c";
+  content: "\e661";
   width: 16px;
   height: 16px;
   display: inline-block;
   position: relative;
-  font-family: 'FontAwesome';
+  font-family: 'shanticon';
   font-size: 1.5rem;
   color: #8982d7 !important;
   margin-right: .7rem;
   float: left;
   top: -0.2rem;
-  margin-left: -2.3rem;
+  margin-left: -2.1rem;
   font-style: normal;
 }
 
@@ -701,16 +725,16 @@ article.main-col li a.active{
 }
 /*.page-sources-search:not(.page-home):not(.page-sources-search-biblio) .views-field-field-zotero-collections .field-content::before,*/
 .page-sources-search:not(.page-sources-search-biblio) .views-field-field-zotero-collections ul::before{
-  content: '\e61b';
+  content: '\e633';
   width: 16px;
   height: 16px;
   display: inline-block;
   position: relative;
   top: 0.175rem;
   font-family: 'shanticon';
-  font-size: 1.5rem;
+  font-size: 1.7rem;
   color: #8982d7 !important;
-  margin-left: -2.1rem;
+  margin-left: -2rem;
   margin-right: 0.2rem;
   font-style: normal;
 }
@@ -757,10 +781,10 @@ article.main-col li a.active{
   margin-left: -2.8rem;
 }
 
-.page-sources-search .views-row .fa-plus{
+.page-sources-search .views-row .shanticon-plus{
   font-size: 1.5rem;
   border-radius: 50%;
-  color: #6f69ae;
+  color: #5a57ad;
   filter: alpha(opacity=50);
   opacity:.5;
   cursor: pointer;
@@ -783,18 +807,18 @@ article.main-col li a.active{
   transform: rotate(0deg);
 }
 
-.page-sources-search .views-row .fa-plus:hover{
+.page-sources-search .views-row .shanticon-plus:hover{
   color: #888;
   border-color: #e0e0e0;
   opacity:.8;
 }
 
-.page-sources-search .views-row .fa-plus::before{
+.page-sources-search .views-row .shanticon-plus::before{
   position: relative;
   top: 0.125rem;
 }
 
-.page-sources-search .views-row .fa-plus.on {
+.page-sources-search .views-row .shanticon-plus.on {
   -webkit-transform: rotate(45deg);
   -moz-transform: rotate(45deg);
   -ms-transform: rotate(45deg);
@@ -813,7 +837,7 @@ article.main-col li a.active{
   padding-left: 0;
   margin-top: 0;
   margin-bottom: 0;
-  padding-left: 2.5rem;
+  padding-left: 2.35rem;
 }
 
 .page-sources-search .views-field-field-zotero-tags ul li {
@@ -849,7 +873,7 @@ article.main-col li a.active{
     margin-bottom: 250px;
 }
 .page-node.node-type-biblio .content .source-full {
-    margin-bottom: 300px;
+    margin-bottom: 100px;
 }
 
 /* Biblio node page */
@@ -858,7 +882,7 @@ article.main-col li a.active{
 }
 
 .node-type-biblio .field-name-field-zotero-collections {
-    margin: 12px 0px;
+    margin: 12px 0;
 }
 
 .node-type-biblio .field-name-field-zotero-collections .field-label-span {
@@ -871,11 +895,11 @@ article.main-col li a.active{
 }
 
 .node-type-biblio ul.links {
-    margin: 12px 0px 0px;
+    margin: 12px 0 0;
 }
 
 .node-type-biblio .links li {
-    padding: 0px;
+    padding: 0;
 }
 
 .node-type-biblio .links li a[title~=Google]:before {
@@ -885,20 +909,20 @@ article.main-col li a.active{
 
 .node-type-biblio .field-name-field-kmap-subjects.field-label-above,
 .node-type-biblio .field-name-field-kmaps-places.field-label-above {
-    margin-top: 20px;
-    margin-bottom: 5px;
+    margin-top: 2rem;
+    margin-bottom: .5rem;
 }
 
-
-
-
-
-
-
-
-.node-type-biblio .content .source-full {
-    padding: 4rem 4rem 6rem;
+/*
+.node-type-biblio .source-full .source-field .field-label.label-zotero{
+    display: block;
+    margin-top: 2rem;
 }
+*/
+
+
+
+
 /*.page-sources-search .view-biblio-search-api .views-field-title,*/
 .node-type-biblio .content .source-full .source-field-title {
     display: block;
@@ -909,6 +933,19 @@ article.main-col li a.active{
     font-family: 'EB Garamond',serif;
     padding-left: 1.5rem;
 }
+
+.node-type-biblio .content .source-full .source-field-title::before{
+    content: "\e631";
+    font-family:'shanticon';
+    margin:0 .5rem 0 0;
+    position: relative;
+    top: .3rem;
+    font-size: 115%;
+    color: #5a57ad;
+}
+
+
+
 /* Biblio node page (added) */
 .node-type-biblio  .source-full .source-field,
 .node-type-biblio  .source-full .field-type-shanti-kmaps-fields-default {
@@ -917,11 +954,20 @@ article.main-col li a.active{
 }
 
 .node-type-biblio .source-full .source-field{
-    font-size: 1.25em;
+    font-size: 1.32em;
     color: #000;
-    letter-spacing: 0.0275rem;
+    /*letter-spacing: 0.0275rem;*/
     font-family: 'EB Garamond',serif;
-    line-height:1.56em;
+    line-height:1.5em;
+}
+
+.node-type-biblio .source-full .source-field.source-field-abstract-e{
+      line-height: 1.5em;
+          margin-top: 2rem;
+}
+
+.node-type-biblio .source-full .source-field.source-field-abstract-e > .field-label{
+  display:block;
 }
 
 .node-type-biblio .source-full .source-field.source-field-zotero a{
@@ -939,6 +985,7 @@ article.main-col li a.active{
     border-top: 2px solid #eee;
     padding-top: 1rem;
     margin-right: 1rem;
+    margin-bottom: 1rem;
 }    
 
 /* For authors see style for .page-sources-search .views-field-biblio-authors around line 440 */
@@ -1194,6 +1241,7 @@ a#long-detail.active {
 }
 .view-biblio-search-api > .pagerer{
   margin-right:3rem;
+  margin-top:1.5rem;
 }
 
 #block-system-main .view-biblio-search-api .shanti-filters div.control-box-cell-header {
@@ -1252,13 +1300,19 @@ a#long-detail.active {
   border-radius: 2px;
   padding: 2rem 3rem 7rem;
 }
-
+/*
 .page-taxonomy .biblio-authors a{
   font-weight:bold;
 }
 
 .page-taxonomy .biblio-title{
   font-weight:normal;
+}
+*/
+.biblio-title{
+  font-weight:400;
+      font-family: 'EB Garamond',serif;
+    font-size: 120%;
 }
 
 
@@ -1312,7 +1366,7 @@ a#long-detail.active {
 }
 
 .views-field-citation span.biblio-title-mla {
-  font-weight: bold;
+  /*font-weight: bold;*/
   filter: alpha(opacity=85);
   opacity: 0.85;
   letter-spacing: -0.03em;
@@ -1399,14 +1453,29 @@ a#long-detail.active {
     }
 }
 
-@media screen and (max-width: 450px) {
+@media screen and (max-width: 575px) {
 
-
-
+  .page-sources-search .title-link-container > .shanticon-sources{
+    margin-left: 0;
+  }
+  .page-sources-search .views-field-biblio-authors, 
+  .node-type-biblio .content .source-full .source-field-authors{
+    padding-left: 1.6rem;
+    font-size: 1.38em;
+  }
+  .page-sources-search .views-field-biblio-abst-e{
+    margin: 0 0 1rem 0.4rem;
+  }
+  .page-sources-search .views-field-field-zotero-collections{
+    padding-left: 2.65rem;
+  }
 }
 
 
-
+.views-exposed-form label,
+.panel.panel-default .panel-heading h6 a{
+  font-weight: 400;
+}
 
 
 /**

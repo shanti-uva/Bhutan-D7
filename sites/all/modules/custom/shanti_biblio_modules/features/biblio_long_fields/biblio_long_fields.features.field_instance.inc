@@ -23,7 +23,7 @@ function biblio_long_fields_field_default_field_instances() {
         'module' => 'list',
         'settings' => array(),
         'type' => 'list_default',
-        'weight' => 5,
+        'weight' => 4,
       ),
       'featured' => array(
         'label' => 'above',
@@ -35,7 +35,7 @@ function biblio_long_fields_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 6,
+        'weight' => 14,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -72,16 +72,16 @@ function biblio_long_fields_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
-        'module' => 'list',
+        'module' => 'text',
         'settings' => array(),
-        'type' => 'list_default',
-        'weight' => 16,
+        'type' => 'text_default',
+        'weight' => 13,
       ),
       'full' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 13,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -96,6 +96,7 @@ function biblio_long_fields_field_default_field_instances() {
     'required' => 0,
     'settings' => array(
       'entity_translation_sync' => FALSE,
+      'text_processing' => 0,
       'user_register_form' => FALSE,
     ),
     'widget' => array(
@@ -120,7 +121,7 @@ function biblio_long_fields_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 9,
+        'weight' => 14,
       ),
       'featured' => array(
         'label' => 'above',
@@ -133,7 +134,7 @@ function biblio_long_fields_field_default_field_instances() {
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_plain',
-        'weight' => -25,
+        'weight' => 0,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -182,11 +183,11 @@ function biblio_long_fields_field_default_field_instances() {
         'weight' => 7,
       ),
       'full' => array(
-        'label' => 'above',
+        'label' => 'inline',
         'module' => 'shanti_kmaps_fields',
         'settings' => array(),
         'type' => 'kmap_popover_formatter',
-        'weight' => 4,
+        'weight' => 5,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -213,7 +214,7 @@ function biblio_long_fields_field_default_field_instances() {
       'module' => 'shanti_kmaps_fields',
       'settings' => array(),
       'type' => 'kmap_typeahead_picker',
-      'weight' => 69,
+      'weight' => 70,
     ),
   );
 
@@ -229,7 +230,7 @@ function biblio_long_fields_field_default_field_instances() {
         'module' => 'shanti_kmaps_fields',
         'settings' => array(),
         'type' => 'kmap_popover_formatter',
-        'weight' => 7,
+        'weight' => 8,
       ),
       'embed' => array(
         'label' => 'above',
@@ -249,7 +250,7 @@ function biblio_long_fields_field_default_field_instances() {
         'module' => 'shanti_kmaps_fields',
         'settings' => array(),
         'type' => 'kmap_popover_formatter',
-        'weight' => 7,
+        'weight' => 6,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -276,6 +277,106 @@ function biblio_long_fields_field_default_field_instances() {
       'module' => 'shanti_kmaps_fields',
       'settings' => array(),
       'type' => 'kmap_typeahead_picker',
+      'weight' => 69,
+    ),
+  );
+
+  // Exported field_instance: 'node-biblio-field_kmaps_terms'.
+  $field_instances['node-biblio-field_kmaps_terms'] = array(
+    'bundle' => 'biblio',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'shanti_kmaps_fields',
+        'settings' => array(
+          'target' => '_blank',
+        ),
+        'type' => 'kmap_default_formatter',
+        'weight' => 17,
+      ),
+      'full' => array(
+        'label' => 'inline',
+        'module' => 'shanti_kmaps_fields',
+        'settings' => array(),
+        'type' => 'kmap_popover_formatter',
+        'weight' => 7,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_kmaps_terms',
+    'label' => 'Terms',
+    'required' => 0,
+    'settings' => array(
+      'kmap_term_limit' => 100,
+      'search_filters' => array(),
+      'search_root_kmap_path' => '',
+      'search_root_kmapid' => '',
+      'search_view' => '',
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 0,
+      'module' => 'shanti_kmaps_fields',
+      'settings' => array(),
+      'type' => 'kmap_typeahead_term_picker',
+      'weight' => 71,
+    ),
+  );
+
+  // Exported field_instance: 'node-biblio-field_language_kmaps'.
+  $field_instances['node-biblio-field_language_kmaps'] = array(
+    'bundle' => 'biblio',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => 'This is the main content language field for this source. Chosen from Knowledge Maps.',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'shanti_kmaps_fields',
+        'settings' => array(),
+        'type' => 'kmap_popover_formatter',
+        'weight' => 9,
+      ),
+      'full' => array(
+        'label' => 'inline',
+        'module' => 'shanti_kmaps_fields',
+        'settings' => array(),
+        'type' => 'kmap_popover_formatter',
+        'weight' => 8,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_language_kmaps',
+    'label' => 'Language (Kmaps)',
+    'required' => 0,
+    'settings' => array(
+      'kmap_term_limit' => 100,
+      'search_filters' => array(),
+      'search_root_kmap_path' => 301,
+      'search_root_kmapid' => 301,
+      'search_view' => '',
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 0,
+      'module' => 'shanti_kmaps_fields',
+      'settings' => array(),
+      'type' => 'kmap_typeahead_picker',
       'weight' => 68,
     ),
   );
@@ -283,10 +384,13 @@ function biblio_long_fields_field_default_field_instances() {
   // Translatables
   // Included for use with string extractors like potx.
   t('Content Language');
+  t('Language (Kmaps)');
   t('Long Title');
   t('Long Title Language');
   t('Places');
   t('Subjects');
+  t('Terms');
+  t('This is the main content language field for this source. Chosen from Knowledge Maps.');
 
   return $field_instances;
 }

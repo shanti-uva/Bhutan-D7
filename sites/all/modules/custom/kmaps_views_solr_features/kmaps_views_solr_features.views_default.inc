@@ -718,6 +718,102 @@ description|GVDESC ',
   $export['related_sources'] = $view;
 
   $view = new view();
+  $view->name = 'related_terms';
+  $view->description = '';
+  $view->tag = 'default';
+  $view->base_table = 'kmaps_views_solr_terms';
+  $view->human_name = 'Related Terms';
+  $view->core = 7;
+  $view->api_version = '3.0';
+  $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
+
+  /* Display: Master */
+  $handler = $view->new_display('default', 'Master', 'default');
+  $handler->display->display_options['title'] = 'Related Terms';
+  $handler->display->display_options['use_ajax'] = TRUE;
+  $handler->display->display_options['use_more_always'] = FALSE;
+  $handler->display->display_options['access']['type'] = 'none';
+  $handler->display->display_options['cache']['type'] = 'none';
+  $handler->display->display_options['query']['type'] = 'views_query';
+  $handler->display->display_options['exposed_form']['type'] = 'better_exposed_filters';
+  $handler->display->display_options['exposed_form']['options']['submit_button'] = '>';
+  $handler->display->display_options['exposed_form']['options']['autosubmit'] = TRUE;
+  $handler->display->display_options['exposed_form']['options']['bef'] = array(
+    'general' => array(
+      'input_required' => 0,
+      'text_input_required' => array(
+        'text_input_required' => array(
+          'value' => 'Select any filter and click on Apply to see results',
+          'format' => 'filtered_html',
+        ),
+      ),
+      'allow_secondary' => 0,
+      'secondary_label' => 'Advanced options',
+      'secondary_collapse_override' => '0',
+    ),
+    'terms_title' => array(
+      'bef_format' => 'default',
+      'more_options' => array(
+        'autosubmit' => 0,
+        'is_secondary' => 0,
+        'any_label' => '',
+        'bef_filter_description' => '',
+        'rewrite' => array(
+          'filter_rewrite_values' => '',
+        ),
+      ),
+    ),
+  );
+  $handler->display->display_options['pager']['type'] = 'pagerer';
+  $handler->display->display_options['pager']['options']['items_per_page'] = '240';
+  $handler->display->display_options['pager']['options']['offset'] = '0';
+  $handler->display->display_options['pager']['options']['id'] = '0';
+  $handler->display->display_options['pager']['options']['quantity'] = '9';
+  $handler->display->display_options['pager']['options']['preset'] = 'mandala_pager';
+  $handler->display->display_options['style_plugin'] = 'default';
+  $handler->display->display_options['style_options']['row_class'] = 'term';
+  $handler->display->display_options['row_plugin'] = 'fields';
+  /* Header: Global: Result summary */
+  $handler->display->display_options['header']['result']['id'] = 'result';
+  $handler->display->display_options['header']['result']['table'] = 'views';
+  $handler->display->display_options['header']['result']['field'] = 'result';
+  $handler->display->display_options['header']['result']['content'] = '<span class="label">Recent Additions</span> <span class="count">(Displaying @start - @end of @total)</span>';
+  /* Field: Terms Group: ID */
+  $handler->display->display_options['fields']['terms_id']['id'] = 'terms_id';
+  $handler->display->display_options['fields']['terms_id']['table'] = 'kmaps_views_solr_terms';
+  $handler->display->display_options['fields']['terms_id']['field'] = 'terms_id';
+  $handler->display->display_options['fields']['terms_id']['label'] = '';
+  $handler->display->display_options['fields']['terms_id']['element_label_colon'] = FALSE;
+  /* Field: Terms Group: Title */
+  $handler->display->display_options['fields']['terms_title']['id'] = 'terms_title';
+  $handler->display->display_options['fields']['terms_title']['table'] = 'kmaps_views_solr_terms';
+  $handler->display->display_options['fields']['terms_title']['field'] = 'terms_title';
+  $handler->display->display_options['fields']['terms_title']['label'] = '';
+  $handler->display->display_options['fields']['terms_title']['element_label_colon'] = FALSE;
+  /* Filter criterion: Terms Group: Title */
+  $handler->display->display_options['filters']['terms_title']['id'] = 'terms_title';
+  $handler->display->display_options['filters']['terms_title']['table'] = 'kmaps_views_solr_terms';
+  $handler->display->display_options['filters']['terms_title']['field'] = 'terms_title';
+  $handler->display->display_options['filters']['terms_title']['operator'] = 'contains';
+  $handler->display->display_options['filters']['terms_title']['exposed'] = TRUE;
+  $handler->display->display_options['filters']['terms_title']['expose']['operator_id'] = 'terms_title_op';
+  $handler->display->display_options['filters']['terms_title']['expose']['operator'] = 'terms_title_op';
+  $handler->display->display_options['filters']['terms_title']['expose']['identifier'] = 'terms_title';
+  $handler->display->display_options['filters']['terms_title']['expose']['remember_roles'] = array(
+    2 => '2',
+    1 => 0,
+    3 => 0,
+  );
+
+  /* Display: Page */
+  $handler = $view->new_display('page', 'Page', 'page');
+  $handler->display->display_options['path'] = 'related-terms';
+
+  /* Display: Terms Block */
+  $handler = $view->new_display('block', 'Terms Block', 'terms_block');
+  $export['related_terms'] = $view;
+
+  $view = new view();
   $view->name = 'related_texts';
   $view->description = '';
   $view->tag = 'default';

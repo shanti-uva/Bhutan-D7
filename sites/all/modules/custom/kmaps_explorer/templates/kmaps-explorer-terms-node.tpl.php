@@ -1,7 +1,7 @@
 <?php global $base_url ?>
 <div class="terms-node-wrapper">
     <div class="terms-introduction-tabs">
-        <ul id="terms-intro-tabs" class="nav nav-tabs nav-justified terms-intro-tabs" role="tablist">
+        <ul id="terms-intro-tabs" class="nav nav-tabs terms-intro-tabs" role="tablist">
             <li class="active" role="presentation">
                 <a href="#terms-intro" role="tab" data-toggle="tab" aria-expanded="true">
                     Term Definition
@@ -49,6 +49,34 @@
                                 <?php endif; ?>
                               <?php endforeach; ?>
                             </ul>
+                            <?php if (count($audio_data) > 0): ?>
+                            <div id="terms-audio-pronunciation-container" class="terms-audio-pronunciation-container">
+                                <div class="recording-wrapper">
+
+                                    <div class="recording-controls">
+                                        <div id="recording-play-button" class="recording-play-button">
+                                            <span class="icon shanticon-audio"></span>
+                                        </div>
+                                    </div>
+                                    <div class="recording-list">
+                                        <label class="sr-only" for="selection">Listen to Audio for Term Pronunciations:</label>
+                                        <select id="recording-selection" class="selectpicker">
+                                            <?php foreach ($audio_data as $id => $audio): ?>
+                                                <option value="<?php echo $audio->audio_file ?>">
+                                                    <?php echo $id === 0 ? 'Amdo Group' : 'Kham-Hor Group' ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+
+                                    <div class="terms-audio-player-selector">
+                                        <audio id="recording-player">
+                                            <source id="recording-mp3_src" src="<?php echo $audio_data[0]->audio_file ?>" type="audio/mp3">Your browser does not support the audio element.
+                                        </audio>
+                                    </div>
+                                </div>
+                            </div>
+                            <?php endif; ?>
                         </dl>
                       <?php if (!empty($definitions)): ?>
                           <div class="terms-definition-list-wrapper">
@@ -86,7 +114,7 @@
                               <?php $count = 1; ?>
                               <?php foreach ($dict_data as $key => $dict): ?>
                                   <div class="terms-dictionaries-other-node">
-                                      <h4><?php echo $count ?>. <cite><a href="#"> <?php echo $key ?></a></cite></h4>
+                                      <h4><?php echo $count ?>. <cite><?php echo $key ?></cite></h4>
                                     <?php if (count($dict) > 1): ?>
                                         <ul>
                                           <?php foreach ($dict as $subdict): ?>
@@ -142,7 +170,7 @@
                             <?php foreach($assoc_subjects as $id => $subject): ?>
                                 <dt><?php echo $subject['header']; ?>:</dt>
                                 <dd class="related_subject">
-                                    <a href="<?php echo $base_url ?>/subjects/<?php echo $id ?>/overview/nojs"><?php echo $subject['subject'] ?></a>
+                                    <a href="<?php echo $base_url ?>/subjects/<?php echo $id ?>/overview/nojs" target="_blank"><?php echo $subject['subject'] ?></a>
                                     <span class="popover-kmaps" data-app="subjects"
                                           data-id="<?php echo $id ?>" rel="popover"
                                           data-original-title="" title="">

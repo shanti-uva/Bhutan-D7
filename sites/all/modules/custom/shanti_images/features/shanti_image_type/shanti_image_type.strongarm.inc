@@ -610,7 +610,7 @@ function shanti_image_type_strongarm() {
       'display' => array(
         'node:image_agent:all:title' => array(
           'full' => array(
-            'weight' => '40',
+            'weight' => '62',
             'visible' => FALSE,
           ),
           'shanti_grid_desc' => array(
@@ -622,7 +622,7 @@ function shanti_image_type_strongarm() {
             'visible' => FALSE,
           ),
           'grid_details' => array(
-            'weight' => '18',
+            'weight' => '42',
             'visible' => FALSE,
           ),
           'default' => array(
@@ -632,7 +632,7 @@ function shanti_image_type_strongarm() {
         ),
         'node:image_agent:all:log' => array(
           'full' => array(
-            'weight' => '39',
+            'weight' => '61',
             'visible' => FALSE,
           ),
           'shanti_grid_desc' => array(
@@ -644,7 +644,7 @@ function shanti_image_type_strongarm() {
             'visible' => FALSE,
           ),
           'grid_details' => array(
-            'weight' => '15',
+            'weight' => '39',
             'visible' => FALSE,
           ),
           'default' => array(
@@ -654,7 +654,7 @@ function shanti_image_type_strongarm() {
         ),
         'node:image_agent:all:field_agent_dates' => array(
           'full' => array(
-            'weight' => '42',
+            'weight' => '64',
             'visible' => FALSE,
           ),
           'shanti_grid_desc' => array(
@@ -666,7 +666,7 @@ function shanti_image_type_strongarm() {
             'visible' => FALSE,
           ),
           'grid_details' => array(
-            'weight' => '38',
+            'weight' => '61',
             'visible' => FALSE,
           ),
           'default' => array(
@@ -676,7 +676,7 @@ function shanti_image_type_strongarm() {
         ),
         'node:image_agent:all:field_agent_role' => array(
           'full' => array(
-            'weight' => '41',
+            'weight' => '63',
             'visible' => FALSE,
           ),
           'shanti_grid_desc' => array(
@@ -688,7 +688,7 @@ function shanti_image_type_strongarm() {
             'visible' => FALSE,
           ),
           'grid_details' => array(
-            'weight' => '36',
+            'weight' => '59',
             'visible' => FALSE,
           ),
           'default' => array(
@@ -698,7 +698,7 @@ function shanti_image_type_strongarm() {
         ),
         'node:image_agent:all:field_agent_notes' => array(
           'full' => array(
-            'weight' => '44',
+            'weight' => '66',
             'visible' => FALSE,
           ),
           'shanti_grid_desc' => array(
@@ -710,7 +710,7 @@ function shanti_image_type_strongarm() {
             'visible' => FALSE,
           ),
           'grid_details' => array(
-            'weight' => '42',
+            'weight' => '65',
             'visible' => FALSE,
           ),
           'default' => array(
@@ -720,7 +720,7 @@ function shanti_image_type_strongarm() {
         ),
         'node:image_agent:all:field_agent_place' => array(
           'full' => array(
-            'weight' => '43',
+            'weight' => '65',
             'visible' => FALSE,
           ),
           'shanti_grid_desc' => array(
@@ -732,7 +732,7 @@ function shanti_image_type_strongarm() {
             'visible' => FALSE,
           ),
           'grid_details' => array(
-            'weight' => '41',
+            'weight' => '64',
             'visible' => FALSE,
           ),
           'default' => array(
@@ -782,7 +782,7 @@ function shanti_image_type_strongarm() {
             'visible' => FALSE,
           ),
           'full' => array(
-            'weight' => '33',
+            'weight' => '55',
             'visible' => FALSE,
           ),
           'shanti_grid_details' => array(
@@ -790,7 +790,7 @@ function shanti_image_type_strongarm() {
             'visible' => FALSE,
           ),
           'grid_details' => array(
-            'weight' => '16',
+            'weight' => '40',
             'visible' => FALSE,
           ),
           'default' => array(
@@ -804,7 +804,7 @@ function shanti_image_type_strongarm() {
             'visible' => FALSE,
           ),
           'full' => array(
-            'weight' => '34',
+            'weight' => '56',
             'visible' => FALSE,
           ),
           'shanti_grid_details' => array(
@@ -812,7 +812,7 @@ function shanti_image_type_strongarm() {
             'visible' => FALSE,
           ),
           'grid_details' => array(
-            'weight' => '17',
+            'weight' => '41',
             'visible' => FALSE,
           ),
           'default' => array(
@@ -826,7 +826,7 @@ function shanti_image_type_strongarm() {
             'visible' => FALSE,
           ),
           'full' => array(
-            'weight' => '36',
+            'weight' => '58',
             'visible' => FALSE,
           ),
           'shanti_grid_details' => array(
@@ -834,7 +834,7 @@ function shanti_image_type_strongarm() {
             'visible' => FALSE,
           ),
           'grid_details' => array(
-            'weight' => '39',
+            'weight' => '62',
             'visible' => FALSE,
           ),
           'default' => array(
@@ -848,7 +848,7 @@ function shanti_image_type_strongarm() {
             'visible' => FALSE,
           ),
           'full' => array(
-            'weight' => '37',
+            'weight' => '59',
             'visible' => FALSE,
           ),
           'shanti_grid_details' => array(
@@ -856,7 +856,7 @@ function shanti_image_type_strongarm() {
             'visible' => FALSE,
           ),
           'grid_details' => array(
-            'weight' => '40',
+            'weight' => '63',
             'visible' => FALSE,
           ),
           'default' => array(
@@ -870,7 +870,7 @@ function shanti_image_type_strongarm() {
             'visible' => FALSE,
           ),
           'full' => array(
-            'weight' => '35',
+            'weight' => '57',
             'visible' => FALSE,
           ),
           'shanti_grid_details' => array(
@@ -878,7 +878,7 @@ function shanti_image_type_strongarm() {
             'visible' => FALSE,
           ),
           'grid_details' => array(
-            'weight' => '37',
+            'weight' => '60',
             'visible' => FALSE,
           ),
           'default' => array(
@@ -892,7 +892,7 @@ function shanti_image_type_strongarm() {
             'visible' => FALSE,
           ),
           'full' => array(
-            'weight' => '38',
+            'weight' => '60',
             'visible' => FALSE,
           ),
           'shanti_grid_details' => array(
@@ -900,7 +900,7 @@ function shanti_image_type_strongarm() {
             'visible' => FALSE,
           ),
           'grid_details' => array(
-            'weight' => '43',
+            'weight' => '66',
             'visible' => FALSE,
           ),
           'default' => array(
@@ -910,7 +910,7 @@ function shanti_image_type_strongarm() {
         ),
         'node:image_agent:all:feeds_item_guid' => array(
           'grid_details' => array(
-            'weight' => '5',
+            'weight' => '30',
             'visible' => FALSE,
           ),
           'default' => array(
@@ -918,13 +918,13 @@ function shanti_image_type_strongarm() {
             'visible' => FALSE,
           ),
           'full' => array(
-            'weight' => '28',
+            'weight' => '50',
             'visible' => FALSE,
           ),
         ),
         'node:image_agent:all:feeds_item_url' => array(
           'grid_details' => array(
-            'weight' => '6',
+            'weight' => '31',
             'visible' => FALSE,
           ),
           'default' => array(
@@ -932,13 +932,13 @@ function shanti_image_type_strongarm() {
             'visible' => FALSE,
           ),
           'full' => array(
-            'weight' => '29',
+            'weight' => '51',
             'visible' => FALSE,
           ),
         ),
         'node:image_descriptions:all:feeds_item_guid' => array(
           'grid_details' => array(
-            'weight' => '7',
+            'weight' => '32',
             'visible' => FALSE,
           ),
           'default' => array(
@@ -946,13 +946,13 @@ function shanti_image_type_strongarm() {
             'visible' => FALSE,
           ),
           'full' => array(
-            'weight' => '31',
+            'weight' => '53',
             'visible' => FALSE,
           ),
         ),
         'node:image_descriptions:all:feeds_item_url' => array(
           'grid_details' => array(
-            'weight' => '8',
+            'weight' => '33',
             'visible' => FALSE,
           ),
           'default' => array(
@@ -960,7 +960,17 @@ function shanti_image_type_strongarm() {
             'visible' => FALSE,
           ),
           'full' => array(
-            'weight' => '32',
+            'weight' => '54',
+            'visible' => FALSE,
+          ),
+        ),
+        'node:image_agent:all:field_agent_dates_approx' => array(
+          'grid_details' => array(
+            'weight' => '29',
+            'visible' => FALSE,
+          ),
+          'full' => array(
+            'weight' => '49',
             'visible' => FALSE,
           ),
         ),

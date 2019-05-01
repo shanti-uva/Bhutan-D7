@@ -27,7 +27,11 @@ function shanti_texts_features_field_default_field_instances() {
       'default' => array(
         'label' => 'above',
         'module' => 'text',
-        'settings' => array(),
+        'settings' => array(
+          'quickedit' => array(
+            'editor' => 'plain_text',
+          ),
+        ),
         'type' => 'text_default',
         'weight' => 12,
       ),
@@ -42,13 +46,13 @@ function shanti_texts_features_field_default_field_instances() {
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
-        'weight' => 16,
+        'weight' => 15,
       ),
       'meta' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 19,
+        'weight' => 18,
       ),
       'metadata' => array(
         'label' => 'above',
@@ -159,7 +163,7 @@ function shanti_texts_features_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 39,
+      'weight' => 46,
     ),
   );
 
@@ -179,7 +183,11 @@ function shanti_texts_features_field_default_field_instances() {
       'default' => array(
         'label' => 'above',
         'module' => 'text',
-        'settings' => array(),
+        'settings' => array(
+          'quickedit' => array(
+            'editor' => 'plain_text',
+          ),
+        ),
         'type' => 'text_default',
         'weight' => 10,
       ),
@@ -337,7 +345,7 @@ function shanti_texts_features_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 26,
+      'weight' => 41,
     ),
   );
 
@@ -346,7 +354,7 @@ function shanti_texts_features_field_default_field_instances() {
     'bundle' => 'book',
     'default_value' => NULL,
     'deleted' => 0,
-    'description' => '',
+    'description' => 'To split the text up into sections based on its headers and create a table of contents that can be navigated, use the Shanti Text Splitter tab after entering the text.',
     'display' => array(
       'book_pubreader' => array(
         'label' => 'hidden',
@@ -362,7 +370,11 @@ function shanti_texts_features_field_default_field_instances() {
       'default' => array(
         'label' => 'hidden',
         'module' => 'text',
-        'settings' => array(),
+        'settings' => array(
+          'quickedit' => array(
+            'editor' => 'plain_text',
+          ),
+        ),
         'type' => 'text_default',
         'weight' => 0,
       ),
@@ -382,13 +394,13 @@ function shanti_texts_features_field_default_field_instances() {
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
-        'weight' => 14,
+        'weight' => 13,
       ),
       'meta' => array(
         'label' => 'hidden',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 20,
+        'weight' => 19,
       ),
       'metadata' => array(
         'label' => 'hidden',
@@ -521,7 +533,6 @@ function shanti_texts_features_field_default_field_instances() {
           ),
         ),
       ),
-      'entity_translation_sync' => FALSE,
       'text_processing' => 1,
       'user_register_form' => FALSE,
     ),
@@ -557,6 +568,9 @@ function shanti_texts_features_field_default_field_instances() {
           'multiple_from' => '',
           'multiple_number' => '',
           'multiple_to' => '',
+          'quickedit' => array(
+            'editor' => 'form',
+          ),
           'show_remaining_days' => FALSE,
         ),
         'type' => 'date_default',
@@ -591,13 +605,13 @@ function shanti_texts_features_field_default_field_instances() {
           'show_remaining_days' => FALSE,
         ),
         'type' => 'date_default',
-        'weight' => 17,
+        'weight' => 16,
       ),
       'meta' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 18,
+        'weight' => 17,
       ),
       'metadata' => array(
         'label' => 'above',
@@ -694,7 +708,7 @@ function shanti_texts_features_field_default_field_instances() {
         'year_range' => '-3:+3',
       ),
       'type' => 'date_text',
-      'weight' => 30,
+      'weight' => 45,
     ),
   );
 
@@ -714,9 +728,13 @@ function shanti_texts_features_field_default_field_instances() {
       'default' => array(
         'label' => 'above',
         'module' => 'text',
-        'settings' => array(),
+        'settings' => array(
+          'quickedit' => array(
+            'editor' => 'plain_text',
+          ),
+        ),
         'type' => 'text_default',
-        'weight' => 13,
+        'weight' => 16,
       ),
       'embed' => array(
         'label' => 'above',
@@ -837,7 +855,7 @@ function shanti_texts_features_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 27,
+      'weight' => 42,
     ),
   );
 
@@ -858,7 +876,7 @@ function shanti_texts_features_field_default_field_instances() {
         'module' => 'computed_field',
         'settings' => array(),
         'type' => 'computed_field_plain',
-        'weight' => 17,
+        'weight' => 23,
       ),
       'embed' => array(
         'label' => 'above',
@@ -870,13 +888,13 @@ function shanti_texts_features_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 18,
+        'weight' => 0,
       ),
       'meta' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 16,
+        'weight' => 15,
       ),
       'search_index' => array(
         'label' => 'above',
@@ -924,9 +942,13 @@ function shanti_texts_features_field_default_field_instances() {
       'default' => array(
         'label' => 'above',
         'module' => 'text',
-        'settings' => array(),
+        'settings' => array(
+          'quickedit' => array(
+            'editor' => 'plain_text',
+          ),
+        ),
         'type' => 'text_default',
-        'weight' => 14,
+        'weight' => 17,
       ),
       'embed' => array(
         'label' => 'above',
@@ -1047,7 +1069,7 @@ function shanti_texts_features_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 28,
+      'weight' => 43,
     ),
   );
 
@@ -1072,6 +1094,9 @@ function shanti_texts_features_field_default_field_instances() {
           'multiple_from' => '',
           'multiple_number' => '',
           'multiple_to' => '',
+          'quickedit' => array(
+            'editor' => 'form',
+          ),
           'show_remaining_days' => FALSE,
         ),
         'type' => 'date_default',
@@ -1295,7 +1320,7 @@ function shanti_texts_features_field_default_field_instances() {
         'year_range' => '-3:+3',
       ),
       'type' => 'date_text',
-      'weight' => 32,
+      'weight' => 47,
     ),
   );
 
@@ -1320,6 +1345,9 @@ function shanti_texts_features_field_default_field_instances() {
           'multiple_from' => '',
           'multiple_number' => '',
           'multiple_to' => '',
+          'quickedit' => array(
+            'editor' => 'form',
+          ),
           'show_remaining_days' => FALSE,
         ),
         'type' => 'date_default',
@@ -1543,7 +1571,7 @@ function shanti_texts_features_field_default_field_instances() {
         'year_range' => '-3:+3',
       ),
       'type' => 'date_text',
-      'weight' => 31,
+      'weight' => 46,
     ),
   );
 
@@ -1563,7 +1591,11 @@ function shanti_texts_features_field_default_field_instances() {
       'default' => array(
         'label' => 'hidden',
         'module' => 'text',
-        'settings' => array(),
+        'settings' => array(
+          'quickedit' => array(
+            'editor' => 'plain_text',
+          ),
+        ),
         'type' => 'text_default',
         'weight' => 9,
       ),
@@ -1719,7 +1751,7 @@ function shanti_texts_features_field_default_field_instances() {
         'summary_rows' => 5,
       ),
       'type' => 'text_textarea_with_summary',
-      'weight' => 24,
+      'weight' => 40,
     ),
   );
 
@@ -1745,7 +1777,7 @@ function shanti_texts_features_field_default_field_instances() {
         'module' => 'list',
         'settings' => array(),
         'type' => 'list_default',
-        'weight' => 18,
+        'weight' => 24,
       ),
       'embed' => array(
         'label' => 'above',
@@ -1757,13 +1789,13 @@ function shanti_texts_features_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 19,
+        'weight' => 0,
       ),
       'meta' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 17,
+        'weight' => 16,
       ),
       'search_index' => array(
         'label' => 'above',
@@ -1791,7 +1823,7 @@ function shanti_texts_features_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_select',
-      'weight' => 7,
+      'weight' => 51,
     ),
   );
 
@@ -1811,7 +1843,11 @@ function shanti_texts_features_field_default_field_instances() {
       'default' => array(
         'label' => 'inline',
         'module' => 'text',
-        'settings' => array(),
+        'settings' => array(
+          'quickedit' => array(
+            'editor' => 'plain_text',
+          ),
+        ),
         'type' => 'text_default',
         'weight' => 3,
       ),
@@ -1982,7 +2018,7 @@ function shanti_texts_features_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 29,
+      'weight' => 44,
     ),
   );
 
@@ -2002,9 +2038,13 @@ function shanti_texts_features_field_default_field_instances() {
       'default' => array(
         'label' => 'inline',
         'module' => 'creative_commons',
-        'settings' => array(),
+        'settings' => array(
+          'quickedit' => array(
+            'editor' => 'form',
+          ),
+        ),
         'type' => 'creative_commons_small_image',
-        'weight' => 5,
+        'weight' => 6,
       ),
       'embed' => array(
         'label' => 'inline',
@@ -2022,7 +2062,7 @@ function shanti_texts_features_field_default_field_instances() {
         'module' => 'creative_commons',
         'settings' => array(),
         'type' => 'creative_commons_small_image',
-        'weight' => 12,
+        'weight' => 11,
       ),
       'meta' => array(
         'label' => 'inline',
@@ -2118,7 +2158,7 @@ function shanti_texts_features_field_default_field_instances() {
       'module' => 'creative_commons',
       'settings' => array(),
       'type' => 'select',
-      'weight' => 34,
+      'weight' => 49,
     ),
   );
 
@@ -2138,9 +2178,13 @@ function shanti_texts_features_field_default_field_instances() {
       'default' => array(
         'label' => 'inline',
         'module' => 'text',
-        'settings' => array(),
+        'settings' => array(
+          'quickedit' => array(
+            'editor' => 'plain_text',
+          ),
+        ),
         'type' => 'text_default',
-        'weight' => 4,
+        'weight' => 5,
       ),
       'embed' => array(
         'label' => 'inline',
@@ -2158,7 +2202,7 @@ function shanti_texts_features_field_default_field_instances() {
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
-        'weight' => 11,
+        'weight' => 10,
       ),
       'meta' => array(
         'label' => 'inline',
@@ -2291,7 +2335,7 @@ function shanti_texts_features_field_default_field_instances() {
         'rows' => 5,
       ),
       'type' => 'text_textarea',
-      'weight' => 33,
+      'weight' => 48,
     ),
   );
 
@@ -2311,7 +2355,7 @@ function shanti_texts_features_field_default_field_instances() {
         'label' => 'inline',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 20,
+        'weight' => 15,
       ),
       'embed' => array(
         'label' => 'inline',
@@ -2326,13 +2370,13 @@ function shanti_texts_features_field_default_field_instances() {
           'file_view_mode' => 'default',
         ),
         'type' => 'file_rendered',
-        'weight' => 15,
+        'weight' => 14,
       ),
       'meta' => array(
         'label' => 'inline',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 21,
+        'weight' => 20,
       ),
       'metadata' => array(
         'label' => 'hidden',
@@ -2445,7 +2489,7 @@ function shanti_texts_features_field_default_field_instances() {
         ),
       ),
       'type' => 'media_generic',
-      'weight' => 23,
+      'weight' => 39,
     ),
   );
 
@@ -2465,9 +2509,14 @@ function shanti_texts_features_field_default_field_instances() {
       'default' => array(
         'label' => 'inline',
         'module' => 'shanti_kmaps_fields',
-        'settings' => array(),
-        'type' => 'kmap_popover_formatter',
-        'weight' => 7,
+        'settings' => array(
+          'quickedit' => array(
+            'editor' => 'form',
+          ),
+          'target' => '_blank',
+        ),
+        'type' => 'kmap_default_formatter',
+        'weight' => 8,
       ),
       'embed' => array(
         'label' => 'inline',
@@ -2593,7 +2642,7 @@ function shanti_texts_features_field_default_field_instances() {
       'module' => 'shanti_kmaps_fields',
       'settings' => array(),
       'type' => 'kmap_typeahead_picker',
-      'weight' => 5,
+      'weight' => 13,
     ),
   );
 
@@ -2613,9 +2662,13 @@ function shanti_texts_features_field_default_field_instances() {
       'default' => array(
         'label' => 'inline',
         'module' => 'shanti_kmaps_fields',
-        'settings' => array(),
+        'settings' => array(
+          'quickedit' => array(
+            'editor' => 'form',
+          ),
+        ),
         'type' => 'kmap_popover_formatter',
-        'weight' => 6,
+        'weight' => 7,
       ),
       'embed' => array(
         'label' => 'inline',
@@ -2739,16 +2792,16 @@ function shanti_texts_features_field_default_field_instances() {
       'module' => 'shanti_kmaps_fields',
       'settings' => array(),
       'type' => 'kmap_typeahead_picker',
-      'weight' => 4,
+      'weight' => 12,
     ),
   );
 
-  // Exported field_instance: 'node-book-field_language_kmaps'.
-  $field_instances['node-book-field_language_kmaps'] = array(
+  // Exported field_instance: 'node-book-field_kmap_terms'.
+  $field_instances['node-book-field_kmap_terms'] = array(
     'bundle' => 'book',
     'default_value' => NULL,
     'deleted' => 0,
-    'description' => 'This is the main language field. Choose the main language of the text in it\'s current form. For example, if translated, the language into which the text is translated.',
+    'description' => '',
     'display' => array(
       'book_pubreader' => array(
         'label' => 'above',
@@ -2757,11 +2810,13 @@ function shanti_texts_features_field_default_field_instances() {
         'weight' => 0,
       ),
       'default' => array(
-        'label' => 'inline',
+        'label' => 'above',
         'module' => 'shanti_kmaps_fields',
-        'settings' => array(),
-        'type' => 'kmap_popover_formatter',
-        'weight' => 8,
+        'settings' => array(
+          'target' => '_blank',
+        ),
+        'type' => 'kmap_default_formatter',
+        'weight' => 29,
       ),
       'embed' => array(
         'label' => 'above',
@@ -2770,17 +2825,16 @@ function shanti_texts_features_field_default_field_instances() {
         'weight' => 0,
       ),
       'full' => array(
-        'label' => 'inline',
-        'module' => 'shanti_kmaps_fields',
+        'label' => 'above',
         'settings' => array(),
-        'type' => 'kmap_popover_formatter',
-        'weight' => 10,
+        'type' => 'hidden',
+        'weight' => 0,
       ),
       'meta' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 15,
+        'weight' => 0,
       ),
       'search_index' => array(
         'label' => 'above',
@@ -2796,8 +2850,83 @@ function shanti_texts_features_field_default_field_instances() {
       ),
     ),
     'entity_type' => 'node',
-    'field_name' => 'field_language_kmaps',
-    'label' => 'Language (Kmaps)',
+    'field_name' => 'field_kmap_terms',
+    'label' => 'Terms',
+    'required' => 0,
+    'settings' => array(
+      'kmap_term_limit' => 100,
+      'search_filters' => array(),
+      'search_root_kmap_path' => '',
+      'search_root_kmapid' => '',
+      'search_view' => '',
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 0,
+      'module' => 'shanti_kmaps_fields',
+      'settings' => array(),
+      'type' => 'kmap_typeahead_term_picker',
+      'weight' => 14,
+    ),
+  );
+
+  // Exported field_instance: 'node-book-field_language_kmap'.
+  $field_instances['node-book-field_language_kmap'] = array(
+    'bundle' => 'book',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => 'This is the main language field. Choose the main language of the text in it\'s current form. For example, if translated, the language into which the text is translated. ',
+    'display' => array(
+      'book_pubreader' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'default' => array(
+        'label' => 'above',
+        'module' => 'shanti_kmaps_fields',
+        'settings' => array(
+          'target' => '_blank',
+        ),
+        'type' => 'kmap_default_formatter',
+        'weight' => 26,
+      ),
+      'embed' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'full' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'meta' => array(
+        'label' => 'inline',
+        'module' => 'shanti_kmaps_fields',
+        'settings' => array(),
+        'type' => 'kmap_popover_formatter',
+        'weight' => 10,
+      ),
+      'search_index' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_language_kmap',
+    'label' => 'Language',
     'required' => 0,
     'settings' => array(
       'kmap_term_limit' => 100,
@@ -2812,7 +2941,7 @@ function shanti_texts_features_field_default_field_instances() {
       'module' => 'shanti_kmaps_fields',
       'settings' => array(),
       'type' => 'kmap_typeahead_picker',
-      'weight' => 6,
+      'weight' => 11,
     ),
   );
 
@@ -2836,9 +2965,12 @@ function shanti_texts_features_field_default_field_instances() {
         'settings' => array(
           'bypass_access' => FALSE,
           'link' => FALSE,
+          'quickedit' => array(
+            'editor' => 'form',
+          ),
         ),
         'type' => 'entityreference_label',
-        'weight' => 15,
+        'weight' => 21,
       ),
       'embed' => array(
         'label' => 'above',
@@ -2961,7 +3093,7 @@ function shanti_texts_features_field_default_field_instances() {
       'module' => 'og',
       'settings' => array(),
       'type' => 'og_complex',
-      'weight' => 39,
+      'weight' => 48,
     ),
   );
 
@@ -2982,7 +3114,7 @@ function shanti_texts_features_field_default_field_instances() {
         'module' => 'file',
         'settings' => array(),
         'type' => 'file_default',
-        'weight' => 19,
+        'weight' => 25,
       ),
       'embed' => array(
         'label' => 'above',
@@ -2994,7 +3126,7 @@ function shanti_texts_features_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 20,
+        'weight' => 0,
       ),
       'meta' => array(
         'label' => 'above',
@@ -3035,16 +3167,26 @@ function shanti_texts_features_field_default_field_instances() {
         'progress_indicator' => 'throbber',
       ),
       'type' => 'file_generic',
-      'weight' => 35,
+      'weight' => 50,
     ),
   );
 
-  // Exported field_instance: 'node-book-field_terms_kmaps'.
-  $field_instances['node-book-field_terms_kmaps'] = array(
+  // Exported field_instance: 'node-book-field_split_headings'.
+  $field_instances['node-book-field_split_headings'] = array(
     'bundle' => 'book',
-    'default_value' => NULL,
+    'default_value' => array(
+      0 => array(
+        'value' => 1,
+      ),
+      1 => array(
+        'value' => 2,
+      ),
+      2 => array(
+        'value' => 3,
+      ),
+    ),
     'deleted' => 0,
-    'description' => '',
+    'description' => 'Choose on which headings to split the text',
     'display' => array(
       'book_pubreader' => array(
         'label' => 'above',
@@ -3054,12 +3196,10 @@ function shanti_texts_features_field_default_field_instances() {
       ),
       'default' => array(
         'label' => 'above',
-        'module' => 'shanti_kmaps_fields',
-        'settings' => array(
-          'target' => '_blank',
-        ),
-        'type' => 'kmap_default_formatter',
-        'weight' => 21,
+        'module' => 'list',
+        'settings' => array(),
+        'type' => 'list_default',
+        'weight' => 28,
       ),
       'embed' => array(
         'label' => 'above',
@@ -3074,11 +3214,10 @@ function shanti_texts_features_field_default_field_instances() {
         'weight' => 0,
       ),
       'meta' => array(
-        'label' => 'inline',
-        'module' => 'shanti_kmaps_fields',
+        'label' => 'above',
         'settings' => array(),
-        'type' => 'kmap_popover_formatter',
-        'weight' => 10,
+        'type' => 'hidden',
+        'weight' => 0,
       ),
       'search_index' => array(
         'label' => 'above',
@@ -3094,23 +3233,91 @@ function shanti_texts_features_field_default_field_instances() {
       ),
     ),
     'entity_type' => 'node',
-    'field_name' => 'field_terms_kmaps',
-    'label' => 'Terms',
+    'field_name' => 'field_split_headings',
+    'label' => 'Split Headings',
     'required' => 0,
     'settings' => array(
-      'kmap_term_limit' => 100,
-      'search_filters' => array(),
-      'search_root_kmap_path' => '',
-      'search_root_kmapid' => '',
-      'search_view' => '',
       'user_register_form' => FALSE,
     ),
     'widget' => array(
-      'active' => 0,
-      'module' => 'shanti_kmaps_fields',
+      'active' => 1,
+      'module' => 'options',
       'settings' => array(),
-      'type' => 'kmap_typeahead_term_picker',
-      'weight' => 6,
+      'type' => 'options_buttons',
+      'weight' => 10,
+    ),
+  );
+
+  // Exported field_instance: 'node-book-field_split_text'.
+  $field_instances['node-book-field_split_text'] = array(
+    'bundle' => 'book',
+    'default_value' => array(
+      0 => array(
+        'value' => 0,
+      ),
+    ),
+    'deleted' => 0,
+    'description' => 'If this box is checked, the text will be split a text into separate book pages — sections — based on it\'s headers: Heading 1, Heading 2, Heading 3, etc, as selected below. Splitting your text allows you to edit and assign KMap terms to its sections individually, as well as creating a navigable table of contents. Beware, however, that the process is currently irreversible: once your text is divided into sections, the sections cannot be automatically re-joined into a single text.',
+    'display' => array(
+      'book_pubreader' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'default' => array(
+        'label' => 'above',
+        'module' => 'list',
+        'settings' => array(),
+        'type' => 'list_default',
+        'weight' => 27,
+      ),
+      'embed' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'full' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'meta' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'search_index' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_split_text',
+    'label' => 'Split Text on Headers',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'options',
+      'settings' => array(
+        'display_label' => 1,
+      ),
+      'type' => 'options_onoff',
+      'weight' => 9,
     ),
   );
 
@@ -3134,9 +3341,13 @@ function shanti_texts_features_field_default_field_instances() {
       'default' => array(
         'label' => 'above',
         'module' => 'list',
-        'settings' => array(),
+        'settings' => array(
+          'quickedit' => array(
+            'editor' => 'form',
+          ),
+        ),
         'type' => 'list_default',
-        'weight' => 16,
+        'weight' => 22,
       ),
       'embed' => array(
         'label' => 'above',
@@ -3154,7 +3365,7 @@ function shanti_texts_features_field_default_field_instances() {
         'module' => 'list',
         'settings' => array(),
         'type' => 'list_default',
-        'weight' => 13,
+        'weight' => 12,
       ),
       'meta' => array(
         'label' => 'inline',
@@ -3222,7 +3433,7 @@ function shanti_texts_features_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_select',
-      'weight' => 40,
+      'weight' => 49,
     ),
     'widget_type' => 'options_select',
   );
@@ -3231,6 +3442,7 @@ function shanti_texts_features_field_default_field_instances() {
   // Included for use with string extractors like potx.
   t('A brief description of the text, for use when displaying lists of text. Typically this is used only for the top level of a text.');
   t('Author');
+  t('Choose on which headings to split the text');
   t('Collection');
   t('Content');
   t('Date');
@@ -3238,8 +3450,8 @@ function shanti_texts_features_field_default_field_instances() {
   t('Determine if this text should be made public or visible only to those in its Collection.');
   t('Editor');
   t('Featured image');
+  t('If this box is checked, the text will be split a text into separate book pages — sections — based on it\'s headers: Heading 1, Heading 2, Heading 3, etc, as selected below. Splitting your text allows you to edit and assign KMap terms to its sections individually, as well as creating a navigable table of contents. Beware, however, that the process is currently irreversible: once your text is divided into sections, the sections cannot be automatically re-joined into a single text.');
   t('Language');
-  t('Language (Kmaps)');
   t('MLID');
   t('Original language');
   t('Original publication year');
@@ -3248,12 +3460,15 @@ function shanti_texts_features_field_default_field_instances() {
   t('Publication year');
   t('Rights');
   t('Rights (CC)');
+  t('Split Headings');
+  t('Split Text on Headers');
   t('Subjects');
   t('Terms');
   t('The Collection or Subcollection to which this text belongs. ');
   t('The main, original language of the text, if translated.');
   t('This field has been deprecated in favor of “Language (Kmaps)”. Currently, this field is still used to render the text properly for reading but it will be phased out.');
-  t('This is the main language field. Choose the main language of the text in it\'s current form. For example, if translated, the language into which the text is translated.');
+  t('This is the main language field. Choose the main language of the text in it\'s current form. For example, if translated, the language into which the text is translated. ');
+  t('To split the text up into sections based on its headers and create a table of contents that can be navigated, use the Shanti Text Splitter tab after entering the text.');
   t('Translator');
   t('Visibility');
   t('status');

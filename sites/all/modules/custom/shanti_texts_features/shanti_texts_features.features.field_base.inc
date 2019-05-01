@@ -592,6 +592,27 @@ $entity_field[0][\'value\'] = $mlid;',
     'type' => 'shanti_kmaps_fields_default',
   );
 
+  // Exported field_base: 'field_kmap_terms'.
+  $field_bases['field_kmap_terms'] = array(
+    'active' => 1,
+    'cardinality' => -1,
+    'deleted' => 0,
+    'entity_types' => array(),
+    'field_name' => 'field_kmap_terms',
+    'indexes' => array(
+      'id' => array(
+        0 => 'id',
+      ),
+    ),
+    'locked' => 0,
+    'module' => 'shanti_kmaps_fields',
+    'settings' => array(
+      'kmap_domain' => 'terms',
+    ),
+    'translatable' => 0,
+    'type' => 'shanti_kmaps_fields_default',
+  );
+
   // Exported field_base: 'field_language_kmap'.
   $field_bases['field_language_kmap'] = array(
     'active' => 1,
@@ -658,6 +679,61 @@ $entity_field[0][\'value\'] = $mlid;',
     ),
     'translatable' => 0,
     'type' => 'file',
+  );
+
+  // Exported field_base: 'field_split_headings'.
+  $field_bases['field_split_headings'] = array(
+    'active' => 1,
+    'cardinality' => -1,
+    'deleted' => 0,
+    'entity_types' => array(),
+    'field_name' => 'field_split_headings',
+    'indexes' => array(
+      'value' => array(
+        0 => 'value',
+      ),
+    ),
+    'locked' => 0,
+    'module' => 'list',
+    'settings' => array(
+      'allowed_values' => array(
+        1 => '&lt;h1&gt;',
+        2 => '&lt;h2&gt;',
+        3 => '&lt;h3&gt;',
+        4 => '&lt;h4&gt;',
+        5 => '&lt;h5&gt;',
+        6 => '&lt;h6&gt;',
+        7 => '&lt;h7&gt;',
+      ),
+      'allowed_values_function' => '',
+    ),
+    'translatable' => 0,
+    'type' => 'list_text',
+  );
+
+  // Exported field_base: 'field_split_text'.
+  $field_bases['field_split_text'] = array(
+    'active' => 1,
+    'cardinality' => 1,
+    'deleted' => 0,
+    'entity_types' => array(),
+    'field_name' => 'field_split_text',
+    'indexes' => array(
+      'value' => array(
+        0 => 'value',
+      ),
+    ),
+    'locked' => 0,
+    'module' => 'list',
+    'settings' => array(
+      'allowed_values' => array(
+        0 => '',
+        1 => '',
+      ),
+      'allowed_values_function' => '',
+    ),
+    'translatable' => 0,
+    'type' => 'list_boolean',
   );
 
   // Exported field_base: 'field_terms_kmaps'.

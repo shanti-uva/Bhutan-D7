@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * audio_video.features.field_base.inc
@@ -1713,6 +1714,30 @@ function audio_video_field_default_field_bases() {
     ),
     'translatable' => 0,
     'type' => 'field_collection',
+  );
+
+  // Exported field_base: 'field_kmap_terms'.
+  $field_bases['field_kmap_terms'] = array(
+    'active' => 1,
+    'cardinality' => -1,
+    'deleted' => 0,
+    'entity_types' => array(),
+    'field_name' => 'field_kmap_terms',
+    'field_permissions' => array(
+      'type' => 0,
+    ),
+    'indexes' => array(
+      'id' => array(
+        0 => 'id',
+      ),
+    ),
+    'locked' => 0,
+    'module' => 'shanti_kmaps_fields',
+    'settings' => array(
+      'kmap_domain' => 'terms',
+    ),
+    'translatable' => 0,
+    'type' => 'shanti_kmaps_fields_default',
   );
 
   // Exported field_base: 'field_language'.

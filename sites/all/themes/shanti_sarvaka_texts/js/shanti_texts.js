@@ -4,7 +4,6 @@ Drupal.behaviors.shantiTexts = {
     attach: function (context, settings) {
 
         $('.shanti-texts-section-title').on('inview', function(event, isInView) {
-            console.log($(this).text() + ": " + isInView);
             nid = $(this).parent().attr('id');
             toc_id = nid.replace('shanti-texts','shanti-texts-toc');
             if (isInView) {
@@ -76,6 +75,7 @@ Drupal.behaviors.shantiTextsReaderSidebar = {
             $('.main-content>.row:first-of-type,.footer,.site-banner,.flap').toggle();
             $('.main-col').once().height( $(".main-col").height() + 140 );
             $('.admin-menu .main-col').once().height( $(".admin-menu .main-col").height() + 140 );
+            $(this).toggleClass('expanded-view');
 
 //            if ($(this).text() == "[exit] Full-Screen")
 //                $(this).text("[enter] Full-Screen")

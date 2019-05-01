@@ -159,7 +159,7 @@
 
 .breadcrumb-child-container {
   margin-top: 2px;
-  display: none;
+  display: none !important;
 }
 
 .library-dropdown {
@@ -291,4 +291,28 @@
 /** Prevent views pagers from showing since we have custom pagers **/
 .view.view-biblio-search-api > ul.pager {
   display: none;
+}
+
+/** Sources full display where url is .../source/{title} **/
+
+.source-full .field-type-shanti-kmaps-fields-default {
+  padding-top: 0.3em;
+}
+
+.source-full .field-type-shanti-kmaps-fields-default .field-item span.tib {
+  font-size: 120%;
+}
+
+.source-full .field-type-shanti-kmaps-fields-default.field-label-inline .field-label {
+  color: #000;
+  font-weight: 400;
+  text-transform: uppercase;
+  font-size: 0.85em;
+  font-family: 'Open Sans','Segoe UI',Tahoma,sans-serif;
+  margin-right: 0.5rem;
+  letter-spacing: 0.0475rem;
+}
+
+.source-full .source-field .field-content a {
+  font-size: 95%;
 }

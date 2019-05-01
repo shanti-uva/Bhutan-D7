@@ -15,6 +15,19 @@ function shanti_texts_enable()
     drupal_theme_rebuild();
 }
 
+/**
+ * Implementing hook_ckeditor_settings_alter to point to Shanti Texts custom settings
+ * Used to update Word cleanup JS with additional functionality
+ *
+ * @param $settings
+ * @param $conf
+ */
+function shanti_texts_ckeditor_settings_alter(&$settings, $conf) {
+  // Change the ckeditor custom config path
+  $settings['customConfig'] = '/' . drupal_get_path('module', 'shanti_texts') . '/js/shanti_texts_ckeditor.config.js';
+  //watchdog('shanti texts ckeditor settings', json_encode($settings));
+}
+
 function shanti_texts_menu()
 {
     return array(
@@ -117,8 +130,14 @@ function shanti_texts_node_ajax_text($nid)
 function shanti_texts_node_embed($nid)
 {
     $node = node_load($nid);
-    $build = node_view($node,'embed'); // This view mode is declared in Display Suite -- should it just be declared here?
-    $url = parse_url(variable_get('shanti_kmaps_admin_server_subjects_explorer'));
+    $build = array(
+        '#type' => 'markup',
+        '#markup' => '<div class="content">There is no text with the id ' . $nid . '.</div>',
+    );
+    if ($node) {
+        $build = node_view($node, 'embed'); // This view mode is declared in Display Suite -- should it just be declared here?
+        $url = parse_url(variable_get('shanti_kmaps_admin_server_subjects_explorer'));
+    }
     drupal_add_http_header('X-Frame-Options', 'ALWAYS-ALLOW ' . $url['host']);
     return $build;
 }
@@ -191,47 +210,89 @@ function shanti_texts_edit_tab_title($node)
 }
 
 function shanti_texts_form_alter(&$form, &$form_state, $form_id) {
-    if ($form_id == 'book_admin_edit')
-    {
-        $form['save']['#value'] = 'Save text sections';
-    }
-    elseif ($form_id == 'book_node_form')
-    {
-        $form['actions']['submit']['#value']  = 'Save text section';
-        // Hide things if this is the form for a book child page
-        $nid = $form['nid']['#value'];
-        $bid = $form['#node']->book['bid'];
-        if ($nid != $bid) {
-            hide($form['field_og_collection_ref']);
-            hide($form['field_general_featured_image']);
-            field_group_hide_field_groups($form, array('group_collection','group_book_metadata','group_book_admin'));
-        }
-    }
+  $search_flyout_forms = array(
+    'views-exposed-form-text-search-block-3',
+    'views-exposed-form-full-text-local-2-block',
+  );
 
-    $search_flyout_forms = array(
-      'views-exposed-form-text-search-block-3',
-      'views-exposed-form-full-text-local-2-block',
-    );
-    if($form_id == 'views_exposed_form' && in_array($form['#id'], $search_flyout_forms)) {
-      $form_state['view']->display_handler->handlers['empty']['area']->options['format'] = 'full_html';
-
-      $input = $form_state['input'];
-      $term = NULL;
-      $no_results_message = "<p>" . t("There are no results for '%s'. Check your spelling or try a different term.") . "</p>";
-      if (array_key_exists('title', $input)) {
-        $term = $input['title'];
-      } else if (array_key_exists('search_api_views_fulltext', $input)) {
-        $term = $input['search_api_views_fulltext'];
+  if ($form_id == 'book_admin_edit')
+  {
+      $form['save']['#value'] = 'Save text sections';
+  }
+  elseif ($form_id == 'book_node_form')
+  {
+      $form['actions']['submit']['#value']  = 'Save text section';
+      // Hide things if this is the form for a book child page
+      $nid = $form['nid']['#value'];
+      $bid = $form['#node']->book['bid'];
+      if ($nid != $bid) {
+          hide($form['field_og_collection_ref']);
+          hide($form['field_general_featured_image']);
+          field_group_hide_field_groups($form, array('group_collection','group_book_metadata','group_book_admin'));
       }
-      if($term && count($form_state->view->result) == 0) {
-        $form_state['view']->display_handler->handlers['empty']['area']->options['content'] = sprintf(
-          $no_results_message,
-          check_plain($term)
+      // Check if it's an additional page inside existing book and add class to form
+      if (!empty($form['book']['bid']['#default_value']) && $form['book']['bid']['#default_value'] > 0) {
+        $form['#attributes']['class'][] = 'node-add-page-form';
+        $form['node_url'] = array(
+          '#type' => 'hidden',
+          '#attributes' => array('id' => 'parent-page-alias'),
+          '#value' => drupal_get_path_alias('node/' . $form['book']['bid']['#default_value']),
         );
+        // Adjust for page title if its adding a page to a book
+        $title = drupal_get_title();
+        if (!strstr($title, $form['#node']->title)) {
+          $book_node = node_load($form['book']['bid']['#default_value']);
+          if ($book_node && !empty($book_node->title)) {
+            $title = str_replace(t('Create Book page'), t('Add Page to '), $title);
+            drupal_set_title($title . ' <em>' . $book_node->title . ' </em>', PASS_THROUGH);
+          }
+        }
+      }
+  }
+  elseif($form_id == 'node_delete_confirm')
+  {
+    $node = $form['#node'];
+    if ($node->book['bid'] == $node->nid) {
+      $toc = book_toc($node->nid, 20);
+      if (count($toc) > 1) {
+        $delchld = array(
+          'delchild' => array(
+            '#type' => 'checkbox',
+            '#prefix' => '<p>Or you can delete all children pages in this book by checking the box below.</p>',
+            '#title' => 'Delete Children',
+            '#description' => 'If this is not checked children will become their own books',
+          )
+        );
+        // Put delete children check box before description
+        $form = array_slice($form, 0, 3, TRUE) + $delchld
+          + array_slice($form, 3, NULL, TRUE);
+        // Add custom function to delete children
+        array_unshift($form['#submit'], 'shanti_texts_delete_children_submit');
       }
     }
-}
+    // Add custom function to redirect to collection after delete
+    array_push($form['#submit'], 'shanti_texts_delete_path_submit');
+  }
+  elseif($form_id == 'views_exposed_form' && in_array($form['#id'], $search_flyout_forms))
+  {
+    $form_state['view']->display_handler->handlers['empty']['area']->options['format'] = 'full_html';
 
+    $input = $form_state['input'];
+    $term = NULL;
+    $no_results_message = "<p>" . t("There are no results for '%s'. Check your spelling or try a different term.") . "</p>";
+    if (array_key_exists('title', $input)) {
+      $term = $input['title'];
+    } else if (array_key_exists('search_api_views_fulltext', $input)) {
+      $term = $input['search_api_views_fulltext'];
+    }
+    if($term && count($form_state->view->result) == 0) {
+      $form_state['view']->display_handler->handlers['empty']['area']->options['content'] = sprintf(
+        $no_results_message,
+        check_plain($term)
+      );
+    }
+  }
+}
 
 /**
  * Implements hook_kmaps_fields_solr_doc_alter to change the doc sent to the solr KM asset index.
@@ -250,6 +311,119 @@ function shanti_texts_kmaps_fields_solr_doc_alter(&$solrdoc)
     }
 }
 
+/**
+ * Hook presaves in texts checks to see if the access to the book has changed
+ * And if it has then it batch updates all the book pages to match the access
+ * This is so that for a book created as private (with all children nodes as private)
+ * One can see the pages if it is made public. Otherwise only the book page is public
+ * and the children remain private
+ *
+ * @param $node
+ */
+function shanti_texts_node_presave($node) {
+  /*
+  //dpm($node, 'node in presave');
+  if ($node->type == 'book') {
+    $node->access_change = FALSE;
+    if ($node->book['bid'] == $node->book['nid']) {
+      $node->access_change= TRUE;
+      $prevaccess = $node->original->group_content_access['und'][0]['value'];
+      $newaccess = $node->group_content_access['und'][0]['value'];
+      if ($prevaccess != $newaccess) {
+        $batch = array(
+          'operations' => array(
+            array(
+              'shanti_texts_update_child_access',
+              array($node->book['bid'], $newaccess)
+            ),
+          ),
+          'finished' => 'shanti_texts_update_child_access_finished',
+          'title' => t('Updating Permissions on the Book’s Pages'),
+          'init_message' => t('Updating all book pages'),
+          'progress_message' => t('Updated @current out of @total pages.'),
+          'error_message' => t('Updating book page permissions has encountered an error.'),
+        );
+        batch_set($batch);
+        $alias = drupal_get_path_alias("node/{$node->nid}");
+        batch_process($alias);
+      }
+    }
+  }
+  */
+}
+
+/**
+ *  The operation function called from shanti_texts_node_presave if book access has changed
+ *  Updates visibility (access) for all child nodes to match the book
+ *  Function copied directly from https://cgit.drupalcode.org/book_delete/tree/book_delete.module line 127
+ *
+ * @param $bid
+ * @param $acces_val
+ * @param $context
+ *
+ * @throws \Exception
+ */
+function shanti_texts_update_child_access($bid, $acces_val, &$context) {
+  if (!isset($context['sandbox']['progress'])) {
+    $context['sandbox']['max'] = db_query("SELECT COUNT(nid) FROM {book} WHERE bid = :bid", array(':bid' => $bid))->fetchField();
+    $context['sandbox']['progress'] = 0;
+    $context['sandbox']['highest_nid'] = 0;
+    $context['sandbox']['bid'] = $bid;
+  }
+
+  // Update 5 nodes at a time.
+  $limit = 5;
+  $nids = db_query_range("SELECT nid FROM {book} WHERE bid = :bid AND nid > :nid AND nid <> bid ORDER BY nid ASC", 0, $limit, array(
+    ':bid' => $context['sandbox']['bid'],
+    ':nid' => $context['sandbox']['highest_nid'],
+  ))->fetchCol();
+
+  if (!empty($nids)) {
+    $nodes = node_load_multiple($nids);
+    foreach ($nodes as $nd) {
+      $nd->group_content_access['und'][0]['value'] = $acces_val;
+      node_save($nd);
+    }
+  }
+
+  // Update our progress information.
+  $context['sandbox']['progress'] += count($nids);
+  $context['sandbox']['highest_nid'] = array_pop($nids);
+
+  // Multistep processing : report progress.
+  if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
+    $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
+    $context['message'] = t("@num out of @total children updates (@perc %)!",
+      array(
+        '@num' => $context['sandbox']['progress'],
+        '@total' => $context['sandbox']['max'],
+        '@perc' => $context['finished'],
+      )
+    );
+  }
+}
+
+/**
+ * The finish function for batch updating child access after book access changed.
+ * Code from https://cgit.drupalcode.org/book_delete/tree/book_delete.module
+ *
+ * @param $success
+ * @param $results
+ * @param $operations
+ *
+ * @throws \Exception
+ */
+function shanti_texts_update_child_access_finished($success, $results, $operations) {
+  if ($success) {
+    drupal_set_message(t('The visibility for each of the book’s pages has been updated.'));
+  }
+  else {
+    drupal_set_message(t('An error occurred, when trying to update visibility for the book pages, processing did not complete.'), 'error');
+    $message = format_plural(count($results), '1 item successfully updated:', '@count items successfully updated:');
+    $message .= theme('item_list', $results);
+    drupal_set_message($message);
+  };
+}
 
 function shanti_texts_node_insert($node)
 {
@@ -281,27 +455,39 @@ function _shanti_texts_book_update_or_insert($node,$op)
         $lang = $node->language;
         if (isset($book->field_og_collection_ref))
         {
-          // Depends on collection field
-          $node->field_og_collection_ref[$lang][0]['target_id'] = $book->field_og_collection_ref[$lang][0]['target_id'];
-          field_attach_update('node', $node);
+            if (!isset($node->field_og_collection_ref[$lang]) && isset($node->field_og_collection_ref[LANGUAGE_NONE])) {
+                $lang = LANGUAGE_NONE;  // To prevent the notices
+            }
+            // Depends on collection field and visibility
+            $node->field_og_collection_ref[$lang][0]['target_id'] = $book->field_og_collection_ref[$lang][0]['target_id'];
+            $node->group_content_access[LANGUAGE_NONE][0]['value'] = $book->group_content_access[LANGUAGE_NONE][0]['value'];
+            field_attach_presave('node', $node);
+            field_attach_update('node', $node);
+            entity_get_controller('node')->resetCache(array($node->nid));
+            node_access_acquire_grants($node);
         }
     }
-    // Case: Parent; set childrens' collections to parent's
+    // Case: Parent; set childrens' collections to parent's and visibility to parent's
     elseif ($node->nid == $node->book['bid'])
     {
         if ($op == 'update')
         {
             $sql = "SELECT nid FROM {book} WHERE bid = :bid AND nid != bid";
             $rs = db_query($sql,array(':bid' => $node->nid));
+
             while ($r = $rs->fetchObject())
             {
                 $this_node = node_load($r->nid);
                 $lang = $this_node->language;
                 if (isset($node->field_og_collection_ref))
                 {
-                    // Depends on collection field
+                    // Depends on collection field and collection visibility field
                     $this_node->field_og_collection_ref[$lang][0]['target_id'] = $node->field_og_collection_ref[$lang][0]['target_id'];
+                    $this_node->group_content_access[LANGUAGE_NONE][0]['value'] = $node->group_content_access[LANGUAGE_NONE][0]['value'];
+                    field_attach_presave('node', $this_node);
                     field_attach_update('node', $this_node);
+                    entity_get_controller('node')->resetCache(array($this_node->nid));
+                    node_access_acquire_grants($this_node);
                 }
             }
         }
@@ -312,15 +498,130 @@ function _shanti_texts_book_update_or_insert($node,$op)
     }
 }
 
-function shanti_texts_node_delete($node)
-{
-	if ($node->type == 'book')
-	{
-		# If node has children
-	}
-
-
+/**
+ * Custom function for node delete, return to collection page if node has a collection
+ * @param $form
+ * @param $form_state
+ */
+function shanti_texts_delete_path_submit(&$form, &$form_state) {
+  $node = $form['#node'];
+  $retpath = 'home';
+  if (!empty($node->book) && $node->book['bid'] != $node->nid) {
+    $retpath = drupal_get_path_alias("node/{$node->book['bid']}");
+  } else if (!empty($node->field_og_collection_ref)) {
+    $collid = $node->field_og_collection_ref['und'][0]['target_id'];
+    $retpath = drupal_get_path_alias("node/{$collid}");
+  }
+  drupal_goto($retpath);
 }
+
+/**
+ * Extra submit node for node_delete form. If book and delete children checkbox is checked
+ * See shanti_texts_form_alter() for checkbox definition. If checked,
+ * This starts a batch process to delete all child nodes of the book
+ *
+ * @param $form
+ * @param $form_state
+ */
+function shanti_texts_delete_children_submit(&$form, $form_state)
+{
+  $node = $form['#node'];
+  $retpath = 'home';
+  if (!empty($node->field_og_collection_ref)) {
+    $collid = $node->field_og_collection_ref['und'][0]['target_id'];
+    $retpath = drupal_get_path_alias("node/{$collid}");
+  }
+  $delchild = $form_state['values']['delchild'];
+	if ($node->type == 'book' && $node->book['bid'] == $node->nid && $delchild == 1)
+	{
+
+    $batch = array(
+      'operations' => array(
+        array('shanti_texts_delete_node_children', array($node->book['bid'])),
+      ),
+      'finished' => 'shanti_texts_delete_node_children_finished',
+      'title' => t('Deleting Book Pages'),
+      'init_message' => t('Starting to delete all book pages'),
+      'progress_message' => t('Deleted @current out of @total pages.'),
+      'error_message' => t('Deleting text pages has encountered an error.'),
+    );
+    batch_set($batch);
+    batch_process($retpath);
+	}
+}
+
+/**
+ *  The operation function called in the batch to delete a books children
+ *  Function copied directly from https://cgit.drupalcode.org/book_delete/tree/book_delete.module line 127
+ *
+ * @param $bid
+ * @param $context
+ *
+ * @throws \Exception
+ */
+function shanti_texts_delete_node_children($bid, &$context) {
+  if (!isset($context['sandbox']['progress'])) {
+    $context['sandbox']['max'] = db_query("SELECT COUNT(nid) FROM {book} WHERE bid = :bid", array(':bid' => $bid))->fetchField();
+    $context['sandbox']['progress'] = 0;
+    $context['sandbox']['highest_nid'] = 0;
+    $context['sandbox']['bid'] = $bid;
+  }
+
+  // Delete 5 nodes at a time.  This needs to be set fairly low as there may be
+  // many search index deletions for each node.
+  $limit = 3;
+  $nids = db_query_range("SELECT nid FROM {book} WHERE bid = :bid AND nid > :nid AND nid <> bid ORDER BY nid ASC", 0, $limit, array(
+    ':bid' => $context['sandbox']['bid'],
+    ':nid' => $context['sandbox']['highest_nid'],
+  ))->fetchCol();
+  if (!empty($nids)) {
+    node_delete_multiple($nids);
+  }
+
+  // Update our progress information.
+  $context['sandbox']['progress'] += count($nids);
+  $context['sandbox']['highest_nid'] = array_pop($nids);
+  // Delete the top book node last.
+  if ($context['sandbox']['progress'] == $context['sandbox']['max'] - 1) {
+    node_delete($context['sandbox']['bid']);
+    $context['sandbox']['progress']++;
+  }
+
+  // Multistep processing : report progress.
+  if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
+    $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
+    $context['message'] = t("@num out of @total children deleted (@perc %)!",
+      array(
+        '@num' => $context['sandbox']['progress'],
+        '@total' => $context['sandbox']['max'],
+        '@perc' => $context['finished'],
+      )
+    );
+  }
+}
+
+/**
+ * The finish function for batch deleting children of a book node.
+ * Code from https://cgit.drupalcode.org/book_delete/tree/book_delete.module
+ *
+ * @param $success
+ * @param $results
+ * @param $operations
+ *
+ * @throws \Exception
+ */
+function shanti_texts_delete_node_children_finished($success, $results, $operations) {
+  if ($success) {
+    drupal_set_message(t('The book and all its children have been deleted.'));
+  }
+  else {
+    drupal_set_message(t('An error occurred, when trying to delete book children, processing did not complete.'), 'error');
+    $message = format_plural(count($results), '1 item successfully deleted:', '@count items successfully deleted:');
+    $message .= theme('item_list', $results);
+    drupal_set_message($message);
+  };
+}
+
 
 /**
  * Special function to count number of BOOK items in a collection in texts.

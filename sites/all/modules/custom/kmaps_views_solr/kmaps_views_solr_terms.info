@@ -1,0 +1,14 @@
+name = Solr Views Integration for Terms
+description = This module exposes Solr API as fields in Views for Terms related assets
+core = 7.x
+package = Shanti
+
+dependencies[] = views:views
+dependencies[] = views:views_ui
+dependencies[] = pagerer:pagerer
+dependencies[] = better_exposed_filters:better_exposed_filters
+dependencies[] = kmaps_views_solr:kmaps_views_solr
+
+files[] = handlers/terms/kmaps_views_solr_terms_handler_field.inc
+files[] = handlers/terms/kmaps_views_solr_terms_handler_filter_title.inc
+files[] = plugins/terms/kmaps_views_solr_terms_plugin_query.inc

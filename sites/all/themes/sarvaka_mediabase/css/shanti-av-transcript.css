@@ -100,6 +100,7 @@
   height: 6rem;
   border: 1px solid #ddd;
   width: 100%;
+      padding-left: 20%;
 }
 
 .av-main-transcript-section .btn-group-transcript .btn.btn-default.dropdown-toggle:focus {
@@ -109,9 +110,10 @@
 .bootstrap-select.btn-group.transcript-options .icon:first-child {
   font-size: 2.3rem;
   line-height: 1.5em;
-  color: #606060;
+  color: #fff;
+  background-color: transparent;
   position: relative;
-  left: 0.5rem;
+  left: 0;
   top: 0;
   width: auto;
 }
@@ -122,12 +124,13 @@
 .bootstrap-select.btn-group.transcript-options .btn:focus .icon,
 .bootstrap-select.btn-group.transcript-options .btn:hover .icon::before,
 .bootstrap-select.btn-group.transcript-options .btn:focus .icon::before {
-  background: #ddd;
+  background-color: #ddd;
+  background-color: transparent;
 }
 
 .av-main-transcript-section .bootstrap-select.btn-group .btn:hover,
 .av-main-transcript-section .bootstrap-select.btn-group .btn:focus {
-  background: #444;
+  background-color: #444;
 }
 
 .av-main-transcript-section .bootstrap-select.btn-group .dropdown-menu.inner{
@@ -160,7 +163,7 @@
   overflow:hidden;
   white-space: nowrap;
   text-overflow:ellipsis;
-  padding: .2rem .3rem;
+  padding: 0 .3rem;
   border:1px dashed transparent;
 }
 
@@ -263,7 +266,7 @@
 
 .speaker-tiers .tier[data-tier="dzo_bod"]{
   font-size: 112%;
-  letter-spacing: .1rem;
+  font-family: 'Jomolhari-ID', 'Tibetan Machine Uni';
 }
 
 .speaker-tiers .tier[style="display: block;"]:last-of-type{
@@ -277,7 +280,7 @@
 .speaker-tiers .tier[data-tier='content_bod'],
 .speaker-name .speaker-display[data-speaker-display='ss_speaker_bod']{
   font-size: 1.18em;
-  letter-spacing: 0.05rem;
+  font-family: 'Jomolhari-ID', 'Tibetan Machine Uni';
 }
 
 .speaker-tiers .tier[data-tier='ts_content_gyal'],
@@ -561,8 +564,8 @@
 }
 
 .has-transcript .tabs.primary li a.transcript-edit::after{
-  content: '\f040';
-  font-family:'FontAwesome';
+  content: '\e687';
+  font-family:'shanticon';
   color: #f9f9f9;
   font-size: 1.25em;
   position: relative;
@@ -796,12 +799,29 @@
 }
 
 .btn-group-transcript .btn.btn-icon .fa {
-  font-size: 1em;
-  /*height: 4.06em;*/
+  font-size: 1.12em;
+  opacity: .8;
 }
 
-.btn-group-transcript .btn.btn-icon .fa.fa-play {
-  padding-top: 2.3rem;
+.btn-group-transcript .btn.btn-icon .fa.fa-play::before{
+  content:'\e680';
+  font-family:'shanticon';
+  position: relative;
+  left: .3rem;
+  color:#fff;
+  font-size: 1.12em;
+}
+
+.btn-group-transcript .btn.btn-icon .fa.fa-pause{
+  font-size: 1.25em;
+  position: relative;
+  left: .3rem;
+}
+
+.btn-group-transcript .btn.btn-icon .fa.fa-pause::before{
+  content:'\e681';
+  font-family:'shanticon';
+  left: .4rem;
 }
 
 .btn-group-transcript .btn.btn-icon.playpause {
@@ -821,6 +841,10 @@
 .btn-group-transcript .fa.fa-comments-o{
   top: 0.3rem;
   position: relative;
+}
+.btn-group-transcript .fa.fa-comments-o::before{
+  content:'\e66f';
+  font-family:'shanticon';
 }
 
 .btn-group-transcript .bootstrap-select.btn-group .btn{
@@ -864,7 +888,7 @@ div.fivestar-widget .star{
 .av-main-transcript-section .transcript-options.bootstrap-select.btn-group .caret{
   position: absolute;
   top: 36% !important;
-  right: 35% !important;
+  right: 38% !important;
 }
 
 .av-main-transcript-section .transcript-options.bootstrap-select.btn-group .caret::before {
@@ -891,9 +915,7 @@ div.fivestar-widget .star{
 }
 
 .transcript-options.bootstrap-select.btn-group .dropdown-menu.open .popover-title{
-  font-size: 0.75em;
-  text-transform: uppercase;
-  letter-spacing: 0.07rem;
+  font-size: 1em;
   padding-left:1.4rem;
 }
 
@@ -1213,7 +1235,7 @@ div.fivestar-widget .star{
   display: none;
   position: relative;
   margin: 0 0 0 0.1rem;
-  background-color: #555;
+  background-color: #777;
   /* background-image: linear-gradient(transparent 95%, rgba(200, 200, 200, .transcript-search-wrapper.35) 95%);
   background-size: 4px 4px;*/
     height: 6.44em;
@@ -1274,8 +1296,7 @@ div.fivestar-widget .star{
   z-index: 10;
   color: #888;
   cursor: pointer;
-  font-size: 1.12em;
-  font-family: 'shanticon';
+  font-size: 1.5em;
 }
 
 .transcript-search-wrapper > .icon:hover,
@@ -1369,8 +1390,8 @@ div.fivestar-widget .star{
 }
 
 .transcript-search-wrapper .input-group-btn .icon.fa-spinner::before {
-  content: '\f110';
-  font-family: 'FontAwesome';
+  content: '\e64d';
+  font-family: 'shanticon';
   font-size: 3rem;
   color: transparent;
   position: relative;

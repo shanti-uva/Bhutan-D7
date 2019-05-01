@@ -468,7 +468,7 @@
       Apache Solr Search Integration
         The format used is $document->id = $site_hash . '/' . $entity_type . '/' . $entity->id;
     -->
-    <field name="id" type="string" indexed="true" stored="true" required="true" />
+    <field name="id" type="string" indexed="true" stored="true" docValues="true" required="true" />
 
     <!-- Add Solr Cloud version field as mentioned in
          http://wiki.apache.org/solr/SolrCloud#Required_Config
@@ -477,9 +477,9 @@
 
     <!-- Search Api specific fields -->
     <!-- item_id contains the entity ID, e.g. a node's nid. -->
-    <field name="item_id"  type="string" indexed="true" stored="true" />
+    <field name="item_id"  type="string" indexed="true" docValues="true" stored="true" />
     <!-- index_id is the machine name of the search index this entry belongs to. -->
-    <field name="index_id" type="string" indexed="true" stored="true" />
+    <field name="index_id" type="string" indexed="true" docValues="true" stored="true" />
   <!-- copyField commands copy one field to another at the time a document
         is added to the index.  It's used either to index the same field differently,
         or to add multiple fields to the same field for easier/faster searching.  -->
@@ -488,15 +488,15 @@
 
     <!-- Apache Solr Search Integration specific fields -->
     <!-- entity_id is the numeric object ID, e.g. Node ID, File ID -->
-    <field name="entity_id"  type="long" indexed="true" stored="true" />
+    <field name="entity_id"  type="long" indexed="true" docValues="true" stored="true" />
     <!-- entity_type is 'node', 'file', 'user', or some other Drupal object type -->
-    <field name="entity_type" type="string" indexed="true" stored="true" />
+    <field name="entity_type" type="string" indexed="true" docValues="true" stored="true" />
     <!-- bundle is a node type, or as appropriate for other entity types -->
-    <field name="bundle" type="string" indexed="true" stored="true"/>
-    <field name="bundle_name" type="string" indexed="true" stored="true"/>
-    <field name="site" type="string" indexed="true" stored="true"/>
-    <field name="hash" type="string" indexed="true" stored="true"/>
-    <field name="url" type="string" indexed="true" stored="true"/>
+    <field name="bundle" type="string" indexed="true" docValues="true" stored="true"/>
+    <field name="bundle_name" type="string" indexed="true" docValues="true" stored="true"/>
+    <field name="site" type="string" indexed="true" docValues="true" stored="true"/>
+    <field name="hash" type="string" indexed="true" docValues="true" stored="true"/>
+    <field name="url" type="string" indexed="true" docValues="true" stored="true"/>
     <!-- label is the default field for a human-readable string for this entity (e.g. the title of a node) -->
     <field name="label" type="text" indexed="true" stored="true" termVectors="true" omitNorms="true"/>
     <!-- The string version of the title is used for sorting -->
@@ -505,7 +505,7 @@
     <!-- content is the default field for full text search - dump crap here -->
     <field name="content" type="text" indexed="true" stored="true" termVectors="true"/>
     <field name="teaser" type="text" indexed="false" stored="true"/>
-    <field name="path" type="string" indexed="true" stored="true"/>
+    <field name="path" docValues="true" type="string" indexed="true" stored="true"/>
     <field name="path_alias" type="text" indexed="true" stored="true" termVectors="true" omitNorms="true"/>
 
     <!-- These are the fields that correspond to a Drupal node. The beauty of having
@@ -560,8 +560,8 @@
     <dynamicField name="bm_*"  type="boolean" indexed="true"  stored="true" multiValued="true"/>
     <dynamicField name="bs_*"  type="boolean" indexed="true"  stored="true" multiValued="false"/>
     <!-- Regular text (without processing) can be stored in a string field-->
-    <dynamicField name="ss_*"  type="string"  indexed="true"  stored="true" multiValued="false"/>
-    <dynamicField name="sm_*"  type="string"  indexed="true"  stored="true" multiValued="true"/>
+    <dynamicField name="ss_*"  docValues="true" type="string"  indexed="true"  stored="true" multiValued="false"/>
+    <dynamicField name="sm_*"  docValues="true" type="string"  indexed="true"  stored="true" multiValued="true"/>
     <!-- Normal text fields are for full text - the relevance of a match depends on the length of the text -->
     <dynamicField name="ts_*"  type="text"    indexed="true"  stored="true" multiValued="false" termVectors="true"/>
     <dynamicField name="tm_*"  type="text"    indexed="true"  stored="true" multiValued="true" termVectors="true"/>
@@ -611,8 +611,8 @@
     <dynamicField name="htm_*" type="tint"   indexed="true"  stored="true" multiValued="true"/>
 
     <!-- Unindexed string fields that can be used to store values that won't be searchable -->
-    <dynamicField name="zs_*" type="string"   indexed="false"  stored="true" multiValued="false"/>
-    <dynamicField name="zm_*" type="string"   indexed="false"  stored="true" multiValued="true"/>
+    <dynamicField name="zs_*" docValues="true" type="string"   indexed="false"  stored="true" multiValued="false"/>
+    <dynamicField name="zm_*" docValues="true" type="string"   indexed="false"  stored="true" multiValued="true"/>
 
     <!-- Fields for location searches.
          http://wiki.apache.org/solr/SpatialSearch#geodist_-_The_distance_function -->

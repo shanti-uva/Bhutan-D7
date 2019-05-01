@@ -6,13 +6,13 @@
     padding-left: 1rem;
     min-height: 1rem;
 }
-.kmap-filter-box .selected-kmap:not(:first-child)::before{
+.kmap-filter-box .selected-kmap ~ .selected-kmap::before{
     content: '(or)';
     width: 2.2em;
     color: #888;
     display: inline-block;
 }
-.kmap-filter-box.kmaps-conjunctive-filters .selected-kmap:not(:first-child)::before{
+.kmap-filter-box.kmaps-conjunctive-filters .selected-kmap ~ .selected-kmap::before{
     content: '(and)';
     width: 3em;
     color: #888;

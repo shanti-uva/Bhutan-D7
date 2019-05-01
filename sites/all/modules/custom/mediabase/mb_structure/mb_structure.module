@@ -936,7 +936,7 @@ function mb_structure_preprocess_node(&$vars)
               $subtitle_options = array_flip($subtitle_options);
               $data_content = array();
               foreach ($subtitle_options as $key => $val) {
-                $data_content[$key] = '<span class="text">' .$val. '</span><span class="glyphicon glyphicon-hourglass"></span><span class="fa fa-spinner fa-spin"></span>';
+                $data_content[$key] = '<span class="text">' .$val. '</span><span class="glyphicon glyphicon-hourglass"></span><span class="icon shanticon-spinner"></span>';
               }
               $selected = array();
               if ($result->totalCount > 0) {

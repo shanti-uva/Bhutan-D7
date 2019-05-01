@@ -7,7 +7,7 @@
 include_once 'shanti_collections.features.inc';
 
 /**
- * Implements hook_node_load
+ * Implements hook_node_view
  *  - Add parent collection title to subcollection node in case the parent is private
  */
 function shanti_collections_node_view($node, $view_mode, $langcode) {
@@ -132,8 +132,8 @@ function shanti_collections_get_groups_for_user($type='update', $add_optgroup = 
     }
     
     if ($add_optgroup) {
-        asort($colls);
-        asort($subcolls);
+        natcasesort($colls);
+        natcasesort($subcolls);
         $gids_with_labels[$coll_key] = $colls;
         $gids_with_labels[$subcoll_key] = $subcolls;
     } else {

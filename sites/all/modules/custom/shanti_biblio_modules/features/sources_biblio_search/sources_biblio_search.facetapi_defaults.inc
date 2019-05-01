@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * sources_biblio_search.facetapi_defaults.inc

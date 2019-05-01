@@ -83,6 +83,105 @@ function kmaps_explorer_menu()
         'menu_name' => 'main-menu',
     );
 
+    $items['terms/%/overview/%'] = array(
+      'title' => 'Terms',
+      'description' => 'Creates a callback that shows overview in terms via ajax',
+      'page callback' => 'kmaps_explorer_terms_overview',
+      'page arguments' => array(3, 1, 'terms'),
+      'access arguments' => TRUE,
+      'access callback' => TRUE,
+    );
+
+    $items['terms/%/sources/%'] = array(
+      'title' => 'Terms',
+      'description' => 'Creates a callback that shows sources in Terms via ajax',
+      'page callback' => 'kmaps_explorer_sources_universal', //using same function as in subjects.
+      'page arguments' => array(3, 1, 'terms'),
+      'access arguments' => TRUE,
+      'access callback' => TRUE,
+    );
+
+    $items['terms/%/visuals/%'] = array(
+      'title' => 'Terms',
+      'description' => 'Creates a callback that shows Terms in places via ajax',
+      'page callback' => 'kmaps_explorer_visuals_universal', //using same function as in subjects.
+      'page arguments' => array(3, 1, 'terms'),
+      'access arguments' => TRUE,
+      'access callback' => TRUE,
+    );
+
+    $items['terms/%/audio-video/%'] = array(
+      'title' => 'Terms',
+      'description' => 'Creates a callback that shows Terms in subjects via ajax',
+      'page callback' => 'kmaps_explorer_subjects_audio_video',
+      'page arguments' => array(3, 1, 'terms'),
+      'access arguments' => TRUE,
+      'access callback' => TRUE,
+    );
+
+    $items['terms/%/texts/%'] = array(
+      'title' => 'Terms',
+      'description' => 'Creates a callback that shows essays in Terms via ajax',
+      'page callback' => 'kmaps_explorer_texts_universal',
+      'page arguments' => array(3, 1, 'terms'),
+      'access arguments' => TRUE,
+      'access callback' => TRUE,
+    );
+
+    $items['terms/%/photos/%'] = array(
+      'title' => 'Terms',
+      'description' => 'Creates a callback that shows photos in Terms via ajax',
+      'page callback' => 'kmaps_explorer_photos_universal',
+      'page arguments' => array(3, 1, 'terms'),
+      'access arguments' => TRUE,
+      'access callback' => TRUE,
+    );
+
+    $items['terms/%/photos-node/%'] = array(
+      'title' => 'Terms',
+      'description' => 'Creates a callback that shows individual photos in terms via ajax',
+      'page callback' => 'kmaps_explorer_subjects_photos_node',
+      'page arguments' => array(1, 3),
+      'access arguments' => TRUE,
+      'access callback' => TRUE,
+    );
+
+    $items['terms/%/sources-node/%/%'] = array(
+      'title' => 'Terms',
+      'description' => 'Create a callback that shows an individual source in Terms via ajax',
+      'page callback' => 'kmaps_explorer_sources_node_universal', // using same function for both subject and places.
+      'page arguments' => array(4, 1, 3, 'terms'),
+      'access arguments' => TRUE,
+      'access callback' => TRUE,
+    );
+
+    $items['terms/%/visuals-node/%/%'] = array(
+      'title' => 'Terms',
+      'description' => 'Create a callback that shows an individual Terms in places via ajax',
+      'page callback' => 'kmaps_explorer_visuals_node_universal', // using same function for both subject and places.
+      'page arguments' => array(4, 1, 3, 'terms'),
+      'access arguments' => TRUE,
+      'access callback' => TRUE,
+    );
+
+    $items['terms/%/audio-video-node/%/%'] = array(
+      'title' => 'Terms',
+      'description' => 'Creates a callback that shows individual Terms nodes',
+      'page callback' => 'kmaps_explorer_audio_video_node', //using same function for both places and subjects.
+      'page arguments' => array(4, 1, 3, 'terms'),
+      'access arguments' => TRUE,
+      'access callback' => TRUE,
+    );
+
+    $items['terms/%/text-node/%/%'] = array(
+      'title' => 'Terms',
+      'description' => 'Creates a callback that shows individual term nodes',
+      'page callback' => 'kmaps_explorer_each_text_node',
+      'page arguments' => array(4, 1, 3, 'terms'),
+      'access arguments' => TRUE,
+      'access callback' => TRUE,
+    );
+
     $items['terms/%/%'] = array(
       'title' => 'Terms',
       'description' => 'Create a callback that shows an individual terms node without sidebars',
@@ -122,7 +221,7 @@ function kmaps_explorer_menu()
     $items['subjects/%/texts/%'] = array(
         'title' => 'Subjects',
         'description' => 'Creates a callback that shows essays in subjects via ajax',
-        'page callback' => 'kmaps_explorer_subjects_essays',
+        'page callback' => 'kmaps_explorer_texts_universal',
         'page arguments' => array(3, 1, 'subjects'),
         'access arguments' => TRUE,
         'access callback' => TRUE,
@@ -131,7 +230,7 @@ function kmaps_explorer_menu()
     $items['places/%/texts/%'] = array(
         'title' => 'Places',
         'description' => 'Creates a callback that shows essays in places via ajax',
-        'page callback' => 'kmaps_explorer_places_essays',
+        'page callback' => 'kmaps_explorer_texts_universal',
         'page arguments' => array(3, 1, 'places'),
         'access arguments' => TRUE,
         'access callback' => TRUE,
@@ -626,7 +725,9 @@ function kmaps_explorer_preprocess_breadcrumb(&$vars) {
     $node_data = $node_shuffle['data'];
     if (isset($node_data->{'ancestors_tib.alpha'}) && !empty($node_data->{'ancestors_tib.alpha'})) {
       $vars['breadcrumb'] = $node_data->{'ancestors_tib.alpha'};
+      array_unshift($vars['breadcrumb'], 'Tibetan');
       $vars['breadcrumbids'] = $node_data->{'ancestor_uids_tib.alpha'};
+      array_unshift($vars['breadcrumbids'], 'terms');
     }
   }
 }
@@ -875,7 +976,7 @@ function kmaps_explorer_terms_landing() {
         'domain' => 'terms',
         'featureId' => '',
         'solrId_featureId' => '',
-        'featuresPath' => $base_url . '/terms/%%ID%%/nojs',
+        'featuresPath' => $base_url . '/terms/%%ID%%/overview/nojs',
         'perspective' => 'tib.alpha',
         'tree' => 'terms',
         'direct_ancestors' => false,
@@ -936,7 +1037,6 @@ function kmaps_explorer_subjects_overview($type = 'ajax', $id, $app) {
     } else {
         return $content;
     }
-
 }
 
 function kmaps_explorer_print_subjects_names($obj) {
@@ -1077,8 +1177,6 @@ function kmaps_explorer_places_overview($type = 'ajax', $id, $app) {
  * Function to setup the page for first time loads and non ajax loads.
  */
 function kmaps_explorer_setup_page($id, $app, $resource = '') {
-    global $base_url;
-
     //Drupal static initializations
     $data_shuffle = &drupal_static('kmaps_explorer_data');
 
@@ -1092,14 +1190,8 @@ function kmaps_explorer_setup_page($id, $app, $resource = '') {
         'group' => CSS_THEME,
     );
 
-    //drupal_add_css($path . '/css/bootstrap.min.css', $options);
-    //drupal_add_css($path . '/css/bootstrap-theme.min.css', $options);
     drupal_add_css($path . '/css/kmaps_explorer.css', $options);
-    /**
-     *  if ($app === 'places') {
-     *    drupal_add_css($path . '/css/places.css', $options);
-     *  }
-     **/
+
     //custom javascript
     drupal_add_js($path . '/js/custom.js', $options);
     drupal_add_js(array('kmaps_explorer' => array(
@@ -1120,41 +1212,18 @@ function kmaps_explorer_setup_page($id, $app, $resource = '') {
     $node_data = $node_data->response->docs[0];
     //dpm($node_data);
 
-    //Create the url for related assets for subjects and places
-    // if ($app == 'subjects') {
-    //     //$mURL = "{$base_url}/api/subject/mod/{$id}";
-    //     $mURL = variable_get('shanti_kmaps_admin_server_subjects', SHANTI_KMAPS_ADMIN_SERVER_SUBJECTS) . '/features/' . $id . '.json';
-    // } elseif ($app == 'places') {
-    //     $mURL = variable_get('shanti_kmaps_admin_server_places', SHANTI_KMAPS_ADMIN_SERVER_PLACES) . '/features/' . $id . '.json';
-    // } else {
-    //     $mURL = "http://" . $app . ".kmaps.virginia.edu/features/" . $id . ".json";
-    // }
-
-    /* if($app == 'subjects') { $mURL = "{$base_url}/api/subject/mod/{$id}"; } */ // not sure what this is but will remove for now
-
     //Create the url for the solr related assets for subjects and places
     $solrURL = variable_get('shanti_kmaps_admin_server_solr', SHANTI_KMAPS_ADMIN_SERVER_SOLR) .
     '/select?q=kmapid:' . $app . '-' . $id .
     '&fq=&start=0&facets=on&group=true&group.field=asset_type&group.facet=true&group.ngroups=true&group.limit=0&wt=json';
-
-    //Get related data and saving in cache
-    // $c_name = 'json2';
-
-    // $related_url = save_to_cache($c_name, $app, $id, $mURL);
-
-    // $obj = json_decode($related_url);
-    //dpm($obj);
-    //dpm($node_data);
 
     //Get solr data
     $c_name_solr = 'solrJSON';
     $related_solr = save_to_cache($c_name_solr, $app, $id, $solrURL);
     $search = 'Kheri';
     $solrObj = json_decode($related_solr);
-    //dpm($solrObj);
 
     //Store the solr object to be used in essays.
-
     if ($app === 'places') {
         if (isset($node_data->closest_fid_with_shapes)) {
             $options = array(
@@ -1186,16 +1255,6 @@ function kmaps_explorer_setup_page($id, $app, $resource = '') {
     $related_sp = json_decode($related_sp_cache);
     //dpm($related_sp);
 
-    //Call to get the terms count
-    $solr_terms = variable_get('shanti_kmaps_admin_server_solr_terms', SHANTI_KMAPS_ADMIN_SERVER_SOLR_TERMS);
-    $solr_terms .= '/select?q=id:terms-';
-    $solr_terms .= $id;
-    $solr_terms .= '&fq=tree:terms&wt=json&rows=0&limit=0';
-
-    $related_terms_cache = save_to_cache('related_terms', 'terms', $id, $solr_terms);
-    $related_terms = json_decode($related_terms_cache);
-    //dpm($related_terms);
-
     $video_count = 0;
     $sources_count = 0;
     $visuals_count = 0;
@@ -1203,7 +1262,7 @@ function kmaps_explorer_setup_page($id, $app, $resource = '') {
     $images_count = 0;
     $places_count = 0;
     $subjects_count = 0;
-    $terms_count = $related_terms->response ? intval($related_terms->response->numFound) : 0;
+    $terms_count = 0;
 
     foreach ($related_sp->grouped->block_child_type->groups as $solrKey => $solrValue) {
         if ($solrValue->groupValue == "feature_types" && $solrValue->doclist->numFound > 0) {
@@ -1263,6 +1322,9 @@ function kmaps_explorer_setup_page($id, $app, $resource = '') {
         }
         if ($solrValue->groupValue == "visuals" && $solrValue->doclist->numFound > 0) {
             $visuals_count = $solrValue->doclist->numFound;
+        }
+        if ($solrValue->groupValue == "terms" && $solrValue->doclist->numFound > 0) {
+          $terms_count = $solrValue->doclist->numFound;
         }
     }
 
@@ -1446,44 +1508,9 @@ function kmaps_explorer_places_subjects($type = 'ajax', $id, $app) {
 }
 
 /**
- * Function to create the ajax content for essays in subjects
+ * Function to create the ajax content for texts universally
  */
-function kmaps_explorer_subjects_essays($type = 'ajax', $id, $app) {
-    //Drupal static initializations
-    $data_shuffle = &drupal_static('kmapS_explorer_data');
-    $data_shuffle['asset'] = 'texts';
-
-    $setup = kmaps_explorer_setup_page($id, $app, 'texts');
-
-    //Retrieve the title of the node
-    $title = $data_shuffle['node_title'];
-
-    $output = '<h4>' . 'Texts Related to ' . $title . '</h4>';
-    $output .= views_embed_view('related_texts', 'texts_block', $app, $id);
-
-    if ($type == 'ajax') {
-        $commands = array();
-        $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . 'subjects/' . $id . '/texts/nojs');
-        $page = array('#type' => 'ajax', '#commands' => $commands);
-
-        ajax_deliver($page);
-    } else {
-        $setup += array(
-            'active_content' => $output,
-            'ajax' => $type == 'ajax' ? TRUE : FALSE,
-            'text' => TRUE,
-        );
-
-        $content = theme('kmaps_explorer_initial_template', $setup);
-
-        return $content;
-    }
-}
-
-/**
- * Function to create the ajax content for esssays in places
- */
-function kmaps_explorer_places_essays($type = 'ajax', $id, $app) {
+function kmaps_explorer_texts_universal($type = 'ajax', $id, $app) {
     //Drupal static initializations
     $data_shuffle = &drupal_static('kmaps_explorer_data');
     $data_shuffle['asset'] = 'texts';
@@ -1498,7 +1525,7 @@ function kmaps_explorer_places_essays($type = 'ajax', $id, $app) {
 
     if ($type == 'ajax') {
         $commands = array();
-        $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . 'places/' . $id . '/texts/nojs');
+        $commands[] = custom_ajax_command_html('#tab-main', $output, null, base_path() . $app . '/' . $id . '/texts/nojs');
         $page = array('#type' => 'ajax', '#commands' => $commands);
 
         ajax_deliver($page);
@@ -1554,7 +1581,6 @@ function kmaps_explorer_sources_universal($type = 'ajax', $id, $app) {
  * Function to create the ajax content for terms in places and subjects
  */
 function kmaps_explorer_terms_universal($type = 'ajax', $id, $app) {
-  global $base_url;
   //Drupal static initializations
   $data_shuffle = &drupal_static('kmaps_explorer_data');
   $data_shuffle['asset'] = 'terms';
@@ -1565,27 +1591,7 @@ function kmaps_explorer_terms_universal($type = 'ajax', $id, $app) {
   $title = $data_shuffle['node_title'];
 
   $output = '<h4>' . 'Terms Related to ' . $title . '</h4>';
-  $output .= '<div class="relation_tree_container"></div>';
-
-  //Set data needed for relationship tree
-  drupal_add_js(
-    array(
-      'kmaps_explorer' => array(
-        'base_url' => $base_url,
-        'title' => $data_shuffle['node_title'],
-        'domain' => 'terms',
-        'featureId' => $id,
-        'solrId_featureId' => 'terms-' . $id,
-        'featuresPath' => $base_url . '/' . $app . '/' . $id . '/terms-node/%%ID%%/nojs',
-        'perspective' => 'tib.alpha',
-        'tree' => 'terms',
-        'direct_ancestors' => true,
-        'termIndex' => variable_get('shanti_kmaps_admin_server_solr_terms', SHANTI_KMAPS_ADMIN_SERVER_SOLR_TERMS),
-        'assetIndex' => variable_get('shanti_kmaps_admin_server_solr', SHANTI_KMAPS_ADMIN_SERVER_SOLR),
-      ),
-    ),
-    'setting'
-  );
+  $output .= views_embed_view('related_terms', 'terms_block', $app, $id);
 
   if ($type == 'ajax') {
     $commands = array();
@@ -2325,7 +2331,9 @@ function kmaps_explorer_audio_video_node($type = 'ajax', $id, $avId, $app) {
     $url = $node_data->url_html;
 
     $output = '<h4>' . $title . '</h4>';
-    $output .= '<iframe scrolling="no" height="3450" width="100%" frameBorder="0" src="' . $url . '?mbframe=on' . '" seamless ></iframe>';
+    $output .= '<div class="iframe-loader">';
+    $output .= '<iframe class="shanti-iframe" scrolling="no" height="3450" width="100%" frameBorder="0" src="' . $url . '?mbframe=on' . '" seamless ></iframe>';
+    $output .= '</div>';
 
     if ($type == 'ajax') {
         $commands = array();
@@ -2537,10 +2545,141 @@ function kmaps_explorer_visuals_node_universal($type = 'ajax', $id, $visualsId, 
     }
 }
 
+/** Terms Section */
+
+/**
+ * Terms Overview Page
+ */
+function kmaps_explorer_terms_overview($type = 'ajax', $termId, $app) {
+  //Drupal static initializations
+  $data_shuffle = &drupal_static('kmaps_explorer_data');
+  $data_shuffle['asset'] = 'terms';
+
+  $setup = kmaps_explorer_setup_page($termId, $app, 'overview');
+
+  //Get data for the individual term
+  $asset = 'terms';
+  $termURL = variable_get('shanti_kmaps_admin_server_solr_terms', SHANTI_KMAPS_ADMIN_SERVER_SOLR_TERMS);
+  $termURL .= '/select?q=id:terms-';
+  $termURL .= $termId;
+  $termURL .= '&fl=*&indent=true&wt=json';
+
+  $term_cache = save_to_cache('term_data', $asset, $termId, $termURL);
+  $term_data = json_decode($term_cache);
+  $term_data = (intval($term_data->response->numFound) > 0) ? $term_data->response->docs[0]: new stdClass();
+  //dpm($term_data);
+
+  //Get the data for term dictionaries
+  $termDict = variable_get('shanti_kmaps_admin_server_solr_terms', SHANTI_KMAPS_ADMIN_SERVER_SOLR_TERMS);
+  $termDict .= '/select?q={!child%20of=block_type:parent}id:terms-';
+  $termDict .= $termId;
+  $termDict .= '&fl=*&wt=json&indent=true&rows=1000&limit=1000';
+
+  $dict_cache = save_to_cache('dict_data', $asset, $termId, $termDict);
+  $dict_data = json_decode($dict_cache);
+  $dict_data = (intval($dict_data->response->numFound) > 0) ? $dict_data->response->docs: [];
+  //dpm($dict_data);
+  //Filter $dict_data to remove headers
+  $related_dict = array_filter($dict_data, function($k) {
+    return $k->block_child_type == 'related_definitions';
+  });
+  //Group related_dict by related_definitions_source_s
+  $related_dict = array_reduce($related_dict, function(array $accumulator, $element) {
+    if (!isset($element->related_definitions_source_s)) {
+      $accumulator['main_definitions'][] = $element;
+    } else {
+      $accumulator[$element->related_definitions_source_s][] = $element;
+    }
+    return $accumulator;
+  }, []);
+
+  //Check for main_definitions key and pluck it from the dictionaries array
+  $definitions = [];
+  if (array_key_exists('main_definitions', $related_dict)) {
+    $definitions = $related_dict['main_definitions'];
+    unset($related_dict['main_definitions']);
+  }
+  //dpm($related_dict);
+  //dpm($definitions);
+  //dpm($term_data);
+
+  $related_names = array_filter($dict_data, function($k) {
+    return $k->block_child_type == 'related_names';
+  });
+
+  //Get data for Terms details tab
+  // Step 1: Get all associated subject ids
+  $assoc_subject_ids = [];
+  foreach(get_object_vars($term_data) as $key => $value) {
+    if (preg_match('/associated_subject_(\d+)_ls/', $key, $matches)) {
+      array_push($assoc_subject_ids, $matches[1]);
+    }
+  }
+  //Add prefix to all elements in the array
+  $assoc_subject_ids = array_map(function($item){ return 'subjects-' . $item;}, $assoc_subject_ids);
+  //Get data for the associated subjects only getting their headers.
+  $assoc_subj_url = variable_get('shanti_kmaps_admin_server_solr_terms', SHANTI_KMAPS_ADMIN_SERVER_SOLR_TERMS);
+  $assoc_subj_url .= '/select?q=id:(';
+  $assoc_subj_url .= implode('%20OR%20', $assoc_subject_ids);
+  $assoc_subj_url .= ')&fl=id,header&indent=true&wt=json';
+
+  $assoc_subj_response = [];
+  if (count($assoc_subject_ids) > 0) {
+    $assoc_subj_cache = save_to_cache('assoc_subj_data', $asset, $termId, $assoc_subj_url);
+    $assoc_subj_data = json_decode($assoc_subj_cache);
+    $assoc_subj_response = (intval($assoc_subj_data->response->numFound) > 0) ? $assoc_subj_data->response->docs: new stdClass();
+  }
+  //Create the response object to use for the terms details page.
+  $assoc_subjects = [];
+  foreach($assoc_subj_response as $response) {
+    $id = explode('-', $response->id)[1];
+    $assoc_subjects[$term_data->{'associated_subject_' . $id . '_ls'}[0]] = array(
+      'header' => $response->header,
+      'subject' => $term_data->{'associated_subject_' . $id . '_ss'}[0]
+    );
+  }
+
+  //Get data for audio and pronunciations
+  $audioURL = "https://dev-terms.kmaps.virginia.edu/features/{$termId}/recordings.json";
+  $audioCache = save_to_cache('audio_data', $asset, $termId, $audioURL);
+  $audio_data = json_decode($audioCache);
+  $audio_data = (count($audio_data->recordings) > 0) ? $audio_data->recordings: [];
+  //dpm($audio_data);
+
+  $output = theme('kmaps_explorer_terms_individual_node', array(
+    'term_data' => $term_data,
+    'dict_data' => $related_dict,
+    'names_data' => $related_names,
+    'definitions' => $definitions,
+    'assoc_subjects' => $assoc_subjects,
+    'audio_data' => $audio_data,
+  ));
+
+  $setup += array(
+    'active_content' => $output,
+    'ajax' => $type == 'ajax' ? TRUE : FALSE,
+    'overview' => TRUE,
+    'type' => 'terms',
+  );
+  $content = theme('kmaps_explorer_initial_template', $setup);
+
+  //Drupal static initializations
+  $node_shuffle = &drupal_static('kmaps_explorer_asset_node');
+  //Store data for other uses in same session.
+  $node_shuffle['data'] = $term_data;
+
+  if ($type == 'ajax') {
+    $commands = array();
+    $commands[] = custom_ajax_command_html('#' . $app . '-main', $content, null, base_path() . 'terms/' . $termId . '/overview/nojs');
+    $page = array('#type' => 'ajax', '#commands' => $commands);
+    ajax_deliver($page);
+  } else {
+    return $content;
+  }
+}
+
 /**
  * Terms Node No sidebar
- * @param string $type
- * @param $id
  */
 function kmaps_explorer_terms_node_nosidebar_universal($type = 'ajax', $termId) {
   //Drupal static initializations
@@ -2553,7 +2692,7 @@ function kmaps_explorer_terms_node_nosidebar_universal($type = 'ajax', $termId) 
     'group' => JS_THEME,
     'weight' => 1000,
   );
-  drupal_add_js(array('kmaps_explorer' => array('app' => 'subjects')), 'setting');
+  drupal_add_js(array('kmaps_explorer' => array('app' => 'Terms')), 'setting');
   drupal_add_js($path . '/js/custom.js', $options);
 
   //Get data for the individual term
@@ -2678,6 +2817,15 @@ function kmaps_explorer_terms_node_universal($type = 'ajax', $id, $termId, $app)
   $data_shuffle = &drupal_static('kmaps_explorer_data');
   $data_shuffle['asset'] = 'terms';
 
+  //css and js files to include in pages
+  $path = drupal_get_path('module', 'kmaps_explorer');
+  $options = array(
+    'group' => JS_THEME,
+    'weight' => 1000,
+  );
+  drupal_add_js(array('kmaps_explorer' => array('app' => 'subjects')), 'setting');
+  drupal_add_js($path . '/js/custom.js', $options);
+
   //Get data for the individual term
   $asset = 'terms';
   $termURL = variable_get('shanti_kmaps_admin_server_solr_terms', SHANTI_KMAPS_ADMIN_SERVER_SOLR_TERMS);
@@ -2688,6 +2836,7 @@ function kmaps_explorer_terms_node_universal($type = 'ajax', $id, $termId, $app)
   $term_cache = save_to_cache('term_data', $asset, $termId, $termURL);
   $term_data = json_decode($term_cache);
   $term_data = (intval($term_data->response->numFound) > 0) ? $term_data->response->docs[0]: new stdClass();
+  //dpm($term_data);
 
   //Get the data for term dictionaries
   $termDict = variable_get('shanti_kmaps_admin_server_solr_terms', SHANTI_KMAPS_ADMIN_SERVER_SOLR_TERMS);
@@ -2698,23 +2847,73 @@ function kmaps_explorer_terms_node_universal($type = 'ajax', $id, $termId, $app)
   $dict_cache = save_to_cache('dict_data', $asset, $termId, $termDict);
   $dict_data = json_decode($dict_cache);
   $dict_data = (intval($dict_data->response->numFound) > 0) ? $dict_data->response->docs: [];
+  //dpm($dict_data);
   //Filter $dict_data to remove headers
   $related_dict = array_filter($dict_data, function($k) {
     return $k->block_child_type == 'related_definitions';
   });
   //Group related_dict by related_definitions_source_s
   $related_dict = array_reduce($related_dict, function(array $accumulator, $element) {
-    $accumulator[$element->related_definitions_source_s][] = $element;
+    if (!isset($element->related_definitions_source_s)) {
+      $accumulator['main_definitions'][] = $element;
+    } else {
+      $accumulator[$element->related_definitions_source_s][] = $element;
+    }
     return $accumulator;
   }, []);
+
+  //Check for main_definitions key and pluck it from the dictionaries array
+  $definitions = [];
+  if (array_key_exists('main_definitions', $related_dict)) {
+    $definitions = $related_dict['main_definitions'];
+    unset($related_dict['main_definitions']);
+  }
+  //dpm($related_dict);
+  //dpm($definitions);
+  //dpm($term_data);
 
   $related_names = array_filter($dict_data, function($k) {
     return $k->block_child_type == 'related_names';
   });
+
+  //Get data for Terms details tab
+  // Step 1: Get all associated subject ids
+  $assoc_subject_ids = [];
+  foreach(get_object_vars($term_data) as $key => $value) {
+    if (preg_match('/associated_subject_(\d+)_ls/', $key, $matches)) {
+      array_push($assoc_subject_ids, $matches[1]);
+    }
+  }
+  //Add prefix to all elements in the array
+  $assoc_subject_ids = array_map(function($item){ return 'subjects-' . $item;}, $assoc_subject_ids);
+  //Get data for the associated subjects only getting their headers.
+  $assoc_subj_url = variable_get('shanti_kmaps_admin_server_solr_terms', SHANTI_KMAPS_ADMIN_SERVER_SOLR_TERMS);
+  $assoc_subj_url .= '/select?q=id:(';
+  $assoc_subj_url .= implode('%20OR%20', $assoc_subject_ids);
+  $assoc_subj_url .= ')&fl=id,header&indent=true&wt=json';
+
+  $assoc_subj_response = [];
+  if (count($assoc_subject_ids) > 0) {
+    $assoc_subj_cache = save_to_cache('assoc_subj_data', $asset, $termId, $assoc_subj_url);
+    $assoc_subj_data = json_decode($assoc_subj_cache);
+    $assoc_subj_response = (intval($assoc_subj_data->response->numFound) > 0) ? $assoc_subj_data->response->docs: new stdClass();
+  }
+  //Create the response object to use for the terms details page.
+  $assoc_subjects = [];
+  foreach($assoc_subj_response as $response) {
+    $id = explode('-', $response->id)[1];
+    $assoc_subjects[$term_data->{'associated_subject_' . $id . '_ls'}[0]] = array(
+      'header' => $response->header,
+      'subject' => $term_data->{'associated_subject_' . $id . '_ss'}[0]
+    );
+  }
+
   $output = theme('kmaps_explorer_terms_individual_node', array(
     'term_data' => $term_data,
     'dict_data' => $related_dict,
     'names_data' => $related_names,
+    'definitions' => $definitions,
+    'assoc_subjects' => $assoc_subjects,
   ));
 
   if ($type == 'ajax') {
@@ -2768,6 +2967,9 @@ function kmaps_explorer_each_text_node($type = 'ajax', $id, $tid, $app) {
     $node_data = $node_data->response->numFound > 0 ? $node_data->response->docs[0] : new stdClass();
     $title = isset($node_data->title) ? $node_data->title[0] : '';
     $url = $node_data->url_ajax;
+    if (strpos($url, 'https') === false) {
+      $url = preg_replace("/^http:/i", "https:", $url);
+    }
 
     $output = '<h4>' . $title . '</h4>';
     $output .= theme('kmaps_explorer_texts_individual_node', array(
@@ -3367,8 +3569,6 @@ function kmaps_explorer_get_popover_data($app, $kid) {
       $url2 .= '/select?q=kmapid:terms-';
       $url2 .= $kid;
       $url2 .= '&fq=&start=0&facets=on&group=true&group.field=asset_type&group.facet=true&group.ngroups=true&group.limit=0&wt=json';
-
-
   }
 
   $node_cache = save_to_cache('json', $app, $kid, $nodeURL);

@@ -983,6 +983,12 @@ return 1;';
 
   /* Display: Front Page */
   $handler = $view->new_display('panel_pane', 'Front Page', 'panel_pane_1');
+  $handler->display->display_options['defaults']['cache'] = FALSE;
+  $handler->display->display_options['cache']['type'] = 'time';
+  $handler->display->display_options['cache']['results_lifespan'] = '21600';
+  $handler->display->display_options['cache']['results_lifespan_custom'] = '0';
+  $handler->display->display_options['cache']['output_lifespan'] = '21600';
+  $handler->display->display_options['cache']['output_lifespan_custom'] = '0';
   $handler->display->display_options['defaults']['fields'] = FALSE;
   /* Field: Content: Title */
   $handler->display->display_options['fields']['title']['id'] = 'title';
@@ -1619,13 +1625,23 @@ return 1;';
   $handler->display->display_options['fields']['group_access']['exclude'] = TRUE;
   $handler->display->display_options['fields']['group_access']['element_label_colon'] = FALSE;
   /* Field: Content: Visibility */
+  $handler->display->display_options['fields']['group_content_access_1']['id'] = 'group_content_access_1';
+  $handler->display->display_options['fields']['group_content_access_1']['table'] = 'field_data_group_content_access';
+  $handler->display->display_options['fields']['group_content_access_1']['field'] = 'group_content_access';
+  $handler->display->display_options['fields']['group_content_access_1']['label'] = '';
+  $handler->display->display_options['fields']['group_content_access_1']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['group_content_access_1']['element_label_colon'] = FALSE;
+  /* Field: Content: Visibility */
   $handler->display->display_options['fields']['group_content_access']['id'] = 'group_content_access';
   $handler->display->display_options['fields']['group_content_access']['table'] = 'field_data_group_content_access';
   $handler->display->display_options['fields']['group_content_access']['field'] = 'group_content_access';
   $handler->display->display_options['fields']['group_content_access']['alter']['alter_text'] = TRUE;
-  $handler->display->display_options['fields']['group_content_access']['alter']['text'] = '<span class="text-visibility-[group_content_access-value]"><span class="text-val">[group_content_access]</span> <span class="group-val">[group_access] (group default)</span></span>';
+  $handler->display->display_options['fields']['group_content_access']['alter']['text'] = '[group_content_access_1]';
   $handler->display->display_options['fields']['group_content_access']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['group_content_access']['element_default_classes'] = FALSE;
+  $handler->display->display_options['fields']['group_content_access']['empty'] = '[group_access] (default)';
+  $handler->display->display_options['fields']['group_content_access']['empty_zero'] = TRUE;
+  $handler->display->display_options['fields']['group_content_access']['type'] = 'list_key';
   /* Field: Content: Description */
   $handler->display->display_options['fields']['field_dc_description']['id'] = 'field_dc_description';
   $handler->display->display_options['fields']['field_dc_description']['table'] = 'field_data_field_dc_description';
@@ -1684,6 +1700,18 @@ return 1;';
     'multiple_from' => '',
     'multiple_to' => '',
   );
+  /* Field: Content: Language */
+  $handler->display->display_options['fields']['field_language_kmap']['id'] = 'field_language_kmap';
+  $handler->display->display_options['fields']['field_language_kmap']['table'] = 'field_data_field_language_kmap';
+  $handler->display->display_options['fields']['field_language_kmap']['field'] = 'field_language_kmap';
+  $handler->display->display_options['fields']['field_language_kmap']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['field_language_kmap']['hide_empty'] = TRUE;
+  $handler->display->display_options['fields']['field_language_kmap']['click_sort_column'] = 'raw';
+  $handler->display->display_options['fields']['field_language_kmap']['type'] = 'kmap_popover_formatter';
+  $handler->display->display_options['fields']['field_language_kmap']['settings'] = array(
+    'target' => '_blank',
+  );
+  $handler->display->display_options['fields']['field_language_kmap']['delta_offset'] = '0';
   /* Field: Content: Subjects */
   $handler->display->display_options['fields']['field_kmap_term']['id'] = 'field_kmap_term';
   $handler->display->display_options['fields']['field_kmap_term']['table'] = 'field_data_field_kmap_term';
@@ -1718,17 +1746,18 @@ return 1;';
   $handler->display->display_options['fields']['field_kmap_places']['multi_type'] = 'ul';
   $handler->display->display_options['fields']['field_kmap_places']['separator'] = ' ';
   /* Field: Content: Terms */
-  $handler->display->display_options['fields']['field_terms_kmaps']['id'] = 'field_terms_kmaps';
-  $handler->display->display_options['fields']['field_terms_kmaps']['table'] = 'field_data_field_terms_kmaps';
-  $handler->display->display_options['fields']['field_terms_kmaps']['field'] = 'field_terms_kmaps';
-  $handler->display->display_options['fields']['field_terms_kmaps']['element_label_colon'] = FALSE;
-  $handler->display->display_options['fields']['field_terms_kmaps']['hide_empty'] = TRUE;
-  $handler->display->display_options['fields']['field_terms_kmaps']['click_sort_column'] = 'raw';
-  $handler->display->display_options['fields']['field_terms_kmaps']['type'] = 'kmap_popover_formatter';
-  $handler->display->display_options['fields']['field_terms_kmaps']['settings'] = array(
+  $handler->display->display_options['fields']['field_kmap_terms']['id'] = 'field_kmap_terms';
+  $handler->display->display_options['fields']['field_kmap_terms']['table'] = 'field_data_field_kmap_terms';
+  $handler->display->display_options['fields']['field_kmap_terms']['field'] = 'field_kmap_terms';
+  $handler->display->display_options['fields']['field_kmap_terms']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['field_kmap_terms']['click_sort_column'] = 'raw';
+  $handler->display->display_options['fields']['field_kmap_terms']['type'] = 'kmap_popover_formatter';
+  $handler->display->display_options['fields']['field_kmap_terms']['settings'] = array(
     'target' => '_blank',
   );
-  $handler->display->display_options['fields']['field_terms_kmaps']['delta_offset'] = '0';
+  $handler->display->display_options['fields']['field_kmap_terms']['delta_offset'] = '0';
+  $handler->display->display_options['fields']['field_kmap_terms']['multi_type'] = 'ul';
+  $handler->display->display_options['fields']['field_kmap_terms']['separator'] = ' ';
   /* Field: Content: Rights */
   $handler->display->display_options['fields']['field_dc_rights_general']['id'] = 'field_dc_rights_general';
   $handler->display->display_options['fields']['field_dc_rights_general']['table'] = 'field_data_field_dc_rights_general';
@@ -1831,7 +1860,8 @@ return 1;';
     t('Collection Node'),
     t('Collection'),
     t('Visibility'),
-    t('<span class="text-visibility-[group_content_access-value]"><span class="text-val">[group_content_access]</span> <span class="group-val">[group_access] (group default)</span></span>'),
+    t('[group_content_access_1]'),
+    t('[group_access] (default)'),
     t('Author'),
     t('Editor'),
     t('<tr><td>Editor</td><td>[field_book_editor] </td></tr>'),
@@ -1841,6 +1871,7 @@ return 1;';
     t('<tr><td>Year</td><td>[field_dc_date_publication_year]</td></tr>'),
     t('Original year published'),
     t('<tr><td>Year</td><td>[field_dc_date_publication_year] [field_dc_date_orginial_year]</td></tr>'),
+    t('Language'),
     t('Subjects'),
     t('<tr><td>Subjects</td><td>[field_kmap_term]</td></tr>'),
     t('Places'),

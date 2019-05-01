@@ -476,11 +476,13 @@ function _shanti_kmaps_fields_get_solr_doc($nid_list, $force=FALSE)
         $kmapids_strict = array(); // And this just the ones directly tagged
         $kmapids = array(); // This will include the ancestors
         $kmapids_is = array(); // Special integer id's
+        $kmapheads = array();  // List of headers (names) that is in same order as $kmapsids_strict
         foreach ($fields as $field_name) {
             $terms = field_get_items('node', $node, $field_name);
             if ($terms) {
                 foreach ($terms as $term) {
-                    $kmapids_strict[] = $term['domain'] .'-'. $term['id']; // header
+                    $kmapids_strict[] = "{$term['domain']}-{$term['id']}";
+                    $kmapheads[] = $term['header'];  // Add header or kmap name
                     $these_ids = _shanti_kmaps_fields_get_ancestor_kmap_terms($term['domain'], $term['id']);
                     $kmapids = array_merge($kmapids, $these_ids);
                 }
@@ -519,6 +521,7 @@ function _shanti_kmaps_fields_get_solr_doc($nid_list, $force=FALSE)
             'url_thumb' => url(str_replace('__NID__', $node->nid, variable_get('shanti_kmaps_fields_url_thumb__' . $node->type)), array('absolute' => TRUE)),
             'kmapid' => array_values(array_unique($kmapids)),
             'kmapid_strict' => $kmapids_strict,
+            'kmapid_strict_ss' => $kmapheads,
             'kmapid_is' => $kmapids_is,
         );
 
@@ -1203,7 +1206,7 @@ function _shanti_kmaps_fields_index_node($node) {
 
 function _shanti_kmaps_fields_push_solr_doc($nid)
 {
-    $debug = variable_get('shanti_kmaps_admin_debug_mode', FALSE);
+    $debug = (variable_get('shanti_kmaps_admin_debug_mode', FALSE) && module_exists('devel'));
     $solrdoc = _shanti_kmaps_fields_get_solr_doc(array($nid));
     if ($debug) {  dpm($solrdoc, 'Solr doc before Json convert'); }
     $solrdoc = json_encode($solrdoc);

@@ -220,7 +220,9 @@
                         mandalaURL: Drupal.settings.kmaps_explorer.base_url + "/%%APP%%/%%ID%%/%%REL%%/nojs",
                         solrUtils: relatedSolrUtils,
                         view: "roman.scholar",
-                        sortBy: "position_i+ASC"
+                        sortBy: "position_i+ASC",
+                        extraFields: ['associated_subject_ids'],
+                        nodeMarkerPredicates: [{field: 'associated_subject_ids', value: 9315, operation: '!includes', mark: 'nonInteractiveNode'}] //A predicate is: {field:, value:, operation: 'eq', mark: 'nonInteractive'}
                     });
 
                     var summaryLoaded = false;
@@ -238,6 +240,7 @@
                             relatedSolrUtils.getPlacesSummaryElements().then(function(result) {
                                 relatedSolrUtils.addPlacesSummaryItems(feature_label, feature_path, "parent", result);
                                 relatedSolrUtils.addPlacesSummaryItems(feature_label, feature_path, "child", result);
+                                relatedSolrUtils.addPlacesSummaryItems(feature_label, feature_path, "other", result);
                                 if (!collapsibleApplied) {
                                     $("ul.collapsibleList").kmapsCollapsibleList();
                                     collapsibleApplied = true;
@@ -285,6 +288,7 @@
                             relatedSolrUtils.getSubjectsSummaryElements().then(function(result) {
                                 relatedSolrUtils.addSubjectsSummaryItems(feature_label, feature_path, "parent", result);
                                 relatedSolrUtils.addSubjectsSummaryItems(feature_label, feature_path, "child", result);
+                                relatedSolrUtils.addSubjectsSummaryItems(feature_label, feature_path, "other", result);
                                 if (!collapsibleApplied) {
                                     $("ul.collapsibleList").kmapsCollapsibleList();
                                     collapsibleApplied = true;
@@ -347,6 +351,21 @@
                 }); //end of .relation_tree_container
             } //end of if statement
 
+            //Remove loader afrer iframe loads
+            $(".shanti-iframe").load(function() {
+                $(this).parent().css('background', 'none');
+            });
+
+            //Terms recordings
+            $('#recording-selection').on('change', function() {
+                change($(this).val());
+            });
+
+            $('#recording-play-button').click(function(){
+                var audio = document.getElementById("recording-player");
+                playRecording(audio)
+            });
+
             //Extend handlebars to support comparison Functionality
             Handlebars.registerHelper("ifCond", function(v1, operator, v2, options) {
                 switch (operator) {
@@ -396,3 +415,18 @@
         } //End of attach function.
     };
 })(jQuery);
+
+//Functions used by Terms Recordings
+function playRecording(audio_element){
+    audio_element.pause();
+    audio_element.play();
+}
+function change(sourceUrl) {
+    var audio = document.getElementById("recording-player");
+    var source = document.getElementById("recording-mp3_src");
+    if (sourceUrl) {
+        source.src = sourceUrl;
+        audio.load();
+    }
+    playRecording(audio)
+}

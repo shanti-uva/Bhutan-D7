@@ -1,0 +1,17 @@
+<ul>
+  {{#each children}}
+    <li>
+
+      <span class="results-node-definition">{{{related_definitions_content_s}}}</span>
+        <dl class="dl-horizontal results-node-definition-details" >
+          {{#if related_definitions_source_s}}<dt>Source</dt><dd>{{related_definitions_source_s}}</dd>{{/if}}
+          {{#if related_definitions_author_s}}<dt>Author</dt><dd>{{related_definitions_author_s}}</dd>{{/if}}
+        </dl>
+      {{#if children}}
+        <ul>
+          {{> search-results-details-terms-definitions}}
+        </ul>
+      {{/if}}
+    </li>
+  {{/each}}
+</ul>

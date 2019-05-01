@@ -14,7 +14,7 @@ function shanti_texts_features_ckeditor_profile_defaults() {
       'name' => 'CKEditor Global Profile',
       'settings' => array(
         'skin' => 'moono',
-        'ckeditor_path' => '//cdn.ckeditor.com/4.5.4/full-all',
+        'ckeditor_path' => '//cdn.ckeditor.com/4.7.3/full-all',
         'ckeditor_local_path' => '',
         'ckeditor_plugins_path' => '%l/ckeditor/plugins',
         'ckeditor_plugins_local_path' => '',
@@ -49,7 +49,7 @@ function shanti_texts_features_ckeditor_profile_defaults() {
         'auto_lang' => 't',
         'language_direction' => 'default',
         'allowed_content' => 't',
-        'extraAllowedContent' => 'style[text-indent,-1.5em]',
+        'extraAllowedContent' => 'style[text-indent,-1.5em];div[*];cite[*];',
         'enter_mode' => 'p',
         'shift_enter_mode' => 'br',
         'font_format' => 'p;div;pre;address;h1;h2;h3;h4;h5;h6',
@@ -77,7 +77,9 @@ function shanti_texts_features_ckeditor_profile_defaults() {
         'html_entities' => 'f',
         'scayt_autoStartup' => 'f',
         'theme_config_js' => 'f',
-        'js_conf' => '',
+        'js_conf' => 'config.footnotesPrefix = \'\';
+config.footnotesTitle = \'&nbsp;\';
+config.footnotesHeaderEls = [\'<hr width="30%" align="left"/>\', \'\'];',
         'loadPlugins' => array(
           'autogrow' => array(
             'name' => 'autogrow',

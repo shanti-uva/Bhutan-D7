@@ -129,18 +129,6 @@
   padding-top:3rem;
 }
 
-.page-node-edit table.field-multiple-table tr,
-.page-node-edit table.field-multiple-table tbody {
-  /*border:none !important;*/
-}
-
-
-
-/* powerful, careful */
-.page-node-add .main-content .fieldset-wrapper .form-item,
-.page-node-edit .main-content .fieldset-wrapper .form-item{
-  /* margin:0; ---- removed jan 3, 2018 mf8yk */
-}
 
 /* My Stuff Account Collections page - 50% columns for drop-select */
 .view-my-workflow .field-accordion .form-item {
@@ -432,7 +420,7 @@ font-size: 1.12em;
 .kmap-tree-picker .shanticon-magnify,
 .kmap-typeahead-picker .shanticon-magnify{
   position: absolute;
-  left: 1rem;
+  left: 2rem;
   top:3rem;
   color: #999;
   font-size: 1em;
@@ -925,6 +913,8 @@ button#edit-delete:hover{
   color: #fff;
   display: inline-block;
   padding: 0.7rem 1.2rem 0.3rem;
+        padding: 0.7rem 1.5rem 0.6rem;
+        
   border-radius: .3rem;
   font-size: 0.82em;
 }
@@ -1445,6 +1435,19 @@ html body.admin-menu {
   color: #ddd;
   font-size: 1em;
 }
+.region-admin-footer h2{
+  margin-top:0;
+}
+.region-admin-footer .block p{
+  margin-bottom:0;
+}
+.region-admin-footer .block ul{
+  margin-top:0;
+}
+
+.region-admin-footer h2{
+  margin-top:0;
+}
 
 .region-admin-footer {
   padding: 1rem 1rem 1rem 2.5rem;
@@ -1491,6 +1494,14 @@ html body.admin-menu {
   color:#ddd;
 }
 
+.region-admin-footer .block p{
+  margin-bottom:0;
+}
+
+.region-admin-footer .block ul{
+  margin-top:0;
+}
+
 .region-admin-footer .description{
   margin:0 0 0 -1rem;
   padding:0;
@@ -1517,8 +1528,12 @@ html body.admin-menu {
   margin: -0.4rem 0 0.5rem 0.75rem;
   border: 1px solid #999;
   position: absolute;
-  right: 0;
+  right: -1.5rem;
   top: 0.2rem;
+}
+
+.region-admin-footer div#block-user-online {
+    overflow-y: scroll;
 }
 
 .region-admin-footer .block-masquerade form{
@@ -1791,6 +1806,21 @@ html body.admin-menu {
 .vertical-tabs fieldset.vertical-tabs-pane{
   text-transform: capitalize;
 }
+
+
+
+
+
+.page-user-edit #edit-cancel{
+  float:right;
+}
+
+
+
+
+
+
+
 
 
 

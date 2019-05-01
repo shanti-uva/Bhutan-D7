@@ -35,15 +35,13 @@ stylesheets[all][] =  css/shanti-search-shiva.css
 ;;;;;;;;;;;;;;;;;;;;;;
 ;;; Scripts
 ;;;;;;;;;;;;;;;;;;;;;;
+
 scripts[] = js/shanti-main-shiva.js
 scripts[] = js/shanti-search-shiva.js
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Theme Settings
 ;;;;;;;;;;;;;;;;;;;;;
-;
-; These theme settings can be changed in the admin interface as well.
-; Furthermore, base color is primarily determined in CSS
-;
-settings[shanti_sarvaka_base_color] = '#558e3c'
+
+settings[shanti_sarvaka_site_body_tag] = 'visuals'
 settings[shanti_sarvaka_icon_class] = 'visuals'

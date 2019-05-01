@@ -40,10 +40,4 @@ scripts[] = js/shanti-search-images.js
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Theme Settings
 ;;;;;;;;;;;;;;;;;;;;;
-;
-; These theme settings can be changed in the admin interface as well.
-; Furthermore, base color is primarily determined in CSS
-;
-;settings[shanti_sarvaka_base_color] = '#b5953b'
-;settings[shanti_sarvaka_icon_class] = 'photos'
 settings[sarvaka_images_replace_broken_images] = 1

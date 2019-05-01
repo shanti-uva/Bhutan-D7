@@ -43,7 +43,7 @@
            <!--</div>-->
          <!--</li>-->
          {{#each asset_counts}}
-           {{#ifCond this.hide "===" false}}
+           <!--{{#ifCond this.hide "===" false}}-->
          <li class="{{@key}} results-list-asset-type-filter {{this.selected}}"  data-asset-type="{{@key}}" data-toggle="tooltip" title="{{@key}}">
            <div>
              <a href="#">
@@ -55,7 +55,7 @@
              </a>
            </div>
          </li>
-           {{/ifCond}}
+           <!--{{/ifCond}}-->
          {{/each}}
        </ul>
      </div>
@@ -122,12 +122,18 @@
                                   <span>{{ftype}}</span>
                               {{/each}}
                             {{/ifCond}}
+                            {{#ifCond doc.tree '===' "terms"}}
+                              {{#each doc.associated_subjects_ss as |assoc i|}}
+                                <span>{{assoc}}</span>
+                              {{/each}}
+                            {{/ifCond}}
                           </span>
+
                           <span class="node-id">{{doc.uid}}</span>
                         </h4>
 
                         <div class="results-node-classification">
-                          <span class="parents-path">{{#each doc.ancestors as |name i|}}<span>/<a href="/{{doc.tree}}/{{ancestorId doc i}}/overview/nojs#search">{{name}}</a></span>{{/each}}</span>
+                          <span class="parents-path">{{#each doc.ancestors as |name i|}}<span><a href="/{{doc.tree}}/{{ancestorId doc i}}/overview/nojs#search">{{name}}</a></span>{{/each}}</span>
                         </div>
 
                         {{#if collection_title}}

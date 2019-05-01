@@ -126,19 +126,23 @@
                   </ul>
                   </div>
                   <div class="col-xs-12 col-sm-6">
-                      <?php if (!empty($content['field_places']) || !empty($content['field_subjects']) || !empty($content['field_kmap_collections'])): ?>
+                      <?php if (!empty($content['field_places']) || !empty($content['field_subjects']) || !empty($content['field_kmap_terms']) || !empty($content['field_kmap_collections'])): ?>
                           <h5>Classification</h5>
                             <ul class="kmap-items" style="display: none;">
-                              <?php if (!empty($content['field_places'])): ?>
-                              <li><span class="icon shanticon-places"></span> <?php print render($content['field_places']); ?></li>
-                                  <?php endif; ?>
-                                  <?php if (!empty($content['field_subjects'])): ?>
-                              <li><span class="icon shanticon-subjects"></span> <?php print render($content['field_subjects']); ?></li>
-                                  <?php endif; ?>
-                                  <?php if (!empty($content['field_kmap_collections'])): ?>
+                                <?php if (!empty($content['field_places'])): ?>
+                                    <li><span class="icon shanticon-places"></span> <?php print render($content['field_places']); ?></li>
+                                <?php endif; ?>
+                                <?php if (!empty($content['field_subjects'])): ?>
+                                    <li><span class="icon shanticon-subjects"></span> <?php print render($content['field_subjects']); ?></li>
+                                <?php endif; ?>
+                                <?php if (!empty($content['field_kmap_collections'])): ?>
                                     <li><span class="icon shanticon-stack"></span> <?php print render($content['field_kmap_collections']); ?></li>
-                                  <?php endif; ?>
+                                <?php endif; ?>
+                                <?php if (!empty($content['field_kmap_terms'])): ?>
+                                    <li><span class="icon shanticon-terms"></span> <?php print render($content['field_kmap_terms']); ?></li>
+                                <?php endif; ?>
                             </ul>
+
                         <?php endif; ?>
                   </div>
               </div> <!-- END image-detail-summary -->
@@ -148,8 +152,8 @@
                       <h3 class="image-detail-title"><?php print $title; ?></h3>
                       <ul class="image-summary-info-list">
                           <li><span class="icon shanticon-agents"></span> <?php print $creator; ?></li>
-                          <li><span class="fa fa-camera"></span><?php print render($content['field_image_type']); ?></li>
-                          <li><span class="fa fa-arrows"></span><?php print str_replace('x', ' x ', $pixels); ?> px</li>
+                          <li><span class="icon shanticon-camera"></span><?php print render($content['field_image_type']); ?></li>
+                          <li><span class="icon shanticon-arrows"></span><?php print str_replace('x', ' x ', $pixels); ?> px</li>
                       </ul>
                       <?php if (!empty($content['field_image_descriptions'])): ?>
                           <h5>Description</h5>

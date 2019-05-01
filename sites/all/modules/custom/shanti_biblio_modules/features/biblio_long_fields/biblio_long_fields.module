@@ -12,7 +12,6 @@ include_once 'biblio_long_fields.features.inc';
 function biblio_long_fields_node_presave($node) {
   //dpm($node, "node@hook_node_presave");    
   if ($node->type == 'biblio') {    
-    $node->title = substr($node->title, 0, 255);
     $node->biblio_lang = (isset($node->biblio_lang)) ? substr($node->biblio_lang, 0, 24) : '';
   }
 }
@@ -33,7 +32,6 @@ function biblio_long_fields_node_load($nodes) {
  */
 function biblio_long_fields_node_prepare($node) {  
   if ($node->type == 'biblio' && isset($node->field_biblio_title)) {
-    $node->title = substr($node->title, 0, 255);
     $node->biblio_lang = substr($node->biblio_lang, 0, 24);
   }
 }

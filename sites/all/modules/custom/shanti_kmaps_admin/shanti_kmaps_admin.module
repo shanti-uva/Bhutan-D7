@@ -468,6 +468,7 @@ function shanti_kmaps_admin_filter_options($domain)
         'associated_subject' => t('Associated Subject'),
       ),
       'subjects' => array(), // there are currently no filters for subjects
+      'terms' => array(), // there are currently no filters for terms either
     );
   }
   return $filter_options[$domain];

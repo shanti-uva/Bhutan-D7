@@ -124,7 +124,7 @@ if ($node->type == 'subcollection')
                 $ctype_label = $ctype;
                 if ($ctype == 'book') $ctype_label = 'text';
             ?>
-    		<a class="btn btn-primary" href="/node/add/<?php echo $ctype;?>?<?php echo $og_field;?>=<?php echo $node->nid;?>&amp;destination=node/<?php echo $node->nid;?>">Add <?php echo $ctype_label;?></a>
+    		<a class="btn btn-primary" href="/node/add/<?php echo $ctype;?>?<?php echo $og_field;?>=<?php echo $node->nid;?>">Add <?php echo $ctype_label;?></a>
     		<?php endif;?>
 		<?php endforeach;?>
 

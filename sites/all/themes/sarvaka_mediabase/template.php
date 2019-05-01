@@ -236,13 +236,13 @@ function sarvaka_mediabase_preprocess_node(&$vars) {
 			}
 
 			// Truncate title in teasers (75 chars for Tib)
-			if($vars['title_lang'] == 'bo' && strlen($vars['title']) > 75) {
+			if($vars['title_lang'] == 'bo' && strlen($vars['title']) > 85) {
 			    $vars['title_full'] = $vars['title'];
-				$vars['title'] = truncate_utf8($vars['title'], 75, TRUE, TRUE);
+				$vars['title'] = truncate_utf8($vars['title'], 85, TRUE, TRUE);
             // Truncate 45 chars for English
-			} elseif ($vars['title_lang'] == 'en' && strlen($vars['title']) > 47) {
+			} elseif ($vars['title_lang'] == 'en' && strlen($vars['title']) > 55) {
 			    $vars['title_full'] = $vars['title'];
-                $vars['title'] = truncate_utf8($vars['title'], 47, TRUE, TRUE);
+                $vars['title'] = truncate_utf8($vars['title'], 55, TRUE, TRUE);
             }
 
             // Add Place Link information ($var['place_link'])

@@ -57,10 +57,6 @@ class ShantiImage
 
         // If width and height are still missing, update from IIIF and save to shanti_images table
         if (!$this->width || !$this->height) {
-            //watchdog("shanti image class", "setting dimensions by iiif");
-            if ($this->id == 264146) {
-                watchdog('shanto images', "264146 Node withd / height: " . $this->width . ":" . $this->height);
-            }
             $this->setDimensionsByIIIF();
             if ($this->width && $this->height) {
                 $data = array(
@@ -303,6 +299,8 @@ class ShantiImage
             $jobj = json_decode('{"status": "404", "height":1, "width":1, "msg":"No Shanti Image ID"}');
         } else {
             $iurl = $this->getInfoUrl();
+            $iurl = str_replace('https://cicada.shanti.virginia.edu/images-test', 'http://iiif-test.lib.virginia.edu', $iurl);
+            $iurl = str_replace('https://cicada.shanti.virginia.edu/images', 'http://iiif.lib.virginia.edu', $iurl);
             if (_url_exists($iurl)) {
                 $json = file_get_contents($iurl);
                 if ($json) {

@@ -23,32 +23,16 @@
 .ui-resizable-handle.ui-resizable-nw:active {
   background-color: #558e3c !important;
 }
-
 .bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a .check-mark,
-.bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a:active .check-mark,
-.view-section .nav-tabs>li.active>a, 
-.view-section .nav-tabs>li.active>a:hover, 
-.view-section .nav-tabs>li.active>a:active,
-.view-section .fancytree-container .glyphicon,
-.view-section .fancytree-container .fancytree-node:hover > .glyphicon,
-.view-section .fancytree-container .fancytree-node:active > .glyphicon,
-.view-section .fancytree-node.fancytree-active > .glyphicon,
-.view-section .fancytree-node.fancytree-selected > .glyphicon {
+.bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a:active .check-mark{
   color: #558e3c !important;
 }
-
 .carousel-indicators li{
   border-color: #558e3c !important;;
 }
-
 .nav-tabs.nav-justified>li.active{
   border-top-color: #558e3c;
 }
-/*
-.ui-resizable-handle.ui-resizable-w,
-.ui-resizable-handle.ui-resizable-w:hover,
-.ui-resizable-handle.ui-resizable-w:active { border-color: #558e3c transparent transparent transparent; }*/
-
 @media screen and (min-width: 500px) {
   .navbar-header .site-slogan{ color:#487833 !important; } /* Darker shade for banner site-slogan text */
   .navbar-brand:hover .site-slogan{ color: #555 !important; } 
@@ -63,12 +47,11 @@
 
 ::-moz-selection { background: #9B4151 !important; }
 ::selection { background: #9B4151 !important; }
-
 /*** END - colors ***/
 
-
-
-
+.page-collection-all article.main-col{
+  max-width:100%;
+}
 
 .collections-sidebar h4{
   font-weight: 400;
@@ -208,10 +191,6 @@ fieldset.form-wrapper{
   padding-left: 0;
 }
 
-.page-explore .shanti-thumbnail{
-  height:22rem;
-}
-
 .page-groups .pane-menu-menu-groups .pane-content {
   margin-left: -0.3rem;
   margin-top: .5rem;
@@ -247,10 +226,9 @@ fieldset.form-wrapper{
   height: 2.8rem;
 }
 
-/*.page-explore .panel-default .panel-heading+.panel-collapse .panel-body{
-  box-shadow: inset 0 0 5px #c0c0c0;
+.view-header h1{
+  margin-top:0;
 }
-*/ 
 
 
 
@@ -259,12 +237,7 @@ fieldset.form-wrapper{
 *  Thumbnails 
 * -----------------------
 */
-
 .shanti-thumbnail-image .icon.shanticon-visuals::before {
-  /*width: 1.75em;
-  height: 1.62em;
-  font-size: 1.38em;
-  line-height: 1.62em;*/
   font-size: 1.32em;
 }
 
@@ -352,6 +325,10 @@ fieldset.form-wrapper{
   height: 17.5em;
 }
 
+.page-explore .shanti-thumbnail{
+  height:22rem;
+}
+
 .shanti-gallery2 .shanti-thumbnail,
 .page-create .shanti-thumbnail,
 .sn-explore-list .shanti-thumbnail {
@@ -384,9 +361,6 @@ fieldset.form-wrapper{
   color: rgb(207, 47, 30);
 }
 
-.shanti-thumbnail .body-wrap {
-  padding-top: 0;
-}
 .page-create .shanti-thumbnail .body-wrap,
 .page-explore .shanti-thumbnail .body-wrap{
   padding-top: 0.75rem;
@@ -397,7 +371,6 @@ fieldset.form-wrapper{
   display: none;
 }
 
-.front .shanti-thumbnail .body-wrap,
 .page-mygallery .shanti-thumbnail .body-wrap,
 .node-type-collection .shanti-thumbnail .body-wrap,
 .node-type-subcollection .shanti-thumbnail .body-wrap  {
@@ -406,52 +379,11 @@ fieldset.form-wrapper{
   overflow-x: auto;
 }
 
-.shanti-thumbnail .body-wrap .shanti-field-agent a,
-.shanti-thumbnail .body-wrap .shanti-field-author a {
-  /*line-height: 2.5rem;*/
-  font-size: 1.06em;
-}
-
-.shanti-thumbnail .body-wrap .title,
-.shanti-thumbnail .body-wrap ul.links li a{
-  font-size: 1em;
-  line-height: 1.38em;
-  font-weight: bold;
-  margin: 0;
-}
-
-
-.shanti-thumbnail a.shanti-thumbnail-link {
-  /*height: auto;
-  background-color: white;*/
-}
-
 .sn-explore-list .shanti-thumbnail .body-wrap ul.links li a {
   font-size: 1.25em;
   font-weight: normal;
 }
 
-.shanti-thumbnail-image a .overlay::before {
-  content: '\e63c';
-  position: relative;
-  top: 3.5rem;
-}
-
-.front .shanti-thumbnail-image a:active .overlay::before {
-  font-size: 3.5em !important;
-}
-
-.shanti-thumbnail-image.shanti-field-collection a .overlay::before {
-  content: '\e61b';
-  position: relative;
-  top: 3.5rem;
-}
-/*
-.shanti-field-content,
-.shanti-field-created {
-  color: #222;
-  font-family: 'EB Garamond',Garamond,Baskerville,'Baskerville Old Face','Hoefler Text','Times New Roman',serif;
-}*/
 /* thumbnail footer */
 .shanti-field-agent > span::before,
 .shanti-field-author span::before,
@@ -471,24 +403,23 @@ fieldset.form-wrapper{
   top: 0;
   left: 0.07rem;
   margin-right:.7rem;
-/* force agent text as anchor tag to not wrap */
 }
-/*
-.shanti-field-agent > span::before{
-  top: -0.2rem;
-}
-*/
+
 .shanti-field-agent span.username{
   position: relative;
   top:0.2rem;
 }
 
+.shanti-field-created span::before{
+  top: .2rem;
+}
 
 .shanti-field-type span::before {
-  content: '\e63c' !important;
+  content: '\e63b' !important;
   color: #444;
-  margin-left: 0.04rem;
+  margin-left: -.1rem;
   font-size: 1.5em;
+  top:.25rem;
 }
 
 .shanti-thumbnail.collection .shanti-field-type span::before {
@@ -497,14 +428,7 @@ fieldset.form-wrapper{
   top: 0.3rem;
   font-size: 140%;
 }
-/*
-.shanti-field-type span {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-size: 0.88em;
-}
-*/
+
 #sharetabs > h2 {
   width: 100%;
   text-align: center;
@@ -525,27 +449,21 @@ fieldset.form-wrapper{
 .view-id-shiva_collections_views .pager.top {
   margin-top: -25px;
 }
-/*
-.shanti-thumbnail .shanti-thumbnail-field.shanti-field-type{
-  line-height: 1.62em;
-  font-size: 1.18em;
+
+.shanti-thumbnail .shanti-field-type span::before {
+    content: '\e63b' !important;
 }
-.view-shiva-collections-views .shanti-thumbnail-field.shanti-field-type{
-  line-height: 1.5em;
-  font-size: 1.19em;
-}
-*/
+
 .view-shiva-collections-views .shanti-thumbnail .shanti-field-type span::before {
-    content: '';
     position: relative;
-    left: -0.15rem;
-    color: #666;
+    left: .1rem;
+    content: '\e633' !important;
 }
 
 /**** The Popup share block ****/
 .page-node-share .block-system-main {
-  margin: 0px;
-  padding: 0px;
+  margin: 0;
+  padding: 0;
 }
 
 body.html.visuals.page-node-share.lightbox-processed {
@@ -554,7 +472,7 @@ body.html.visuals.page-node-share.lightbox-processed {
 }
 
 .page-node-share.lightbox-processed {
-  margin: 0px !important;
+  margin: 0 !important;
 }
 
 #sharetabs .tab-pane {
@@ -578,9 +496,6 @@ body.html.visuals.page-node-share.lightbox-processed {
 
 #outerImageContainer{
   border: 4px solid #999;
-  /*width: auto !important;
-  max-width: 100% !important;
-  height: auto !important;*/
 }
 
 .page-node-add-shivanode .fieldset-legend {
@@ -594,9 +509,6 @@ body.html.visuals.page-node-share.lightbox-processed {
 }
 
 #lightbox2-overlay.overlay_default {  /* for lightbox overlay */
-  filter: alpha(opacity=60);
-  opacity: 0.6;
-
     background-color: #fff !important;
     filter: alpha(opacity=40);
     opacity: 0.4 !important;
@@ -607,17 +519,17 @@ body.html.visuals.page-node-share.lightbox-processed {
   top: 0.15rem;
   font-size: 140%;
   opacity: .85;
+  font-family: 'shanticon';
 }
 
-
-
-
-
+.vis-infoshare .fa-info-circle::before{
+  content:'\e67f';
+}
 
 
 /** 
 * -----------------------
-*  Shivanode View Page 
+*  Node View Page 
 * -----------------------
 */
 
@@ -672,15 +584,9 @@ body.html.visuals.page-node-share.lightbox-processed {
 /*.vis-infoshare .visinfo .popover h5.popover-title { color: white; }*/ 
 .visinfo .popover h5.popover-title {
   background: #f7f7f7;
-  font-size: 1.5rem;
-  padding: 16px 14px 16px 22px;
-    /*white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;*/
-    background: #f7f7f7;
-    font-size: 1.38rem;
-    padding: 16px 14px 10px 22px;
-    line-height: 1.38em;
+  font-size: 1.38rem;
+  padding: 16px 14px 10px 22px;
+  line-height: 1.38em;
 }
 
 .visinfo .popover-content {
@@ -733,7 +639,6 @@ body.html.visuals.page-node-share.lightbox-processed {
 
 .vis-infoshare .shanticon-share{
   position: relative;
-  top: .3rem;
   color: #558e3c;
 }
 
@@ -745,9 +650,6 @@ body.html.visuals.page-node-share.lightbox-processed {
 .vis-infoshare.share-link {
     margin-left: 0rem;
 }
-
-/* .vis-kmaps{ display: inline-block;}
-.vis-kmaps > div { display: inline-block; vertical-align: text-bottom; } */
 
 .visinfo .popover-content .popover-body {
   padding: 1rem 1rem 2rem;
@@ -764,7 +666,7 @@ body.html.visuals.page-node-share.lightbox-processed {
 
 .page-node.node-type-shivanode .vis-kmaps {
     display: inline-block;
-    top: -0.8rem;
+    top: -1.2rem;
     position: relative;
     font-size: 1.18em;
 }
@@ -774,12 +676,26 @@ body.html.visuals.page-node-share.lightbox-processed {
   font-size: 1.18em;
 }
 
+.vis-infoshare .popover-link .shanticon-info
+{
+  color: #558e3c;
+  border:none;
+  cursor:pointer;
+  font-size: 110%;
+  padding-top: 4px;
+}
+
+
+.vis-infoshare .popover-link .shanticon-info:before {
+  color: inherit;
+}
+
 .vis-kmaps a.vis-kmaps-show-link,
 .vis-kmaps a.vis-kmaps-show-link:hover{
   color: #558e3c;
   border:none;
   cursor:pointer;
-  font-size: 140%;
+  font-size: 120%;
 }
 
 .vis-kmaps .popover-link-tip{
@@ -804,8 +720,13 @@ body.html.visuals.page-node-share.lightbox-processed {
   padding: 1.25rem 1.7rem 1.6rem;
 }
 
+.page-node.node-type-shivanode .vis-kmaps .kmap-content span.tib {
+  font-size: 130%;
+}
+
 .page-node.node-type-shivanode .vis-subjects, 
-.page-node.node-type-shivanode .vis-places {
+.page-node.node-type-shivanode .vis-places,
+.page-node.node-type-shivanode .vis-terms{
     display: inline-block;
     margin-right: 2rem;
 }
@@ -828,9 +749,11 @@ body.html.visuals.page-node-share.lightbox-processed {
   margin-bottom: .3rem;
 }
 
-
-
-
+/** For shivanode edit kmaps places field may be generalizabel  **/
+.kmap-filter-box, 
+.kmap-result-box {
+  min-height: 24px;  /* otherwise filters get pushed over as one adds kmap places */
+}
 
 /* Node Details group **/
 .page-node.node-type-shivanode .node-shivanode .group-details {
@@ -845,8 +768,7 @@ body.html.visuals.page-node-share.lightbox-processed {
     margin: 8px 0 0 0;
 }
 
-/**** Shivanode Edit page ****/
-
+/**** Edit page ****/
 .page-node-edit.node-type-shivanode .tab-pane.main-col,
 .page-node-group .tab-pane.main-col,
 .page-group-node-admin .tab-pane.main-col {
@@ -863,7 +785,7 @@ body.html.visuals.page-node-share.lightbox-processed {
   left: -0.45rem;
 }
 
-/***** Shivanode Views ****/
+/***** Views ****/
 .sn-list-filter {
   margin: 8px 0px;
 }
@@ -879,15 +801,6 @@ body.html.visuals.page-node-share.lightbox-processed {
 }
 
 
-
-
-/* WIDTH CONTROL */
-/*
-.page-node-edit form:nth-of-type(1),
-.page-groups .content-section.col-xs-12 .tab-content:nth-of-type(1),
-.front .content-section.col-xs-12 .tab-content:nth-of-type(1){ max-width:1000px;margin:0 auto;}
-*/
-
 .page-all-groups .views-table.cols-2 {
   width: 98%;
   margin: 1.5rem auto 0;
@@ -896,16 +809,12 @@ body.html.visuals.page-node-share.lightbox-processed {
 table.token-tree {
   margin-left: 0px;
   margin-bottom: 15rem;
-} /*  look in /user/166/devel/token user developer tab */s
+} /*  look in /user/166/devel/token user developer tab */
 
 .no-sidebars .tab-pane.main-col > .region-content, /* broad range need to watch */
 .page-node-devel .tab-pane.main-col > .region-content {
   max-width: 100% !important;
   margin: 0;
-}
-
-/*.front .content-section.col-xs-12 .tab-content:nth-of-type(1){ max-width:1000px;margin:0 auto;}*/
-.page-node-add-shivanode article.main-col {
 }
 
 .page-node-add-shivanode.no-sidebars .tab-pane.main-col {
@@ -933,10 +842,6 @@ table.token-tree {
   padding: 0.6rem 0;
 }
 
-.page-node-edit .form-item-title input.form-control {
-  /*max-width: 20em !important;*/
-}
-
 .page-node-edit .bootstrap-select.form-control:not([class*='span']) {
   max-width: 14em !important;
 }
@@ -952,16 +857,13 @@ table.token-tree {
 
 .inside.panels-flexible-row-inside > div {
   padding: 0 15px;
-/*  width: 33.333%;  // Makes visualization table on user page too thin */
   float: left;
 }
 
-
-
-
-
-
-
+/* homepage gallery filtering select visual type */
+.form-item-shivanode-element-type-value .bootstrap-select.btn-group .dropdown-menu li>a{
+  line-height: 2em;
+}
 
 .pane-menu-menu-groups ul.menu {
   padding-left: 0;
@@ -1034,15 +936,11 @@ table.token-tree {
 }
 
 
-
-
-
 /** 
 * -----------------------
 *  Admin & Editing 
 * -----------------------
 */
-
 .btn.btn-primary.form-submit.btn-delete.btn-sm.btn-icon {
   width: 2.5rem;
   height: 2.5rem;
@@ -1115,13 +1013,6 @@ table.token-tree {
   position: absolute;
   top:2.75rem;
   left:27rem; 
-}
-
-
-.field-name-field-image .btn.btn-primary.form-submit.btn-delete.btn-sm.btn-icon .icon::before{
-  position: relative;
-  top: -1.05rem;
-  left: -0.2rem;
 }
 
 .kmap-filter-box{
@@ -1221,7 +1112,11 @@ input.form-control.kmap-search-term,
 
 
 .sidebar-second .btn.btn-icon span:last-child{
-  /* font-size:85%; */
+  font-size:90%;
+}
+
+.sidebar-second .block-shanti-collections .btn.btn-primary .icon{
+  line-height: 2.75em
 }
 
 
@@ -1258,53 +1153,12 @@ input.form-control.kmap-search-term,
 .page-node-add .form-item-body-und-0-value > label{
       font-size: 80%;
 }
-
-
-
-
-/* testing */
-
-/*
-article.main-col{
-  max-width: 100% !important;
-  padding-top: .5rem;
+.page-node-edit .field-type-shanti-kmaps-fields-default{
+  max-width: 110rem;
 }
-
-.front article.main-col{
-  max-width: 1600 !important;
+.page-node-edit .vertical-tabs{
+  max-width: 89rem;
 }
-
-
-
-@media screen and (min-width: 1170px) {
-
-    body:not(.page-user) section.sidebar-second{
-      max-width: 25%;
-      float: right;
-    }
-} 
-
-@media screen and (min-width: 1450px) {
-
-    body:not(.page-user) .content-section.col-md-9{
-      width:79%;
-    }
-
-    body:not(.page-user) section.sidebar-second{
-      max-width: 20%;
-    }
-}
-
-@media (min-width:1750px) {
-    body:not(.page-user) .content-section.col-md-9{
-      width:84%;
-    }
-
-    body:not(.page-user) section.sidebar-second{
-      max-width: 15%;
-    }
-}
-*/
 
 
 
@@ -1347,10 +1201,12 @@ article.main-col{
   font-weight: 600;
   color: #555;
   line-height: 1.38em;
+      padding-left: 1.5rem !important;
 }
 
 .node-type-shivanode .related-resources-popover .popover-body{
   font-size: 1.06em;
+  padding: 0.5rem 0.2rem;
 }
 
 .node-type-shivanode .related-resources-popover .popover-body .desc{
@@ -1370,12 +1226,14 @@ article.main-col{
 }
 
 .node-type-shivanode .related-resources-popover .popover-body ul li .icon{
-  font-size:1.18em;
+  font-size:1.25em;
   margin-right:.5rem;
 }
 
 .node-type-shivanode .related-resources-popover .popover-body ul li .icon.shanticon-visuals{
-  font-size:1.32em;
+  font-size:1.44em;
+  margin-left: -.1rem;
+  margin-right: .3rem;
 }
 
 .node-type-shivanode .related-resources-popover .popover-body ul li .icon:before{

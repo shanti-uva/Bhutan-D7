@@ -275,7 +275,7 @@ function shanti_kmaps_faceted_search_block_configure($delta = 1) {
           '#title' => t('Kmap Tree Type'),
           '#description' => t('Type of Kmap Navigator Tree to Show in Block'),
           '#default_value' => variable_get('shanti_kmaps_faceted_search_block_type_' . $delta, 'places'),
-          '#options' => drupal_map_assoc(array('places', 'subjects')),
+          '#options' => drupal_map_assoc(array('places', 'subjects', 'terms')),
         );
       }
 
@@ -620,7 +620,7 @@ function shanti_kmaps_faceted_search_preprocess_region(&$vars)
     // For search flyout in mediabase, sniff out facet api blocks so that they can be placed in tabs
     $elements = &$vars['elements'];
     $children = element_children($elements);
-    $facettabs = '<section class="view-section"><div id="kmfacet-list" class="active-kmfaceted-list kmap-filter-box shanti-kmaps-processed" style="display:none;"></div><ul class="nav nav-tabs">';
+    $facettabs = '<section class="view-section"><div class="facet-search-messages"><div class="facet-search-error">This is the message section</div></div><div id="kmfacet-list" class="active-kmfaceted-list kmap-filter-box shanti-kmaps-processed" style="display:none;"></div><ul class="nav nav-tabs">';
     $firstblk = false; // id of the first facet block
     $lastblk = '';        // id of the last facet block
     foreach ($children as $ename) {

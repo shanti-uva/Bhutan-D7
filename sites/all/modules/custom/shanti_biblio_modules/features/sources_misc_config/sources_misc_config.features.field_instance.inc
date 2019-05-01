@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * sources_misc_config.features.field_instance.inc
@@ -34,7 +35,7 @@ function sources_misc_config_field_default_field_instances() {
           'image_style' => 'source_full_page_image',
         ),
         'type' => 'image',
-        'weight' => 0,
+        'weight' => 1,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -83,7 +84,7 @@ function sources_misc_config_field_default_field_instances() {
         ),
       ),
       'type' => 'media_generic',
-      'weight' => 72,
+      'weight' => 74,
     ),
   );
 
@@ -113,7 +114,7 @@ function sources_misc_config_field_default_field_instances() {
           'link' => 1,
         ),
         'type' => 'entityreference_label',
-        'weight' => 4,
+        'weight' => 3,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -158,7 +159,7 @@ function sources_misc_config_field_default_field_instances() {
       'module' => 'og',
       'settings' => array(),
       'type' => 'og_complex',
-      'weight' => 70,
+      'weight' => 72,
     ),
   );
 
@@ -185,7 +186,7 @@ function sources_misc_config_field_default_field_instances() {
         'module' => 'list',
         'settings' => array(),
         'type' => 'list_default',
-        'weight' => 5,
+        'weight' => 4,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -219,7 +220,7 @@ function sources_misc_config_field_default_field_instances() {
         'apply_chosen' => '',
       ),
       'type' => 'options_select',
-      'weight' => 71,
+      'weight' => 73,
     ),
     'widget_type' => 'options_select',
   );

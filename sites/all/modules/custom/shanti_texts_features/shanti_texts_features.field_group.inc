@@ -31,7 +31,7 @@ function shanti_texts_features_field_group_info() {
       'formatter' => 'closed',
       'instance_settings' => array(
         'description' => '',
-        'classes' => 'group-book-admin field-group-tab',
+        'classes' => '',
         'required_fields' => 1,
       ),
     ),
@@ -52,15 +52,13 @@ function shanti_texts_features_field_group_info() {
     'weight' => '1',
     'children' => array(
       0 => 'field_book_content',
-      1 => 'field_dc_lang_code',
-      2 => 'field_language_kmaps',
     ),
     'format_type' => 'tab',
     'format_settings' => array(
       'formatter' => 'closed',
       'instance_settings' => array(
         'description' => '',
-        'classes' => 'group-book-content field-group-tab',
+        'classes' => '',
         'required_fields' => 1,
       ),
     ),
@@ -91,17 +89,17 @@ function shanti_texts_features_field_group_info() {
       8 => 'field_general_featured_image',
       9 => 'field_book_editor',
       10 => 'field_book_translator',
-      11 => 'field_pdf_version',
+      11 => 'field_dc_lang_code',
+      12 => 'field_pdf_version',
     ),
     'format_type' => 'tab',
     'format_settings' => array(
-      'label' => 'Catalog Data',
-      'instance_settings' => array(
-        'required_fields' => 1,
-        'classes' => '',
-        'description' => 'Typically these fields are used only for the root node of the book.',
-      ),
       'formatter' => 'closed',
+      'instance_settings' => array(
+        'description' => '',
+        'classes' => '',
+        'required_fields' => 1,
+      ),
     ),
   );
   $field_groups['group_book_metadata|node|book|form'] = $field_group;
@@ -127,7 +125,7 @@ function shanti_texts_features_field_group_info() {
       'formatter' => 'closed',
       'instance_settings' => array(
         'description' => '',
-        'classes' => 'group-collection field-group-tab',
+        'classes' => '',
         'required_fields' => 1,
       ),
     ),
@@ -144,24 +142,55 @@ function shanti_texts_features_field_group_info() {
   $field_group->mode = 'form';
   $field_group->parent_name = '';
   $field_group->data = array(
-    'label' => 'KMap Terms',
+    'label' => 'Knowledge Maps',
     'weight' => '3',
     'children' => array(
       0 => 'field_kmap_places',
       1 => 'field_kmap_term',
-      2 => 'field_terms_kmaps',
+      2 => 'field_language_kmap',
+      3 => 'field_kmap_terms',
     ),
     'format_type' => 'tab',
     'format_settings' => array(
-      'formatter' => 'closed',
+      'label' => 'Knowledge Maps',
       'instance_settings' => array(
-        'description' => '',
-        'classes' => 'group-kmap-terms field-group-tab',
         'required_fields' => 1,
+        'classes' => '',
+        'description' => '',
       ),
+      'formatter' => 'closed',
     ),
   );
   $field_groups['group_kmap_terms|node|book|form'] = $field_group;
+
+  $field_group = new stdClass();
+  $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->api_version = 1;
+  $field_group->identifier = 'group_text_splitter|node|book|form';
+  $field_group->group_name = 'group_text_splitter';
+  $field_group->entity_type = 'node';
+  $field_group->bundle = 'book';
+  $field_group->mode = 'form';
+  $field_group->parent_name = '';
+  $field_group->data = array(
+    'label' => 'Shanti Texts Splitter',
+    'weight' => '2',
+    'children' => array(
+      0 => 'field_split_headings',
+      1 => 'field_split_text',
+    ),
+    'format_type' => 'tab',
+    'format_settings' => array(
+      'label' => 'Shanti Texts Splitter',
+      'instance_settings' => array(
+        'required_fields' => 1,
+        'classes' => 'text-splitter-group',
+        'description' => '',
+      ),
+      'formatter' => 'closed',
+    ),
+  );
+  $field_groups['group_text_splitter|node|book|form'] = $field_group;
 
   // Translatables
   // Included for use with string extractors like potx.
@@ -169,7 +198,8 @@ function shanti_texts_features_field_group_info() {
   t('Catalog Data');
   t('Collection');
   t('Content');
-  t('KMap Terms');
+  t('Knowledge Maps');
+  t('Shanti Texts Splitter');
 
   return $field_groups;
 }

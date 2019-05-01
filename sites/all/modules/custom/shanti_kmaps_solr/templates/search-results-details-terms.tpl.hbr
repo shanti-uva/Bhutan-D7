@@ -1,0 +1,121 @@
+
+  {{#if url_thumb}}
+    <div class="results-node-description"><a class="results-node-thumbnail-image" href="{{doc.url_asset_nav}}"><img src="{{{url_thumb}}}"></a></div>
+  {{/if}}
+  {{#if caption}}
+    <div class="results-node-classification" data-label="Caption"><p>{{{caption}}}</p></div>
+  {{/if}}
+  {{#if summary}}
+    <div class="results-node-description" data-label="Summary"><p>{{{summary}}}</p></div>
+  {{/if}}
+
+  {{#if names_txt}}
+    <div class="results-node-description" data-label="Alternate Names">
+      {{#each names_txt}}
+        {{{this}}}{{#unless @last}}, {{/unless}}
+      {{/each}}
+    </div>
+  {{/if}}
+
+  <div class="results-node-kmaps-resources">
+    <h6 class="sr-only">Related Resources:</h6>
+    <ul class="results-kmaps-resource-list list-inline">
+
+      <li class="subjects" data-toggle="tooltip" title="Subjects" style="display:none;">
+        <div>
+          <a href="/{{{tree}}}/{{extractId uid}}/subjects/nojs#search">
+            <div>
+              <span class="icon shanticon-subjects"></span>
+              <span class="kmaps-results-name">Subjects</span>
+              <span class="badge">0</span>
+            </div>
+          </a>
+        </div>
+      </li>
+
+      <li class="places"  data-toggle="tooltip" title="Places" style="display:none;">
+        <div>
+          <a href="/{{{tree}}}/{{extractId uid}}/places/nojs#search">
+            <div>
+              <span class="icon shanticon-places"></span>
+              <span class="kmaps-results-name">Places</span>
+              <span class="badge">0</span>
+            </div>
+          </a>
+        </div>
+      </li>
+
+      <li class="audio-video" data-toggle="tooltip" title="Audio-Video" style="display:none;">
+        <div>
+          <a href="/{{{tree}}}/{{extractId uid}}/audio-video/nojs#search">
+            <div>
+              <span class="icon shanticon-audio-video"></span>
+              <span class="kmaps-results-name">AV</span>
+              <span class="badge">0</span>
+            </div>
+          </a>
+        </div>
+      </li>
+
+      <li class="images" data-toggle="tooltip" title="Images" style="display:none;">
+        <div>
+          <a href="/{{{tree}}}/{{extractId uid}}/photos/nojs#search">
+            <div>
+              <span class="icon shanticon-photos"></span>
+              <span class="kmaps-results-name">Images</span>
+              <span class="badge">0</span>
+            </div>
+          </a>
+        </div>
+      </li>
+
+      <li class="texts" data-toggle="tooltip" title="Texts" style="display:none;">
+        <div>
+          <a href="/{{{tree}}}/{{extractId uid}}/texts/nojs#search">
+            <div>
+              <span class="icon shanticon-texts"></span>
+              <span class="kmaps-results-name">Texts</span>
+              <span class="badge">0</span>
+            </div>
+          </a>
+        </div>
+      </li>
+
+      <li class="visuals" data-toggle="tooltip" title="Visuals" style="display:none;">
+        <div>
+          <a href="/{{{tree}}}/{{extractId uid}}/visuals/nojs#search">
+            <div>
+              <span class="icon shanticon-visuals"></span>
+              <span class="kmaps-results-name">Visuals</span>
+              <span class="badge">0</span>
+            </div>
+          </a>
+        </div>
+      </li>
+
+      <li class="sources" data-toggle="tooltip" title="Sources" style="display:none;">
+        <div>
+          <a href="/{{{tree}}}/{{extractId uid}}/sources/nojs#search">
+            <div>
+              <span class="icon shanticon-sources"></span>
+              <span class="kmaps-results-name">Sources</span>
+              <span class="badge">0</span>
+            </div>
+          </a>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="results-node-kmaps-definitions-wrapper">
+    <a class="results-node-kmaps-definitions-toggle" data-toggle="collapse" data-target="#definitions-{{uid}}" aria-expanded="true" aria-controls="collapseExample">
+      Definitions (<span class="results-node-kmaps-definitions-total-count">0</span>)
+    </a>
+    <div class="collapse results-node-kmaps-definitions" id="definitions-{{uid}}" data-uid="{{{uid}}}">
+      <a class="definitions-moreless"><span class="definition-moreless-default">+/-</span></a>
+      <div class="content"></div>
+      <a class="definitions-moreless"><span class="definition-moreless-default">+/-</span></a>
+    </div>
+  </div>
+
+

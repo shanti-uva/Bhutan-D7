@@ -164,6 +164,13 @@ function shanti_texts_features_strongarm() {
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'pathauto_node_book_pattern';
+  $strongarm->value = 'text/[node:title]';
+  $export['pathauto_node_book_pattern'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'theme_shanti_sarvaka_texts_settings';
   $strongarm->value = array(
     'toggle_logo' => 1,
@@ -184,8 +191,6 @@ function shanti_texts_features_strongarm() {
     'shanti_sarvaka_shanti_site' => 1,
     'shanti_sarvaka_show_login_link' => 1,
     'shanti_sarvaka_flyout_open' => 0,
-    'shanti_sarvaka_replace_broken_images' => 1,
-    'shanti_sarvaka_varnish_exceptions' => '',
     'shanti_sarvaka_use_admin_site_title' => 0,
     'shanti_sarvaka_default_title' => 'Texts',
     'shanti_sarvaka_prefix_default_title' => 0,

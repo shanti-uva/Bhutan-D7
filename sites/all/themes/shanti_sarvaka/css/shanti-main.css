@@ -29,7 +29,8 @@ body {
   margin-top: 0 !important;
   font-family:'Open Sans','Segoe UI',Tahoma,sans-serif;
   font-weight: 400;
-  letter-spacing: normal;
+  /*letter-spacing:normal; */
+  letter-spacing:0.01rem;
 }
 
 body.html{ background-color:#222; color:#ccc;}
@@ -66,6 +67,22 @@ body.lightbox-processed{ background-color:#fff; color:#333;}
   margin-top: 10px;
 }
 
+/* this markup can be incorporated as attributes for links - 
+** <a href="/language/switch/dz" lang="fr" hreflang="dz">Dz</a> 
+*/
+.content-section .zh,
+.content-section .bo,
+.content-section .dz,
+*[data-tier="dzo_bod"],
+*[data-speaker-display="ss_speaker_dzo"],
+*[lang="bo"], *[lang="bo"] *, 
+*[lang="dz"], *[lang="dz"] *,
+*[lang="zh"], *[lang="zh"] *{
+  letter-spacing: normal !important;
+  text-rendering: optimizeLegibility !important;
+  font-family: Jomolhari,Jomolhari-ID,"Tibetan Machine Uni","TCRC Youtso Unicode","Tib-US Unicode", Kokonor, "Microsoft Himalaya",Arial !important;
+}
+
 ul {
   /*list-style: square inside none;*/
   -webkit-margin-before: 1em;
@@ -76,7 +93,9 @@ ul {
   padding-left: 20px;
 }
 
-b, strong{ font-weight:bold; font-weight:500; font-weight:600; }
+b, strong{ font-weight:bold; font-weight:500; font-weight:600; color: #404040;}
+
+#admin-menu-account strong { color: #fafafa; }
 
 label,
 .field .field-label{
@@ -256,6 +275,8 @@ a {
   text-decoration: none;
   color: #454fa4;
   color: rgb(0, 0, 139);
+          color: #03038e;
+          
 }
 
 a:hover,a:focus,a:active {
@@ -342,13 +363,12 @@ a:hover,a:focus,a:active {
 }
 
 .go-to-link a::after{
-    font-size: 1.38em;
+    font-size: 1.12em;
     margin-left: 0.3em;
-    font-family: 'FontAwesome';
-    content: '\f18e';
+    font-family: 'shanticon';
+    content: '\e683';
     position: relative;
-    top: 0.25rem;
-    left: -0.1rem;
+    top: 0.15rem;
     font-style: normal;
     opacity: .5;
 }
@@ -368,9 +388,32 @@ div.contextual-links-wrapper{
   text-decoration: none !important;
 }
 
+/*
+** This spinner used in the AV gallery is under development for broader integration across Mandala 
+** - mf8yk April 2019
 
+<div class="spinner-border" role="status">
+  <span class="sr-only">Loading...</span>
+</div>
+*/
+.spinner-border {
+    display: inline-block;
+    width: 4rem;
+    height: 4rem;
+    vertical-align: text-bottom;
+    border: .15em solid #fff;
+    border-right-color: transparent;
+    border-radius: 50%;
+    -webkit-animation: spinner-border .75s linear infinite;
+    animation: spinner-border .75s linear infinite;
+}
+@keyframes spinner-border {
+  to { transform: rotate(360deg); }
+}
+
+.fa,
 .icon {
-  font-family: 'shanticon';
+  font-family: 'shanticon' !important;
   speak: none;
   font-style: normal;
   font-weight: normal;
@@ -382,6 +425,18 @@ div.contextual-links-wrapper{
   -moz-osx-font-smoothing: grayscale;
 }
 
+.shanticon-images,
+.shanticon-photos::before{ /* set to Images icon */
+  content:'\e62a' !important;
+}
+.shanticon-grid::before,
+.shanticon-stack::before{ /* set to Collections icon */
+  content:'\e633' !important;
+}
+
+.fa-arrows-alt::before{ /* lightbox image enlarge */
+  content:'\e662' !important;
+}
 
 /* Ajax Loading */
 .throbber,
@@ -570,8 +625,8 @@ div.contextual-links-wrapper{
 
 .navbar-brand .shanticon-logo {
   position: relative;
-  top: 0.3rem;
-  font-size: 1.62em;
+  top: 0.2rem;
+  font-size: 1.5em;
   margin-right: 0.1rem;
   margin-left: 1.18rem;
 }
@@ -624,7 +679,7 @@ div.contextual-links-wrapper{
 }
 
 .menu-icon .icon::before {
-  content: '\e627';
+  content: '\e626';
 }
 
 .menu-icon.show-topmenu a {
@@ -654,12 +709,18 @@ div.contextual-links-wrapper{
   z-index:300;
 }
 
+.navbar-default .navbar-nav>li.lang{
+  display:none;
+}
+
 .navbar-default .navbar-nav>li a {
-  color: #444;
+  color: #222;
   display: inline-block;
-  font-size: .93em;
+  font-size: 1em;
   font-weight:600;
-  line-height: 3.68em;
+  line-height: 3.3em;
+  letter-spacing: 0.0575rem;
+  font-family: 'museo-sans-300','Arial Unicode MS','Helvetica Neue',Helvetica,arial,sans-serif;
   height: 42px;
   margin: 0;
   padding: 0 0 0 15px;
@@ -673,7 +734,7 @@ div.contextual-links-wrapper{
 .navbar-default .navbar-nav>li a:hover,
 .navbar-default .navbar-nav>li a:active {
   background: #f0f0f0;
-  color: #444;
+  color: #555;
 }
 
 .navbar-default .navbar-nav>.login a {
@@ -718,8 +779,9 @@ div.contextual-links-wrapper{
 .navbar-default .navbar-nav .explore .icon {
   font-size: 1.44em;
   position: relative;
-  top: 0.4rem;
+  top: 0.45rem;
   left: 0.4rem;
+    color: #555;
 }
 
 .navbar-default .navbar-nav li a .shanticon-arrowselect {
@@ -886,7 +948,7 @@ div.contextual-links-wrapper{
   margin: 0 0 0 10%;
   float: left;
   line-height: 2.12em;
-  height: 2.25em;
+  height: 2.5em;
   width: 37%;
 }
 
@@ -897,7 +959,7 @@ div.contextual-links-wrapper{
   margin-left: 0;
   float: left;
   font-size: 0.68em;
-  font-weight: 600;
+  /*font-weight: 600;*/
   white-space: nowrap;
   text-transform: uppercase;
   -webkit-transform: scale(1.1);
@@ -905,10 +967,20 @@ div.contextual-links-wrapper{
   -webkit-transition: .2s ease-in-out;
           transition: .2s ease-in-out;
 }
-/* adjustment for longer length of Documentation link */
-.collections ul li:last-of-type a,
+/* adjustment for longer length of AV link */
 .collections ul li:nth-of-type(2) a{
    margin-left: .3rem;
+}
+
+.collections ul li:last-of-type a .icon{
+  position: relative;
+  top: .55rem;
+}
+
+.collections ul li a .shanticon-terms{
+  font-size: 1.7em;
+  position: relative;
+  top: .3rem;
 }
 
 .collections ul li a.disabled, 
@@ -927,8 +999,9 @@ div.contextual-links-wrapper{
           transform: scale(1.175);
 }
 .collections ul li a:active {
-  -webkit-transform: scale(1.15);
-          transform: scale(1.15);
+  /*-webkit-transform: scale(1.15);
+          transform: scale(1.15);*/
+          color:#aaa;
 }
 
 
@@ -961,13 +1034,15 @@ div.contextual-links-wrapper{
 .collections ul .icon.shanticon-logo-shanti:before{
   content: '\f059'; /* question mark */
     content: '\f05a'; /* info icon circle */
-  font-family: FontAwesome;
+
+    content:'\e085';
+
+  font-family: 'Glyphicons Halflings';
   position: relative;
     bottom: .1rem;
 }
 /* targeting the Terms app Icon - this is the second to last link */
 .collections ul li:nth-last-of-type(+2n) .icon.shanticon-:before{
-  font-family: 'shanticon';
   content: '\e636'; 
 }
 .collections ul li:nth-last-of-type(+2n) .icon.shanticon- {
@@ -979,6 +1054,7 @@ div.contextual-links-wrapper{
   font-size: 2em;
   position: relative;
   right: .1rem;
+      color: #ddd !important;
 }
 .collections ul > li:first-child .icon.shanticon-overview:before{
   content: '\e60b';
@@ -988,7 +1064,7 @@ div.contextual-links-wrapper{
   color: #e0e0e0;
 }
 .collections ul li a:active .icon::before{
-  color: #fff;
+  /*color: #888;*/
 }
 
 
@@ -1005,11 +1081,9 @@ div.contextual-links-wrapper{
   background: transparent;
   background-image: none;
   font-size: 1.75em;
-  width: 2.5rem;
-  height: 2.5rem;
   position: absolute;
-  top: 2rem;
-  right: 2rem;
+  top: 1rem;
+  right: 3rem;
   z-index: 10 !important;
   filter: alpha(opacity=40);
   opacity: 0.4;
@@ -1194,7 +1268,7 @@ div.contextual-links-wrapper{
   height: 1.25em;
   line-height: 1.32em;
   overflow: hidden;
-  font-weight: 600;
+  /*font-weight: 600;*/
     font-size:0.93em;
     line-height:1em;
       letter-spacing:0.0275rem;
@@ -1222,7 +1296,7 @@ div.contextual-links-wrapper{
     line-height: 1em;
     color: #fff;
     text-transform: uppercase;
-    font-weight: 600;
+    font-weight: 400;
     letter-spacing: 0.0575rem;
 }
 
@@ -1230,11 +1304,11 @@ div.contextual-links-wrapper{
   color: #eee;
   background: transparent;
   position: absolute;
-  right: 5px;
-  top: -3px;
+  right: 1rem;
+  top: 0.1rem;
   z-index: 10;
-  font-family: 'FontAwesome';
-  font-size: 1.68em;
+  font-family: 'shanticon';
+  font-size: 1.12em;
   font-weight: normal;
   line-height: .88em;
   height: 1em;
@@ -1244,12 +1318,12 @@ div.contextual-links-wrapper{
 }
 
 .breadcrumb .icon::before {
-  content: '\f105';
+  content: '\e607';
   position: relative;
   top: 0;
   left: 0;
   filter: alpha(opacity=40);
-  opacity: 0.4;
+  opacity: 0.7;
 }
 
 .breadcrumb li:last-child .icon {
@@ -1431,6 +1505,7 @@ div.contextual-links-wrapper{
 .nav-tabs.nav-justified>li:hover:not(.active){
   background: #fefefe;
   box-shadow: 0 0 2px 1px #ccc;
+    box-shadow:none;
 }
 
 .nav-tabs.nav-justified>li:active{
@@ -1449,7 +1524,7 @@ div.contextual-links-wrapper{
 .nav-tabs.nav-justified>li.active::before {
   font-family: 'shanticon';
   font-size: 2em;
-  content: '\e646';
+  content: '\e645';
   position: absolute;
   left: 50%;
   top: 100%;
@@ -1513,6 +1588,7 @@ div.contextual-links-wrapper{
   border-bottom: 1px solid #c0c0c0;
   font-size: 1.56em;
   line-height: 2.88em;
+    line-height: 2.56em;
   height: 2.68em;
   font-style: italic;
   font-family: 'EB Garamond',serif;
@@ -1525,11 +1601,11 @@ div.contextual-links-wrapper{
   border-top: 4px solid #444;
   overflow: visible;
 }
-
+/*
 .menu-main h2{
   line-height: 2.5em;
 }
-
+*/
 .menu-main h2 a {
   cursor: default;
   background: #fff;
@@ -1739,23 +1815,35 @@ div.contextual-links-wrapper{
   color: #5360c6 !important;
 }
 
-.menu-main .levelHolderClass.rtl .backItemClass .floatLeft.fa.fa-angle-left {
+.menu-main .levelHolderClass.rtl .backItemClass .fa.fa-angle-left {
   position: relative;
-  top: -1rem;
-  left: 0;
+  top: -0.45rem;
   height: 2rem;
   width: 2rem;
+  font-style:normal;
 }
 
-.menu-main .levelHolderClass.rtl .backItemClass .floatLeft.fa.fa-angle-left::before {
-  font-size: 2.1rem;
-}
-
-.menu-main .levelHolderClass.rtl .floatRight.iconSpacing_rtl.fa.fa-angle-right {
-  font-size: 1.75em;
+.menu-main .levelHolderClass.rtl .backItemClass .fa.fa-angle-left::before {
+  font-size: .88em;
+  content:'\e606';
+  font-family:'shanticon';
   position: relative;
-  top: 0.5rem;
-  right: 2rem;
+  top:0;
+  right:0;
+}
+
+.menu-main .levelHolderClass.rtl .fa.fa-angle-right {
+    font-size: 1.18em;
+    position: relative;
+    top: 1.2rem;
+    right: 2.5rem;
+    font-style: normal;
+    opacity:.7;
+}
+
+.menu-main .levelHolderClass.rtl .fa.fa-angle-right::before{
+  content:'\e607';
+  font-family:'shanticon';
 }
 
 .menu-main .levelHolderClass.rtl .backItemClass .icon {
@@ -1798,17 +1886,19 @@ div.contextual-links-wrapper{
 /*----------------------------*/
 /*----- BEGIN Popovers -------*/
 /*----------------------------*/
+.kmap-tag-group { white-space: nowrap; }  /** Keeps the popover with the preceeding kmap term it goes with **/
+
 .popover-link {
   background: #5a65d1;
   border: none;
-  height: 1.08rem;
-  width: 1.25rem;
+  height: 1.25rem;
+  width: 1.45rem;
   color: white;
   padding: 0;
   display: inline-block;
   position: relative;
   left: 0;
-  top: 0.1rem;
+  top: 0;
   margin-left: 0.8rem;
   margin-right: 1.25rem;
   font-size: 1rem;
@@ -1828,11 +1918,13 @@ div.contextual-links-wrapper{
 }
 
 .popover-link .icon {
-  color: white;
-  font-size: 0.7rem;
+  font-size: 0.8rem;
   position: relative;
-  bottom: 0.15rem;
-  right: 0.25rem;
+  right: 0.2rem;
+}
+
+.popover-link .icon::before{
+  color: white;
 }
 
 .popover {
@@ -1870,7 +1962,7 @@ div.contextual-links-wrapper{
 
 .related-resources-popover .popover-body {
   border-top: 1px solid #ccc;
-  padding-top: 0.5rem 0.2rem;
+  padding: 0.5rem 0.2rem;
 }
 
 .related-resources-popover .popover-title {
@@ -1977,7 +2069,7 @@ div.contextual-links-wrapper{
   height: 3em;
   text-transform:capitalize;
   letter-spacing: 0.05rem;
-  font-family:'Open Sans','Segoe UI',Tahoma,sans-serif;
+  font-family:'Open Sans','Segoe UI',Tahoma,sans-serif !important;
   font-weight: 400;
 }
 
@@ -2012,6 +2104,9 @@ div.contextual-links-wrapper{
 
 .popover-footer .popover-footer-button:first-child .icon::before{
   margin-right: 1.3rem;
+  content:'\e629';
+  position: relative;
+  left:.2rem;
 }
 
 .popover-footer-button:last-child {
@@ -2068,13 +2163,20 @@ div.contextual-links-wrapper{
   z-index:1;
   box-shadow: 0 2px 5px #ccc;
   border-top: 2px solid rgba(205, 169, 66, 1) !important;
+  -webkit-transition: .2s ease-in-out;
+  transition: .2s ease-in-out;
 }
-.related-av-nodes .shanti-thumbnail{
-  height: 17.5em;
+
+.shanti-thumbnail:hover{
+    -webkit-transform: scale(1.025);
+    transform: scale(1.025);
+    box-shadow: 0 8px 15px 2px #c0c0c0;
 }
-
-
-
+.shanti-thumbnail:active{
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    box-shadow: 0 2px 5px #ccc;
+}
 
 .shanti-thumbnail-image {
   width: 100%;
@@ -2099,7 +2201,7 @@ div.contextual-links-wrapper{
   filter: alpha(opacity=90);
   opacity: 0.9;
   position: absolute;
-  top: 0;
+  top: 0.1rem;
   right: 0;
   z-index: 100;
   background: #31acb6;
@@ -2107,15 +2209,14 @@ div.contextual-links-wrapper{
   height: 1.88em;
   border-radius: 0 0 0 .3rem;
   background-clip: padding-box;
-  border: 1px solid #aaa;
-  border-width: 0 0 1px 1px;
   text-shadow: 0 0 1px #555;
   color: white;
-  font-size: 1em;
+  font-size: 1.12em;
   line-height: 1.88em;
   font-weight: normal;
   text-align: center;
-  box-shadow: 0 0 3px rgba(24, 24, 24, .25);
+  box-shadow: none;
+  border:none;
 }
 
 .shanti-thumbnail-image > a:hover .icon {
@@ -2123,8 +2224,12 @@ div.contextual-links-wrapper{
   opacity: 1;
 }
 
-.shanti-thumbnail-image.shanti-field-audio .icon {
+.shanti-thumbnail-image.shanti-field-audio a .icon:last-child {
   background: #4850bd !important;
+}
+
+.shanti-thumbnail-image > a .icon.audio-video::before{
+  font-size:120%;
 }
 
 .shanti-thumbnail-image img {
@@ -2138,8 +2243,8 @@ div.contextual-links-wrapper{
 }
 
 .shanti-thumbnail-image img:hover{
-  -webkit-transform: scale(1.175);
-  transform: scale(1.175);
+ /* -webkit-transform: scale(1.175);
+  transform: scale(1.175);*/
 }
 
 .shanti-thumbnail-image img:active{
@@ -2155,42 +2260,39 @@ div.contextual-links-wrapper{
 }
 
 .shanti-thumbnail-image > a .overlay {
-    display:none;
+  position: absolute;
+  top: 2.2rem;
+  right: 50%;
+  margin-right: -2.7rem;
+}
+.shanti-thumbnail .shanti-thumbnail-image > a .overlay .icon{
+  background-color: transparent !important;
+}
+.shanti-thumbnail.active .shanti-thumbnail-image > a .overlay .icon {
+    display: inline-block;
+    width: 5rem;
+    height: 5rem;
+    vertical-align: text-bottom;
+    border: .15em solid #c5a23f;
+    border-right-color: transparent;
+    border-radius: 50%;
+    -webkit-animation: spinner-border .75s linear infinite;
+    animation: spinner-border .75s linear infinite;
 }
 
-.shanti-thumbnail-image a .overlay::before {
-  content: '\e60a';
-    content: '\f0c1'; /* testing new link icon */
-  color: rgba(255,255,255,0.0);
-  font-size: 2.5em;
-  text-align: center;
-  position: relative;
-  top: 3.5rem;
-    top: 3.75rem; /* testing new link icon */
-  -webkit-transition: all 300ms ease;
-  transition: all 300ms ease;
-}
-
-.shanti-thumbnail-image a:hover .overlay::before {
-  color: rgba(255,255,255,0.8);
-  font-size: 4em;
-    font-size: 3em !important; /* testing new link icon */
-}
-
-.shanti-thumbnail-image a:active .overlay::before {
-  color: rgba(255,255,255,0.9);
-  font-size: 3.5em;
-    font-size: 2.25em !important; /* testing new link icon */
-}
 .shanti-thumbnail-info,
-.shanti-thumbnail-info  a {
+.shanti-thumbnail-info a {
   font-size: .82em;
   font-family:'Open Sans','Segoe UI',Tahoma,sans-serif;
-    font-weight:400;
+  font-weight:400;
+}
+
+.shanti-thumbnail-info a{
+  font-style:italic;
 }
 
 .shanti-thumbnail .body-wrap {
-  padding: 0 .5rem;
+  padding: 0 .5rem .75rem;
   overflow: auto;
   height: 13.3rem;
   border-top: 1px solid rgba(205, 169, 66, 1) !important;
@@ -2216,28 +2318,43 @@ div.contextual-links-wrapper{
   cursor: pointer;
 }
 
-.shanti-field-title{
-  padding: 0.45rem .5rem .1rem .2rem;
-  margin-bottom: .5rem;
+.shanti-thumbnail-info .body-wrap  a{
+  border-bottom: 1px solid transparent !important;
+  display:inline;
+}
+.shanti-thumbnail-info .body-wrap  a:hover{
+  border-bottom-color: rgba(163, 90, 209, 0.52) !important;
+}
+
+
+.shanti-thumbnail-info .body-wrap .shanti-field-title{
+  padding: 0 .5rem .1rem .2rem;
+  line-height: 2em;
+  margin-bottom: .4rem;
   border-bottom: 1px solid rgba(205, 169, 66, .6) !important;
 }
 
-.shanti-field-title a {
+.shanti-thumbnail-info .body-wrap .shanti-field-title a {
   font-size: 1em;
   line-height: 1.32em;
-  padding: 0 0 0.3rem 0.2rem;
+  padding: 0;
   font-weight:600;
   word-break: break-word;
   color: #111;
+  border-bottom: none !important;
+  font-style:normal;
+  display:inline-block;
+  position: relative;
+  top: .2rem;
 }
 
 .shanti-thumbnail-link:hover {
-  color: #df3d26;
+  color: #0e1fbd;
   box-shadow: none;
   text-decoration: none;
 }
 .shanti-thumbnail-link:active {
-  color: #333;
+  color: #df3d26;
 }
 /* Tibetan in teaser titles */
 .shanti-thumbnail-field.shanti-field-title.bo {
@@ -2311,18 +2428,15 @@ div.contextual-links-wrapper{
 }
 
 .shanti-field-languages span::before {
-  content: '\f0e6';
-  font-family: 'FontAwesome';
+  content: '\e675';
   font-size: 150%;
   position: relative;
   left: -.1rem;
-  top: 0.1rem;
   margin-right: 0.5rem;
 }
 
 .shanti-field-duration span::before {
   content: '\e61c';
-  top: 0.1rem;
   left: 0.13rem;
   margin-right: 0.5rem;
 }
@@ -2330,7 +2444,6 @@ div.contextual-links-wrapper{
 .shanti-field-created span::before {
   content: '\e60c';
   position: relative;
-  top: 0.15rem;
   color:#222;
   margin-right: 0.8rem;
 }
@@ -2340,35 +2453,50 @@ div.contextual-links-wrapper{
 .shanti-field-registrar > span::before{
   content: '\e600';
   float: left;
-  position: relative;
-  top: -0.05rem;
 }
 
 .shanti-field-registrar > span::before{
-  content: '\e63a';
-  top: -0.2rem;
+  content: '\e673';
 }
 
 .shanti-field-type span::before{
-  content: '\e634' !important;
+  content: '\e633' !important;
   position: relative;
-  top: 0.3rem;
   left:0.03rem;
   font-size: 130%;
   margin-right:0.6rem;
   color: #555;
 }
 
-.shanti-field-itemcount span::before{
-  content: '\e649';
+.shanti-thumbnail .shanti-field-type span::before{
+  content: '\e633' !important;
+  position: relative;
+  left: 0rem;
+}
+
+.images.page-collections .shanti-field-itemcount span::before{
+  content: '\e62a';
   position:relative;
   top: 0.25rem;
+  left: 0.08rem;
+}
+
+.visuals.page-collections .shanti-field-itemcount span::before{
+  content: '\e63b';
+  position: relative;
+  top: 0.25rem;
+  left: -.05rem;
+  font-size: 1.5em;
+}
+
+.audio-video.page-collections .shanti-field-itemcount span::before{
+  content: '\e648';
   left: 0.2rem;
 }
 
 
 .shanti-field-place > span::before {
-  content: '\e62c';
+  content: '\e62b';
   position: relative;
   top: 0.15rem;
   color:#222;
@@ -2376,54 +2504,62 @@ div.contextual-links-wrapper{
 
 
 
-.shanti-thumbnail .footer-wrap {
-  background: #f6f6f6; /* light-grey */
-    background: #8c7553; /* brown */
-      background: #8e752e; /* golden brown more aligned with the Images theme color */
-      background: rgba(142, 117, 46, 0.85);
 
-  /*border-top: 1px solid #e6e6e6;*/
+
+
+
+.shanti-thumbnail .footer-wrap {
+  background: rgba(142, 117, 46, 0.85);
   border-radius: 0 0 .5rem .5rem;
   background-clip: padding-box;
   width: 100%;
   display: block;
-  padding: 0.35rem 0.9rem 0 .9rem;
-  height: 2.32em;
+  padding: 0 .9rem;
+  height: 2.8rem;
 }
-
+.shanti-thumbnail .footer-wrap:hover {  
+  background-color: rgba(105, 79, 4, 0.85);
+}
+.shanti-thumbnail .footer-wrap:active {  
+  background-color: rgba(142, 117, 46, 0.85);
+}
 .shanti-thumbnail .footer-wrap a {
   font-size: 1.06em;
-  line-height: 1.18em;
   display: block;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   color: #fff;
+  font-style:italic;
   border:none !important;
+  padding: .6rem 0;
+  line-height: 1.4em;
 }
 
-.shanti-thumbnail .footer-wrap a:hover,
-.shanti-thumbnail .footer-wrap a:active {
-  text-decoration: underline;
+.shanti-thumbnail .footer-wrap a:hover {
   background-color: transparent;
 }
 
 .shanti-thumbnail .footer-wrap a::before{
-  content: '\e634';
+  content: '\e633';
   font-family: 'shanticon';
   display: inline-block;
   font-size: 1.32em;
   color: #eee;
   margin-right: .5rem;
-  position: relative;
-  top: 0.225rem;
+  float: left;
+  font-style: normal;
 }
 .shanti-thumbnail .footer-wrap a:empty{
   display:none;
 }
 
+.shanti-thumbnail .footer-wrap:empty:active {  
+  background-color: rgba(105, 79, 4, 0.85);
+}
+
 .shanti-thumbnail-field.shanti-field-type{
-  font-size: 1.06em;
+  font-size: 1em;
 }
 .shanti-thumbnail-field.shanti-field-type span{
   padding-left:.2rem;
@@ -2559,6 +2695,7 @@ a.btn,a.btn:hover,a.btn:active {
   background: #5b68ce;
   filter: alpha(opacity=90);
   opacity: 0.9;
+  font-weight:400;
 }
 
 .btn.btn-primary:hover {
@@ -2633,20 +2770,6 @@ a.btn,a.btn:hover,a.btn:active {
 
 .btn.btn-icon:active span:last-child,.btn.btn-icon.active span:last-child {
   background: rgba(255,255,255,.08);
-}
-
-.image-widget .btn.btn-primary.btn-icon {
-  margin: 0;
-  width: 3.75rem;
-  height: 3.5rem;
-  position: relative;
-  top:-.5rem;
-  left:.5rem;
-}
-.image-widget .btn.btn-primary.btn-icon .icon {
-  font-size: 140%;
-  line-height: 3.25em;
-  width: 3.8rem;
 }
 
 .btn.btn-primary .icon {
@@ -3063,6 +3186,7 @@ div.block-shanti-carousel > h2 {
   margin-right: .5rem;
   font-size: 1.38em;
   color: #777;
+  content:'\e633';
 }
 
 .carousel .byline {
@@ -3182,7 +3306,7 @@ div.block-shanti-carousel > h2 {
 }
 
 .carousel-control.left .icon::before {
-  content: '\e641';
+  content: '\e640';
   position: relative;
   right: 0;
   top: 0.2rem;
@@ -3190,7 +3314,7 @@ div.block-shanti-carousel > h2 {
 }
 
 .carousel-control.right .icon::before {
-  content: '\e642';
+  content: '\e641';
   position: relative;
   left: 0rem;
   top: 0.2rem;
@@ -3576,9 +3700,7 @@ div#carousel-buttons {
   border-radius: 50%;
   background-clip: padding-box;
   border:1px solid #888;
-  display: none;
   text-align: center;
-
     display:none !important; /* hiding since most pages are short enough not to need this, will add required */
 }
 
@@ -3593,7 +3715,7 @@ div#carousel-buttons {
 .back-to-top .fa {
   color: #444;
   font-size: 2.5em;
-  font-family: 'FontAwesome';
+  font-family: 'shanticon';
   font-weight: normal;
   margin: 0 auto;
   text-align: center;
@@ -3605,7 +3727,7 @@ div#carousel-buttons {
 }
 
 .back-to-top .fa::before {
-  content: '\f077';
+  content: '\e608';
   position: relative;
   top: .5rem;
 }
@@ -4054,19 +4176,19 @@ li.pager-item > form input {
 }
 
 .main-wrapper ul.pager li.pager-first .icon::before {
-  content: '\e63d' !important;
+  content: '\e63c' !important;
 }
 
 .main-wrapper ul.pager li.pager-previous .icon::before {
-  content: '\e640' !important;
-}
-
-.main-wrapper ul.pager li.pager-next .icon::before {
   content: '\e63f' !important;
 }
 
-.main-wrapper ul.pager li.pager-last .icon::before {
+.main-wrapper ul.pager li.pager-next .icon::before {
   content: '\e63e' !important;
+}
+
+.main-wrapper ul.pager li.pager-last .icon::before {
+  content: '\e63d' !important;
 }
 
 .main-wrapper ul.pager li span {
@@ -4220,13 +4342,12 @@ table tr.ok {
   border-top: 1px solid #fff;
   border-bottom: 1px solid #ccc;
   margin: 0;
-  height: 75px;
+  height: 72px;
   letter-spacing: 0.075rem;
 }
 
 .panel.panel-default .panel-heading h6 a {
-  color: #555;
-  font-weight:600;
+  color: #333;
   border: none;
   display: block;
   padding-left: 2rem;
@@ -4415,9 +4536,7 @@ table tr.ok {
 }
 
 
-.region-admin-footer div#block-user-online {
-    overflow-y: scroll;
-}
+
 
 /**
 * Hiding 'Federated Log In' link since it seems to do nothing. */
@@ -4479,23 +4598,28 @@ article.main-col {
   margin-right:1rem;
 }
 
-
 .front.images article.main-col,
 .front.visuals article.main-col,
 .front.audio-video article.main-col,
-.collection-page article.main-col,
 .page-mycontent.images article.main-col,
 .page-mycontent.visuals article.main-col,
 .page-mycontent.audio-video article.main-col,
 .page-examples.visuals article.main-col{
   max-width:100% !important;
 }
-
-.texts.collection-page article.main-col{
-  max-width: 1250px !important;
+/*
+.node-type-subcollection article.main-col,
+.texts.collection-page article.main-col*/
+.collection-page article.main-col{
+  max-width: 1600px !important;
 }
 .sources.collection-page article.main-col{
   max-width: 1050px !important;
+}
+.images.collection-page article.main-col,
+.visuals.collection-page article.main-col,
+.audio-video.collection-page article.main-col{
+  /*max-width: 1250px !important;*/
 }
 
 .no-sidebars article.main-col{
@@ -4682,8 +4806,9 @@ article.main-col > div.region-content::after{
 }
 
 .front .btn.btn-default.view-offcanvas-sidebar,
-.home-carousel .btn.btn-default.view-offcanvas-sidebar,
-.page-user .row-offcanvas .btn.btn-default.view-offcanvas-sidebar{
+.page-user .btn.btn-default.view-offcanvas-sidebar,
+.contact-page .btn.btn-default.view-offcanvas-sidebar,
+.home-carousel .btn.btn-default.view-offcanvas-sidebar{
   display:none !important;
 }
 
@@ -4999,6 +5124,13 @@ article.main-col > div.region-content::after{
     bottom: .25rem;
     left: 4rem;
   }
+
+  .collections .close{
+    position: relative;
+    top:1.25rem;
+    right:3rem;
+    font-size:2em;
+  }
 }
 
 @media screen and (min-width: 992px) {
@@ -5279,6 +5411,26 @@ article.main-col > div.region-content::after{
 }
 #sliding-popup .eu-cookie-compliance-more-button{ float:right; margin-left:1rem;}
 
+
+.page-contact .contact-form .icheckbox_minimal-red{
+  margin-right: 1rem;
+  margin-top: -.3rem;
+}
+.page-contact .contact-form{
+  max-width: 70rem;
+  margin-left: 3.5%;
+}
+.contact-form .form-type-textfield:nth-child(n+4){
+  display:block;
+}
+.contact-form .form-type-textfield.form-item-mail .form-control{
+  max-width: 40rem;
+  display:block;
+}
+.contact-form .form-type-textfield.form-item-subject .form-control{
+  max-width: 45rem;
+  display:block;
+}
 
 
 /*-------------------------*/

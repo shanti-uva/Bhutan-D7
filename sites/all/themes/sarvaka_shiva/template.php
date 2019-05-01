@@ -40,7 +40,9 @@ function sarvaka_shiva_menu_local_tasks_alter(&$data, $router_item, $root_path)
   */
 function sarvaka_shiva_menu_breadcrumb_alter(&$active_trail, $item) {
     $map = $item['map']; // Item map tells us about what page we are on
+
     if ($map[0] == "node") {
+        /* moved to shanti Sarvaka
         //dpm($item, 'itme in bc alter');
         $node = $map[1];
         // if it's a collection node, add link to all collections before it's name 
@@ -56,7 +58,8 @@ function sarvaka_shiva_menu_breadcrumb_alter(&$active_trail, $item) {
             $newat[0] = array_shift($active_trail);
             $newat[1] = $collslink;
             $active_trail = array_merge($newat, $active_trail);
-        } 
+        }
+        */
     } else if ($item['path'] == 'collections/all' && count($active_trail) == 3 && $active_trail[1]['link_title'] == "Collections") {
         unset($active_trail[1]); // Remove the extra "collections" breadcrumb from user menu set up.
     }  else if ($item['path'] == 'group/%/%/admin/people') {
@@ -219,7 +222,7 @@ function sarvaka_shiva_preprocess_shivanode_full(&$vars) {
     if (empty($desc)) { $desc = '<i>No description</i>'; }
 
     $infovars = array(
-        'icon' => 'fa-info-circle', 
+        'icon' => 'shanticon-info',
         'title' => $vars['title'], 
         'vtype' => $vtype, 
         'vsubtype' => $vsubtype, 
@@ -433,7 +436,7 @@ function sarvaka_shiva_field__shivadata_source_url($variables) {
  */
 function sarvaka_shiva_custom_info_popover($variables) {
     $icon = $variables['icon'];
-    $icon = (strpos($icon, 'fa') > -1) ? "fa $icon" : "icon $icon";
+    $icon = "icon $icon";  // was (strpos($icon, 'fa') > -1) ? "fa $icon" : "icon $icon";
     $subtype = (!empty($variables['vsubtype'])) ? ", {$variables['vsubtype']}" : "";
     $infoitems = '';
     $vtype = '';
@@ -465,6 +468,8 @@ function sarvaka_shiva_custom_info_popover($variables) {
     if (!empty($variables['vdata'])) {
         $vdata = "<li><span class=\"icon shanticon-list\" title=\"Data Used\"></span> {$variables['vdata']}</li>";
     }
+    // Subjects are no long displayed in info popover
+    // See node-shivanode.tpl.php for links to show popups with kmaps in them
     if (!empty($variables['vsubjects'])) {
         $vsubjs = "<li><span class=\"icon shanticon-subjects\" title=\"Subject Kmaps\"></span> {$variables['vsubjects']}</li>";
     }

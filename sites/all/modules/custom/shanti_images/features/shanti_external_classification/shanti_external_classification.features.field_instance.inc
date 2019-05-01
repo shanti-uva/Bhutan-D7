@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * shanti_external_classification.features.field_instance.inc
@@ -32,10 +33,13 @@ function shanti_external_classification_field_default_field_instances() {
         'weight' => 5,
       ),
       'grid_details' => array(
-        'label' => 'above',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 0,
+        'label' => 'inline',
+        'module' => 'text',
+        'settings' => array(
+          'trim_length' => 600,
+        ),
+        'type' => 'text_summary_or_trimmed',
+        'weight' => 1,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -106,9 +110,10 @@ function shanti_external_classification_field_default_field_instances() {
         'weight' => 0,
       ),
       'grid_details' => array(
-        'label' => 'above',
+        'label' => 'inline',
+        'module' => 'text',
         'settings' => array(),
-        'type' => 'hidden',
+        'type' => 'text_default',
         'weight' => 0,
       ),
       'node_teaser' => array(
@@ -186,10 +191,14 @@ function shanti_external_classification_field_default_field_instances() {
         'weight' => 1,
       ),
       'grid_details' => array(
-        'label' => 'above',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 0,
+        'label' => 'inline',
+        'module' => 'url',
+        'settings' => array(
+          'nofollow' => FALSE,
+          'trim_length' => 80,
+        ),
+        'type' => 'url_default',
+        'weight' => 2,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -262,7 +271,7 @@ function shanti_external_classification_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 3,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -334,7 +343,7 @@ function shanti_external_classification_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 4,
       ),
       'node_teaser' => array(
         'label' => 'above',
@@ -406,7 +415,7 @@ function shanti_external_classification_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 5,
       ),
       'node_teaser' => array(
         'label' => 'above',

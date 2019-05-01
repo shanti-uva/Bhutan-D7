@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * sources_biblio_search.features.fe_block_settings.inc

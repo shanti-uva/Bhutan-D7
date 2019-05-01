@@ -1,8 +1,13 @@
 /* FOOTNOTES */
 
-.shanti-texts-section-content .note {
-    vertical-align: top;
-    font-size: smaller;
+.shanti-texts-section-content a[id*="ref"],
+.shanti-texts-section-content a[id*="edn"],
+.shanti-texts-section-content a[id*="ftn"],
+.shanti-texts-section-content a.fntref,
+.shanti-texts-section-content a.ednref {
+  color:cornflowerblue;
+  vertical-align: super;
+  font-size: 0.7em;
 }
 
 ul.footnotes {
@@ -34,4 +39,16 @@ li.footnote {
 #reader .footnotes .footnote:target {
   background-color: #FFFCD3;
   box-shadow: 2px 2px 5px gray;
+}
+
+.shanti-endnotes hr {
+  display: none;
+}
+
+.shanti-endnotes #edn1 {
+  margin-top: -45px;
+}
+
+.shanti-endnotes div[id*=edn] {
+  margin-top: -15px;
 }

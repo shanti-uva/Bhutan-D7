@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * audio_video.field_group.inc
@@ -180,6 +181,7 @@ function audio_video_field_group_info() {
       6 => 'field_subject',
       7 => 'field_og_collection_ref',
       8 => 'field_language_kmap',
+      9 => 'field_kmap_terms',
     ),
     'format_type' => 'fieldset',
     'format_settings' => array(
@@ -204,7 +206,7 @@ function audio_video_field_group_info() {
   $field_group->parent_name = '';
   $field_group->data = array(
     'label' => 'Classification',
-    'weight' => '5',
+    'weight' => '2',
     'children' => array(
       0 => 'field_pbcore_coverage',
       1 => 'field_tags',
@@ -215,6 +217,7 @@ function audio_video_field_group_info() {
       6 => 'field_subcollection_new',
       7 => 'field_subject',
       8 => 'field_language_kmap',
+      9 => 'field_kmap_terms',
     ),
     'format_type' => 'fieldset',
     'format_settings' => array(
@@ -252,6 +255,7 @@ function audio_video_field_group_info() {
       6 => 'field_subject',
       7 => 'field_og_collection_ref',
       8 => 'field_language_kmap',
+      9 => 'field_kmap_terms',
     ),
     'format_type' => 'fieldset',
     'format_settings' => array(
@@ -287,6 +291,7 @@ function audio_video_field_group_info() {
       6 => 'field_subcollection_new',
       7 => 'field_subject',
       8 => 'field_language_kmap',
+      9 => 'field_kmap_terms',
     ),
     'format_type' => 'fieldset',
     'format_settings' => array(
@@ -436,7 +441,7 @@ function audio_video_field_group_info() {
   $field_group->parent_name = '';
   $field_group->data = array(
     'label' => 'Availability & Copyrights',
-    'weight' => '8',
+    'weight' => '4',
     'children' => array(
       0 => 'field_available_from',
       1 => 'field_pbcore_publisher',
@@ -636,7 +641,7 @@ function audio_video_field_group_info() {
   $field_group->parent_name = '';
   $field_group->data = array(
     'label' => 'Rights & Licensing',
-    'weight' => '6',
+    'weight' => '3',
     'children' => array(
       0 => 'field_copyright_owner',
       1 => 'field_license',
@@ -754,7 +759,7 @@ function audio_video_field_group_info() {
   $field_group->parent_name = '';
   $field_group->data = array(
     'label' => 'Technical Metadata',
-    'weight' => '9',
+    'weight' => '5',
     'children' => array(
       0 => 'field_pbcore_extension',
       1 => 'field_pbcore_identifier',
@@ -994,7 +999,7 @@ function audio_video_field_group_info() {
   $field_group->parent_name = '';
   $field_group->data = array(
     'label' => 'Transcript',
-    'weight' => '4',
+    'weight' => '1',
     'children' => array(
       0 => 'field_transcript',
     ),
@@ -1105,7 +1110,7 @@ function audio_video_field_group_info() {
   $field_group->parent_name = '';
   $field_group->data = array(
     'label' => 'Workflow',
-    'weight' => '10',
+    'weight' => '7',
     'children' => array(
       0 => 'field_workflow',
     ),

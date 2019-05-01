@@ -42,12 +42,12 @@
                  <div class="subject"><span class="icon shanticon-subjects"></span> <?php print $grid_fields['subject']; ?></div>
             </div>
         <?php endif; ?>
+        <div class="description">
+          <?php if (!empty($grid_fields['desc'])) { print $grid_fields['desc']; }  else { print t('No description available.') ; }?>
+        </div>
         <div class="links">
             <a href="#" class="btn btn-default btn-sm view-btn">Details</a>
             <!--button class="btn btn-default btn-sm details-btn">Details</button-->
-        </div>
-        <div class="description">
-            <?php if (!empty($grid_fields['desc'])) { print $grid_fields['desc']; }  else { print t('No description available.') ; }?>
         </div>
     </div> <!-- END details inner -->
 </div> <!-- END details --> 

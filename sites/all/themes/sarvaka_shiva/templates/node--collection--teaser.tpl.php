@@ -93,7 +93,7 @@
             <div class="body-wrap">
                 <div class="shanti-thumbnail-field shanti-field-title">        
                     <span class="field-content">
-                        <a href="<?php print $node_url; ?>" class=""><?php print $title; ?></a></span>  
+                        <a href="<?php print $node_url; ?>" class="shanti-thumbnail-link"><?php print $title; ?></a></span>  
                 </div>  
                 
                 <div class="shanti-thumbnail-field shanti-field-author">       
@@ -119,7 +119,7 @@
                 </div>  
                 
                 <div class="shanti-thumbnail-field shanti-field-body">
-                    <?php print $desc; ?>
+                    <?php print strip_tags($desc); ?>
                 </div>
             </div> <!-- end of body wrap -->
             

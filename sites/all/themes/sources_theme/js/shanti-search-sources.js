@@ -78,7 +78,7 @@
     attach: function (context, settings) {
       if (context == document) {
 
-        $('.view-biblio-search-api .fa-plus').click(function() {
+        $('.view-biblio-search-api .shanticon-plus').click(function() {
 
             if($(this).hasClass('on')) {
                 $(this).toggleClass('on');
@@ -92,14 +92,14 @@
 
         // clicking details buttons resets plus icons to original vertical position
         $('.detail-level-option li a').click(function() {
-            $('.view-biblio-search-api .fa-plus').removeClass('on');
+            $('.view-biblio-search-api .shanticon-plus').removeClass('on');
         });
         $('.detail-level-option li:nth-of-type(3) a').click(function() {
-            $('.view-biblio-search-api .fa-plus').addClass('on');
+            $('.view-biblio-search-api .shanticon-plus').addClass('on');
         });
 
         if($('.detail-level-option li:nth-of-type(3) a').hasClass('active')){
-            $('.view-biblio-search-api .fa-plus').addClass('on');
+            $('.view-biblio-search-api .shanticon-plus').addClass('on');
         }
 
 

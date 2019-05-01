@@ -188,7 +188,7 @@ else:     /************ FULL Display ***********/
       <div class="avdesc">
       	<!-- Info/Description row -->
 	      <!-- info column -->
-	      <div class="avinfo col-xs-12 col-md-3">
+	      <div class="avinfo col-xs-12 col-md-4">
 	      	<?php if (!empty($variables['media_create_date'])) : ?>
 	        	<div class="avdate"><span class="icon shanticon-calendar" title="Created"></span>
 	        		<?php print date('d M Y', $variables['media_create_date']);  ?>
@@ -216,7 +216,7 @@ else:     /************ FULL Display ***********/
 	          </div>
 	        <?php endif; ?>
 	      </div> <!-- End of avinfo -->
-	      <div class="video-overview col-xs-12 col-md-9">
+	      <div class="video-overview col-xs-12 col-md-8">
 	        <h5 class="video-overview-title"><?php print t('Audio Overview'); ?></h5>
 	        <div class="field field-name-creator field-type-item field-label-inline clearfix">
                 <div class="field-label"><?php print t('Creators');?>:&nbsp;</div>

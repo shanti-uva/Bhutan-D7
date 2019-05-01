@@ -223,8 +223,8 @@ object.flip_label {
 }
 
 .ui-resizable-handle.ui-resizable-w::before{
-  content: '\f047';
-  font-family: 'FontAwesome';
+  content: '\e665';
+  font-family: 'shanticon';
   font-size: 1.12em;
   display: inline-block;
   color: #fff;
@@ -482,7 +482,7 @@ object.flip_label {
   position: absolute;
   top: 1.9rem;
   right: 0.1rem;
-  z-index: 10;
+  z-index: 9;
   background: transparent;
   padding: 0;
   margin: 0;
@@ -616,14 +616,12 @@ object.flip_label {
 }
 
 .extruder .shanticon-magnify {
-    position: absolute;
-    left: 2rem;
-    top: 1.45rem;
-          left: 1.05rem;
-          top: 2.8rem;
-    z-index: 10;
-    font-size: 1.12em;
-    color: #999;
+  position: absolute;
+  left: 1.05rem;
+  top: 2.9rem;
+  z-index: 10;
+  font-size: 1.12em;
+  color: #999;
 }
 
 
@@ -760,15 +758,15 @@ object.flip_label {
 .view-section .tab-content .tab-pane {
   padding: 1rem 0 0;
 }
-    .view-section .tab-content .shanti-kmaps-faceted-search-kmaps-1.tab-pane.treeview,
-    .view-section .tab-content .shanti-kmaps-faceted-search-kmaps-2.tab-pane.treeview{
-      padding-left:.75rem
-    }
+.view-section .tab-content .shanti-kmaps-faceted-search-kmaps-1.tab-pane.treeview,
+.view-section .tab-content .shanti-kmaps-faceted-search-kmaps-2.tab-pane.treeview,
+.view-section .tab-content .shanti-kmaps-faceted-search-kmaps-3.tab-pane.treeview{
+  padding-left:.75rem
+}
 
 .view-section .nav-tabs {
   margin-top: 0 !important;
 }
-
 .view-section .nav-tabs>li {
   width: 23%;
   max-width: 130px;
@@ -776,15 +774,15 @@ object.flip_label {
   line-height: 1.5em;
 }
 .view-section .nav-tabs>li.shanti-kmaps-faceted-search-kmaps-2{
-  width:29%;
+  width:27%;
 }
-
+    /* Visuals search 
     .visuals .view-section .nav-tabs>li.shanti-kmaps-faceted-search-kmaps-2{
       width:23%;
     }
     .visuals .view-section .nav-tabs>li.shanti-kmaps-faceted-search-kmaps-1{
       width:27%;
-    }
+    }*/
     
 .view-section .nav-tabs>li>a {
   color: #777;
@@ -1363,7 +1361,7 @@ object.flip_label {
 }
 
 .fancytree-container .glyphicon {
-  color: #4d59ca;
+  /*color: #4d59ca;*/
   font-family: 'Glyphicons Halflings';
   font-size: 15px;
   margin-right: 1.2rem;
@@ -2030,10 +2028,6 @@ ul.facetapi-facet-transcript-languages li > a[href$="_empty_"] {
   text-decoration: none !important;
 }
 
-.input-section .toggle-link .icon {
-  font-family: 'FontAwesome';
-}
-
 .input-section .toggle-link .icon::before {
   color: #555 !important;
   font-family: 'FontAwesome';
@@ -2200,6 +2194,135 @@ ul.facetapi-facet-transcript-languages li > a[href$="_empty_"] {
 
 /**
 *** END / Input & Advanced */
+
+
+
+
+/**
+* - Custom theme color change under Search Flyout Tabs Places - Subjects
+*/
+
+/* custom theme color change under Search Flyout Tabs Places - Subjects */
+.front .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-1>a,
+.front .view-section .shanti-kmaps-faceted-search-kmaps-1 .fancytree-container .glyphicon,
+.front .view-section .shanti-kmaps-faceted-search-kmaps-1 .fancytree-container .fancytree-node:hover > .glyphicon, 
+.front .view-section .shanti-kmaps-faceted-search-kmaps-1 .fancytree-container .fancytree-node:active > .glyphicon, 
+.front .view-section .shanti-kmaps-faceted-search-kmaps-1 .fancytree-node.fancytree-active > .glyphicon,
+.page-subjects .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-1>a,
+.page-subjects .view-section .shanti-kmaps-faceted-search-kmaps-1 .fancytree-container .glyphicon,
+.page-subjects .view-section .shanti-kmaps-faceted-search-kmaps-1 .fancytree-container .fancytree-node:hover > .glyphicon, 
+.page-subjects .view-section .shanti-kmaps-faceted-search-kmaps-1 .fancytree-container .fancytree-node:active > .glyphicon, 
+.page-subjects .view-section .shanti-kmaps-faceted-search-kmaps-1 .fancytree-node.fancytree-active > .glyphicon{
+  color: #49a0f2 !important;
+}
+.front .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-2>a,
+.front .view-section .shanti-kmaps-faceted-search-kmaps-2 .fancytree-container .glyphicon,
+.front .view-section .shanti-kmaps-faceted-search-kmaps-2 .fancytree-container .fancytree-node:hover > .glyphicon, 
+.front .view-section .shanti-kmaps-faceted-search-kmaps-2 .fancytree-container .fancytree-node:active > .glyphicon, 
+.front .view-section .shanti-kmaps-faceted-search-kmaps-2 .fancytree-node.fancytree-active > .glyphicon,
+.page-places .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-2>a,
+.page-places .view-section .shanti-kmaps-faceted-search-kmaps-2 .fancytree-container .glyphicon,
+.page-places .view-section .shanti-kmaps-faceted-search-kmaps-2 .fancytree-container .fancytree-node:hover > .glyphicon, 
+.page-places .view-section .shanti-kmaps-faceted-search-kmaps-2 .fancytree-container .fancytree-node:active > .glyphicon, 
+.page-places .view-section .shanti-kmaps-faceted-search-kmaps-2 .fancytree-node.fancytree-active > .glyphicon{
+  color: #cc4c39 !important;
+}
+.front .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-3>a,
+.front .view-section .shanti-kmaps-faceted-search-kmaps-3 .fancytree-container .glyphicon,
+.front .view-section .shanti-kmaps-faceted-search-kmaps-3 .fancytree-container .fancytree-node:hover > .glyphicon, 
+.front .view-section .shanti-kmaps-faceted-search-kmaps-3 .fancytree-container .fancytree-node:active > .glyphicon, 
+.front .view-section .shanti-kmaps-faceted-search-kmaps-3 .fancytree-node.fancytree-active > .glyphicon,
+.page-places .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-3>a,
+.page-places .view-section .shanti-kmaps-faceted-search-kmaps-3 .fancytree-container .glyphicon,
+.page-places .view-section .shanti-kmaps-faceted-search-kmaps-3 .fancytree-container .fancytree-node:hover > .glyphicon, 
+.page-places .view-section .shanti-kmaps-faceted-search-kmaps-3 .fancytree-container .fancytree-node:active > .glyphicon, 
+.page-places .view-section .shanti-kmaps-faceted-search-kmaps-3 .fancytree-node.fancytree-active > .glyphicon,
+.page-subjects .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-3>a,
+.page-subjects .view-section .shanti-kmaps-faceted-search-kmaps-3 .fancytree-container .glyphicon,
+.page-subjects .view-section .shanti-kmaps-faceted-search-kmaps-3 .fancytree-container .fancytree-node:hover > .glyphicon, 
+.page-subjects .view-section .shanti-kmaps-faceted-search-kmaps-3 .fancytree-container .fancytree-node:active > .glyphicon, 
+.page-subjects .view-section .shanti-kmaps-faceted-search-kmaps-3 .fancytree-node.fancytree-active > .glyphicon{
+  color: #a57546 !important;
+}
+
+.front .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-1>a,
+.page-subjects .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-1>a{
+  border-top-color: #49a0f2 !important;
+}
+.front .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-2>a,
+.page-places .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-2>a{
+  border-top-color: #cc4c39 !important;
+}
+.front .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-3>a,
+.page-places .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-3>a,
+.page-subjects .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-3>a{
+  border-top-color: #a57546 !important;
+}
+
+
+.front .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-facets>a,
+.page-places .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-facets>a,
+.page-subjects .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-facets>a,
+.page-terms .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-facets>a{
+  color: #4d59ca !important;
+}
+.front .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-facets>a,
+.page-subjects .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-facets>a,
+.page-places .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-facets>a,
+.page-terms .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-facets>a{
+  border-top-color: #4d59ca !important;
+}
+
+
+.view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-1>a,
+.view-section .shanti-kmaps-faceted-search-kmaps-1 .fancytree-container .glyphicon,
+.view-section .shanti-kmaps-faceted-search-kmaps-1 .fancytree-container .fancytree-node:hover > .glyphicon, 
+.view-section .shanti-kmaps-faceted-search-kmaps-1 .fancytree-container .fancytree-node:active > .glyphicon, 
+.view-section .shanti-kmaps-faceted-search-kmaps-1 .fancytree-node.fancytree-active > .glyphicon{
+  color: #49a0f2 !important;
+}
+.view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-2>a,
+.view-section .shanti-kmaps-faceted-search-kmaps-2 .fancytree-container .glyphicon,
+.view-section .shanti-kmaps-faceted-search-kmaps-2 .fancytree-container .fancytree-node:hover > .glyphicon, 
+.view-section .shanti-kmaps-faceted-search-kmaps-2 .fancytree-container .fancytree-node:active > .glyphicon, 
+.view-section .shanti-kmaps-faceted-search-kmaps-2 .fancytree-node.fancytree-active > .glyphicon{
+  color: #cc4c39 !important;
+}
+.view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-3>a,
+.view-section .shanti-kmaps-faceted-search-kmaps-3 .fancytree-container .glyphicon,
+.view-section .shanti-kmaps-faceted-search-kmaps-3 .fancytree-container .fancytree-node:hover > .glyphicon, 
+.view-section .shanti-kmaps-faceted-search-kmaps-3 .fancytree-container .fancytree-node:active > .glyphicon, 
+.view-section .shanti-kmaps-faceted-search-kmaps-3 .fancytree-node.fancytree-active > .glyphicon{
+  color: #a57546 !important;
+}
+
+.view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-1>a{
+  border-top-color: #49a0f2 !important;
+}
+.view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-2>a{
+  border-top-color: #cc4c39 !important;
+}
+.view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-3>a{
+  border-top-color: #a57546 !important;
+}
+
+
+.view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-facets>a{
+  color: #4d59ca !important;
+}
+.view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-facets>a{
+  border-top-color: #4d59ca !important;
+}
+
+.view-section .nav-tabs>li.active>a{
+  color: #4d59ca !important;
+  border-top-color: #4d59ca !important;
+}
+
+
+.ui-resizable-handle.ui-resizable-nw:active { 
+  background-color: #4d59ca !important; 
+}
 
 
 

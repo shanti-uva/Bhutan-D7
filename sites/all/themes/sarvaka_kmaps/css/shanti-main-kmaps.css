@@ -8,7 +8,9 @@
 *
 */
 
-/* BEGIN THEME COLORS - Places */
+/* 
+** BEGIN THEME COLORS - Places 
+*/
 .page-places .titlearea,
 .page-places .breadcrumb .icon,
 .page-places .carousel-control,
@@ -17,7 +19,7 @@
 .page-places .nav-tabs.nav-justified>li.active>a,
 .page-places .nav-tabs.nav-justified>li.active>a:focus,
 .page-places .nav-tabs.nav-justified>li.active>a:hover {
-  background: #3297f7 !important;
+  background-color: #3297f7 !important;
 }
 
 .page-places .front-list .shanticon-places::before,
@@ -29,10 +31,14 @@
 .page-places .carousel-feature-slides li.active div a::before,
 .page-places .bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a .check-mark,
 .page-places .bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a:active .check-mark,
-.page-places .kmaps-sources-summary ul.summary-list > li span.icon.shanticon-essays {
+.page-places .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-1>a,
+.page-places .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-1>a:hover,
+.page-places .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-1>a:active {
   color: #3297f7 !important;
 }
 
+.page-places .kmaps-list-columns ul li div:active,
+.page-places #sidebar-first .nav-pills li.active,
 .page-places .carousel-feature-slides li div a:hover,
 .page-places .carousel-feature-slides li div a:active,
 .page-places .carousel-feature-slides li.active div a,
@@ -41,56 +47,40 @@
   border-color: #3297f7 !important;
 }
 
-.page-places .input-section .toggle-link,
-.page-places .input-section .toggle-link:hover,
-.page-places .input-section .toggle-link .icon::before,
-.page-places .input-section .toggle-link:hover .icon::before,
-.page-places .input-section .selectpicker .caret::before,
-.page-places .view-section .nav-tabs>li.active>a,
-.page-places .view-section .nav-tabs>li.active>a:hover,
-.page-places .view-section .nav-tabs>li.active>a:active {
-  color: #3297f7 !important;
-}
-
 .page-places .kmaps-tt-menu .kmaps-tt-suggestion:hover::before,
 .page-places .kmaps-tt-menu .kmaps-tt-suggestion.kmaps-tt-cursor::before,
 .page-places .carousel-indicators li:hover, 
 .page-places .carousel-indicators li.active,
 .page-places .kmaps-tt-menu .kmaps-tt-suggestion:hover::before{
-    border-color: #3297f7 !important; /* set subtheme color */
-    background: #3297f7 !important;
+  border-color: #3297f7 !important; /* set subtheme color */
+  background-color: #3297f7 !important;
 }
 
-.page-places #sidebar-first .nav-pills li.active {
-  border-color: #3297f7 !important; /* darker shade */
-}
-
-.page-places .view-section .nav-tabs>li.active>a,
-.page-places .nav-tabs.nav-justified>li.active{
+/*.page-places .view-section .nav-tabs>li.active>a,*/
+.page-places .nav-tabs.nav-justified>li.active,
+.page-places .content-section > .tab-content .nav-tabs>li.active>a{
   /*border-top-color: #4ca6fb !important;*/
   border-top-color: #3297f7 !important;
 }
 
-
-.page-places ::-moz-selection {background: #B35904 !important;}
-.page-places ::selection{background: #B35904 !important;}
-
+.page-places ::-moz-selection { background-color: #B35904 !important;}
+.page-places ::selection{ background-color: #B35904 !important;}
 
 
 
-/* BEGIN THEME COLORS - Subjects */
+/* 
+** BEGIN THEME COLORS - Subjects 
+*/
 .page-subjects .titlearea,
 .page-subjects .carousel-control,
 .page-subjects .breadcrumb .icon,
 .page-subjects .carousel-control,
 .page-subjects .fixed-action-button a,
-.page-subjects .bx-controls-direction a,
-.page-subjects .nav-tabs.nav-justified>li.active>a,
-.page-subjects .nav-tabs.nav-justified>li.active>a:focus,
-.page-subjects .nav-tabs.nav-justified>li.active>a:hover {
-  background: #cc4c39 !important;
+.page-subjects .bx-controls-direction a {
+  background-color: #cc4c39 !important;
 }
 
+.page-subjects .kmaps-sources-summary .shanticon-texts,
 .page-subjects .front-list .shanticon-places::before,
 .page-subjects .view-section .fancytree-container .glyphicon,
 .page-subjects .view-section .fancytree-container .fancytree-node:hover > .glyphicon,
@@ -101,10 +91,13 @@
 .page-subjects .input-section .selectpicker .caret::before,
 .page-subjects .bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a .check-mark,
 .page-subjects .bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a:active .check-mark,
-.page-subjects .kmaps-sources-summary ul.summary-list > li span.icon.shanticon-essays {
+.page-subjects .nav-tabs.nav-justified>li.active.shanti-kmaps-faceted-search-kmaps-2>a,
+.page-subjects .nav-tabs.nav-justified>li.active.shanti-kmaps-faceted-search-kmaps-2>a:focus,
+.page-subjects .nav-tabs.nav-justified>li.active.shanti-kmaps-faceted-search-kmaps-2>a:hover {
   color: #cc4c39 !important;
 }
 
+.page-subjects #sidebar-first .nav-pills li.active,
 .page-subjects .carousel-feature-slides li div a:hover,
 .page-subjects .carousel-feature-slides li div a:active,
 .page-subjects .carousel-feature-slides li.active div a,
@@ -118,33 +111,79 @@
 .page-subjects .carousel-indicators li:hover, 
 .page-subjects .carousel-indicators li.active,
 .page-subjects .kmaps-tt-menu .kmaps-tt-suggestion:hover::before{
-    border-color: #cc4c39 !important; /* set subtheme color */
-    background: #cc4c39 !important;
+  border-color: #cc4c39 !important; /* set subtheme color */
+  background-color: #cc4c39 !important;
 }
 
-.page-subjects #sidebar-first .nav-pills li.active {
-  border-color: #b24232 !important; /* Darker shade of red for shadow blend */
-}
-
-.page-subjects .view-section .nav-tabs>li.active>a,
-.page-subjects .nav-tabs.nav-justified>li.active{
+/*.page-subjects .view-section .nav-tabs>li.active>a,*/
+.page-subjects .nav-tabs.nav-justified>li.active,
+.page-subjects .content-section > .tab-content .nav-tabs>li.active>a{
   border-top-color: #cc4c39 !important;
 }
 
+.page-subjects ::-moz-selection { background-color: #2A974B !important;}
+.page-subjects ::selection { background-color: #2A974B !important;}
 
 
 
-
-
-
-
-
-.page-subjects ::-moz-selection { background: #2A974B !important;}
-.page-subjects ::selection { background: #2A974B !important;}
-
-.shanti-thumbnail-image .icon{
-  background-color: #8e752e !important;
+/* 
+** BEGIN THEME COLORS - Terms 
+*/
+.page-terms .recording-play-button,
+.page-terms .titlearea,
+.page-terms-node .titlearea,
+.page-terms .breadcrumb .icon,
+.page-terms-node .breadcrumb .icon,
+.page-terms .fixed-action-button a,
+.page-terms-node .fixed-action-button a,
+.page-terms .bx-controls-direction a,
+.page-terms-node .bx-controls-direction a {
+  background-color: #a2733f !important;
 }
+
+.page-terms .definition-details-control>span.glyphicon:before,
+.page-terms .navbar-header .site-slogan,
+.page-terms .fancytree-container .glyphicon,
+.page-terms .fancytree-container .fancytree-node:hover>.glyphicon,
+.page-terms .fancytree-container .fancytree-node:active>.glyphicon,
+.page-terms .fancytree-node.fancytree-active>.glyphicon,
+.page-terms .fancytree-node.fancytree-selected>.glyphicon,
+.page-terms .bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a .check-mark,
+.page-terms .bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a:active .check-mark,
+.page-terms .kmaps-sources-summary ul.summary-list>li span.icon.shanticon-essays {
+  color: #a2733f !important;
+}
+
+.page-terms #sidebar-first .nav-pills li.active,
+.page-terms #tab-main .each-photo a.thumbnail:hover,
+.page-terms #tab-main .each-text a.thumbnail:hover {
+  border-color: #a2733f !important;
+}
+
+.page-terms .content-section > .tab-content .nav-tabs>li.active>a{
+  border-top-color: #a2733f !important;
+}
+
+.page-terms .bootstrap-select.btn-group .dropdown-menu li.selected>a::before,
+.page-terms .bootstrap-select.btn-group .dropdown-menu li:hover>a::before,
+.page-terms .bootstrap-select.btn-group .dropdown-menu li.selected:hover>a::before,
+.page-terms .kmaps-tt-menu .kmaps-tt-suggestion:hover::before,
+.page-terms .kmaps-tt-menu .kmaps-tt-suggestion.kmaps-tt-cursor::before,
+.page-terms .kmaps-tt-menu .kmaps-tt-suggestion:hover::before {
+  border-color: #a2733f !important;
+  background-color: #a2733f !important;
+}
+
+.kmaps-terms ::-moz-selection {
+  background-color: #B35904 !important;
+}
+.kmaps-terms ::selection {
+  background-color: #B35904 !important;
+}
+
+/*
+** END Theme Colors
+*/
 
 
 
@@ -160,32 +199,19 @@
     font-size: 1.25rem !important;
 }
 
-
-
-
 /* Image block View Styles */
 .view-related-images .views-exposed-form .form-item label {
   display: none;
 }
-
 
 /* fixes whole page layout in Drupal admin theme called Seven */
 .page-admin #page{
   margin:0 !important;
 }
 
-
-
-
-
-
 .kmaps:not(.home-carousel) article.main-col{
   padding-bottom:80px !important;
 }
-
-
-
-
 
 /* - also in bhutan */
 .sidebar-first .nav-pills > li .ajax-progress {
@@ -194,9 +220,9 @@
   top: 0.1rem;
 }
 
-
-
-
+.shanti-thumbnail-image .icon{
+  background-color: #8e752e !important;
+}
 
 
 
@@ -217,16 +243,14 @@
 
 @media screen and (min-width: 768px) {
 
-    .nav-tabs.nav-justified>li.active::before{color: #3297f7 !important; }
+    .nav-tabs.nav-justified>li.active::before{
+      color: #3297f7 !important; 
+    }
 
-    .page-subjects .nav-tabs.nav-justified>li.active::before{color: #cc4c39 !important; }
+    .page-subjects .nav-tabs.nav-justified>li.active::before{
+      color: #cc4c39 !important; 
+    }
 }
-
-
-
-
-
-
 
 
 /**

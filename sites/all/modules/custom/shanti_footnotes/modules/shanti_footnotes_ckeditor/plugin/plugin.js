@@ -24,9 +24,9 @@ CKEDITOR.plugins.add( 'footnotes', {
         
         var $this = this;
         
-        editor.on('saveSnapshot', function(evt) {
+        /*editor.on('saveSnapshot', function(evt) {
             console.log('saveSnapshot');
-        });
+        });*/
         
         // Force a reorder on startup to make sure all vars are set: (e.g. footnotes store):
         editor.on('instanceReady', function(evt) {
@@ -191,7 +191,7 @@ CKEDITOR.plugins.add( 'footnotes', {
     },
 
     generateFootnoteId: function() {
-        var id = Math.random().toString(36).substr(2, 5);
+        var id = Math.random().toString(36).substr(2, 8); // was 5
         while (jQuery.inArray(id, this.footnote_ids) != -1) {
             id = String(this.generateFootnoteId());
         }

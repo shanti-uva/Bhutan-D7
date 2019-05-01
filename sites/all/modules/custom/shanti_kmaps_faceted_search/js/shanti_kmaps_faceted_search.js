@@ -4,19 +4,24 @@
   var DEBUG = false; // To turn on console log DEBUGging
   var PROFILING = false;
   var ASSET_VIEWER_PATH = "/places/0/";
-  var ASSET_TYPE_LIST = ["all", "places", "subjects", "audio-video", "images", "sources", "texts", "visuals"];
+  var ASSET_TYPE_LIST = ["all", "places", "subjects", "terms", "audio-video", "images", "sources", "texts", "visuals"];
   var storage = window.localStorage; // probably should polyfill
 
     // Drupal Behavior Functions
     /**
      * Script for loading the trees upon page load.
      *      Each tree is in div.kmapfacetedtree
-     *      Calls $.kmapsTree() function (from shanti_kmaps_tree library) for each such div with special settings.
-     *      Uses special functions below:
-     *              - getKmapFacetCounts() : whenever a treenode is expanded, adds counts to new treenodes (Really readds to all treenodes)
-     *              - loadMyFacetHitCounts() : when a treenode is collapsed, because it is displayed without the count by the innate collapse function
-     *              - loadKmapFacetHits(): when a treenode is activated (clicked on), load teasers for all such tagged Drupal nodes
-     *              - updateKmapFacetCounts: an jQuery extended function called by Drupal Ajax array
+     *      Calls $.kmapsTree() function (from shanti_kmaps_tree library) for
+     * each such div with special settings. Uses special functions below:
+     *              - getKmapFacetCounts() : whenever a treenode is expanded,
+     * adds counts to new treenodes (Really readds to all treenodes)
+     *              - loadMyFacetHitCounts() : when a treenode is collapsed,
+     * because it is displayed without the count by the innate collapse
+     * function
+     *              - loadKmapFacetHits(): when a treenode is activated
+     * (clicked on), load teasers for all such tagged Drupal nodes
+     *              - updateKmapFacetCounts: an jQuery extended function called
+     * by Drupal Ajax array
      */
     Drupal.behaviors.shanti_kmaps_faceted_search_tree_loading = {
       attach: function (context, settings) {
@@ -202,7 +207,6 @@
                 $('.km-facet-tab').on('show.bs.tab', function (e) {
                     var div = $(this).children('a').eq(0).attr('href') + " .kmapfacetedtree"; // find the tree div
 
-
                     //  TODO: ys2n: CRAPPY HACK!  PROBABLY WILL CAUSE PROBLEMS
                     if ($(div).data('kmtype') !== "facets") {
                         var tree = $(div).fancytree('getTree');   // get the fancytree
@@ -224,6 +228,200 @@
    */
   Drupal.behaviors.shanti_kmaps_faceted_search_solr = {
     attach: function (context, settings) {
+      
+      function endBusyState(message) {
+        console.error("endBusyState( " + message + " )");
+        $('#faceted-search-results').removeClass("search-active")
+        $('.search-results-list-wrapper').removeClass("search-results-loading");
+        $('.search-results-node-preview').removeClass("search-results-loading");
+        $('.view-section .tab-content.active-loading').removeClass("active-loading");
+        // console.log("afterSearch: overlayMask hide")
+        $('.extruder-content').overlayMask('hide');
+      }
+
+      function startBusyState(message) {
+        console.error("startBusyState( " + message + " )");
+        $('#faceted-search-results').trigger("searchUpdating");
+        $('#faceted-search-results').addClass("search-active");
+        $('.search-results-list-wrapper').addClass("search-results-loading");
+        $('.search-results-node-preview').addClass("search-results-loading");
+        $('.view-section .tab-content').addClass("active-loading");
+        $('.extruder-content').overlayMask('show');
+
+        // clear error messages.
+        $('div.facet-search-error').text('');
+
+      }
+
+      function populateDefinition(uid, outputElem) {
+
+        console.dir("populateDefiniton():");
+        console.dir(arguments);
+
+        if (!$(outputElem).hasClass('definition-populated')) {
+          var tmpl = Handlebars.compile($('#search-results-details-terms-definitions').html())
+          var solrurl = Drupal.settings.shanti_kmaps_admin.shanti_kmaps_admin_server_solr_terms;
+          if (uid) {
+            $.ajax({
+              url: solrurl + '/select',
+              data: {
+                'q': "uid:" + uid,
+                'fl': '*,[child parentFilter=block_type:parent childFilter=block_child_type:related_definitions ]',
+                'rows': 30,
+                'wt': 'json'
+              },
+              dataType: 'jsonp',
+              jsonp: 'json.wrf',
+              success: function (data) {
+                // console.dir(data);
+                if (data.response && data.response.numFound > 0) {
+                  var flatDefs = data.response.docs[0]._childDocuments_;
+                  // console.error("TRICKY RICKY BICKY");
+                  // console.dir(flatDefs);
+
+                  if ($.isArray(flatDefs) && flatDefs.length > 0) {
+                    var hash = {};
+                    var levels = [];
+                    $(flatDefs).each(function (i, definition) {
+                      var uid = definition.uid;
+                      var level = definition.related_definitions_level_i;
+                      var path = definition.related_definitions_path_s;
+                      console.error("UID:   " + uid);
+                      console.error("LEVEL: " + level);
+                      console.error("PATH:  " + path);
+                      hash[path] = definition;
+                      if (!levels[level]) {
+                        levels[level] = [];
+                      }
+                      levels[level].push(definition);
+                    });
+
+                    console.dir(hash);
+                    console.dir(levels);
+
+                    var tree = {uid: "root", childHash: {}};
+
+                    // there is no level 0
+                    for (var i = 1; i < levels.length; i++) {
+                      console.error("LEVEL " + i);
+                      $.each(levels[i], function (i, definition) {
+                        if (!definition.childHash) {
+                          definition.childHash = {};
+                        }
+                        if (!definition.children) {
+                          definition.children = [];
+                        }
+                        var self = definition.related_definitions_path_s;
+                        var elems = self.split("/");
+                        var parents = elems.slice(0, elems.length - 1);
+
+                        var str = JSON.stringify;
+                        console.log("elems " + str(elems) + " parents: " + str(parents));
+                        var drilldown = tree;
+                        var ppath = "";
+                        for (var p = 0; p < parents.length; p++) {
+                          ppath = ppath + ((ppath.length) ? "/" : "") + parents[p];
+                          console.log("ppath = " + ppath);
+                          drilldown = drilldown.childHash[ppath];
+                        }
+                        drilldown.childHash[self] = definition;
+                      });
+                    }
+
+                    var recurse = function recurse(item, cb) {
+                      if (DEBUG) {
+                        console.error("item = " + JSON.stringify(item, undefined, 2));
+                      }
+
+                      if (item.related_definitions_author_s || item.related_definitions_source_s) {
+                        item.source_author_available = true;
+                      }
+
+                      item.children = Object.values(item.childHash);
+                      var count = Object.keys(item.childHash).length;
+
+                      if (DEBUG) {
+                        console.error("children = " + JSON.stringify(item.children));
+                        console.error("childHash = " + JSON.stringify(item.childHash));
+                        console.log("def = " + item.related_definitions_path_s);
+                        console.log(item.uid + ": " + JSON.stringify(item.children));
+                        console.error("COUNTY COUNT: " + count);
+                      }
+
+                      if (count === 0) {
+                        cb();
+                      }
+                      $.each(item.childHash, function (i, item) {
+                        recurse(item, function () {
+                          count--;
+                          if (count <= 0) {
+                            cb();
+                          }
+                        });
+                      });
+                    };
+                    recurse(tree, function () {
+                      console.error("TREE UPDATED =============================================");
+                      console.dir(tree);
+                      var markup = tmpl(tree);
+                      $(outputElem).html(markup);
+                    });
+                  }
+                }
+                $(outputElem).addClass('definition-populated');
+                toggleDefinitions(outputElem);
+              }
+            });
+          }
+        }
+      }
+
+      function toggleDefinitions(elem) {
+        var numShown = 3;
+        var morecount = $(elem)
+          .find('ul')
+          .children('li').slice(numShown)
+          .slideToggle('fast',
+            function() {
+              var hiddencount = $(elem)
+                .find('ul>li:hidden').length;
+              console.error("hidden count: " + hiddencount);
+
+              if (hiddencount > 0) {
+                $(elem).parent().find('.definitions-moreless').text("show " + hiddencount + " more...");
+              } else {
+                $(elem).parent().find('.definitions-moreless').text("show only top " + numShown + " definitions...");
+              }
+            }
+          ).length;
+
+        console.log("more count = " + morecount);
+
+        if (morecount) {
+          $(elem).parent().find('.definitions-moreless').show();
+        } else {
+          $(elem).parent().find('.definitions-moreless').hide();
+        }
+
+        var totalcount = $(elem).find('li').length;
+        console.log("total count:" + totalcount);
+
+        $(elem).closest('.results-node-kmaps-definitions-wrapper').find('.results-node-kmaps-definitions-total-count').text(totalcount);
+
+      }
+
+      function grokDefaultAssetType() {
+        var defaultAssetType = document.location.hostname.match(/^[^\.]+/)[0].replace('-dev', '').replace('-stage', '');
+        if (defaultAssetType === "mandala" || defaultAssetType === "subjects" || defaultAssetType === "places") {
+          defaultAssetType = "all";
+          var gronk = document.location.pathname.split('/')[1];
+          if (gronk === "places" || gronk === "subjects" || gronk === "terms") {
+            defaultAssetType = gronk;
+          }
+        }
+        return defaultAssetType;
+      }
+
       $("#search-flyout").once('shanti_kmaps_faceted_search_solr_attach',  function() {
 
         var select_searchForm = '#search-block-form'; // selector for the search form
@@ -247,6 +445,8 @@
           Handlebars.registerPartial('item-template', $('#search-results-item').html());
           Handlebars.registerPartial('search-results-details-media', $('#search-results-details-media').html());
           Handlebars.registerPartial('search-results-details-kmaps', $('#search-results-details-kmaps').html());
+          Handlebars.registerPartial('search-results-details-terms', $('#search-results-details-terms').html());
+          Handlebars.registerPartial('search-results-details-terms-definitions', $('#search-results-details-terms-definitions').html());
           Handlebars.registerPartial('search-results-gallery-audio-video', $('#search-results-gallery-audio-video').html());
           Handlebars.registerPartial('search-results-gallery-default', $('#search-results-gallery-default').html());
           Handlebars.registerPartial('search-results-gallery-visuals', $('#search-results-gallery-visuals').html());
@@ -259,10 +459,16 @@
         Handlebars.registerHelper('choosetemplate', function(asset_type) {
           var DEFAULT_TEMPLATE = "search-results-details-media";
           var KMAPS_TEMPLATE = "search-results-details-kmaps";
+          var TERMS_TEMPLATE = "search-results-details-terms";
           if (DEBUG) console.log("chooseTemplate: asset_type = " + asset_type);
-          if (asset_type === "subjects" || asset_type === "places" || asset_type === "terms") {
+          if (asset_type === "subjects" || asset_type === "places") {
+            console.log("USING " + KMAPS_TEMPLATE);
             return KMAPS_TEMPLATE;
+          } else if(asset_type === "terms") {
+            // console.log("USING " + TERMS_TEMPLATE);
+            return TERMS_TEMPLATE;
           } else {
+            // console.log("USING " + DEFAULT_TEMPLATE);
             return DEFAULT_TEMPLATE;
           }
         });
@@ -340,8 +546,23 @@
                   $('.place-open-' + kid).toggle('fast');
                   // console.log("open: " + app + "-" + kid);
                   populateAssetCounts($('.place-open-' + kid + " .results-kmaps-resource-list"), kid, app);
+
+                  // trigger opening definitions as well!
+                  console.log("Trying to populate " + "#definitions-terms-" + kid)
+                  $("#definitions-terms-" + kid).collapse('show');
                 });
 
+                // DEFINITIONS HANDLERS
+                $('#faceted-search-results').on('show.bs.collapse',".results-node-kmaps-definitions", function(EVT) {
+                  var uid = $(EVT.target).data("uid");
+                  var outputElem = $(EVT.currentTarget).find(".content");
+                  populateDefinition(uid, outputElem);
+                });
+
+                $('#faceted-search-results').on('click', '.definitions-moreless', function(evt) {
+                  var elem = $(evt.currentTarget).closest(".results-node-kmaps-definitions");
+                  toggleDefinitions(elem);
+                });
 
                 // wire up the search result closers
                 $('#faceted-search-results').on('click', '#btn-collapse-search-results', function() {
@@ -437,11 +658,15 @@
                     console.log("Error deserializing defaultFilterState: " + err);
                   }
 
+                  var loadedFromURL = false;
                   var f = $(document).getUrlParam("f");
                   if (f) {
                     var json = LZString.decompressFromEncodedURIComponent(f);
                     defaultFilterState = JSON.parse(json);
-                    if (true) { console.log("DEFAULT FILTER STATE = " + JSON.stringify(defaultFilterState)); }
+                    if (true) { console.log("LOADED FILTER STATE = " + JSON.stringify(defaultFilterState)); }
+                    // since we loaded the state from the url.  Assume that lastStateJSON and the new filter state should be the same
+                    // this will result in last code to NOT see this as a state change.
+                    loadedFromURL = true;
                   }
                   var path = document.location.pathname; // path without hash or queryString
                   var hash = document.location.hash;
@@ -694,7 +919,7 @@
 
                   });
 
-                  settings.kmapsSolr = $.kmapsSolr(
+                  Drupal.settings.kmapsSolr = $.kmapsSolr(
                     {
                       'pageSize': 100,
                       'overFetch': 100,
@@ -812,8 +1037,6 @@
                               var $b = Number($($(b).find('.shanti-kmaps-solr-facet-item')[0]).data('facet-count'));
                               return $b - $a;
                             }).appendTo($block);
-
-
                           }
                         });
 
@@ -843,18 +1066,28 @@
                             var field = ASSET_TYPE_LIST[f];
                             var value = blob.asset_counts[field];
 
-                            if ($.type(value) === 'undefined') { value = 0 };
+                            if ($.type(value) === 'undefined') { value = 0; };
 
                             if (DEBUG) console.log("field = " + field + " count = " + value);
 
-                            var assetTypes = [];
+                            var assetTypes = ['all'];
 
-                            if(DEBUG) console.error("assetType List: " + JSON.stringify(Drupal.settings.kmapsSolr.getState().assetTypeList, undefined, 2));
+                            if (DEBUG) console.error("assetType List: " + JSON.stringify(Drupal.settings.kmapsSolr.getState().assetTypeList, undefined, 2));
 
                             if (Drupal.settings.kmapsSolr.getState().assetTypeList) {
                               assetTypes = Drupal.settings.kmapsSolr.getState().assetTypeList;
                               if (assetTypes.length === 0 || assetTypes[0] === 'all') {
-                                assetTypes = ['all'];
+
+                                var defaultAssetType = "all";
+
+                                // override default asset type per app.
+
+                                var defaultAssetType = grokDefaultAssetType();
+
+                                if (defaultAssetType === "audio-video") {
+                                  defaultAssetType = "A/V";
+                                }
+                                assetTypes = [ defaultAssetType ];
                               }
                             }
                             var selected = ($.inArray(field, assetTypes) > -1) ? "selected" : "";
@@ -879,8 +1112,6 @@
                           console.log("DECORATED COUNTS:");
                           console.log(JSON.stringify(decorated_counts, undefined,2));
                         }
-
-
                         //
 
                         var filterJson = JSON.stringify(blob.filters);
@@ -939,7 +1170,7 @@
                             //
 
                             if (Drupal.settings.shanti_kmaps_admin.shanti_kmaps_admin_search_navigation_mode === "app") {
-                              if (this.asset_type === "subjects" || this.asset_type === "places") {
+                              if (this.asset_type === "subjects" || this.asset_type === "places" || this.asset_type === "terms") {
                                 // this.url_asset_nav = "/" + this.asset_type + "/" + this.id + "/overview/nojs?f=" + encodedFilters;
                                 this.url_asset_nav = new Handlebars.SafeString(this.url_html + "?f=" + encodedFilters);
                               } else if (this.asset_type === "texts") {
@@ -975,7 +1206,7 @@
                               if (typeof Drupal.settings.kmaps_explorer !== 'undefined' && typeof Drupal.settings.kmaps_explorer.kmaps_id !== 'undefined') {
                                   ASSET_VIEWER_PATH = '/' + Drupal.settings.kmaps_explorer.app + '/' + Drupal.settings.kmaps_explorer.kmaps_id + '/';
                               }
-                              if (this.asset_type === "subjects" || this.asset_type === "places") {
+                              if (this.asset_type === "subjects" || this.asset_type === "places" || this.asset_type === "terms") {
                                 this.url_asset_nav =  "/" + this.asset_type + "/" + this.id + "/overview/nojs";
                               } else if (this.asset_type === "texts") {
                                 this.url_asset_nav = ASSET_VIEWER_PATH + "text-node/" + this.id + "/nojs";
@@ -1090,12 +1321,14 @@
                           viewMode['texts'] = 'list';
                           viewMode['sources'] = 'list';
 
-                          if (DEBUG) console.dir(viewMode);
+                          // if (true) console.error("GUGUGUGUGUGUUGUPPU");
+                          // if (true) console.dir({ "viewMode":viewMode });
 
                           // We use the first item in the array
                           // The implicit assumption here is that this is a radio-button selector
                           // and there will always only be one assetType selected at a time.
-                          var current = (assetTypes)?assetTypes[0]:"all";
+                          var current = (assetTypes)?assetTypes[0]: defaultAssetType;
+
                           hbcontext.view_mode = current;
 
                           if ( viewMode[current] === "gallery" ) {
@@ -1108,7 +1341,7 @@
 
                           // console.error("CURRENT: " + current);
 
-                          if (current === "all" || current === "subjects" || current === "places" || current === "texts" || current === "sources") {
+                          if (current === "all" || current === "subjects" || current === "places" || current === "terms" || current === "texts" || current === "sources") {
                             hbcontext.no_gallery = true;
                             $('body').addClass('results-display-no-gallery');
                           } else {
@@ -1254,11 +1487,11 @@
 
                           //  kludge logic for seeing if the search has been updated:
                           var stateChange = false;
-                          var newState = JSON.stringify(Drupal.settings.kmapsSolr.getState());
-                          if(Drupal.settings.kmapsSolr.lastState) {
-                            stateChange = (Drupal.settings.kmapsSolr.lastState !== newState);
+                          var newStateJSON = JSON.stringify(Drupal.settings.kmapsSolr.getState());
+                          if(Drupal.settings.kmapsSolr.lastStateJSON) {
+                            stateChange = (Drupal.settings.kmapsSolr.lastStateJSON !== newStateJSON);
                           }
-                          Drupal.settings.kmapsSolr.lastState = newState;
+                          Drupal.settings.kmapsSolr.lastStateJSON = newStateJSON;
 
                           if (!$.isEmptyObject(blob.filters)) {
                             if ($('#faceted-search-results').hasClass('initialized')) {
@@ -1297,14 +1530,9 @@
                       }, // end updateHandler
 
                       beforeSearch: function(x) {
-                        $('#faceted-search-results').trigger("searchUpdating");
-                        $('#faceted-search-results').addClass("search-active");
-                        $('.search-results-list-wrapper').addClass("search-results-loading");
-                        $('.search-results-node-preview').addClass("search-results-loading");
-                        $('.view-section .tab-content').addClass("active-loading");
-                        $('.extruder-content').overlayMask('show');
+                        startBusyState("beforeSearch");
                       },
-
+                      
                       afterSearch: function(x) {
 
                         try {
@@ -1316,14 +1544,13 @@
                         }
 
                         $('#faceted-search-results').trigger("searchUpdate");
-                        $('#faceted-search-results').removeClass("search-active")
-                        $('.search-results-list-wrapper').removeClass("search-results-loading");
-                        $('.search-results-node-preview').removeClass("search-results-loading");
-                        $('.view-section .tab-content.active-loading').removeClass("active-loading");
-                        // console.log("afterSearch: overlayMask hide")
-                        $('.extruder-content').overlayMask('hide');
-
-
+                        endBusyState("afterSearch");
+                        // $('#faceted-search-results').removeClass("search-active")
+                        // $('.search-results-list-wrapper').removeClass("search-results-loading");
+                        // $('.search-results-node-preview').removeClass("search-results-loading");
+                        // $('.view-section .tab-content.active-loading').removeClass("active-loading");
+                        // // console.log("afterSearch: overlayMask hide")
+                        // $('.extruder-content').overlayMask('hide');
 
                         // start kmapsUpdates
                         var checkKmapUpdates = function() {
@@ -1351,6 +1578,10 @@
                         }
 
                         checkKmapUpdates();
+                      },
+
+                      afterError: function(state) {
+                         endBusyState("afterError");
                       },
 
                       afterInit: function (xxx) {
@@ -1459,17 +1690,52 @@
                         });
                       }
                     },
-                    { 'defaultFilterState': defaultFilterState }
+                    { 'defaultFilterState': defaultFilterState,
+                      'loadedFromURL': loadedFromURL }
                   );
+
+
+                  // // override default asset type per app.
+
+                  if (true) {
+                    var defaultAssetType = grokDefaultAssetType();
+
+                    setTimeout(function () {
+                      // $('.' + defaultAssetType + '.results-list-asset-type-filter').click();
+                      Drupal.settings.kmapsSolr.showAssetTypes([ defaultAssetType ]);
+                      Drupal.settings.kmapsSolr.search( {} );
+
+                      // also select flyout tab
+                      if (defaultAssetType === "subjects" || defaultAssetType === "places" || defaultAssetType === "terms" ) {
+                        var sel = defaultAssetType.replace(/^s/,"S").replace(/^p/,"P").replace(/^t/,"T");
+                        // console.error("REPLACE: " + sel);
+                        $(".km-facet-tab a:contains(" + sel + ")").tab('show');
+                      }
+                    }, 300);
+                  };
 
                   // Search reset controls
                   // Add listener to search box clear (reloads page without search string)
                   $('#search-flyout .search-group .searchreset').click(function () {
-                    Drupal.settings.kmapsSolr.search( { searchString:"" } );
+                    Drupal.settings.kmapsSolr.search( { searchString:"" } )
+                      .done( function() {
+                        console.log("RESET DONE");
+                      })
+                      .fail( function() {
+                        $('div.facet-search-error').slideUp().text("There was an error.  That sucks.").slideDown();
+                        endBusyState("reset fail");
+                        console.log("RESET FAIL");
+                        console.dir (arguments);
+                      })
+                      .always( function() {
+                        console.log("ALWAYS");
+                        endBusyState("reset aways");
+                      })
                   });
                   $('.input-section').append("<div class='facet-search-controls'>" +
                     "<a href='#' class='clearall'>Clear All</a>" +
                     "</div>");
+
                   $('.input-section').on('click','.clearall',
                     function() {
                       Drupal.settings.kmapsSolr.clearAll().then(
@@ -1506,21 +1772,36 @@
             // TODO: ys2n: need to make this configurable.
             $(select_searchForm).submit(function () {
               var $ss = $(select_searchInput).val();
+
+
+              // eliminate terminal SHAD from search strings
+
+              if (DEBUG) console.log("before: " + $ss);
+              $ss = $ss.replace(/[\u0F08-\u0F14]$/,'');
+              if (DEBUG) console.log("after: " + $ss);
+
               var $params = {searchString: ""};
               if ($ss !== null && $ss !== "") {
                 // need to support other types of wildcarding: e.g. begins with, exact match, etc.
                 $ss = "*" + $ss.toLowerCase() + "*";
                 $params = {searchString: $ss};
               }
-              if (DEBUG) console.log("DOING SEARCH: " + JSON.stringify($params));
-              // do an initial search to populate facets
-              settings.kmapsSolr.search($params);
+              if (true) console.log("DOING SEARCH: " + JSON.stringify($params));
+              settings.kmapsSolr.search($params)
+                .done( function() {
+                  console.log("SEARCH DONE");
+                })
+                .fail( function() {
+                  $('div.facet-search-error').slideUp().text("The search failed.  That sucks.").slideDown();
+                  endBusyState("search fail");
+                  console.log("SEARCH FAIL");
+                  console.dir (arguments);
+                });
+              ;
               return false;
             });
 
           });  // once
-
-
     }
   };
 
@@ -1529,14 +1810,20 @@
 
     /**
      * updateKmapFacetCounts:
-     *          a function extended in jQuery for the AJAX command array in shanti_kmaps_faceted_search.module function shanti_kmaps_faceted_search_gallery()
-     *          It is called to add counts to the tree based on current treenode selection after drupal node teasers are loaded
-     *          Also called after a page reload, when url has facets tags in them.
+     *          a function extended in jQuery for the AJAX command array in
+     * shanti_kmaps_faceted_search.module function
+     * shanti_kmaps_faceted_search_gallery() It is called to add counts to the
+     * tree based on current treenode selection after drupal node teasers are
+     * loaded Also called after a page reload, when url has facets tags in
+     * them.
      *
      * @param {String} data
-     *      A JSON representation of count data in an associative array with kmapid => count pairs, where kmapid is domain-number.
-     *      When added to Drupal.settings.shanti_kmaps_faceted_search.search_filter_data this is the default count data displayed on the tree
-     *      If not set, then the getKmapFacetCounts will get data from SOLR index based on selected kmapids.
+     *      A JSON representation of count data in an associative array with
+     *     kmapid => count pairs, where kmapid is domain-number. When added to
+     *     Drupal.settings.shanti_kmaps_faceted_search.search_filter_data this
+     *     is the default count data displayed on the tree If not set, then the
+     *     getKmapFacetCounts will get data from SOLR index based on selected
+     *     kmapids.
      */
     // Called in Ajax Command Array in shanti_kmaps_faceted_search.module (~ l.682)
     $.fn.updateKmapFacetCounts = function (data) {
@@ -1569,7 +1856,8 @@
     };
 
     /**
-     * Called when a facet results are loaded after a search has been made and then a facet clicked on
+     * Called when a facet results are loaded after a search has been made and
+     * then a facet clicked on
      */
     var repopulateSearchBoxFromSettings = function () {
         // Repopulate search box after ajax load
@@ -1582,15 +1870,20 @@
     };
 
     /**
-     * An extension of the fancytree-expand event and also called on facet loads by updateKmapFacetCounts()
-     * Queries the kmasset index for all assets of selected type that are tagged with the currently selecte facet(s)
-     * And with the results updates the counts for each visisble node on the tree
-     * Also hides nodes with no counts if that setting is chosen in the shanti_kmaps_faceted_search config page.
-     * Counts are added to each node as an attribute of the node object (node.hitcount)
-     * TODO: Several things to do:
-     *                  - Only load counts on page load (for all) and when a node is activated (and counts change).
-     *                  - Have server make call on page loads. (Can use setting .search_filter_data which automatically calls filterTreeByArray)
-     *                  - Only update new nodes when exanded. Don't visit the whole tree. (Can use node.node.visit() possibly)
+     * An extension of the fancytree-expand event and also called on facet
+     * loads by updateKmapFacetCounts() Queries the kmasset index for all
+     * assets of selected type that are tagged with the currently selecte
+     * facet(s) And with the results updates the counts for each visisble node
+     * on the tree Also hides nodes with no counts if that setting is chosen in
+     * the shanti_kmaps_faceted_search config page. Counts are added to each
+     * node as an attribute of the node object (node.hitcount) TODO: Several
+     * things to do:
+     *                  - Only load counts on page load (for all) and when a
+     * node is activated (and counts change).
+     *                  - Have server make call on page loads. (Can use setting
+     * .search_filter_data which automatically calls filterTreeByArray)
+     *                  - Only update new nodes when exanded. Don't visit the
+     * whole tree. (Can use node.node.visit() possibly)
      *
      * @param {Object} e
      *      The current event object
@@ -1813,14 +2106,18 @@
     }
 
     /**
-     * Will filter the given tree by a javascript object array where properies are the kmap ids and their values are the counts, e.g., fdata['subjects-123'] = 9
-     * Called from getKmapFacetCounts if Drupal.settings.shanti_kmap_facets.search_filter_data contains an assoc. array of kmap ids with counts
+     * Will filter the given tree by a javascript object array where properies
+     * are the kmap ids and their values are the counts, e.g.,
+     * fdata['subjects-123'] = 9 Called from getKmapFacetCounts if
+     * Drupal.settings.shanti_kmap_facets.search_filter_data contains an assoc.
+     * array of kmap ids with counts
      *
      * @param {Object} mytree
      *      The tree being filtered
      *
      * @param {Object} fdata
-     *      An associative array of counts in the form of kmapid => count, where kmapid is in the format of domain-###
+     *      An associative array of counts in the form of kmapid => count,
+     *     where kmapid is in the format of domain-###
      */
     function filterTreeByArray(mytree, fdata) {
         // Filter tree and add hitcount field to nodes. Remove nodes with no resources if that setting is on.
@@ -1861,7 +2158,8 @@
     }
 
     /**
-     * Traverses up a treenode's ancestor chain to and returns true only if all ancestors are visible
+     * Traverses up a treenode's ancestor chain to and returns true only if all
+     * ancestors are visible
      */
     function checkAncestorVisibility(node) {
         if (node.parent == null) {
@@ -1963,6 +2261,11 @@
             kmloc = Drupal.settings.shanti_kmaps_admin.shanti_kmaps_admin_server_subjects_explorer;
           } else if (domain === "places") {
             kmloc = Drupal.settings.shanti_kmaps_admin.shanti_kmaps_admin_server_places_explorer;
+          } else if (domain === "terms") {
+            kmloc = Drupal.settings.shanti_kmaps_admin.shanti_kmaps_admin_server_terms_explorer;
+            if (!kmloc) {
+              kmloc = "https://mandala.shanti.virginia.edu/" + domain + "/__KMAPID__/overview/nojs";
+            }
           }
         }
         kmloc = kmloc.replace('__KMAPID__', kmid)
@@ -1977,8 +2280,9 @@
   }
 
     /**
-     * An extension of the fancytreecollapse event. Called when a treenode is collapsed
-     * In such cases, fancy tree redisplays the node and its facet count is lost. So this function redisplays that facet count.
+     * An extension of the fancytreecollapse event. Called when a treenode is
+     * collapsed In such cases, fancy tree redisplays the node and its facet
+     * count is lost. So this function redisplays that facet count.
      */
     var loadMyFacetHitCount = function (e, node) {
         if (typeof(node.node) === "undefined") {
@@ -1994,15 +2298,17 @@
     };
 
     /**
-     * Load AV thumbnails for resources with a certain facet in the main content div of the page via AJAX and adds facet tag to list of chosen facets
-     * In order to initiate an AJAX call, we call createFacetAction() with the full kmap id.
-     * A loading div replaces the current page content
+     * Load AV thumbnails for resources with a certain facet in the main
+     * content div of the page via AJAX and adds facet tag to list of chosen
+     * facets In order to initiate an AJAX call, we call createFacetAction()
+     * with the full kmap id. A loading div replaces the current page content
      *
      * @param {Object} e
      *      The event that triggered this function, a fancytreeactivate event
      *
      * @param {Object} item
-     *      The treenode that was clicked. (Item is less confusing than "node", because the item has a node attribute.)
+     *      The treenode that was clicked. (Item is less confusing than "node",
+     *     because the item has a node attribute.)
      */
     var loadKmapFacetHits = function (e, item) {
 
@@ -2049,6 +2355,7 @@
         // Set active tree, remove any messages, and add a progress spinner
         Drupal.settings.shanti_kmaps_faceted_search.activeTree = trid;
         $('div.messages').remove();
+        $('div.facet-search-messages').fadeOut().html(''); // clear messages
 
         if (false) {
             $('article.tab-pane.main-col').html('<div class="region region-content"><div id="block-system-main" class="block block-system"><div class="ajax-progress ajax-progress-throbber" style="display:inline-block;"><div class="throbber">&nbsp;</div></div> Loading ...</div></div>');
@@ -2247,7 +2554,9 @@
   };
 
     /**
-     * Adds a facet tag to the list of active (chosen) facets. Also adds hidden input named "kmap_filters" with kmap ids chosen to the search form if it exists.
+     * Adds a facet tag to the list of active (chosen) facets. Also adds hidden
+     * input named "kmap_filters" with kmap ids chosen to the search form if it
+     * exists.
      *
      * @param {String} title
      *      the text to display in the tag,
@@ -2389,14 +2698,18 @@
     }();
 
     /**
-     * This function is called when the X delete button next to a facet is clicked. It creates a temporary hidden div,
-     * Calculates what the URL would be without that facet, then attaches an Drupal AJAX click call to div with the new url.
-     * Finally, it waits .3 secs and clicks on the hidden div and at the same time removes the facet tile in the list
+     * This function is called when the X delete button next to a facet is
+     * clicked. It creates a temporary hidden div, Calculates what the URL
+     * would be without that facet, then attaches an Drupal AJAX click call to
+     * div with the new url. Finally, it waits .3 secs and clicks on the hidden
+     * div and at the same time removes the facet tile in the list
      *
      * @param {Object} cid
-     *      This is the Cancel button ID or the element ID on the circle X icon in the facet tag in the list
+     *      This is the Cancel button ID or the element ID on the circle X icon
+     *     in the facet tag in the list
      * @param {Object} kmid
-     *      This is the kmap id of the item being deleted, e.g. subjects-20, places-643.
+     *      This is the kmap id of the item being deleted, e.g. subjects-20,
+     *     places-643.
      */
 
         // TODO: ys2n:  refactor to encapsulate the "AJAX-url-creating" action and substitute our own
@@ -2490,7 +2803,8 @@
         // Ajax Related Functions
 
         /**
-         * Custom method to execute this ajax action... (taken from kmaps explorer)
+         * Custom method to execute this ajax action... (taken from kmaps
+         * explorer)
          *
          * I think this is a way to avoid calling an action twice.
          */
@@ -2520,7 +2834,7 @@
 
               var redirect = ajax.options.url.replace('ajax','nojs');
               console.log("punting to redirect: " + redirect);
-              alert("Redirecting to: " + redirect);
+              // alert("Redirecting to: " + redirect);
               window.location = redirect;
                 return false;
             }
@@ -2529,7 +2843,8 @@
         };
 
         /**
-         * Create the custom actions and execute it (taken from Gerard's code in explorer but slightly modified)
+         * Create the custom actions and execute it (taken from Gerard's code
+         * in explorer but slightly modified)
          *
          * @param {Object} kid
          *      The Kmap ID for which to create an action

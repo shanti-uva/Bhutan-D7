@@ -48,8 +48,6 @@ scripts[] = js/shanti-search-sources.js
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Theme Settings
 ;;;;;;;;;;;;;;;;;;;;;
-;
-; These theme settings can be changed in the admin interface as well.
-; Furthermore, base color is primarily determined in CSS
-;
+
+settings[shanti_sarvaka_icon_class] = 'sources'
 

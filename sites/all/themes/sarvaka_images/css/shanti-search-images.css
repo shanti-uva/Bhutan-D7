@@ -298,10 +298,10 @@
 
 
 .node-type-shanti-image #search-flyout.extruder .flap{
-  background-color: #333;
+  background-color: #555;
 }
 .node-type-shanti-image #search-flyout.extruder .flap:hover{
-  background-color: #555;
+  background-color: #777;
 }
 .node-type-shanti-image #search-flyout.extruder.isOpened .flap{
   background-color: #fff;
@@ -311,12 +311,15 @@
   background-color: #000;
 }
 .node-type-shanti-image #search-flyout.extruder .flap>span .icon{
-  opacity:.7;
+  filter: alpha(opacity=75);
+  opacity:.75;
 }
 .node-type-shanti-image #search-flyout.extruder .flap:hover>span .icon{
-  opacity:.9;
+  filter: alpha(opacity=95);
+  opacity:.95;
 }
 .node-type-shanti-image #search-flyout.extruder.isOpened .flap>span .icon{
+  filter: alpha(opacity=100);
   opacity:1;
 }
 .node-type-shanti-image #search-flyout.extruder .flap .flapLabel,
@@ -325,15 +328,14 @@
   background: #000;
 }
 
-
-.node-type-shanti-image .btn-show-search-results{
-  background: #333;
-}
-.node-type-shanti-image .btn-show-search-results:hover{
-  background:#555;
-}
 .btn-show-search-results .icon::before{
   color:#aaa;
+}
+.node-type-shanti-image .btn-show-search-results{
+  background: #555;
+}
+.node-type-shanti-image .btn-show-search-results:hover{
+  background:#777;
 }
 .node-type-shanti-image .btn-show-search-results .badge{
   background-color: transparent;

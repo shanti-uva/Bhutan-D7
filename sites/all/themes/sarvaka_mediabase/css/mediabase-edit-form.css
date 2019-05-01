@@ -42,6 +42,8 @@
 /* Page layout */
 .mb-av-form #block-system-main.block.block-system { width: 100%; }
 .main-content .content-section .view-content { max-width: 100%; }
+.page-node-add.node-type-video.no-sidebars .tab-pane.main-col,
+.page-node-add.node-type-audio.no-sidebars .tab-pane.main-col,
 .page-node-edit.node-type-video.no-sidebars .tab-pane.main-col,
 .page-node-edit.node-type-audio.no-sidebars .tab-pane.main-col{
 	max-width:1050px !important;
@@ -1360,8 +1362,8 @@ table.sticky-table .filter-guidelines ul li{
   text-shadow: 0 0 2px #333;
   border: none;
   background: #5b68ce;
-  filter: alpha(opacity=95);
-  opacity: 0.95;
+  filter: alpha(opacity=85);
+  opacity: 0.85;
   border-radius: .25rem;
   letter-spacing: 0.1rem;
   display: inline-block;
@@ -1408,10 +1410,12 @@ table.sticky-table .filter-guidelines ul li{
   margin: 0 1em 0 0;
 }
 #av-details .field-label-inline .field-items{
-  font-size: 95%;
   color: #000;
 }
 
+.avdesc .video-overview .icon::before{
+  font-size: 110%;
+}
 
 .mb-av-form .kaltura-thumb-wrap {
   float: left;
@@ -1527,7 +1531,24 @@ button .glyphicon-refresh-animate {
 }
 
 
-
+.page-node-add .panel.panel-default .panel-heading h6,
 .page-node-edit .panel.panel-default .panel-heading h6{
-    height: 73px;
+    height: 72px;
 }
+
+/* trashcan icon for media thumbnails */
+.image-widget .btn.btn-primary.btn-icon {
+  margin: 0;
+  width: 3.75rem;
+  height: 3.5rem;
+  position: relative;
+  top:-.5rem;
+  left:.5rem;
+}
+.image-widget .btn.btn-primary.btn-icon .icon {
+  font-size: 140%;
+  line-height: 3.25em;
+  left: -.6rem;
+}
+
+

@@ -332,13 +332,15 @@
         }
 
         // wraps flexslideshow image w/anchor element, and displays icon for expand in center of image
-        $('.ppd-fullimg img').wrap('<a href="#" class="pswp-link" title="Fullscreen Image Viewer"></a>');
-        $('.ppd-fullimg a.pswp-link').hover(function () {
-            $(this).prepend('<span class="fa fa-arrows-alt"></span>');
-            $('.ppd-fullimg .fa-arrows-alt').fadeIn(5000);
+        if ($('.ppd-fullimg img').parent('a.pswp-link').length == 0) {
+            $('.ppd-fullimg img').wrap('<a href="#" class="pswp-link" title="Fullscreen Image Viewer"></a>');
+        }
+        $('.ppd-fullimg a.pswp-link').unbind('hover').hover(function () {
+            $(this).prepend('<span class="icon shanticon-arrows-alt"></span>');
+            $('.ppd-fullimg .shanticon-arrows-alt').fadeIn(5000);
           },
           function () {
-            $('.ppd-fullimg .fa-arrows-alt').remove();
+            $('.ppd-fullimg .shanticon-arrows-alt').remove();
           }
         );
         

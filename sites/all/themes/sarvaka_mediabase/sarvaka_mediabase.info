@@ -36,16 +36,14 @@ stylesheets[all][] =  css/mediabase-edit-form.css
 ;;;;;;;;;;;;;;;;;;;;;;
 ;;; Scripts
 ;;;;;;;;;;;;;;;;;;;;;;
+
 scripts[] = js/shanti-main-mediabase.js
 scripts[] = js/shanti-search-mediabase.js
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Theme Settings   
 ;;;;;;;;;;;;;;;;;;;;;
-;
-; These theme settings can be changed in the admin interface as well.
-; Furthermore, base color is primarily determined in CSS
-;
-;settings[shanti_sarvaka_base_color] = '#31acb6' 
+
+; settings[shanti_sarvaka_site_body_tag] = 'mediabase' - Note - correction below (mf8yk april, 2019)
+settings[shanti_sarvaka_site_body_tag] = 'audio-video'
 settings[shanti_sarvaka_icon_class] = 'audio-video'
-settings[shanti_sarvaka_site_body_tag] = 'mediabase'

@@ -466,7 +466,7 @@ function _shanti_images_build_IIIFURL($fname, $width = '800', $height = '', $rot
     }
     $url = $server . $servpath . $fname . '/' . $crop . '/';
     $dimensions = "{$width},{$height}";
-    if (empty($width) && empty($height)) {
+    if ($width == 'full' || (empty($width) && empty($height))) {
         $dimensions = "full";
     } else if ($scaled) {
         $url .= '!';

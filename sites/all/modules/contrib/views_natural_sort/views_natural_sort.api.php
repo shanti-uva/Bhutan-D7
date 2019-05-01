@@ -71,7 +71,7 @@ function hook_views_natural_sort_queue_rebuild_data(array $entry_type, $offset =
     return array();
   }
   $query = db_select('user', 'u')
-    ->fields('u', array('uid', 'book_favorites'))
+    ->fields('u', array('uid', 'book_favorites'));
   if ($limit) {
     $query->range($offset, $limit);
   }

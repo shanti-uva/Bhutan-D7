@@ -31,7 +31,7 @@
 }
 
 .front .page-title .icon::before{
-    content: '\e634';
+    content: '\e633';
     opacity: 0.85;
     margin-right:.4rem;
     position: relative;

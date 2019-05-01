@@ -166,7 +166,7 @@ function sarvaka_images_preprocess_shanti_image(&$vars) {
  * Creates the main flex slider markup for an image page. This holds the main image slide
  */
 function _sarvaka_images_get_main_flexslider($node) {
-    global $base_url;
+    global $base_path, $base_url;
     $mainwidth = 1000;
     $si = _shanti_images_get_node_image($node->nid);
     $rotation = $node->field_image_rotation[LANGUAGE_NONE][0]['value'];
@@ -177,8 +177,8 @@ function _sarvaka_images_get_main_flexslider($node) {
     // use prod server when on DEV but looking for images on prod
     $url = _fix_prod_urls_on_dev($url, $si->getIIIFName());
 
-    $prevlink = '<li><span class="fa fa-spinner fa-spin" style="display:none;"></span><img src="#prev" style="display:none;" /></li>';
-    $nextlink = '<li><span class="fa fa-spinner fa-spin" style="display:none;"></span><img src="#next"  style="display:none;"/></li>';
+    $prevlink = '<li><span class="icon shanticon-spinner spinner" style="display:none;"></span><img src="#prev" style="display:none;" /></li>';
+    $nextlink = '<li><span class="icon shanticon-spinner spinner" style="display:none;"></span><img src="#next"  style="display:none;"/></li>';
     $main_image = '<ul class="slides">' . $prevlink . '<li><div data-href="' . $url . '" class="shantimg main"><img src="'
                         . $url . '" /></div></li>' . $nextlink . '</ul>';
 
@@ -192,11 +192,12 @@ function _sarvaka_images_get_main_flexslider($node) {
     $markup = '<div id="fsslider" class="flexslider fsmain">' . $main_image .
         '</div><div id="fscarousel-placeholder"></div>';
 
+
     $back_arrow = '<div class="toppadding">-</div>'; // use toppadding div if no back arrow (no session info) to pad the space above image with dark background
-    if (isset($_SESSION['shanti_gallery_url'])) {
-        $back_arrow = '<a href="__PATH__" class="backarrow"><span class="icon shanticon-arrow-left_2"></span> Back</a>';
-        $back_arrow = str_replace('__PATH__', $_SESSION['shanti_gallery_url'], $back_arrow);
-    }
+
+    $coll = shanti_collections_get_collection($node);
+    $backpath = (!empty($coll)) ? $base_path . drupal_get_path_alias("node/{$coll->nid}") : $base_path;
+    $back_arrow = '<a href="' . $backpath . '" class="backarrow"><span class="icon shanticon-arrow-left_2"></span> Back</a>';
 
     $markup = $back_arrow . $markup . $action_icons;
     return array($markup, 1);
@@ -211,7 +212,7 @@ function _sarvaka_images_get_action_links($node) {
     // Make filename (taken from https://stackoverflow.com/questions/2021624/string-sanitizer-for-filename)
     $filetitle = mb_ereg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', $title);
     $filetitle = mb_ereg_replace("([\.]{2,})", '', $filetitle);
-    $filetitle = str_replace(' ', '_', strtolower($filetitle)); // added this to take out whitespaces and lowercase
+    $filetitle = str_replace(' ', '_', strtolower(trim($filetitle, '.,-:;_'))); // added this to take out whitespaces and lowercase
 
     // Get IIIF image info
     $dbrec = _shanti_images_get_record($node->nid, 'nid');
@@ -236,7 +237,7 @@ function _sarvaka_images_get_action_links($node) {
       <ul class="dropdown-menu">';
 
      // Full image download link
-     $almu .= '<li><a href="' . $fullurl . '" download="' . $filetitle . '-full" title="Download Original"><span class="icon shanticon-download"></span>Original (' . $width . 'x' . $height . ')</a></li>';
+     $almu .= '<li><a href="' . $fullurl . '" download="' . $filetitle . '-full.jpg" title="Download Original"><span class="icon shanticon-download"></span>Original (' . $width . 'x' . $height . ')</a></li>';
 
      // Create download links for each size
      if ($width > 0) {
@@ -360,35 +361,61 @@ function sarvaka_images_preprocess_image_descriptions(&$vars) {
     }
 }
 
+/**
+ * Preprocessing function for an external classification entry of a scheme with a particular ID number
+ *
+ * @param $vars
+ */
 function sarvaka_images_preprocess_ext_class(&$vars) {
-    //dpm($vars, 'vas in ext class');
    $vars['title_suffix'] = array(); // Gets rid of contextual links
-
+    // Entity wrapper for this ec tag
     $ew = entity_metadata_wrapper('node', $vars['node']);
     $scheme = $ew->field_external_class_scheme->value();
-
+    // Entity wrapper for external classification
     $ew2 = entity_metadata_wrapper('node', $scheme);
     if (!empty($ew2->field_scheme_abbreviation)) {
         $abbr = $ew2->field_scheme_abbreviation->value();
         $scheme_name = $scheme->title;
-        $scheme_url = url('/node/' . $scheme->nid);
+        //$scheme_url = '/' . drupal_get_path_alias('node/' . $scheme->nid);
         $title =  $vars['node']->title;
+        // Create the scheme's ID for the tag as a link to view it in the scheme iteslf
         $id = $vars['content']['field_external_class_id'][0]['#markup'];
         if (!empty($ew2->field_scheme_item_url)) {
             $record_url = str_replace('__ID__', $id, $ew2->field_scheme_item_url->value());
-            $id = '<a href="' . $record_url . '" target="_blank">' . $id . '</a>';
+            $id = '<a href="' . $record_url . '" target="_blank" title="View ' . $title . ' in ' . $scheme_name . '">' . $id . '</a>';
         }
-        $mu = "<a href=\"{$scheme_url}\" title=\"{$scheme_name}\">{$abbr}</a>, $title ($id)";
-        if (!empty($vars['content']['field_external_class_note'][0]['#markup'])) {
-            $note = $vars['content']['field_external_class_note'][0]['#markup'];
-            $mu .= '<a href="#" data-toggle="popover" title="Note on ' . $vars['title'] .'" data-content="' . $note . '">*</a>';
+
+        // Create a Bootstrap modal popup linked from the scheme's abbrevation to show information about the scheme
+        $ecmid = "ec-nid-{$vars['node']->nid}";
+        $mu = '<a href="#" data-toggle="modal" data-target="#' . $ecmid . '" title="About ' . $scheme_name . '">' . "{$abbr}</a>, $title ($id)";
+        if (!empty($vars['node']->field_external_class_note)) {
+          $note = $vars['node']->field_external_class_note[LANGUAGE_NONE][0]['safe_value'];
+          $mu .= '<a href="#" data-toggle="popover" title="Note on ' . $vars['title'] .'" data-content="' . $note . '">*</a>';
         }
+        $mu .= '<div id="' . $ecmid . '" class="modal face extclass" role="dialog"><div class="modal-dialog"><div class="modal-content">';
+        $mu .= '<div class="modal-header"><h4>' . "$scheme_name ($abbr)</h4>";
+        $mu .= '<span class="close" data-dismiss="modal" aria-hidden="true"><span class="icon shanticon-close2b"></span></span>';
+        $mu .= '</div><div class="modal-body">';
+        $mu .= sarvaka_images_render_ext_class($scheme);
+        $mu .= '</div></div></div></div>';
         $vars['content']['field_external_class_id'][0]['#markup'] = $mu;
     }
 }
 
 function sarvaka_images_preprocess_ext_class_scheme(&$vars) {
    $vars['title_suffix'] = array(); // Gets rid of contextual links
+}
+
+function sarvaka_images_render_ext_class($nd) {
+  $html = '<div><ul><li><span class="field-label">' . t("Classification Name") . '</span> <span class="field-items">' . $nd->title . '</span></li>';
+  $html .= '<li><span class="field-label">' . t("Abbreviation") . '</span> <span class="field-items">' . $nd->field_scheme_abbreviation[LANGUAGE_NONE][0]['value'] . '</span></li>';
+  $html .= '<li><span class="field-label">' . t("Description") . '</span> <span class="field-items">';
+  $html .= $nd->body[LANGUAGE_NONE][0]['safe_value'] . '</span></li>';
+  $url = $nd->field_scheme_home_url[LANGUAGE_NONE][0]['value'];
+  $lnk = '<a href="' . $url . '" target="_blank">' . t("Home Page") . '</a>';
+  $html .= '<li><span class="field-label">' . t("View Site") . '</span> <span class="field-items">' . $lnk . '</span></li>';
+  $html .= '</ul></div>';
+  return $html;
 }
 
 /**
@@ -727,7 +754,7 @@ function sarvaka_images_menu_breadcrumb_alter(&$active_trail, $item) {
 	} else {
 	   $map = $item['map']; // Item map tells us about what page we are on
         if ($map[0] == "node" && is_object($map[1])) {
-            $node = $map[1];
+            /* $node = $map[1];
             // if it's a collection node, add link to all collections before it's name
             if (in_array($node->type, array('collection', 'subcollection'))) {
                 $collslink = array(
@@ -741,7 +768,7 @@ function sarvaka_images_menu_breadcrumb_alter(&$active_trail, $item) {
                 $newat[0] = array_shift($active_trail);
                 $newat[1] = $collslink;
                 $active_trail = array_merge($newat, $active_trail);
-            }
+            }*/
         } else if ($item['path'] == 'collections' && count($active_trail) == 3 && $active_trail[1]['link_title'] == "Collections") {
             unset($active_trail[1]); // Remove the extra "collections" breadcrumb from user menu set up.
         }

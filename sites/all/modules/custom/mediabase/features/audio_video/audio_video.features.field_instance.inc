@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * audio_video.features.field_instance.inc
@@ -3589,7 +3590,49 @@ function audio_video_field_default_field_instances() {
       'module' => 'field_collection',
       'settings' => array(),
       'type' => 'field_collection_hidden',
-      'weight' => 35,
+      'weight' => 34,
+    ),
+  );
+
+  // Exported field_instance: 'node-audio-field_kmap_terms'.
+  $field_instances['node-audio-field_kmap_terms'] = array(
+    'bundle' => 'audio',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'shanti_kmaps_fields',
+        'settings' => array(),
+        'type' => 'kmap_popover_formatter',
+        'weight' => 9,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_kmap_terms',
+    'label' => 'Terms',
+    'required' => 0,
+    'settings' => array(
+      'kmap_term_limit' => 100,
+      'search_filters' => array(),
+      'search_root_kmap_path' => '',
+      'search_root_kmapid' => '',
+      'search_view' => '',
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 0,
+      'module' => 'shanti_kmaps_fields',
+      'settings' => array(),
+      'type' => 'kmap_typeahead_term_picker',
+      'weight' => 38,
     ),
   );
 
@@ -3631,7 +3674,7 @@ function audio_video_field_default_field_instances() {
       'module' => 'shanti_kmaps_fields',
       'settings' => array(),
       'type' => 'kmap_typeahead_picker',
-      'weight' => 38,
+      'weight' => 37,
     ),
   );
 
@@ -3671,7 +3714,7 @@ function audio_video_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 46,
+      'weight' => 47,
     ),
   );
 
@@ -3716,7 +3759,7 @@ function audio_video_field_default_field_instances() {
       'module' => 'shanti_kmaps_fields',
       'settings' => array(),
       'type' => 'kmap_typeahead_picker',
-      'weight' => 36,
+      'weight' => 35,
     ),
   );
 
@@ -3827,7 +3870,7 @@ function audio_video_field_default_field_instances() {
           'view_mode' => 'full',
         ),
         'type' => 'field_collection_fields',
-        'weight' => 9,
+        'weight' => 10,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -3962,7 +4005,7 @@ function audio_video_field_default_field_instances() {
       'module' => 'field_collection',
       'settings' => array(),
       'type' => 'field_collection_embed',
-      'weight' => 48,
+      'weight' => 49,
     ),
   );
 
@@ -4039,7 +4082,7 @@ function audio_video_field_default_field_instances() {
       'module' => 'field_collection',
       'settings' => array(),
       'type' => 'field_collection_embed',
-      'weight' => 47,
+      'weight' => 48,
     ),
   );
 
@@ -4096,7 +4139,7 @@ function audio_video_field_default_field_instances() {
           'view_mode' => 'full',
         ),
         'type' => 'field_collection_fields',
-        'weight' => 10,
+        'weight' => 11,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -4280,7 +4323,7 @@ function audio_video_field_default_field_instances() {
       'module' => 'fivestar',
       'settings' => array(),
       'type' => 'exposed',
-      'weight' => 13,
+      'weight' => 10,
     ),
   );
 
@@ -4321,7 +4364,7 @@ function audio_video_field_default_field_instances() {
       'module' => 'shanti_kmaps_fields',
       'settings' => array(),
       'type' => 'kmap_typeahead_picker',
-      'weight' => 37,
+      'weight' => 36,
     ),
   );
 
@@ -4405,7 +4448,7 @@ function audio_video_field_default_field_instances() {
       'module' => 'shanti_kmaps_fields',
       'settings' => array(),
       'type' => 'kmap_typeahead_picker',
-      'weight' => 34,
+      'weight' => 33,
     ),
   );
 
@@ -4728,7 +4771,7 @@ function audio_video_field_default_field_instances() {
           'show_remaining_days' => FALSE,
         ),
         'type' => 'date_default',
-        'weight' => 12,
+        'weight' => 13,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -4837,7 +4880,49 @@ function audio_video_field_default_field_instances() {
       'module' => 'field_collection',
       'settings' => array(),
       'type' => 'field_collection_hidden',
-      'weight' => 57,
+      'weight' => 64,
+    ),
+  );
+
+  // Exported field_instance: 'node-video-field_kmap_terms'.
+  $field_instances['node-video-field_kmap_terms'] = array(
+    'bundle' => 'video',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'shanti_kmaps_fields',
+        'settings' => array(),
+        'type' => 'kmap_popover_formatter',
+        'weight' => 10,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_kmap_terms',
+    'label' => 'Terms',
+    'required' => 0,
+    'settings' => array(
+      'kmap_term_limit' => 100,
+      'search_filters' => array(),
+      'search_root_kmap_path' => '',
+      'search_root_kmapid' => '',
+      'search_view' => '',
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 0,
+      'module' => 'shanti_kmaps_fields',
+      'settings' => array(),
+      'type' => 'kmap_typeahead_term_picker',
+      'weight' => 60,
     ),
   );
 
@@ -4879,7 +4964,7 @@ function audio_video_field_default_field_instances() {
       'module' => 'shanti_kmaps_fields',
       'settings' => array(),
       'type' => 'kmap_typeahead_picker',
-      'weight' => 60,
+      'weight' => 59,
     ),
   );
 
@@ -4964,7 +5049,7 @@ function audio_video_field_default_field_instances() {
       'module' => 'shanti_kmaps_fields',
       'settings' => array(),
       'type' => 'kmap_typeahead_picker',
-      'weight' => 58,
+      'weight' => 57,
     ),
   );
 
@@ -5075,7 +5160,7 @@ function audio_video_field_default_field_instances() {
           'view_mode' => 'full',
         ),
         'type' => 'field_collection_fields',
-        'weight' => 10,
+        'weight' => 11,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -5344,7 +5429,7 @@ function audio_video_field_default_field_instances() {
           'view_mode' => 'full',
         ),
         'type' => 'field_collection_fields',
-        'weight' => 11,
+        'weight' => 12,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -5405,7 +5490,7 @@ function audio_video_field_default_field_instances() {
         'rows' => 5,
       ),
       'type' => 'text_textarea',
-      'weight' => 15,
+      'weight' => 16,
     ),
   );
 
@@ -5423,7 +5508,7 @@ function audio_video_field_default_field_instances() {
           'view_mode' => 'full',
         ),
         'type' => 'field_collection_fields',
-        'weight' => 14,
+        'weight' => 15,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -5572,7 +5657,7 @@ function audio_video_field_default_field_instances() {
       'module' => 'shanti_kmaps_fields',
       'settings' => array(),
       'type' => 'kmap_typeahead_picker',
-      'weight' => 59,
+      'weight' => 58,
     ),
   );
 
@@ -5776,7 +5861,8 @@ function audio_video_field_default_field_instances() {
           'delivery' => 'RTMP',
           'entry_widget' => 31832371,
           'player_height' => 425,
-          'player_width' => 756,
+      //    'player_width' => 756,
+          'player_width' => 880,
           'rotate' => 0,
           'stretch' => NULL,
           'thumbsize_height' => 45,
@@ -6041,6 +6127,7 @@ function audio_video_field_default_field_instances() {
   t('Subject');
   t('Tags');
   t('Tags Old');
+  t('Terms');
   t('Text Label');
   t('The time period(s) covered by this video resource');
   t('Thumbnail Image');

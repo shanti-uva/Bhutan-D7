@@ -1,7 +1,7 @@
 
       <ul class="menu-main">
           <li class="menu-commons active">
-              <a href="#">Main Menu <span class="fa arrow"></span></a>
+              <a href="#">Main Menu <span class="icon shanticon-arrowselect"></span></a>
                 <ul>
                   <li><a href="#">Login</a></li>
                   <li><a href="#">Help</a></li>
@@ -10,7 +10,7 @@
           </li>
 
           <li class="menu-collections active">
-              <a href="#">Kmaps Collections <span class="fa arrow"></span></a>
+              <a href="#">Kmaps Collections <span class="icon shanticon-arrowselect"></span></a>
                 <ul>
                   <li><a href="<?php //print $theme_path; ?>subjects"><span class="icon shanticon-subjects"></span>Subjects</a></li>
                   <li><a href="<?php //print $theme_path; ?>places"><span class="icon shanticon-places"></span>Places</a></li>
@@ -30,11 +30,11 @@
           </li>
           
           <li class="menu-preferences active">
-              <a href="#">Preferences <span class="fa arrow"></span></a>
+              <a href="#">Preferences <span class="icon shanticon-arrowselect"></span></a>
 
               <ul>          
                 <!-- header -->              
-                <li class="active"><a href="#">Site Language <span class="fa plus-times"></span></a>                            
+                <li class="active"><a href="#">Site Language <span class="icon shanticon-plus"></span></a>
                     <ul>  
                       <li class="form-group"><label class="radio-inline" for="option0a">
                         <input type="radio" name="option0" id="option0a" value="option0a" checked>English</label>
@@ -52,7 +52,7 @@
                 </li>
                                         
                 <!-- header -->    
-                <li><a href="#">Perspective <span class="fa plus-times"></span></a>                           
+                <li><a href="#">Perspective <span class="icon shanticon-plus"></span></a>
                     <ul>     
                       <li class="form-group"><label class="radio-inline" for="option1a">
                         <input type="radio" name="option1" id="option1a" value="option1a" checked>General</label>
@@ -64,7 +64,7 @@
                 </li>   
                 
                 <!-- header -->
-                <li><a href="#">Subject Language <span class="fa plus-times"></span></a>
+                <li><a href="#">Subject Language <span class="icon shanticon-plus"></span></a>
                     <ul>
                       <li class="form-group"><label class="radio-inline" for="option2a">
                         <input type="radio" name="option2" id="option2a" value="option2a">Chinese Characters (simplified)</label>
@@ -91,7 +91,7 @@
                 </li>
                                       
                 <!-- header -->
-                <li><a href="#">Show Subject Details <span class="fa plus-times"></span></a>                        
+                <li><a href="#">Show Subject Details <span class="icon shanticon-plus"></span></a>
                     <ul>
                       <li class="form-group"><label class="radio-inline" for="option3a">
                         <input type="radio" name="option3" id="option3a" value="option3a" checked>Yes</label>

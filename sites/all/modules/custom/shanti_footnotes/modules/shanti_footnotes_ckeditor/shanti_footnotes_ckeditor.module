@@ -30,13 +30,25 @@ function shanti_footnotes_ckeditor_ckeditor_plugin() {
  * @return array
  */
 function shanti_footnotes_ckeditor_wysiwyg_plugin($editor, $version) {
-  if ($editor == 'ckeditor' && preg_match("/^(4|(4\..*))$/", $version)) {
-    return array(
-      'footnotes' => array(
-        'buttons' => array('footnotes' => t('Add Footnote')),
-        'path' => drupal_get_path('module', 'shanti_footnotes_ckeditor') . '/plugin',
-        'basePath' => base_path(),
-      ),
+
+    if ($editor == 'ckeditor' && preg_match("/^(4|(4\..*))$/", $version)) {
+        return array(
+          'footnotes' => array(
+            'buttons' => array('footnotes' => t('Add Footnote')),
+            'path' => drupal_get_path('module', 'shanti_footnotes_ckeditor') . '/plugin',
+            'basePath' => base_path(),
+          ),
+        );
+    }
+}
+
+function shanti_footnotes_ckeditor_ckeditor_settings_alter(&$settings, $conf) {
+    global $base_path;
+    $settings['loadPlugins']['footnotesfromword'] = array(
+        'name' => 'footnotesfromword',
+        'desc' => 'Footnotes from Word',
+        'path' => $base_path . drupal_get_path('module', 'shanti_footnotes_ckeditor') . '/footnotesfromword/',
+        'buttons' => FALSE,
+        'default' => 't',
     );
-  }
 }

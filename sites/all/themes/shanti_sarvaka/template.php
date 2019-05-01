@@ -918,7 +918,7 @@ function shanti_sarvaka_info_popover($variables) {
   $lclass = '';
   $fc =  $fc = mb_substr($variables['label'],0,1,"UTF-8");
   if ($fc > "ༀ" && $fc < "࿏") { $lclass = ' class="tib"'; }
-	$html = "<span{$lclass}>{$variables['label']}</span><span class=\"popover-link\"><span class=\"popover-link-tip\"></span><span class=\"icon shanticon-menu3\"></span></span>
+	$html = "<span class=\"kmap-tag-group\"><span{$lclass}>{$variables['label']}</span><span class=\"popover-link\"><span class=\"popover-link-tip\"></span><span class=\"icon shanticon-menu3\"></span></span></span>
 						<div class=\"popover\" data-title=\"{$variables['label']}\">
 						     <span class=\"kmid\" style=\"display: none;\">{$variables['kid']}</span>
 							<div class=\"popover-body\">
@@ -1261,6 +1261,7 @@ function shanti_sarvaka_menu_breadcrumb_alter(&$active_trail, $item) {
 	$group_exists = TRUE;
 	// Adjust breadcrumbs only for nodes
 	if ($item['map'][0] == 'node') {
+        $node = $item['map'][1];
 		// If Group module exists check if it has a group
 		if (module_exists('og')) {
 			$gps = og_get_entity_groups($item['map'][0], $item['map'][1]);
@@ -1289,10 +1290,25 @@ function shanti_sarvaka_menu_breadcrumb_alter(&$active_trail, $item) {
                         }
 					}
 				}
+
 			}
+
+            if (in_array($node->type, array('collection', 'subcollection'))) {
+                $collslink = array(
+                    'title' => t('Collections'),
+                    'href' => 'collections',
+                    'link_path' => 'collections',
+                    'localized_options' => array(),
+                    'type' => 0,
+                );
+                $newat = array();
+                $newat[0] = array_shift($active_trail);
+                $newat[1] = $collslink;
+                $active_trail = array_merge($newat, $active_trail);
+            }
 		}
-		if ($bcsetting == 3 && isset($item['map'][1]->uid)) {
-			$uid = $item['map'][1]->uid;
+		if ($bcsetting == 3 && isset($node->uid)) {
+			$uid = $node->uid;
 			$user = user_load($uid);
 			$uname = (!empty($user->realname)) ? $user->realname : $user->name;
 			$bc = array( array(

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * sources_biblio_search.features.user_permission.inc
@@ -39,6 +40,7 @@ function sources_biblio_search_user_default_permissions() {
       'administrator' => 'administrator',
       'anonymous user' => 'anonymous user',
       'authenticated user' => 'authenticated user',
+      'editor' => 'editor',
     ),
     'module' => 'file_entity',
   );

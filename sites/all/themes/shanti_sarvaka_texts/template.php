@@ -16,6 +16,7 @@ function shanti_sarvaka_texts_menu_breadcrumb_alter(&$active_trail, $item)
 function shanti_sarvaka_texts_menu_breadcrumb_alter(&$active_trail, $item) {
    $map = $item['map']; // Item map tells us about what page we are on
    if ($map[0] == "node") {
+       /*  Moved to Shanti Sarvaka Theme
        //dpm($item, 'itme in bc alter');
        $node = $map[1];
        // if it's a collection node, add link to all collections before it's name
@@ -32,6 +33,7 @@ function shanti_sarvaka_texts_menu_breadcrumb_alter(&$active_trail, $item) {
            $newat[1] = $collslink;
            $active_trail = array_merge($newat, $active_trail);
        }
+       */
    } else if ($item['path'] == 'collections/all' && count($active_trail) == 3 && $active_trail[1]['link_title'] == "Collections") {
        unset($active_trail[1]); // Remove the extra "collections" breadcrumb from user menu set up.
    }
@@ -143,14 +145,14 @@ function shanti_sarvaka_texts_get_edit_widget($nid,$coll_id) {
     $lang = $node->language;
     $bid  = $node->book['bid'];
     $mlid = $node->book['mlid'];
-    $node_edit_link = l('<i class="fa fa-pencil-square-o" aria-hidden="true"></i>',
+    $node_edit_link = l('<i class="icon shanticon-pencil" aria-hidden="true"></i>',
         "node/$nid/edit",
         array(
             'html' => TRUE,
             'attributes' => array('title' => t('Edit this page'), 'class' => array('text-edit-button')),
         )
     );
-    $node_add_link = l('<i class="fa fa-plus" aria-hidden="true"></i>',
+    $node_add_link = l('<i class="icon shanticon-plus-square-o" aria-hidden="true"></i>',
         "node/add/book",
         array(
             'html' => TRUE,
@@ -161,6 +163,8 @@ function shanti_sarvaka_texts_get_edit_widget($nid,$coll_id) {
             'attributes' => array('title' => t('Add a new page under this one'), 'class' => array('text-edit-button')),
         )
     );
+    $cbc_access = (is_numeric($coll_id) && $coll_id > 0) ? og_user_access('node',$coll_id,'create book content') : TRUE;
+    $uobc_access = (is_numeric($coll_id) && $coll_id > 0) ? og_user_access('node',$coll_id,'update own book content') : TRUE;
     $widget = array(
         'shanti-texts-section-controls' => array(
             '#type' => 'markup',
@@ -170,9 +174,8 @@ function shanti_sarvaka_texts_get_edit_widget($nid,$coll_id) {
             '#access' => (
                 user_has_role(3) || (
                     user_access('add content to books')
-                    //&& og_is_member('node',$coll_id,'user')
-                    && og_user_access('node',$coll_id,'create book content')
-                    && og_user_access('node',$coll_id,'update own book content')
+                    && $cbc_access
+                    && $uobc_access
                 )
             ),
         ),

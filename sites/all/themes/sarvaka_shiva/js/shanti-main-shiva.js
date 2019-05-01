@@ -80,7 +80,7 @@
         Drupal.behaviors.thumbInsertingCreateIcon = {
             attach : function(context, settings) {
                 if (context == document) {
-                    $('.sn-create-link a').prepend('<span class="fa fa-pencil"></span>');
+                    $('.sn-create-link a').prepend('<span class="icon shanticon-pencil"></span>');
                 }
             }
         };

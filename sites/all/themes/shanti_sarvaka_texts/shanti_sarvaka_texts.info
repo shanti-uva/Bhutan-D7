@@ -27,29 +27,24 @@ regions[page_bottom]    = Page bottom
 regions[footer]         = Footer
 regions[admin_footer]   = Admin Footer
 
-
-;;;;;;;;;;;;;;;;;;;;;
-;; Theme Settings
-;;;;;;;;;;;;;;;;;;;;;
-
-settings[shanti_sarvaka_base_color] = '#8c48a1'
-settings[shanti_sarvaka_icon_class] = 'texts'
-settings[shanti_sarvaka_shanti_site] = 1
-
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Stylesheets
 ;;;;;;;;;;;;;;;;;;;;;
-
 stylesheets[all][] =  css/shanti-main-texts.css
 stylesheets[all][] =  css/shanti-search-texts.css
 
 ;; FOAD
 stylesheets[all][] =  css/jquery.ui.tabs.min.css
 
-
 ;;;;;;;;;;;;;;;;;;;;;;
 ;;; Scripts
 ;;;;;;;;;;;;;;;;;;;;;;
-
 scripts[] = js/shanti-main-texts.js
 scripts[] = js/shanti-search-texts.js
+
+;;;;;;;;;;;;;;;;;;;;;
+;; Theme Settings
+;;;;;;;;;;;;;;;;;;;;;
+settings[shanti_sarvaka_site_body_tag] = 'texts'
+settings[shanti_sarvaka_icon_class] = 'texts'
+settings[shanti_sarvaka_shanti_site] = 1

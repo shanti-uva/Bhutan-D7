@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * media_listings.views_default.inc
@@ -174,6 +175,12 @@ function media_listings_views_default_views() {
   $handler->display->display_options['defaults']['use_more_always'] = FALSE;
   $handler->display->display_options['use_more_always'] = FALSE;
   $handler->display->display_options['defaults']['use_more_text'] = FALSE;
+  $handler->display->display_options['defaults']['cache'] = FALSE;
+  $handler->display->display_options['cache']['type'] = 'time';
+  $handler->display->display_options['cache']['results_lifespan'] = '21600';
+  $handler->display->display_options['cache']['results_lifespan_custom'] = '0';
+  $handler->display->display_options['cache']['output_lifespan'] = '21600';
+  $handler->display->display_options['cache']['output_lifespan_custom'] = '0';
   $handler->display->display_options['defaults']['exposed_form'] = FALSE;
   $handler->display->display_options['exposed_form']['type'] = 'better_exposed_filters';
   $handler->display->display_options['exposed_form']['options']['submit_button'] = '>';
@@ -244,7 +251,7 @@ function media_listings_views_default_views() {
   );
   $handler->display->display_options['defaults']['pager'] = FALSE;
   $handler->display->display_options['pager']['type'] = 'pagerer';
-  $handler->display->display_options['pager']['options']['items_per_page'] = '60';
+  $handler->display->display_options['pager']['options']['items_per_page'] = '80';
   $handler->display->display_options['pager']['options']['offset'] = '0';
   $handler->display->display_options['pager']['options']['id'] = '0';
   $handler->display->display_options['pager']['options']['quantity'] = '9';
@@ -496,6 +503,7 @@ function media_listings_views_default_views() {
   $handler->display->display_options['sorts']['title']['id'] = 'title';
   $handler->display->display_options['sorts']['title']['table'] = 'node';
   $handler->display->display_options['sorts']['title']['field'] = 'title';
+  $handler->display->display_options['sorts']['title']['order'] = 'NASC';
   $handler->display->display_options['sorts']['title']['exposed'] = TRUE;
   $handler->display->display_options['sorts']['title']['expose']['label'] = 'Title';
   $handler->display->display_options['defaults']['arguments'] = FALSE;
@@ -579,6 +587,12 @@ function media_listings_views_default_views() {
   $handler->display->display_options['access']['role'] = array(
     2 => '2',
   );
+  $handler->display->display_options['defaults']['cache'] = FALSE;
+  $handler->display->display_options['cache']['type'] = 'time';
+  $handler->display->display_options['cache']['results_lifespan'] = '300';
+  $handler->display->display_options['cache']['results_lifespan_custom'] = '0';
+  $handler->display->display_options['cache']['output_lifespan'] = '300';
+  $handler->display->display_options['cache']['output_lifespan_custom'] = '0';
   $handler->display->display_options['defaults']['exposed_form'] = FALSE;
   $handler->display->display_options['exposed_form']['type'] = 'better_exposed_filters';
   $handler->display->display_options['exposed_form']['options']['autosubmit'] = TRUE;
@@ -749,6 +763,7 @@ function media_listings_views_default_views() {
   $handler = $view->new_display('page', 'My Collections Old', 'my_collections');
   $handler->display->display_options['defaults']['title'] = FALSE;
   $handler->display->display_options['title'] = 'My Collections';
+  $handler->display->display_options['enabled'] = FALSE;
   $handler->display->display_options['display_description'] = 'Show all collections and subcollections belonging to the user';
   $handler->display->display_options['defaults']['access'] = FALSE;
   $handler->display->display_options['access']['type'] = 'role';
@@ -3730,11 +3745,32 @@ function media_listings_views_default_views() {
   $handler->display->display_options['relationships']['field_og_collection_ref_target_id']['id'] = 'field_og_collection_ref_target_id';
   $handler->display->display_options['relationships']['field_og_collection_ref_target_id']['table'] = 'og_membership';
   $handler->display->display_options['relationships']['field_og_collection_ref_target_id']['field'] = 'field_og_collection_ref_target_id';
+  /* Field: Content: Audio */
+  $handler->display->display_options['fields']['field_audio']['id'] = 'field_audio';
+  $handler->display->display_options['fields']['field_audio']['table'] = 'field_data_field_audio';
+  $handler->display->display_options['fields']['field_audio']['field'] = 'field_audio';
+  $handler->display->display_options['fields']['field_audio']['label'] = '';
+  $handler->display->display_options['fields']['field_audio']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['field_audio']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['field_audio']['click_sort_column'] = 'entryid';
+  $handler->display->display_options['fields']['field_audio']['type'] = 'field_kaltura_thumbnail_only';
+  $handler->display->display_options['fields']['field_audio']['settings'] = array(
+    'thumbsize_width' => '120',
+    'thumbsize_height' => '90',
+    'rotate' => 0,
+    'entry_widget' => '38782971',
+    'player_width' => '560',
+    'player_height' => '395',
+    'dispaly_metadata' => 0,
+    'delivery' => 'HTTP',
+    'custom_player' => '',
+  );
   /* Field: Content: Video */
   $handler->display->display_options['fields']['field_video']['id'] = 'field_video';
   $handler->display->display_options['fields']['field_video']['table'] = 'field_data_field_video';
   $handler->display->display_options['fields']['field_video']['field'] = 'field_video';
   $handler->display->display_options['fields']['field_video']['label'] = 'Media';
+  $handler->display->display_options['fields']['field_video']['alter']['text'] = '[field_audio][field_video]';
   $handler->display->display_options['fields']['field_video']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['field_video']['click_sort_column'] = 'entryid';
   $handler->display->display_options['fields']['field_video']['type'] = 'field_kaltura_thumbnail_only';
@@ -3841,13 +3877,26 @@ function media_listings_views_default_views() {
   $handler->display->display_options['filters']['type']['table'] = 'node';
   $handler->display->display_options['filters']['type']['field'] = 'type';
   $handler->display->display_options['filters']['type']['value'] = array(
+    'audio' => 'audio',
     'video' => 'video',
   );
   $handler->display->display_options['filters']['type']['group'] = 1;
+  $handler->display->display_options['filters']['type']['exposed'] = TRUE;
   $handler->display->display_options['filters']['type']['expose']['operator_id'] = 'type_op';
   $handler->display->display_options['filters']['type']['expose']['label'] = 'Type';
   $handler->display->display_options['filters']['type']['expose']['operator'] = 'type_op';
   $handler->display->display_options['filters']['type']['expose']['identifier'] = 'type';
+  $handler->display->display_options['filters']['type']['expose']['remember'] = TRUE;
+  $handler->display->display_options['filters']['type']['expose']['remember_roles'] = array(
+    2 => '2',
+    1 => 0,
+    3 => 0,
+    4 => 0,
+    5 => 0,
+    11 => 0,
+    6 => 0,
+  );
+  $handler->display->display_options['filters']['type']['expose']['reduce'] = TRUE;
   /* Filter criterion: Field collection item: Video Quality Acceptable (field_video_quality_acceptable) */
   $handler->display->display_options['filters']['field_video_quality_acceptable_value']['id'] = 'field_video_quality_acceptable_value';
   $handler->display->display_options['filters']['field_video_quality_acceptable_value']['table'] = 'field_data_field_video_quality_acceptable';
@@ -4431,7 +4480,7 @@ function media_listings_views_default_views() {
   /* Display: All Workflow */
   $handler = $view->new_display('page', 'All Workflow', 'workflow_all');
   $handler->display->display_options['defaults']['title'] = FALSE;
-  $handler->display->display_options['title'] = 'Workflow (All Videos)';
+  $handler->display->display_options['title'] = 'Workflow (All AV)';
   $handler->display->display_options['display_description'] = 'Workflow view showing all videos';
   $handler->display->display_options['defaults']['header'] = FALSE;
   /* Header: Global: Result summary */
@@ -4442,7 +4491,7 @@ function media_listings_views_default_views() {
   $handler->display->display_options['header']['area']['id'] = 'area';
   $handler->display->display_options['header']['area']['table'] = 'views';
   $handler->display->display_options['header']['area']['field'] = 'area';
-  $handler->display->display_options['header']['area']['content'] = '<p>This list for "Workflow (All Videos)" shows all videos. To view only videos of collections you belong to, go <a href="/mycontent/workflow">"My Workflow"</a>.</p>';
+  $handler->display->display_options['header']['area']['content'] = '<p>This list for "Workflow (All AV)" shows all audio and video items. To view only items of collections you belong to, go <a href="/mycontent/workflow">"My Workflow"</a>.</p>';
   $handler->display->display_options['header']['area']['format'] = 'filtered_html';
   $handler->display->display_options['path'] = 'workflow/all';
   $handler->display->display_options['menu']['title'] = 'My Workflow';
@@ -6006,7 +6055,7 @@ function media_listings_views_default_views() {
   $handler->display->display_options['header']['area']['id'] = 'area';
   $handler->display->display_options['header']['area']['table'] = 'views';
   $handler->display->display_options['header']['area']['field'] = 'area';
-  $handler->display->display_options['header']['area']['content'] = '<p>This page "My Workflow" lists only videos in collections you belong to. To view all videos go <a href="/workflow/all">"Workflow (All Videos)"</a>.</p>';
+  $handler->display->display_options['header']['area']['content'] = '<p>This page "My Workflow" lists only videos in collections you belong to. To view all AV items go <a href="/workflow/all">"Workflow (All AV)"</a>.</p>';
   $handler->display->display_options['header']['area']['format'] = 'filtered_html';
   $handler->display->display_options['defaults']['relationships'] = FALSE;
   /* Relationship: Content: Author */
@@ -6032,11 +6081,31 @@ function media_listings_views_default_views() {
   $handler->display->display_options['relationships']['og_membership_related_node_group']['field'] = 'og_membership_related_node_group';
   $handler->display->display_options['relationships']['og_membership_related_node_group']['relationship'] = 'og_membership_rel';
   $handler->display->display_options['defaults']['fields'] = FALSE;
+  /* Field: Content: Audio */
+  $handler->display->display_options['fields']['field_audio']['id'] = 'field_audio';
+  $handler->display->display_options['fields']['field_audio']['table'] = 'field_data_field_audio';
+  $handler->display->display_options['fields']['field_audio']['field'] = 'field_audio';
+  $handler->display->display_options['fields']['field_audio']['label'] = '';
+  $handler->display->display_options['fields']['field_audio']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['field_audio']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['field_audio']['click_sort_column'] = 'entryid';
+  $handler->display->display_options['fields']['field_audio']['settings'] = array(
+    'thumbsize_width' => '120',
+    'thumbsize_height' => '90',
+    'rotate' => 0,
+    'entry_widget' => '38782971',
+    'player_width' => '560',
+    'player_height' => '395',
+    'dispaly_metadata' => 0,
+    'delivery' => 'HTTP',
+    'custom_player' => '',
+  );
   /* Field: Content: Video */
   $handler->display->display_options['fields']['field_video']['id'] = 'field_video';
   $handler->display->display_options['fields']['field_video']['table'] = 'field_data_field_video';
   $handler->display->display_options['fields']['field_video']['field'] = 'field_video';
   $handler->display->display_options['fields']['field_video']['label'] = 'Media';
+  $handler->display->display_options['fields']['field_video']['alter']['text'] = '[field_audio][field_video]';
   $handler->display->display_options['fields']['field_video']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['field_video']['click_sort_column'] = 'entryid';
   $handler->display->display_options['fields']['field_video']['type'] = 'field_kaltura_thumbnail_only';
@@ -6152,13 +6221,26 @@ function media_listings_views_default_views() {
   $handler->display->display_options['filters']['type']['table'] = 'node';
   $handler->display->display_options['filters']['type']['field'] = 'type';
   $handler->display->display_options['filters']['type']['value'] = array(
+    'audio' => 'audio',
     'video' => 'video',
   );
   $handler->display->display_options['filters']['type']['group'] = 1;
+  $handler->display->display_options['filters']['type']['exposed'] = TRUE;
   $handler->display->display_options['filters']['type']['expose']['operator_id'] = 'type_op';
   $handler->display->display_options['filters']['type']['expose']['label'] = 'Type';
   $handler->display->display_options['filters']['type']['expose']['operator'] = 'type_op';
   $handler->display->display_options['filters']['type']['expose']['identifier'] = 'type';
+  $handler->display->display_options['filters']['type']['expose']['remember'] = TRUE;
+  $handler->display->display_options['filters']['type']['expose']['remember_roles'] = array(
+    2 => '2',
+    1 => 0,
+    3 => 0,
+    4 => 0,
+    5 => 0,
+    11 => 0,
+    6 => 0,
+  );
+  $handler->display->display_options['filters']['type']['expose']['reduce'] = TRUE;
   /* Filter criterion: Field collection item: Video Quality Acceptable (field_video_quality_acceptable) */
   $handler->display->display_options['filters']['field_video_quality_acceptable_value']['id'] = 'field_video_quality_acceptable_value';
   $handler->display->display_options['filters']['field_video_quality_acceptable_value']['table'] = 'field_data_field_video_quality_acceptable';
