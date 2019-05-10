@@ -52,7 +52,7 @@
           <?php if ($images_count > 0): ?>
               <li class="images <?php print isset($photo) ? 'active' : ''; ?>">
                   <a href="<?php print base_path() . $type . '/' . $kid; ?>/photos/nojs" class="use-ajax">
-                      <span class="icon shanticon-photos"></span>
+                      <span class="icon shanticon-images"></span>
                       Images
                       <span class="badge"><?php print $images_count; ?></span>
                   </a>

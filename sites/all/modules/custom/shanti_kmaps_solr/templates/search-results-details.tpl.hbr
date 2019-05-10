@@ -58,7 +58,7 @@
         <div>
           <a href="/{{{tree}}}/{{extractId id}}/photos/nojs">
             <div>
-              <span class="icon shanticon-photos"></span>
+              <span class="icon shanticon-images"></span>
               <span class="kmaps-results-name">Images</span>
               <span class="badge">0</span>
             </div>

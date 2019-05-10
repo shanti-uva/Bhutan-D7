@@ -151,7 +151,7 @@ function decorateElementWithPopover(elem, node) {
 
                 counts.html("");
                 if (video_count) counts.append("<span class='associated'><i class='icon shanticon-audio-video'></i><span class='badge' + (video_count)?' alert-success':'>" + video_count + "</span></span>");
-                if (picture_count) counts.append("<span class='associated'><i class='icon shanticon-photos'></i><span class='badge' + (picture_count)?' alert-success':'>" + picture_count + "</span></span>");
+                if (picture_count) counts.append("<span class='associated'><i class='icon shanticon-images'></i><span class='badge' + (picture_count)?' alert-success':'>" + picture_count + "</span></span>");
                 if (place_count) counts.append("<span class='associated'><i class='icon shanticon-places'></i><span class='badge' + (place_count)?' alert-success':'>" + place_count + "</span></span>");
                 if (description_count) counts.append("<span class='associated'><i class='icon shanticon-essays'></i><span class='badge' + (description_count)?' alert-success':'>" + description_count + "</span></span>");
                 if (related_count) counts.append("<span class='associated'><i class='icon shanticon-"+ Settings.type  +"'></i><span class='badge' + (related_count)?' alert-success':''>" + related_count + "</span></span>");
@@ -1342,7 +1342,7 @@ jQuery(function($) {
 
                     counts.html("");
                     if (video_count) counts.append("<span class='associated'><i class='icon shanticon-audio-video'></i><span class='badge' + (video_count)?' alert-success':'>" + video_count + "</span></span>");
-                    if (picture_count) counts.append("<span class='associated'><i class='icon shanticon-photos'></i><span class='badge' + (picture_count)?' alert-success':'>" + picture_count + "</span></span>");
+                    if (picture_count) counts.append("<span class='associated'><i class='icon shanticon-images'></i><span class='badge' + (picture_count)?' alert-success':'>" + picture_count + "</span></span>");
                     if (place_count) counts.append("<span class='associated'><i class='icon shanticon-places'></i><span class='badge' + (place_count)?' alert-success':'>" + place_count + "</span></span>");
                     if (description_count) counts.append("<span class='associated'><i class='icon shanticon-essays'></i><span class='badge' + (description_count)?' alert-success':'>" + description_count + "</span></span>");
                     if (related_count) counts.append("<span class='associated'><i class='icon shanticon-"+ Settings.type  +"'></i><span class='badge' + (related_count)?' alert-success':''>" + related_count + "</span></span>");
@@ -1504,12 +1504,12 @@ function processSubjectsData(data) {
       $.ajax({
         url: photosURL,
         beforeSend: function(xhr) {
-          $('li.photos i').removeClass('icon shanticon-photos').addClass('fa fa-spinner fa-spin');
+          $('li.photos i').removeClass('icon shanticon-images').addClass('fa fa-spinner fa-spin');
         }
       })
       .done(relatedPhotos)
       .always(function() {
-        $('li.photos i').removeClass('fa fa-spinner fa-spin').addClass('icon shanticon-photos');
+        $('li.photos i').removeClass('fa fa-spinner fa-spin').addClass('icon shanticon-images');
       });
     });
   }
