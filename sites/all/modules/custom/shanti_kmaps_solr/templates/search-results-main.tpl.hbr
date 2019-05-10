@@ -181,7 +181,7 @@
                         </div>
 
                         <div class="toggle-results-node" role="button" aria-label="Show Results Description">
-                          <span class="results-details-open open-task fa fa-plus" data-app="{{doc.tree}}" data-id="{{extractId doc.uid}}"></span>
+                          <span class="results-details-open open-task icon shanticon-plus" data-app="{{doc.tree}}" data-id="{{extractId doc.uid}}"></span>
                         </div>
 
                     </div>

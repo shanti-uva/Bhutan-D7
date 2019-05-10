@@ -177,8 +177,8 @@ function _sarvaka_images_get_main_flexslider($node) {
     // use prod server when on DEV but looking for images on prod
     $url = _fix_prod_urls_on_dev($url, $si->getIIIFName());
 
-    $prevlink = '<li><span class="icon shanticon-spinner spinner" style="display:none;"></span><img src="#prev" style="display:none;" /></li>';
-    $nextlink = '<li><span class="icon shanticon-spinner spinner" style="display:none;"></span><img src="#next"  style="display:none;"/></li>';
+    $prevlink = '<li><span class="icon shanticon-spinner" role="status" style="display:none;"></span><img src="#prev" style="display:none;" /></li>';
+    $nextlink = '<li><span class="icon shanticon-spinner" role="status" style="display:none;"></span><img src="#next"  style="display:none;"/></li>';
     $main_image = '<ul class="slides">' . $prevlink . '<li><div data-href="' . $url . '" class="shantimg main"><img src="'
                         . $url . '" /></div></li>' . $nextlink . '</ul>';
 

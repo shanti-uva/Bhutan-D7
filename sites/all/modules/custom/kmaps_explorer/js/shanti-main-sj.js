@@ -1504,12 +1504,12 @@ function processSubjectsData(data) {
       $.ajax({
         url: photosURL,
         beforeSend: function(xhr) {
-          $('li.photos i').removeClass('icon shanticon-images').addClass('fa fa-spinner fa-spin');
+          $('li.photos i').removeClass('icon shanticon-images').addClass('icon shanticon-spinner');
         }
       })
       .done(relatedPhotos)
       .always(function() {
-        $('li.photos i').removeClass('fa fa-spinner fa-spin').addClass('icon shanticon-images');
+        $('li.photos i').removeClass('icon shanticon-spinner').addClass('icon shanticon-images');
       });
     });
   }
@@ -1595,7 +1595,7 @@ function processSubjectsSolr(data) {
 
 function populateBreadcrumbs(bInd, bVal) {
   $breadcrumbOl = $("ol.breadcrumb");
-  $breadcrumbOl.append('<li><a href="#id=' + bVal.id + '">' + bVal.header + '</a><span class="fa fa-angle-right"></span></li>');
+  $breadcrumbOl.append('<li><a href="#id=' + bVal.id + '">' + bVal.header + '</a><span class="icon shanticon-angle-right"></span></li>');
 }
 
 function showOverviewImage(data) {

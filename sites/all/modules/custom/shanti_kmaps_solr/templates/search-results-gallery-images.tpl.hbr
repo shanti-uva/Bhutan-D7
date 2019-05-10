@@ -9,7 +9,7 @@
         <img alt="{{display_label}}" data-asset-type="{{tree}}" src="{{{url_thumb}}}" {{#if url_thumb_height}} height={{url_thumb_height}} width={{url_thumb_width}} {{/if}} onError="this.src='/sites/all/themes/shanti_sarvaka/images/default/generic-{{tree}}-icon.png'; this.height=110; this.width=150" >
 
         <!-- Audio and Popover Icons -->
-        <span class="btn-gallery-popup-icon" role="button" aria-label="Close Results Descriptive Popup" data-toggle="popover" data-placement="bottom"><span class="icon fa-info-circle" role="button"></span></span>
+        <span class="btn-gallery-popup-icon" role="button" aria-label="Close Results Descriptive Popup" data-toggle="popover" data-placement="bottom"><span class="icon shanticon-info" role="button"></span></span>
         <span class="gallery-audio-icon"><span class="icon shanticon-audio"></span></span>
       </a>
     {{/each}}

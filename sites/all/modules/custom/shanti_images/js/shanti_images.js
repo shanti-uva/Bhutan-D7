@@ -98,7 +98,7 @@
         attach: function (context, settings) {
             // Confirm before field deletes. Uses Bootbox.
             if ($('body').hasClass('page-node-edit')) {
-                var spinner = '<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>';
+                var spinner = '<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate" role="status"></span>';
                 $('.btn-delete.ajax-processed').each(function () {
                     var btnid = $(this).attr('id');  // Get the button id
                     var inputval = $(this).prevAll('.field-type-text').find('input').val();
