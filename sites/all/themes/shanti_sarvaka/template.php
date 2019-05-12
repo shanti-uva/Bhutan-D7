@@ -884,7 +884,7 @@ function shanti_sarvaka_carousel($variables) {
   }
 
   // Add closing HTML for carousel
-  $pauseplay = ($autostart) ? "glyphicon-pause" : "glyphicon-play";
+  //  $pauseplay = ($autostart) ? "glyphicon-pause" : "glyphicon-play";
   $html .= '</div>
               <div class="control-box">
                   <a data-slide="prev" href="#' . $cid  . '" class="carousel-control left"><span class="icon"></span></a>
@@ -892,11 +892,7 @@ function shanti_sarvaka_carousel($variables) {
               </div>
 
               <ol class="control-box-3 carousel-indicators">' . $slidelinks . '</ol><!-- /.control-box-3 -->
-              <div id="carousel-buttons">
-                    <button id="pause-play-btn" type="button" class="btn btn-default btn-xs">
-                        <span class="glyphicon '. $pauseplay . '"></span>
-                    </button>
-              </div>
+
               <p class="go-to-link"><a id="carousel-slide-link" href="#">' . $el['res_link_text'] . ' </a></p>
             </div><!-- /#collection-carousel -->
           <!-- </div> /.span12 -->
@@ -1296,7 +1292,7 @@ function shanti_sarvaka_menu_breadcrumb_alter(&$active_trail, $item) {
             if (in_array($node->type, array('collection', 'subcollection'))) {
                 $collslink = array(
                     'title' => t('Collections'),
-                    'href' => 'collections',
+                    'href' => 'collections/all',
                     'link_path' => 'collections',
                     'localized_options' => array(),
                     'type' => 0,

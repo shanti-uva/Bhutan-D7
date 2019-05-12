@@ -142,23 +142,3 @@
     text-shadow: 0 0 1px #444;
 }
 
-button .glyphicon-refresh-animate {
-    display: inline-block;
-    margin-left: 8px;
-}
-
-.glyphicon-refresh-animate {
-    -animation: spin .7s infinite linear;
-    -webkit-animation: spin2 .7s infinite linear;
-    font-size: 1rem;
-}
-
-@-webkit-keyframes spin2 {
-    from { -webkit-transform: rotate(0deg);}
-    to { -webkit-transform: rotate(360deg);}
-}
-
-@keyframes spin {
-    from { transform: scale(1) rotate(0deg);}
-    to { transform: scale(1) rotate(360deg);}
-}

@@ -47,7 +47,6 @@
             <a href="#" class="btn btn-default btn-sm view-btn">Details
                 <span class="icon shanticon-angle-double-right"></span>
             </a>
-            <!--button class="btn btn-default btn-sm details-btn">Details</button-->
         </div>
     </div> <!-- END details inner -->
 </div> <!-- END details --> 

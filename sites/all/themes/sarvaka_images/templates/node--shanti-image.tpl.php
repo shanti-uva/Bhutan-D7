@@ -148,7 +148,7 @@
               </div> <!-- END image-detail-summary -->
 
               <div class="row image-detail-extended">
-                  <div class="field detail-columns col-xs-12">
+                  <div class="field detail-columns col-xs-12" style="overflow:hidden;height:0;">
                       <h3 class="image-detail-title"><?php print $title; ?></h3>
                       <ul class="image-summary-info-list">
                           <li><span class="icon shanticon-agents"></span> <?php print $creator; ?></li>
