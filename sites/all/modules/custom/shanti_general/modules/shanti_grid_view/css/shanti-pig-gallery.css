@@ -91,12 +91,13 @@
 
 .ppd-close {
     position: absolute;
-    width: 3rem;
-    height: 3rem;
+    z-index:15;
     top: 1rem;
     right: 1rem;
     color: #aaa;
     cursor: pointer;
+    width: 3rem;
+    height: 3rem;
 }
 
 .ppd-close::before, .ppd-close::after {
@@ -306,14 +307,14 @@ font-weight: normal;
 }
 
 .ppd-expander .ppd-details .links {
-    float: left;
+    /*float: left;
     margin-bottom: 0;
     padding-left: 3rem;
-    padding-top: 1rem;
+    padding-top: 1rem;*/
+    display:inline-block;
 }
 
-.ppd-expander .ppd-details .specs *,  
-.ppd-expander .ppd-details .links * {
+.ppd-expander .ppd-details .specs * {
     display: inline;
 }
 
@@ -378,7 +379,7 @@ font-weight: normal;
 }
 
 
-.ppd-expander .ppd-details .links .btn-sm{
+.ppd-expander .ppd-details .view-btn{
     background: #333;
     border: 1px solid #888 !important;
     color: #eee;
@@ -387,64 +388,113 @@ font-weight: normal;
     box-shadow: none;
     font-weight: 400;
     letter-spacing: 0.275rem;
-    float: left;
-      padding: .2rem 1.8rem .4rem 2rem;
-    margin: 2.5rem 1rem 0.5rem 3rem;
+      padding: 1.2rem 1.5rem 1.1rem 2rem;
+  display: inline;
 }
-.ppd-expander .ppd-details .links .btn-sm:hover{
+.ppd-expander .ppd-details .view-btn:hover{
   background-color:#000;
   color:#fff;
   border: 1px solid #888 !important;
 }
-.ppd-expander .ppd-details .links .btn-sm:active,
-.ppd-expander .ppd-details .links .btn-sm:focus{
+.ppd-expander .ppd-details .view-btn:active,
+.ppd-expander .ppd-details .view-btn:focus{
   color:#000;
   background-color:#f0f0f0;
   border: 1px solid #aaa !important;
 }
-
-
-.ppd-expander .ppd-details .links .btn-sm .icon {
+.ppd-expander .ppd-details .view-btn .icon {
     font-size: 1.5em;
     position: relative;
     top: 0.3rem;
-    left: .7rem;
+  left: -.15rem;
     font-style: normal;
     opacity: .6;
     -webkit-transition: all 0.3s ease-in-out;
     transition: all 0.3s ease-in-out;
+  width: 1.5rem;
+  height: auto;
+  display: inline-block;
+  background: transparent;
+}
+.ppd-expander .ppd-details .links:hover .view-btn .icon{
+  opacity:1;
+  position: relative;
+  left:.25rem;
+}
 
-
-    width: 1.5rem;
-    height: 1.5rem;
+body.status-loading .ppd-status-loading{
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 10;
+  background: white;
+  width: 100%;
+  height: 100%;
+  opacity: .4;
+}
+body.status-loading .ppd-status-loading span {
     vertical-align: text-bottom;
-    border: .15em solid #fff;
+    border: .25em solid #d49805;
     border-right-color: transparent;
     border-radius: 50%;
+    width: 20rem;
+    height: 20rem;
     -webkit-animation: spinner-border .75s linear infinite;
     animation: spinner-border .75s linear infinite;
+    margin-left: 50%;
+    margin-top: 20rem;
+    display: block;
+    position: relative;
+    left: -10rem;
 }
-.ppd-expander .ppd-details .links:hover .btn-sm .icon{
-    opacity:1;
-    left: 1rem;
+body.status-loading .ppd-status-loading span::before{
+  content:'';
+}
+/*
+#loading-text {
+  -webkit-animation: loading-text-opacity 1s linear 0s infinite normal;
+  animation: loading-text-opacity 1s linear 0s infinite normal;
+  color: #4d59ca;
+  font-size: 1.38em;
+  text-transform: capitalize;
+  font-weight: normal;
+  filter: alpha(opacity=50);
+  opacity: .5;
+  position: absolute;
+  z-index: 330;
+  top: -15px;
+  left: 27px;
+  width: 100px;
+}
+*/
+/*
+.ppd-expander .ppd-details .view-btn.spinner-loader{
+  padding-right: .9rem;
 }
 
-.ppd-expander .ppd-details .links .view-btn.spinner-loader .icon {
+.ppd-expander .ppd-details .view-btn.spinner-loader .icon {
+  width: 1.25em;
+  font-size: 1.12em;
+  top: 0.1rem;
     animation: spinloader 1s infinite linear;
     -webkit-animation: spinloader2 1s infinite linear;
 }
-.ppd-expander .ppd-details .links .view-btn.spinner-loader .icon::before{
+.ppd-expander .ppd-details .view-btn.spinner-loader .icon::before{
   content:'\e64f';
 }
 @keyframes spinloader {
     from { transform: scale(1) rotate(0deg); }
     to { transform: scale(1) rotate(360deg); }
 }
-
 @-webkit-keyframes spinloader2 {
     from { -webkit-transform: rotate(0deg); }
     to { -webkit-transform: rotate(360deg); }
 }
+*/
+
+
+
 /*---------------------------------*/
 /*  Gallery Dropdown KMAP Popover
 /*---------------------------------*/
@@ -1149,6 +1199,10 @@ body:after {
     .ppd-loading{
       position: relative;
       top: 100px;
+    }
+
+    body.status-loading .ppd-status-loading span {
+      left: -9.5rem;
     }
 }
 

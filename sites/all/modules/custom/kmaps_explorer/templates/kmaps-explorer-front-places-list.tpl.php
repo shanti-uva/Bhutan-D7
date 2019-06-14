@@ -27,7 +27,7 @@
               </a> <?php if (0 !== --$toEnd): ?>&gt;<?php endif; ?>
             <?php endforeach; ?>
         </span>
-        <span class="landing-popover open-task fa fa-plus" data-app="<?php echo $app; ?>" data-id="<?php echo explode('-', $place->id)[1]; ?>"></span>
+        <span class="landing-popover open-task icon shanticon-plus" data-app="<?php echo $app; ?>" data-id="<?php echo explode('-', $place->id)[1]; ?>"></span>
       </div>
       <div class="pop-content closeup place-open-<?php echo explode('-', $place->id)[1]; ?>"></div>
     </div>

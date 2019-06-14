@@ -1277,7 +1277,7 @@
   border-top-color:#cc4c39;
 }
 .results-node-kmaps-resources.results-filtering-top-tabs ul li.selected.terms{
-  border-top-color:#558dd1;
+  border-top-color:#a2733f;
 }
 .results-node-kmaps-resources.results-filtering-top-tabs ul li.selected.video,
 .results-node-kmaps-resources.results-filtering-top-tabs ul li.selected.audio-video{
@@ -1892,7 +1892,10 @@
   display:none;
 }
 
-
+.search-results-list-container .shanti-gallery .footer-wrap {
+  padding: 0.35rem 0.9rem 0 .9rem;
+  height: 2.32em;
+}
 
 
 

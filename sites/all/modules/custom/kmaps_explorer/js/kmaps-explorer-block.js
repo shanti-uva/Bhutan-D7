@@ -57,7 +57,7 @@
           av.parent().show();
         }
 
-        var photos = elem.find('.shanticon-photos ~ span.badge');
+        var photos = elem.find('.shanticon-images ~ span.badge');
         if (typeof(counts.picture) != "undefined") {
           photos.html(counts.picture);
         }
@@ -194,7 +194,7 @@
             countsElem.html("<span class='assoc-resources-loading'>loading...</span>\n");
             countsElem.append("<span style='display: none' class='associated'><i class='icon shanticon-sources'></i><span class='badge' >?</span></span>");
             countsElem.append("<span style='display: none' class='associated'><i class='icon shanticon-audio-video'></i><span class='badge' >?</span></span>");
-            countsElem.append("<span style='display: none' class='associated'><i class='icon shanticon-photos'></i><span class='badge' >?</span></span>");
+            countsElem.append("<span style='display: none' class='associated'><i class='icon shanticon-images'></i><span class='badge' >?</span></span>");
             countsElem.append("<span style='display: none' class='associated'><i class='icon shanticon-texts'></i><span class='badge' >?</span></span>");
             countsElem.append("<span style='display: none' class='associated'><i class='icon shanticon-visuals'></i><span class='badge' >?</span></span>");
             countsElem.append("<span style='display: none' class='associated'><i class='icon shanticon-places'></i><span class='badge' >?</span></span>");

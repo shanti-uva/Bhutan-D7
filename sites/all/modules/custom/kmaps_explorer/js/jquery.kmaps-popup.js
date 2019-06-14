@@ -123,7 +123,7 @@
             popOverFooter.append("<div class='popover-footer-button'><a href='"+plugin.options.mandalaURL.replace("%%ID%%",key.replace(plugin.options.domain+'-',"")).replace("%%APP%%",plugin.options.domain).replace("%%REL%%","overview")+"' class='icon shanticon-link-external' target='_blank'>Full Entry</a></div>");
             popOverFooter.append("<div style='display: none' class='popover-footer-button'><a href='"+plugin.options.mandalaURL.replace("%%ID%%",key.replace(plugin.options.domain+'-',"")).replace("%%APP%%",plugin.options.domain).replace("%%REL%%","sources")+"' class='icon shanticon-sources' target='_blank'>Related sources (<span class='badge-count' >?</span>)</a></div>");
             popOverFooter.append("<div style='display: none' class='popover-footer-button'><a href='"+plugin.options.mandalaURL.replace("%%ID%%",key.replace(plugin.options.domain+'-',"")).replace("%%APP%%",plugin.options.domain).replace("%%REL%%","audio-video")+"' class='icon shanticon-audio-video' target='_blank'>Related audio-video (<span class='badge-count' >?</span>)</a></div>");
-            popOverFooter.append("<div style='display: none' class='popover-footer-button'><a href='"+plugin.options.mandalaURL.replace("%%ID%%",key.replace(plugin.options.domain+'-',"")).replace("%%APP%%",plugin.options.domain).replace("%%REL%%","photos")+"' class='icon shanticon-photos' target='_blank'>Related photos (<span class='badge-count' >?</span>)</a></div>");
+            popOverFooter.append("<div style='display: none' class='popover-footer-button'><a href='"+plugin.options.mandalaURL.replace("%%ID%%",key.replace(plugin.options.domain+'-',"")).replace("%%APP%%",plugin.options.domain).replace("%%REL%%","photos")+"' class='icon shanticon-images' target='_blank'>Related photos (<span class='badge-count' >?</span>)</a></div>");
             popOverFooter.append("<div style='display: none' class='popover-footer-button'><a href='"+plugin.options.mandalaURL.replace("%%ID%%",key.replace(plugin.options.domain+'-',"")).replace("%%APP%%",plugin.options.domain).replace("%%REL%%","texts")+"' class='icon shanticon-texts' target='_blank'>Related texts (<span class='badge-count' >?</span>)</a></div>");
             popOverFooter.append("<div style='display: none' class='popover-footer-button'><a href='"+plugin.options.mandalaURL.replace("%%ID%%",key.replace(plugin.options.domain+'-',"")).replace("%%APP%%",plugin.options.domain).replace("%%REL%%","visuals")+"' class='icon shanticon-visuals' target='_blank'>Related visuals (<span class='badge-count' >?</span>)</a></div>");
             popOverFooter.append("<div style='display: none' class='popover-footer-button'><a href='"+plugin.options.mandalaURL.replace("%%ID%%",key.replace(plugin.options.domain+'-',"")).replace("%%APP%%",plugin.options.domain).replace("%%REL%%","places")+"' class='icon shanticon-places' target='_blank'>Related places (<span class='badge-count' >?</span>)</a></div>");
@@ -182,7 +182,7 @@
             av.parent().parent().hide();
           }
 
-          var photos = elem.find('.shanticon-photos > span.badge-count');
+          var photos = elem.find('.shanticon-images > span.badge-count');
           if (typeof(counts.picture) != "undefined") {
             photos.html(counts.picture);
           }

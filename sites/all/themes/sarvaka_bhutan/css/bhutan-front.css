@@ -98,7 +98,7 @@
 .tzr-summary .shanticon-audio-video{ color:#31acb6;left:4.3rem;}
 
 .tzr-summary .shanticon-texts{ color:#8c48a1; margin-top: -3.1rem;}
-.tzr-summary .shanticon-photos{ color:#b5953b;font-size:6.5rem;/*top:2.5rem;*/}
+.tzr-summary .shanticon-images{ color:#b5953b;font-size:6.5rem;/*top:2.5rem;*/}
 .tzr-summary .shanticon-places{ color:#3297f7; left:3rem; opacity:0.9;}
 .tzr-summary .shanticon-subjects{ color:#cc4c39; opacity:0.9;}	   
 .tzr-summary .icon:hover{ opacity:0.85;}
@@ -192,7 +192,6 @@
 			.tzr-audio-video.teaser:active{
 				border-color:#31acb6 !important;
 			}
-			.tzr-photos.teaser:active,
 			.tzr-images.teaser:active{
 				border-color:#b5953b !important;
 			}

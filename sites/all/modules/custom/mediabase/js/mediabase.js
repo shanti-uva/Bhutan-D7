@@ -213,7 +213,7 @@
      Drupal.behaviors.mediabaseForms={
         attach: function(context){
 
-            var spinner = '<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>';
+            var spinner = '<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate" role="status"></span>';
 
             // Hide Add Media Button after audio or video is added for MANU-4900
             var thumbimg = $('.page-node-add-audio .field-name-field-audio .kaltura_field_thumb img,' +

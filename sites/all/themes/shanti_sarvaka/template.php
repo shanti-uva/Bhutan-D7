@@ -884,7 +884,7 @@ function shanti_sarvaka_carousel($variables) {
   }
 
   // Add closing HTML for carousel
-  $pauseplay = ($autostart) ? "glyphicon-pause" : "glyphicon-play";
+  //  $pauseplay = ($autostart) ? "glyphicon-pause" : "glyphicon-play";
   $html .= '</div>
               <div class="control-box">
                   <a data-slide="prev" href="#' . $cid  . '" class="carousel-control left"><span class="icon"></span></a>
@@ -892,11 +892,7 @@ function shanti_sarvaka_carousel($variables) {
               </div>
 
               <ol class="control-box-3 carousel-indicators">' . $slidelinks . '</ol><!-- /.control-box-3 -->
-              <div id="carousel-buttons">
-                    <button id="pause-play-btn" type="button" class="btn btn-default btn-xs">
-                        <span class="glyphicon '. $pauseplay . '"></span>
-                    </button>
-              </div>
+
               <p class="go-to-link"><a id="carousel-slide-link" href="#">' . $el['res_link_text'] . ' </a></p>
             </div><!-- /#collection-carousel -->
           <!-- </div> /.span12 -->
@@ -1296,7 +1292,7 @@ function shanti_sarvaka_menu_breadcrumb_alter(&$active_trail, $item) {
             if (in_array($node->type, array('collection', 'subcollection'))) {
                 $collslink = array(
                     'title' => t('Collections'),
-                    'href' => 'collections',
+                    'href' => 'collections/all',
                     'link_path' => 'collections',
                     'localized_options' => array(),
                     'type' => 0,
@@ -1491,7 +1487,7 @@ function shanti_sarvaka_preprocess_apachesolr_search_snippets(&$vars) {
 }
 
 function shanti_sarvaka_transcripts_ui_transcript_navigation($vars) {
-        $out  = "<button type='button' class='btn btn-default btn-icon playpause' title='Play/Pause' data-play-icon='fa-play' data-pause-icon='fa-pause'><span class='fa fa-play'></span></button>";
+        $out  = "<button type='button' class='btn btn-default btn-icon playpause' title='Play/Pause' data-play-icon='shanticon-play2' data-pause-icon='shanticon-pause'><span class='icon shanticon-play2'></span></button>";
         $out .= "<button type='button' class='btn btn-default btn-icon previous' title='Previous line'><span class='icon shanticon-arrow-left'></span></button>";
         $out .= "<button type='button' class='btn btn-default btn-icon sameagain' title='Same line'><span class='icon shanticon-spin3'></span></button>";
         $out .= "<button type='button' class='btn btn-default btn-icon next' title='Next line'><span class='icon shanticon-arrow-right'></span></button>";

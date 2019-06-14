@@ -46,8 +46,9 @@
           <?php if (!empty($grid_fields['desc'])) { print $grid_fields['desc']; }  else { print t('No description available.') ; }?>
         </div>
         <div class="links">
-            <a href="#" class="btn btn-default btn-sm view-btn">Details</a>
-            <!--button class="btn btn-default btn-sm details-btn">Details</button-->
+            <a href="#" class="btn btn-default btn-sm view-btn">
+                Details <span class="icon shanticon-angle-double-right"></span>
+            </a>
         </div>
     </div> <!-- END details inner -->
 </div> <!-- END details --> 

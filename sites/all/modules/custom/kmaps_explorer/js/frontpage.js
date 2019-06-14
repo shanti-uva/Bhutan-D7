@@ -12,7 +12,7 @@
         $.ajax({
           url: '/mandala/popover/populate/' + app + '/' + kid,
           beforeSend: function() {
-            $that.toggleClass('fa-spin fa-spinner');
+            $that.toggleClass('fa-spin shanticon-spinner');
           },
           success: function(data) {
             if (data.node) {
@@ -23,7 +23,7 @@
             }
           },
           complete: function() {
-            $that.toggleClass('fa-spin fa-spinner');
+            $that.toggleClass('fa-spin shanticon-spinner');
           }
         });
 

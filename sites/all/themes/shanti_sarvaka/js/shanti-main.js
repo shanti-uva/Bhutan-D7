@@ -275,8 +275,8 @@
           menuHeight: '32em', // this height is determined by tallest menu
           mode: 'cover',
           direction: 'rtl',
-          backItemIcon: 'fa fa-angle-left',
-          groupIcon: 'fa fa-angle-right',
+          backItemIcon: 'icon shanticon-angle-left',
+          groupIcon: 'icon shanticon-angle-right',
           collapsed: false,
           preventItemClick: false,
         });

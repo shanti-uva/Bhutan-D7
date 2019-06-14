@@ -443,10 +443,7 @@
       }
       $('.kmap-items').fadeIn();
 
-      /* set active class for displaying loading spinner */
-      $('.ppd-details-inner .view-btn').click(function() {
-        $(this).addClass('spinner-loader');
-      });
+       $('.detail-columns').css('height','auto');
    }
    
    /** 
@@ -513,7 +510,8 @@
             }
         }
     };
-    
+
+
 }) (jQuery);
 
 

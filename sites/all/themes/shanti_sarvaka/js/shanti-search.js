@@ -159,7 +159,8 @@ Drupal.behaviors.shanti_sarvaka_flyoutinit = {
                         if (tabnum > -1) {
                             $('.shanti-kmaps-faceted-search-kmaps-' + tabnum + ' a').click();
                         }
-                        $('#search-flyout').openMbExtruder();
+                        // $('#search-flyout').openMbExtruder();
+                        $('#search-flyout.extruder:not(.isOpened) .flap').click();
                     }, 800);
                 }
             }
@@ -174,7 +175,8 @@ Drupal.behaviors.shanti_sarvaka_flyoutupdate = {
             $('#search-flyout .flap').click(function(e) {
                 if ($('#search-flyout').attr('isOpened')) {
                     var flyout_status = 'open';
-                    $('#search-flyout').openMbExtruder();
+                    // $('#search-flyout').openMbExtruder();
+                  $('#search-flyout.extruder:not(.isOpened) .flap').click();
                     $('#faceted-search-results').addClass('search-flyout-open');
                 }
                 else {

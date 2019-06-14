@@ -1892,24 +1892,25 @@ p.modal-title {
 
 
 /* IMAGES */
+.kmaps-search-images .related-images,
 .kmaps-search-images .related-photos{
   text-align: center;
   margin-top: 1.5rem;
   color: #111;
 }
-
+.kmaps-search-images .related-images figure,
 .kmaps-search-images .related-photos figure{
   margin-top:.5rem;
 }
-
+.kmaps-search-images .related-images figcaption,
 .kmaps-search-images .related-photos figcaption{
   margin-top: .5rem;
 }
-
+.kmaps-search-images .related-images strong,
 .kmaps-search-images .related-photos strong{
   color:#505050;
 }
-
+.kmaps-search-images .related-images p,
 .kmaps-search-images .related-photos p{
   margin: 0 auto;
   max-width: 85rem;

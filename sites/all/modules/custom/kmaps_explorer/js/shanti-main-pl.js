@@ -280,12 +280,12 @@ function processPlacesData(data) {
       $.ajax({
         url: photosURL,
         beforeSend: function(xhr) {
-          $('li.photos i').removeClass('icon km-photos').addClass('fa fa-spinner fa-spin');
+          $('li.photos i').removeClass('icon shanticon-images').addClass('icon shanticon-spinner');
         }
       })
       .done(relatedPlacesPhotos)
       .always(function() {
-        $('li.photos i').removeClass('fa fa-spinner fa-spin').addClass('icon km-photos');
+        $('li.photos i').removeClass('icon shanticon-spinner').addClass('icon shanticon-images');
       });
     });
   }
@@ -311,7 +311,7 @@ function processPlacesData(data) {
 //Populate Breadcrumbs
 function populatePlacesBreadcrumbs(bInd, bVal) {
   $breadcrumbOl = $("ol.breadcrumb");
-  $breadcrumbOl.append('<li><a href="#id=' + bVal.id + '&que=overview-tab">' + bVal.header + '</a><span class="fa fa-angle-right"></span></li>');
+  $breadcrumbOl.append('<li><a href="#id=' + bVal.id + '&que=overview-tab">' + bVal.header + '</a><span class="icon shanticon-angle-right"></span></li>');
 }
 
 //Function to show related photos in places

@@ -2390,7 +2390,7 @@
       }
       (Number(av.text()) > 0) ? av.closest('li').show() : av.closest('li').hide();
 
-      var photos = elem.find('span.shanticon-photos ~ span.badge');
+      var photos = elem.find('span.shanticon-images ~ span.badge');
       if (typeof(counts.picture) != "undefined") {
         photos.html(counts.picture);
       }
