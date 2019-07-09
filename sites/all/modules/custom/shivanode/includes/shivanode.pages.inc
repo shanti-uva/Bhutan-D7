@@ -21,7 +21,7 @@ function explore_vis_page($mode) {
                 'Each type has links for documentation or examples of that type of visualization</p>'),
 		),
 		'#attributes' => array(
-			'class' => array('shanti-gallery'),
+			'class' => array('shanti-gallery-no-wookmark'),
 		),
 		'charts' => array(
 			'#type' => 'fieldset',
@@ -29,7 +29,7 @@ function explore_vis_page($mode) {
             '#collapsible' => FALSE,
             //'#description' => t("this is a fieldset element"),
             'items' => array(
-				'#prefix' => '<ul class="sn-explore-list shanti-gallery">',
+				'#prefix' => '<ul class="sn-explore-list shanti-no-wookmark">',
 				'#suffix' => '</ul>',
 			),
 		),
@@ -39,7 +39,7 @@ function explore_vis_page($mode) {
             '#collapsible' => FALSE,
             //'#description' => t("this is a fieldset element"),
             'items' => array(
-				'#prefix' => "<ul class=\"sn-explore-list shanti-gallery $mode\">",
+				'#prefix' => "<ul class=\"sn-explore-list shanti-no-wookmark $mode\">",
 				'#suffix' => '</ul>',
 			),
 		),
@@ -49,7 +49,7 @@ function explore_vis_page($mode) {
             '#collapsible' => FALSE,
             //'#description' => t("this is a fieldset element"),
             'items' => array(
-				'#prefix' => "<ul class=\"sn-explore-list shanti-gallery $mode\">",
+				'#prefix' => "<ul class=\"sn-explore-list shanti-no-wookmark $mode\">",
 				'#suffix' => '</ul>',
 			),
 		),

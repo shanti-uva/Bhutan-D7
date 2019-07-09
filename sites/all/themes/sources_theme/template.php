@@ -19,8 +19,6 @@ function sources_theme_breadcrumb(&$bcs) {
   if (!empty($obj)) {
     // Biblio pages
     if ($obj->type == 'biblio') { // add collection & subcollection breadcrumbs to biblio pages
-      /*dpm($obj, 'node');
-        dpm($bcs);*/
       if (!empty($obj->field_og_collection_ref)) {
         $gid = $obj->field_og_collection_ref['und'][0]['target_id'];
         $gnode = node_load($gid);
@@ -32,6 +30,11 @@ function sources_theme_breadcrumb(&$bcs) {
         }
         $bc = l($gnode->title, 'node/' . $gid);
         array_splice($bcs['breadcrumb'], 1, 0, array($bc));
+        if (!strstr($bcs['breadcrumb'][0], 'a href')) {
+            $lstlnk = array_shift($bcs['breadcrumb']);
+            array_unshift($bcs['breadcrumb'], '<a href="">Collections</a>');
+            array_push($bcs['breadcrumb'], $lstlnk);
+        }
         $bcout = shanti_sarvaka_breadcrumb($bcs);
         return $bcout;
       }
@@ -40,11 +43,11 @@ function sources_theme_breadcrumb(&$bcs) {
       $gid = $obj->field_og_parent_collection_ref['und'][0]['target_id'];
       $gnode = node_load($gid);
       $bc = l($gnode->title, 'node/' . $gid);
-      array_splice($bcs['breadcrumb'], 1, 0, array($bc));
+      array_splice($bcs['breadcrumb'], 0, 0, array($bc));
     }
     if (strpos($obj->type, 'collection') > -1) {
         $colllink = '<a href="/collections/all">' . t("Collections") . '</a>';
-        array_splice($bcs['breadcrumb'], 1, 0, array($colllink));
+        array_splice($bcs['breadcrumb'], 0, 0, array($colllink));
     }
   }
   $bchtml = sources_views_custom_breadcrumbs();
@@ -53,6 +56,7 @@ function sources_theme_breadcrumb(&$bcs) {
   }
   return $bchtml;
 }
+
 
 /**
  * Implements HOOK_preprocess_html().

@@ -61,12 +61,27 @@ function sarvaka_mediabase_breadcrumb($variables) {
 	return shanti_sarvaka_breadcrumb($variables);
 }
 
+/**
+ * Fix to issue with just AV site breadcrumbs
+ * @param $active_trail
+ * @param $item
+ */
+function sarvaka_mediabase_menu_breadcrumb_alter(&$active_trail, $item) {
+    if (count($active_trail) > 2) {
+        if (strstr($active_trail[1]['href'], 'subcollection') && strstr($active_trail[2]['href'], 'collection')) {
+            $colllink = array_pop($active_trail);
+            array_splice($active_trail, 1, 0, array($colllink));
+        }
+    }
+}
+
 function sarvaka_mediabase_form_alter(&$form, &$form_state, $form_id) {
 	// Add bo class to text areas for Tibetan descriptions
 	if ($form_id == 'video_node_form' || $form_id == 'audio_node_form' ) {
 		foreach($form['field_pbcore_description'][$form['field_pbcore_description']['#language']] as $key => &$item) {
 			if (is_numeric($key) && !empty($item['field_language'][$item['field_language']['#language']]['#default_value'][0])) {
-				if ($item['field_language'][$item['field_language']['#language']]['#default_value'][0] == 'Tibetan') {
+				if ($item['field_language'][$item['field_language']['#language']]['#default_value'][0] == 'Tibetan' ||
+                    $item['field_language'][$item['field_language']['#language']]['#default_value'][0] == 'Dzongkha') {
 					$item['field_description']['#attributes']['class'][] = 'bo';
 				}
 			}
@@ -143,6 +158,15 @@ function sarvaka_mediabase_facetapi_deactivate_widget($variables) {
  * Preprocess User Profile
  */
 function sarvaka_mediabase_preprocess_user_profile(&$variables) {
+    // dpm($variables);
+    // Updates to user profile to make it look a little better
+    $variables['user_profile']['realname']['#title'] = t("Name");
+    $variables['user_profile']['realname']['#label_display'] = 'above';
+    $variables['user_profile']['realname'][0]['#markup'] = strip_tags($variables['user_profile']['realname'][0]['#markup']);
+    $variables['user_profile']['realname']['#prefix'] = '<div class="profile-content">';
+    unset($variables['user_profile']['Personal Information']);
+    $variables['user_profile']['og_group_ref']['#suffix'] = '</div>';
+    // Turn realname into header
     $variables['user_profile']['group_audience']['#weight'] = 40; // Put Group Audience Last
 }
 
@@ -194,14 +218,18 @@ function sarvaka_mediabase_preprocess_node(&$vars) {
     if(in_array($ntype, array('collection', 'subcollection'))) {
         // Collection Teasers
         if($mode == 'teaser') {
-        	    	$vars['theme_hook_suggestions'][] = 'node__collection__teaser';   // Have them both use the same teaser template
-    	        // Get thumbnail image
+            $vars['theme_hook_suggestions'][] = 'node__collection__teaser';   // Have them both use the same teaser template
+            // Get thumbnail image
             if (empty($vars['field_general_featured_image']) || !isset($vars['field_general_featured_image']['und'][0]['uri'])) {
                 $vars['thumbnail_url'] = $base_path . drupal_get_path('module', 'mediabase') . '/images/collections-generic.png';
             } else {
                 $uri = $vars['field_general_featured_image']['und'][0]['uri'];
                 $style = 'av_gallery_thumb'; // Style defined in mb_structure update 7002
                  $vars['thumbnail_url'] = image_style_url($style, $uri);
+            }
+
+            if (strpos($vars['thumbnail_url'], '://audio-video/') > -1) {
+                $vars['thumbnail_url'] = drupal_get_path('module', 'mediabase') . "/images/generic-collection-thumb.jpg";
             }
             // Deal with the body/description (truncate)
             $vars['desc'] = "";
@@ -215,7 +243,7 @@ function sarvaka_mediabase_preprocess_node(&$vars) {
             }
             //dpm($vars, 'vars');
             // Get the number of items in the collection from mb_structure.module
-            $vars['item_count'] = get_items_in_collection($vars['nid']);
+            $vars['item_count'] = shanti_collections_get_items_in_collection($vars['nid'], "count", 'created', TRUE, FALSE);
 
            $vars['coll'] = ($ntype == "subcollection") ? get_collection_ancestor_node($node) : FALSE;
 
@@ -266,12 +294,18 @@ function sarvaka_mediabase_preprocess_node(&$vars) {
                     }
                 }
                 // Implode the list into a comma separated string with ellipsis if there are more places than showing.
-                if (count($htmllist > 0)) {
+                if (count($htmllist) > 0) {
                     $vars['place_link'] = implode(', ', $htmllist);
                     if (count($placeList) > 2 || $charlen > 20) { $vars['place_link'] .= ', ...'; }
                 }
             }
-            //if ($node->nid == 13771) { dpm($vars, 'vars for node');}
+            // deal with errant thumb urls
+            if (strpos($vars['thumbnail_url'], '://audio-video/') > -1) {
+                $vars['thumbnail_url'] = '/' . drupal_get_path('module', 'mediabase') . "/images/generic-{$ntype}-thumb.jpg";
+            }
+            if (substr($vars['thumbnail_url'], 0, 5) == 'http:') {
+                $vars['thumbnail_url'] = str_replace('http:', 'https:', $vars['thumbnail_url']);
+            }
 		}
 
 		// Add collection field to group details
@@ -319,9 +353,11 @@ function sarvaka_mediabase_preprocess_node(&$vars) {
 	}
     $node_wrapper = entity_metadata_wrapper('node', $node);
     $creator = array();
+    $creator_type_roles = array('creator', 'producer');
     if (isset($node_wrapper->field_pbcore_creator) && count($node_wrapper->field_pbcore_creator)) {
         foreach ($node_wrapper->field_pbcore_creator as $person) {
-            if ($person->field_creator_role->value() == 'Creator') {
+            $creator_role = strtolower($person->field_creator_role->value());
+            if (in_array($creator_role, $creator_type_roles)) {
                 $creator[] = $person->field_creator->value();
             }
         }

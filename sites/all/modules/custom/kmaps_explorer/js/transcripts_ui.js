@@ -50,7 +50,7 @@
 
                                 vid.kBind('playerPlayed', function () {
                                     playerPlaying = true;
-                                    $('.icon', $playpause).removeClass('shanticon-play2').addClass('shanticon-pause');
+                                    $('.icon', $playpause).removeClass('shanticon-arrow-tri-right').addClass('shanticon-pause');
 
                                     if (that.playingThrough) {
                                         vid.kBind('playerUpdatePlayhead.playThrough', function (now, id) {
@@ -60,7 +60,7 @@
                                 });
                                 vid.kBind('playerPaused', function () {
                                     playerPlaying = false;
-                                    $('.icon', $playpause).removeClass('shanticon-pause').addClass('shanticon-play2');
+                                    $('.fa', $playpause).removeClass('shanticon-pause').addClass('shanticon-arrow-tri-right');
                                     that.unbindPlayListener(true);
                                 });
                                 $playpause.click(function () {

@@ -1,0 +1,67 @@
+<?php
+
+/**
+ * Checks at enable to make sure required hook is implementd: hook_node_facet_hits
+ */
+
+ function kmaps_integrated_search_enable() {
+     if (!_kmaps_integrated_search_hook_exists()) {
+         drupal_set_message(t('Required hook is not implemented! For facet trees to display counts upon keyword search the hook_node_facet_hits() must be implemented. See README for kmaps_integrated_search module.'), 'warning');
+     }
+ }
+
+/**
+ * Checks at runtime to make sure the site is implementing the hook_node_facet_hits
+ * If not, displays message on the status page
+ */
+function kmaps_integrated_search_requirements($phase) {
+          $requirements = array();
+
+//    if ($phase == 'runtime') {
+//        $requirements = array();
+//        $rmurl = url(drupal_get_path('module', 'kmaps_integrated_search') . '/README.md');
+//        if (!_shanti_kmaps_facet_hook_exists()) {
+//            $requirements['kmaps_integrated_search'] = array(
+//                'title' => t('Shanti Kmaps Facet Hook'),
+//                'value' => t("Required hook not implemented!"),
+//                'description' => t('The hook_node_facet_hits has not be implemented! In order for Kmaps Facet counts to display in facet trees
+//                                            after a Drupal keyword search, this hook must be implemented.
+//                                            See the <a href="@rmurl">README</a> in kmaps_integrated_search module.', array( '@rmurl' => $rmurl)),
+//                'severity' => REQUIREMENT_WARNING,
+//            );
+//            return $requirements;
+//        } else {
+//            $requirements['kmaps_integrated_search'] = array(
+//                'title' => t('Shanti Kmaps Facet Hook'),
+//                'value' => t("Required hook has been implemented!"),
+//                'description' => t('This site has implemented the required hook_node_facet_hits. See the
+//                                            <a href="@rmurl">README</a> in kmaps_integrated_search module for further information.', array( '@rmurl' => $rmurl)),
+//                'severity' => REQUIREMENT_OK,
+//            );
+//            return $requirements;
+//        }
+//    }
+
+// if ($phase == 'runtime') {
+//   if (($library = libraries_detect('shanti_kmaps_solr')) && !empty($library['installed'])) {
+//     // The library is installed. Awesome!
+//     // drupal_set_message("" . print_r($library, true));
+//   } else {
+//     // Something went wrong. :(
+//     // This contains a short status code of what went wrong, such as 'not found'.
+//     $error = $library['error'];
+//     // This contains a detailed (localized) error message.
+//     $error_message = $library['error message'];
+//     drupal_set_message(t($error_message),'error');
+//     var_dump($library);
+//   }
+// }
+
+  return $requirements;
+}
+
+function _kmaps_integrated_search_hook_exists() {
+//    $hooks = module_implements('node_facet_hits');
+//    return (count($hooks) == 0) ? FALSE : TRUE;
+  return TRUE;
+}

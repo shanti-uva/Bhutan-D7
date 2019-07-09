@@ -8,7 +8,6 @@
 * 
 */
 
-/* BEGIN sub-theme colors */
 .titlearea,
 .carousel-control,
 .breadcrumb .icon,
@@ -17,33 +16,19 @@
 .nav-tabs.nav-justified>li.active>a:focus,
 .nav-tabs.nav-justified>li.active>a:hover,
 .shanti-thumbnail-image.shanti-field-visuals .icon {
-  /* background-color: #c4be28 !important; */
   background-color: #ad8a28 !important;
 }
-/* darker shades below are used to better define details */
+
 .bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a .check-mark,
 .bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a:active .check-mark,
-.main-content .selectpicker .caret::before,
-.view-section .nav-tabs>li.active>a, 
-/*.view-section .nav-tabs>li.active>a:hover, 
-.view-section .nav-tabs>li.active>a:active,*/ 
-.view-section .fancytree-container .glyphicon,
-.view-section .fancytree-container .fancytree-node:hover > .glyphicon,
-.view-section .fancytree-container .fancytree-node:active > .glyphicon,
-.view-section .fancytree-node.fancytree-active > .glyphicon,
-.view-section .fancytree-node.fancytree-selected > .glyphicon {
-  /* color: rgb(196,190,40) !important; */
+.main-content .selectpicker .caret::before {
   color: #ad8a28 !important;
 }
 
 .nav-tabs.nav-justified>li.active {
   border-top-color: #ad8a28 !important;
 }
-/*
-.ui-resizable-handle.ui-resizable-w,
-.ui-resizable-handle.ui-resizable-w:hover { border-color: #ad8a28 transparent transparent transparent; }
-.ui-resizable-handle.ui-resizable-w:active { border-color: transparent; ---- reset --- }
-*/
+
 @media screen and (min-width: 500px) {
   .navbar-header .site-slogan{ color: #92782f !important; } /* Darker shade for banner site-slogan text */
   .navbar-brand:hover .site-slogan{ color: #555 !important; } 
@@ -58,10 +43,8 @@
 
 ::-moz-selection { background: #35397E !important; }
 ::selection { background: #35397E !important; }
-
-
 /*
- *  END Sarvaka subtheme colors 
+ *  END Images theme colors 
  */
 
 /*
@@ -246,6 +229,11 @@
 
 .page-mycontent-collections .views-exposed-form .views-exposed-widget input {
   width: 200px;
+}
+
+/** New No Wookmark collections **/
+.page-collections .shanti-no-wookmark {
+    margin-top: 2.5rem;
 }
 
 /** Pig grid drop down styles specific to images site **/
@@ -584,6 +572,13 @@
 }
 
 
+
+
+
+/* softer color than default #222 - temp fix for font bug that cases bold fonts in this app */
+.results-node-kmaps-resources a{
+  color:#444;
+}
 
 /*------ File Page ------
 .file-ss-div {

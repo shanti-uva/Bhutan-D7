@@ -85,6 +85,7 @@
 
 #search-flyout.extruder .text {
   border: none;
+  border-bottom: 1px solid #ddd;
   padding: 0;
   text-shadow: none;
   /* default panel container width is set */
@@ -100,7 +101,6 @@
   background: #f8f8f8;
   color: #333;
 }
-
 
 .extruder .btn-collapse-flyout{
   width: 2.8rem;
@@ -756,15 +756,20 @@ object.flip_label {
   border-width:0 1px;
 }
 
-
 .view-section .tab-content .tab-pane {
   padding: 1rem 0 0;
 }
-.view-section .tab-content .shanti-kmaps-faceted-search-kmaps-1.tab-pane.treeview,
-.view-section .tab-content .shanti-kmaps-faceted-search-kmaps-2.tab-pane.treeview,
-.view-section .tab-content .shanti-kmaps-faceted-search-kmaps-3.tab-pane.treeview{
-  padding-left:.75rem
+.view-section .tab-content .kmaps-integrated-search-kmaps-1,
+.view-section .tab-content .kmaps-integrated-search-kmaps-2,
+.view-section .tab-content .kmaps-integrated-search-kmaps-3{
+  padding-left:.75rem;
 }
+.view-section .tab-content .kmaps-integrated-search-kmaps-facets{
+  padding-left:.75rem;
+  padding-right: .75rem;
+}
+
+
 
 .view-section .nav-tabs {
   margin-top: 0 !important;
@@ -775,16 +780,9 @@ object.flip_label {
   font-size: 1.06em;
   line-height: 1.5em;
 }
-.view-section .nav-tabs>li.shanti-kmaps-faceted-search-kmaps-2{
+.view-section .nav-tabs>li.kmaps-integrated-search-kmaps-2{
   width:27%;
 }
-    /* Visuals search 
-    .visuals .view-section .nav-tabs>li.shanti-kmaps-faceted-search-kmaps-2{
-      width:23%;
-    }
-    .visuals .view-section .nav-tabs>li.shanti-kmaps-faceted-search-kmaps-1{
-      width:27%;
-    }*/
     
 .view-section .nav-tabs>li>a {
   color: #777;
@@ -843,10 +841,6 @@ object.flip_label {
 }
 
 
-.view-section .treeview .tab-content {
-  padding-top: 10px;
-  padding-bottom: 0;
-}
 /*---- END tabs -----*/
 
 /*---- START list table view ----*/
@@ -976,85 +970,6 @@ object.flip_label {
 }
 
 
-/**
-* search scrollbars
-*/
-
-/* new selector targets - dec 2018 */
-/*.view-section .listview>div,*/
-.view-section .treeview>div {
-  padding: 0;
-  overflow-y: scroll;
-}
-
-.view-section .treeview>div::-webkit-scrollbar {
-  width: 0.6rem;
-  border-radius: 0.6rem;
-  background-clip: padding-box;
-}
-
-.view-section .treeview>div::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.1);
-}
-
-.view-section .treeview>div::-webkit-scrollbar-thumb {
-  background-color: #e5e5e5;
-  border-radius: 0.6rem;
-  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.2);
-}
-
-.view-section .treeview>div:hover::-webkit-scrollbar-thumb {
-  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
-}
-
-
-
-
-/* older selector targets for scrolling pre-kmaps facets */
-/*
-.view-section .view-wrap::-webkit-scrollbar {
-  width: 0.6rem;
-  border-radius: 0.6rem;
-  background-clip: padding-box;
-}
-
-.view-section .view-wrap::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.1);
-}
-
-.view-section .view-wrap::-webkit-scrollbar-thumb {
-  background-color: #e5e5e5;
-  border-radius: 0.6rem;
-  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.2);
-}
-
-.view-section .view-wrap:hover::-webkit-scrollbar-thumb {
-  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
-}
-*/
-
-
-/*.view-section ul.fancytree-container::-webkit-scrollbar {
-  width: 0.6rem;
-  border-radius: 0.6rem;
-}
-
-.view-section ul.fancytree-container::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.1);
-}
-
-.view-section ul.fancytree-container::-webkit-scrollbar-thumb {
-  background-color: #e5e5e5;
-  border-radius: 0.6rem;
-  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.2);
-}
-
-.view-section ul.fancytree-container:hover::-webkit-scrollbar-thumb {
-  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
-}*/
-
-
-
 
 /**
 * bootstrap-select scrollbars
@@ -1175,10 +1090,6 @@ object.flip_label {
   margin-right: -15px;
 }
 
-.view-section .listview h3.popover-title {
-  font-size: medium;
-}
-
 .view-section .popover-content span.associated i {
   font-size: 1.68em;
   position: absolute;
@@ -1236,34 +1147,31 @@ object.flip_label {
 .fancytree-node {
   border: 1px solid transparent !important;
   display: block;
+  cursor:pointer;
 }
 
-.fancytree-node:hover,
-.fancytree-node:active,
+
+
 .fancytree-node.fancytree-active,
-.fancytree-node.fancytree-selected,
-.fancytree-container.fancytree-treefocus span.fancytree-node.fancytree-active {
-  background-color: #fff !important;
-  border-color: #eee !important;
+.fancytree-container.fancytree-treefocus span.fancytree-node.fancytree-active{
+  background-color: #4d59ca !important;
+  border-color: #fff !important;
 }
 
 .fancytree-container.fancytree-treefocus span.fancytree-node.fancytree-active,
 .fancytree-container.fancytree-treefocus span.fancytree-node.fancytree-active{
+  border-color: #fff !important;
+}
+
+.fancytree-node:not(.fancytree-active):hover,
+.fancytree-node:not(.fancytree-active):active {
+  background-color: #fff !important;
   border-color: #ccc !important;
 }
 
-.fancytree-node .ajax-progress{ position:absolute; right:0.6rem; background:transparent; /*padding-right:1rem;*/}
+.fancytree-node .ajax-progress{ position:absolute; right:0.6rem; background:transparent;}
 .fancytree-node.fancytree-has-children .ajax-progress{ right:0.1rem;}
 /*
-.fancytree-container li > .ajax-progress {
-  position: absolute;
-  left: 0;
-  /----- top: 0.15rem;
-  right: 0.1rem; ---------/
-  background: transparent;
-  padding: 0.1rem 0.5rem;
-}
-*/
 .fancytree-title a {
   color: #444;
 }
@@ -1272,6 +1180,7 @@ object.flip_label {
 .fancytree-title a:active {
   color: #111;
 }
+*/
 
 .fancytree-title {
   line-height: 1.68em;
@@ -1283,38 +1192,56 @@ object.flip_label {
   color:#333 !important;
 }
 
+.fancytree-node:hover .fancytree-title{
+  color:#df3d26 !important;
+}
+
+.fancytree-node.fancytree-active:hover,
+.fancytree-node.fancytree-active .fancytree-title:hover{
+  cursor:default;
+}
+
 .fancytree-exp-nl .fancytree-icon,
 .fancytree-exp-nl .fancytree-expander,
 .fancytree-exp-n .fancytree-icon,
 .fancytree-exp-n .fancytree-expander{
   display:none;
 }
-/*
-.fancytree-title:hover,
-.fancytree-title:active {
-  color: #111;
-}
-*/
+
 .fancytree-title::before {
-  background: #fff;
   color: transparent;
-  font-family: 'shanticon';
-  content: '\e625';
   font-size: 1em;
   float: left;
+  display: inline-block;
+    font-family: 'shanticon';
+  content: '\e625';
+  /*
+
+  background: #fff;
   position: relative;
-  top: 0.7rem;
+  top: 0.65rem;
   right: 0.426rem;
   border-radius: 50%;
   background-clip: padding-box;
   width: 9px;
   height: 9px;
-  display: inline-block;
   margin-right: .7rem;
   box-shadow: 0 0 2px 1px #aaa;
+  */
+    width: 1.6rem;
+    height: .175rem;
+    border-radius: 0;
+    box-shadow: none;
+    border: none;
+    background-color: #ccc;
+    position: relative;
+    top: .68em;
+    left: 0.4rem;
+    margin-right: 1.6rem;
 }
 
-.fancytree-title:hover::before {
+.fancytree-title:hover::before,
+.fancytree-node:not(.fancytree-active):hover .fancytree-title::before{
   background: #777;
   box-shadow: none;
 }
@@ -1340,30 +1267,20 @@ object.flip_label {
   top: 0;
 }
 
-.fancytree-active .fancytree-title,
-.fancytree-selected .fancytree-title {
-  color: #000;
-}
-
-.fancytree-active.fancytree-has-children .fancytree-title::before,
-.fancytree-selected.fancytree-has-children .fancytree-title::before {
+.fancytree-active.fancytree-has-children .fancytree-title::before {
   content: none;
   text-shadow: none;
   display: none;
 }
 
-.fancytree-active .fancytree-title::before,
-.fancytree-selected .fancytree-title::before {
-  background: #888;
+.fancytree-node.fancytree-active .fancytree-title::before {
   box-shadow: none;
+  background-color:#eee;
 }
 
-.fancytree-node .fancytree-expander{
-  /*background-image: none !important;*/
-}
+
 
 .fancytree-container .glyphicon {
-  /*color: #4d59ca;*/
   font-family: 'Glyphicons Halflings';
   font-size: 15px;
   margin-right: 1.2rem;
@@ -1381,9 +1298,7 @@ object.flip_label {
 }
 
 .fancytree-node.fancytree-active:active > .glyphicon,
-.fancytree-node.fancytree-active .glyphicon,
-.fancytree-node.fancytree-selected:active > .glyphicon,
-.fancytree-node.fancytree-selected .glyphicon {
+.fancytree-node.fancytree-active .glyphicon {
   opacity: .85;
   background: transparent;
 }
@@ -1399,12 +1314,19 @@ object.flip_label {
 */
 
 .fancytree-plain .fancytree-active .fancytree-title,
-.fancytree-plain .fancytree-selected .fancytree-title,
 .fancytree-plain .fancytree-has-children > .fancytree-title,
 .fancytree-plain .fancytree-container.fancytree-treefocus .fancytree-focused .fancytree-title,
 .fancytree-plain .fancytree-node:hover .fancytree-title{
   background-color: transparent !important;
   border-color: transparent !important;
+}
+
+.view-section .fancytree-node.fancytree-active > .glyphicon {
+  color: #fff !important;
+}
+.view-section .fancytree-node.fancytree-active:hover > .glyphicon,
+.view-section .fancytree-node.fancytree-active:active > .glyphicon {
+  color: #fff !important;
 }
 
 /**
@@ -1428,7 +1350,7 @@ object.flip_label {
 
 .loading-container,
 .loading {
-  height: 150px;
+  height: 15rem;
   position: relative;
   left: 2.7rem;
   width: 15rem;
@@ -1439,7 +1361,7 @@ object.flip_label {
 
 .loading-container {
   position: relative;
-  top: 22rem;
+  top: 27rem !important;
   margin: 0 auto;
 }
 
@@ -1747,8 +1669,9 @@ object.flip_label {
 .input-section .search-filters{
   padding: 0 1.5rem 1rem;
 }
-
-.view-wrap .kmaps-tt-suggestion:hover:not(.kmaps-tt-selected):not(.kmaps-tt-zero-facet){
+/* .view-wrap .kmaps-tt-suggestion:hover:not(.kmaps-tt-selected):not(.kmaps-tt-zero-facet) */
+.view-wrap .kmaps-tt-suggestion:hover:not(.kmaps-tt-selected),
+.view-wrap .kmaps-tt-suggestion:hover:not(.kmaps-tt-zero-facet){
     background-color: #d1e2f3 !important;
 }
 
@@ -1872,10 +1795,11 @@ object.flip_label {
   margin: 1px 2px 3px 0;
 }
 
-/* in active state remove default blue background and outline */
+/* in active state remove default blue background and outline - similar to line #1344 */
 .extruder .view-section .fancytree-active .fancytree-title{
   outline: none;
   background-color: transparent;
+  color:#fff !important;
 }
 .extruder .view-section .active-kmfacets-list .selected-kmap{
   text-shadow: 0 1px 2px #555;
@@ -1987,277 +1911,17 @@ ul.facetapi-facet-transcript-languages li > a[href$="_empty_"] {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/**
-*
-*  TO BE DELETED
-*
-**/
-
-
-/**
-* Advanced Options
-*/
-.input-section .advanced-view {
-      display:none;
-}
-
-/* advanced toggle for search panel */
-.input-section .toggle-link {
-  font-size: 0.88em;
-  display: block;
-  text-align: right;
-  font-weight: 600;
-  margin: .5rem 2.5rem 0 0;
-}
-
-.input-section .toggle-link:hover {
-  text-decoration: none !important;
-}
-
-.input-section .toggle-link .icon::before {
-  color: #555 !important;
-  font-family: 'FontAwesome';
-  content: '\f067';
-  font-size: 0.82em;
-  margin-right: 0.25em;
-}
-
-.input-section .toggle-link:hover .icon::before {
-  color: #555 !important;
-}
-
-.input-section .feature-group .toggle-link.feature-toggle {
-  float: right;
-  padding: 0 10px 0 0;
-  margin: 0;
-  position: relative;
-  top: -1px;
-}
-
-.input-section .toggle-link.advanced-link {
-  display:none;
-}
-
-.input-section .feature-group .toggle-link.show-features .icon::before, /*--- for feature types ---*/
-.input-section .toggle-link.show-advanced .icon::before {
-  content: '\f068';
-}
-
-/***
-.input-section .feature-group .toggle-link.feature-toggle{ float:right;padding:0 10px 0 0;margin:0;display:inline;position:relative;top:-1px;}
-.input-section .toggle-link.advanced-link{ margin-bottom:4px;}
-.input-section .feature-group .toggle-link.show-features i{ content:'\f068';}
-.input-section .toggle-link.advanced-link.show-options i.icon::before,
-.input-section .feature-group .toggle-link.feature-toggle.show-features i.icon::before{ fcontent:'\f068';}
-***/
-
-/*--- iCheck / radio and checkbox style overrides ---*/
-.input-section .icheckbox_minimal-red,
-.input-section .iradio_minimal-red {
-  height: 1.5em;
-  margin-right: 4px;
-}
-
-.input-section .radio-inline input,
-.input-section .radio input[type='radio'],
-.input-section .radio-inline input[type='radio'] {
-  margin-left: 5px;
-}
-
-.input-section .checkbox-inline,
-.input-section .radio-inline {
-  padding: 0 0 0 3px;
-}
-/* .input-section .checkbox-inline{ margin-left:1px;} */
-.input-section .radio-inline+.radio-inline,
-.input-section .checkbox-inline+.checkbox-inline {
-  margin-left: 0.06em;
-}
-
-.input-section .radio-inline>div,
-.input-section .checkbox-inline>div {
-  position: relative;
-  top: -2px;
-  margin: 0;
-  padding: 0;
-} /* graphic icon */
-.input-section label.radio-inline:first-child {
-  width: 6.62em;
-  min-width: 6.62em;
-  max-width: 15em;
-  padding-left: 3px;
-}
-
-
-/**
-* BEGIN select dropdown
-*/
-.input-section .bootstrap-select.btn-group:not(.input-group-btn),
-.input-section .bootstrap-select.btn-group[class*="span"]{
-  margin-top: 1rem;
-}
-
-.input-section .bootstrap-select.btn-group li a span {
-  background: transparent !important;
-  color: #444;
-}
-
-.input-section .bootstrap-select.btn-group li a span:hover {
-  color: #fff;
-}
-
-.input-section .bootstrap-select.btn-group .popover-title .close{
-  line-height: .75;
-  font-weight:normal;
-}
-
-.input-section .bootstrap-select.btn-group .dropdown-menu>li>a .glyphicon:not(.glyphicon-ok){
-  font-size: 1.18em;
-  position: absolute;
-  left: 0.8em;
-  top: 0.6rem;
-  color: #555;
-}
-
-.input-section .bootstrap-select.btn-group .dropdown-menu>li>a .glyphicon:not(.glyphicon-ok) ~ span.text {
-  padding-left: 2.8rem;
-}
-
-.advanced-view .form-group.advanced-input.select-type {
-  padding: 2px 1.2rem 2px;
-}
-
-.advanced-view .form-group.advanced-input .form-control {
-  line-height: 27px;
-  height: 27px;
-  padding: 0 1.5rem;
-  margin: 2px 0;
-  width: 100% !important;
-  color: #666;
-  background: #fff;
-  background-image: none;
-  border: 1px solid #ccc;
-  border-radius: 18px;
-  background-clip: padding-box;
-  overflow: hidden;
-  vertical-align: middle;
-  box-shadow: 0 2px 5px #eee inset;
-}
-
-.advanced-view > .form-group:last-of-type .form-group{
-  border-top:none;
-  padding: 0 !important;
-}
-
-.advanced-view .form-group.advanced-input .form-control:hover {
-  border: 1px solid #ccc;
-  color: #777;
-}
-
-.advanced-view .form-group.advanced-input .form-control:focus {
-  border: 1px solid #9097d3;
-  box-shadow: 0 0 4px #949bd8;
-}
-
-.advanced-view .form-group.advanced-input.select-type > span {
-  font-size: 0.93em;
-  position: relative;
-  top: 6px;
-  left: 12px;
-}
-
-.input-section .kmaps-tt-header .close{
-  position: relative;
-  top: -1rem;
-}
-
-.extruder .bootstrap-select.btn-group .btn:focus,
-.extruedr .bootstrap-select.btn-group .btn.active{
-  border: 1px solid #ccc;
-  box-shadow: inset 0 0 4px 0 #eee;
-  background: #fdfdfd;
-}
-
-/**
-*** END / Input & Advanced */
-
-
-
-
-/**
-* - Custom theme color change under Search Flyout Tabs Places - Subjects
-*/
-
-/* custom theme color change under Search Flyout Tabs Places - Subjects */
-.front .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-1>a,
-.front .view-section .shanti-kmaps-faceted-search-kmaps-1 .fancytree-container .glyphicon,
-.front .view-section .shanti-kmaps-faceted-search-kmaps-1 .fancytree-container .fancytree-node:hover > .glyphicon, 
-.front .view-section .shanti-kmaps-faceted-search-kmaps-1 .fancytree-container .fancytree-node:active > .glyphicon, 
-.front .view-section .shanti-kmaps-faceted-search-kmaps-1 .fancytree-node.fancytree-active > .glyphicon,
-.page-subjects .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-1>a,
-.page-subjects .view-section .shanti-kmaps-faceted-search-kmaps-1 .fancytree-container .glyphicon,
-.page-subjects .view-section .shanti-kmaps-faceted-search-kmaps-1 .fancytree-container .fancytree-node:hover > .glyphicon, 
-.page-subjects .view-section .shanti-kmaps-faceted-search-kmaps-1 .fancytree-container .fancytree-node:active > .glyphicon, 
-.page-subjects .view-section .shanti-kmaps-faceted-search-kmaps-1 .fancytree-node.fancytree-active > .glyphicon{
-  color: #49a0f2 !important;
-}
-.front .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-2>a,
-.front .view-section .shanti-kmaps-faceted-search-kmaps-2 .fancytree-container .glyphicon,
-.front .view-section .shanti-kmaps-faceted-search-kmaps-2 .fancytree-container .fancytree-node:hover > .glyphicon, 
-.front .view-section .shanti-kmaps-faceted-search-kmaps-2 .fancytree-container .fancytree-node:active > .glyphicon, 
-.front .view-section .shanti-kmaps-faceted-search-kmaps-2 .fancytree-node.fancytree-active > .glyphicon,
-.page-places .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-2>a,
-.page-places .view-section .shanti-kmaps-faceted-search-kmaps-2 .fancytree-container .glyphicon,
-.page-places .view-section .shanti-kmaps-faceted-search-kmaps-2 .fancytree-container .fancytree-node:hover > .glyphicon, 
-.page-places .view-section .shanti-kmaps-faceted-search-kmaps-2 .fancytree-container .fancytree-node:active > .glyphicon, 
-.page-places .view-section .shanti-kmaps-faceted-search-kmaps-2 .fancytree-node.fancytree-active > .glyphicon{
-  color: #cc4c39 !important;
-}
-.front .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-3>a,
-.front .view-section .shanti-kmaps-faceted-search-kmaps-3 .fancytree-container .glyphicon,
-.front .view-section .shanti-kmaps-faceted-search-kmaps-3 .fancytree-container .fancytree-node:hover > .glyphicon, 
-.front .view-section .shanti-kmaps-faceted-search-kmaps-3 .fancytree-container .fancytree-node:active > .glyphicon, 
-.front .view-section .shanti-kmaps-faceted-search-kmaps-3 .fancytree-node.fancytree-active > .glyphicon,
-.page-places .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-3>a,
-.page-places .view-section .shanti-kmaps-faceted-search-kmaps-3 .fancytree-container .glyphicon,
-.page-places .view-section .shanti-kmaps-faceted-search-kmaps-3 .fancytree-container .fancytree-node:hover > .glyphicon, 
-.page-places .view-section .shanti-kmaps-faceted-search-kmaps-3 .fancytree-container .fancytree-node:active > .glyphicon, 
-.page-places .view-section .shanti-kmaps-faceted-search-kmaps-3 .fancytree-node.fancytree-active > .glyphicon,
-.page-subjects .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-3>a,
-.page-subjects .view-section .shanti-kmaps-faceted-search-kmaps-3 .fancytree-container .glyphicon,
-.page-subjects .view-section .shanti-kmaps-faceted-search-kmaps-3 .fancytree-container .fancytree-node:hover > .glyphicon, 
-.page-subjects .view-section .shanti-kmaps-faceted-search-kmaps-3 .fancytree-container .fancytree-node:active > .glyphicon, 
-.page-subjects .view-section .shanti-kmaps-faceted-search-kmaps-3 .fancytree-node.fancytree-active > .glyphicon{
-  color: #a57546 !important;
-}
-
-.front .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-1>a,
-.page-subjects .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-1>a{
+.front .view-section .nav-tabs>li.active.kmaps-integrated-search-kmaps-1>a,
+.page-subjects .view-section .nav-tabs>li.active.kmaps-integrated-search-kmaps-1>a{
   border-top-color: #49a0f2 !important;
 }
-.front .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-2>a,
-.page-places .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-2>a{
+.front .view-section .nav-tabs>li.active.kmaps-integrated-search-kmaps-2>a,
+.page-places .view-section .nav-tabs>li.active.kmaps-integrated-search-kmaps-2>a{
   border-top-color: #cc4c39 !important;
 }
-.front .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-3>a,
-.page-places .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-3>a,
-.page-subjects .view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-3>a{
+.front .view-section .nav-tabs>li.active.kmaps-integrated-search-kmaps-3>a,
+.page-places .view-section .nav-tabs>li.active.kmaps-integrated-search-kmaps-3>a,
+.page-subjects .view-section .nav-tabs>li.active.kmaps-integrated-search-kmaps-3>a{
   border-top-color: #a57546 !important;
 }
 
@@ -2276,35 +1940,32 @@ ul.facetapi-facet-transcript-languages li > a[href$="_empty_"] {
 }
 
 
-.view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-1>a,
-.view-section .shanti-kmaps-faceted-search-kmaps-1 .fancytree-container .glyphicon,
-.view-section .shanti-kmaps-faceted-search-kmaps-1 .fancytree-container .fancytree-node:hover > .glyphicon, 
-.view-section .shanti-kmaps-faceted-search-kmaps-1 .fancytree-container .fancytree-node:active > .glyphicon, 
-.view-section .shanti-kmaps-faceted-search-kmaps-1 .fancytree-node.fancytree-active > .glyphicon{
+.view-section .nav-tabs>li.active.kmaps-integrated-search-kmaps-1>a,
+.view-section .kmaps-integrated-search-kmaps-1 .fancytree-container .glyphicon,
+.view-section .kmaps-integrated-search-kmaps-1 .fancytree-container .fancytree-node:hover > .glyphicon, 
+.view-section .kmaps-integrated-search-kmaps-1 .fancytree-container .fancytree-node:active > .glyphicon{
   color: #49a0f2 !important;
 }
-.view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-2>a,
-.view-section .shanti-kmaps-faceted-search-kmaps-2 .fancytree-container .glyphicon,
-.view-section .shanti-kmaps-faceted-search-kmaps-2 .fancytree-container .fancytree-node:hover > .glyphicon, 
-.view-section .shanti-kmaps-faceted-search-kmaps-2 .fancytree-container .fancytree-node:active > .glyphicon, 
-.view-section .shanti-kmaps-faceted-search-kmaps-2 .fancytree-node.fancytree-active > .glyphicon{
+.view-section .nav-tabs>li.active.kmaps-integrated-search-kmaps-2>a,
+.view-section .kmaps-integrated-search-kmaps-2 .fancytree-container .glyphicon,
+.view-section .kmaps-integrated-search-kmaps-2 .fancytree-container .fancytree-node:hover > .glyphicon, 
+.view-section .kmaps-integrated-search-kmaps-2 .fancytree-container .fancytree-node:active > .glyphicon{
   color: #cc4c39 !important;
 }
-.view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-3>a,
-.view-section .shanti-kmaps-faceted-search-kmaps-3 .fancytree-container .glyphicon,
-.view-section .shanti-kmaps-faceted-search-kmaps-3 .fancytree-container .fancytree-node:hover > .glyphicon, 
-.view-section .shanti-kmaps-faceted-search-kmaps-3 .fancytree-container .fancytree-node:active > .glyphicon, 
-.view-section .shanti-kmaps-faceted-search-kmaps-3 .fancytree-node.fancytree-active > .glyphicon{
+.view-section .nav-tabs>li.active.kmaps-integrated-search-kmaps-3>a,
+.view-section .kmaps-integrated-search-kmaps-3 .fancytree-container .glyphicon,
+.view-section .kmaps-integrated-search-kmaps-3 .fancytree-container .fancytree-node:hover > .glyphicon, 
+.view-section .kmaps-integrated-search-kmaps-3 .fancytree-container .fancytree-node:active > .glyphicon{
   color: #a57546 !important;
 }
 
-.view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-1>a{
+.view-section .nav-tabs>li.active.kmaps-integrated-search-kmaps-1>a{
   border-top-color: #49a0f2 !important;
 }
-.view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-2>a{
+.view-section .nav-tabs>li.active.kmaps-integrated-search-kmaps-2>a{
   border-top-color: #cc4c39 !important;
 }
-.view-section .nav-tabs>li.active.shanti-kmaps-faceted-search-kmaps-3>a{
+.view-section .nav-tabs>li.active.kmaps-integrated-search-kmaps-3>a{
   border-top-color: #a57546 !important;
 }
 
@@ -2324,6 +1985,652 @@ ul.facetapi-facet-transcript-languages li > a[href$="_empty_"] {
 
 .ui-resizable-handle.ui-resizable-nw:active { 
   background-color: #4d59ca !important; 
+}
+
+
+
+
+
+.view-section .kmaps-integrated-search-kmaps-1 .fancytree-node.fancytree-active > .glyphicon,
+.view-section .kmaps-integrated-search-kmaps-2 .fancytree-node.fancytree-active > .glyphicon,
+.view-section .kmaps-integrated-search-kmaps-3 .fancytree-node.fancytree-active > .glyphicon {
+  color: #fff !important;
+  cursor:pointer;
+}
+
+.view-section .kmaps-integrated-search-kmaps-1 .fancytree-container .fancytree-node.fancytree-active:hover > .glyphicon, 
+.view-section .kmaps-integrated-search-kmaps-1 .fancytree-container .fancytree-node.fancytree-active:active > .glyphicon,
+.view-section .kmaps-integrated-search-kmaps-2 .fancytree-container .fancytree-node.fancytree-active:hover > .glyphicon, 
+.view-section .kmaps-integrated-search-kmaps-2 .fancytree-container .fancytree-node.fancytree-active:active > .glyphicon,
+.view-section .kmaps-integrated-search-kmaps-3 .fancytree-container .fancytree-node.fancytree-active:hover > .glyphicon, 
+.view-section .kmaps-integrated-search-kmaps-3 .fancytree-container .fancytree-node.fancytree-active:active > .glyphicon{
+  color: #fff !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/* ------------------------------------------------------------
+** BEGIN Facet Module CSS Integration - June 4, 2019 mf8yk
+** ------------------------------------------------------------
+** all styles moved to Sarvaka theme shanti-search.css 
+** from module/kmaps_integrated_search.css
+** ------------------------------------------------------------
+*/
+
+
+
+/**
+ *  Styles Needed to make three tabs fit horizontally in the search flyout.
+*/
+
+.km-facet-div .tab-content {
+  /*padding-top: 10px;
+  padding-bottom: 0;*/
+}
+
+.km-facet-div > div{
+  overflow-y: scroll;
+  background: #f8f8f8;
+  padding: 0;
+  overscroll-behavior: none;
+  padding-bottom: 12rem !important; /* Temp: manage reveal at bottom menu items taht become hidden  as facets are selected in the fancy-tree */
+}
+
+.km-facet-div.shanti-kmaps-faceted-search-kmaps-facets > div{
+  padding-bottom: 2rem !important; /* less bottom padding for facet-Filters Tab */
+}
+
+
+
+
+/**
+* -------------------------------
+* BEGIN - Fancy-Tree
+*/
+ .km-facet-div .fancytree-title{
+    font-size: 1.06em;
+    line-height:1.38em;
+    margin-left: 2.5rem;
+}
+
+.km-facet-div .fancytree-has-children > .fancytree-title{
+    margin-left: 4.1rem;
+}
+
+.km-facet-div .fancytree-node:not(.fancytree-has-children) > .fancytree-title{
+    /*margin-left: 2.5rem;*/
+}
+/* fancytree menus highlight for navigation on test link */
+.km-facet-div .fancytree-node .fancytree-title:hover{
+    /*color: #df3d26 !important;*/
+}
+
+.km-facet-div .fancytree-node .fancytree-title:active{
+    /*color: #333 !important;*/
+}
+
+
+
+.km-facet-div .fancytree-node{
+    padding-left:0;
+    padding-top:.2rem;
+    padding-bottom:0;
+}
+
+.km-facet-div .fancytree-container .fancytree-checkbox{
+    position: absolute;
+    top: .4rem;
+    left: 0.3rem;
+    filter: alpha(opacity=50);
+    opacity:.5;
+    font-size: 1.25em;
+}
+
+.km-facet-div .fancytree-container .fancytree-checkbox:hover{
+    filter: alpha(opacity=100);
+    opacity:1;
+}
+
+.km-facet-div .fancytree-container .fancytree-active .fancytree-checkbox{
+    filter: alpha(opacity=75);
+    opacity:.75;
+}
+
+.km-facet-div .fancytree-container .fancytree-active .fancytree-checkbox:hover{
+    filter: alpha(opacity=100);
+    opacity: 1;
+}
+
+.km-facet-div .fancytree-node .fancytree-expander{
+    position: absolute;
+    left: 3.45rem;
+    top: .6rem;
+    font-size: 1.7rem;
+    -webkit-transform: scale(1.1);
+            transform: scale(1.1);
+    filter: alpha(opacity=80);
+    opacity:.8;
+    cursor:default;
+}
+.km-facet-div .fancytree-node .fancytree-expander:hover{
+    filter: alpha(opacity=100);
+    opacity: 1;
+}
+
+.km-facet-div .shanti-kmaps-solr-facet-item .fancytree-checkbox{
+    filter: alpha(opacity=30);
+    opacity:.3;
+    position: relative;
+    top: .175rem;
+    font-size: 1.25em;
+    margin-right: .5rem;
+}
+.km-facet-div .shanti-kmaps-solr-facet-item .fancytree-checkbox:hover{
+    filter: alpha(opacity=70);
+    opacity: .7;
+}
+.km-facet-div .shanti-kmaps-solr-facet-item .fancytree-checkbox:active{
+    filter: alpha(opacity=100);
+    opacity: 1;
+}
+.km-facet-div .fancytree-node:not(.fancytree-has-children) > .fancytree-checkbox{
+    position: absolute;
+    left: .3rem;
+}
+
+.fancytree-node.fancytree-active .fancytree-checkbox:hover{
+  cursor:pointer;
+}
+
+
+
+
+
+/**
+* -------------------------------
+* BEGIN - Facet - Filters
+*/
+.active-kmfaceted-list {
+    padding: 4px 4px 2px 4px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    font-size: 90%;
+    overflow: hidden;
+}
+
+.active-kmfaceted-list .facet-item {
+    float: left;
+    max-height: 1.5em;
+    margin: 0px 2px 2px 0px;
+    padding: 0px 6px 0px 0px;
+    text-transform: capitalize;
+    font-weight: normal;
+}
+
+.active-kmfaceted-list .facet-item .kmfaceted-item-delete {
+    padding-right: 4px;
+    cursor:pointer;
+}
+
+.shanti-kmaps-facets-block .kmf-no-results {
+    padding: 6px 12px;
+    font-style: italic;
+}
+
+/* capitalize Type (Places and Subjects) */
+.shanti-kmaps-solr-facet-item[data-facet-type='Type'] {
+    text-transform: capitalize;
+}
+
+
+/* Styling for Facet block */
+.shanti-kmaps-faceted-search-block-facets {
+    padding: 0 1rem 5rem .75rem;
+}
+
+/* search flyout facet list header element */
+.shanti-kmaps-solr-facet-title {
+    font-weight: 400;
+    padding: .3rem 1rem 0.2rem 1rem;
+    border: 1px solid #aaa;
+    border-width: 1px 4px 1px 1px;
+    /*border-color: #aaa #aaa transparent transparent;*/
+    cursor: pointer;
+    font-size: 1.12em;
+    line-height: 1.75em;
+
+            background-color: #fff;
+            border-color: #aaa #aaa #ccc #ccc;
+}
+
+.shanti-kmaps-solr-facet-title:hover,
+.shanti-kmaps-solr-facet-block.facets-showing-all .shanti-kmaps-solr-facet-title{
+    background-color:#fff;
+    border-color:#555 #333 #aaa #aaa;
+    color:#000;
+}
+
+/* see more facets link */
+.shanti-kmaps-solr-facet-block .shanti-kmaps-solr-facet-see-more{
+  font-size: .88em;
+  font-style: italic;
+  cursor: pointer;
+  position: absolute;
+  z-index: 1;
+  right:0;
+  bottom:0.1rem;
+  background-color: #f8f8f8;
+  padding:.2rem .5rem;
+}
+.shanti-kmaps-solr-facet-block .shanti-kmaps-solr-facet-see-more:hover,
+.shanti-kmaps-solr-facet-block .shanti-kmaps-solr-facet-see-more:active{
+    color: #df3d26 !important;
+}
+
+.shanti-kmaps-solr-facet-block .shanti-kmaps-solr-facet-see-more:after{
+  content: "+ more..."
+}
+
+.shanti-kmaps-solr-facet-block.facets-showing-all .shanti-kmaps-solr-facet-see-more:after{
+  content: "– show less..."
+}
+
+.shanti-kmaps-solr-facet-block.quickfiltered .shanti-kmaps-solr-facet-see-more{
+    display:none;
+}
+
+
+
+.shanti-kmaps-solr-facet-block .shanti-kmaps-solr-facet-sort-alpha:after,
+.shanti-kmaps-solr-facet-block .shanti-kmaps-solr-facet-sort-count:after{
+  content: '\e655';
+  font-family:'shanticon';
+  font-size:1.38em;
+}
+
+.shanti-kmaps-solr-facet-block .shanti-kmaps-solr-facet-sort-alpha:after{
+  content: '\e652';
+}
+
+
+
+
+.facets-short-list .shanti-kmaps-solr-facet-title:hover{
+    /*background-color: transparent;
+    border-color: #aaa #aaa transparent transparent;*/
+    cursor:default;
+}
+
+.shanti-kmaps-solr-facet-title > .glyphicon {
+    cursor: pointer;
+    position: relative;
+    top: 0.3rem;
+    margin-left: -.3rem;
+    margin-right: 0.4rem;
+    font-size: 1.12em;
+    color:#4d59ca;
+    filter: alpha(opacity=80);
+    opacity: .8;
+    -webkit-transform: scale(1.05);
+            transform: scale(1.05);
+}
+.shanti-kmaps-solr-facet-title:hover .glyphicon,
+.shanti-kmaps-solr-facet-title .glyphicon:hover{
+    filter: alpha(opacity=100);
+    opacity:1;
+        -webkit-transform: scale(1.15);
+            transform: scale(1.15);
+}
+.facets-short-list .shanti-kmaps-solr-facet-title:hover .glyphicon,
+.facets-short-list .shanti-kmaps-solr-facet-title:hover .glyphicon:hover{
+    filter: alpha(opacity=80);
+    opacity: .8;
+    -webkit-transform: scale(1.05);
+            transform: scale(1.05);    
+}
+
+
+.page-subjects .shanti-kmaps-solr-facet-title > .glyphicon {
+        color:#4d59ca !important;
+}
+.shanti-kmaps-solr-facet-title > .glyphicon.glyphicon-record{
+    filter: alpha(opacity=50);
+    opacity:.5;
+}
+.shanti-kmaps-solr-facet-title > .glyphicon.glyphicon-record{
+    cursor:default;
+}
+.km-facet-div .shanti-kmaps-solr-facet-item:hover span.glyphicon-unchecked{
+    content: '\e067';
+}
+.km-facet-div .shanti-kmaps-solr-facet-item .fancytree-checkbox:hover{
+    filter: alpha(opacity=100);
+    opacity:1;
+}
+
+
+
+
+/* badge counts for facet lists - header toggle */
+.shanti-kmaps-solr-facet-title .badge{
+    font-size: .75em;
+    font-weight: 400;
+    background-color: transparent;
+    color: #000;
+    border-radius: 0;
+    position: absolute;
+    top: 0.35rem;
+    right: 0.3rem;
+    height: 2.3em;
+    margin: 0;
+    padding: 0.2rem .75rem 0 2rem;
+    text-align: center;
+    line-height: 2.2em;
+    -webkit-transition: all .2s ease-in-out;
+    transition: all .2s ease-in-out;
+}
+
+.shanti-kmaps-solr-facet-title .badge::before{
+    content:'Showing: 5/';
+        letter-spacing: 0.065rem;
+}
+.facets-showing-all .shanti-kmaps-solr-facet-title .badge::before,
+.facets-short-list .shanti-kmaps-solr-facet-title .badge::before{
+    content:'Total: ';
+}
+
+/* active/open state for toggle */
+.shanti-kmaps-solr-facet-block.facets-showing-all .shanti-kmaps-solr-facet-title .badge {
+    padding-left: 1.7rem;
+}
+/* this may not be needed */
+.shanti-kmaps-solr-facet-block.facets-showing-all .glyphicon-record + .badge{
+    padding-left: 1rem;
+}
+
+/* active/open state for toggle */
+.shanti-kmaps-solr-facet-title:hover .badge,
+.shanti-kmaps-solr-facet-block.facets-showing-all .shanti-kmaps-solr-facet-title .badge {
+    padding-left: 2rem;
+}
+/* this may not be needed */
+.shanti-kmaps-solr-facet-title:hover .glyphicon-record + .badge,
+.shanti-kmaps-solr-facet-block.facets-showing-all .glyphicon-record + .badge{
+    padding-left: 1rem;
+}
+
+
+
+
+
+
+
+
+/**
+* search scrollbars
+*/
+
+.view-section .km-facet-div>div::-webkit-scrollbar {
+  width: 0.6rem;
+  border-radius: 0.6rem;
+  background-clip: padding-box;
+}
+
+.view-section .km-facet-div>div::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.1);
+}
+
+.view-section .km-facet-div>div::-webkit-scrollbar-thumb {
+  background-color: #e5e5e5;
+  border-radius: 0.6rem;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.2);
+}
+
+.view-section .km-facet-div>div:hover::-webkit-scrollbar-thumb {
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+}
+
+
+
+
+.shanti-kmaps-solr-facet-block dd,
+.view-section .km-facet-div>div{
+    background: #f8f8f8;
+}
+
+
+
+
+.shanti-kmaps-solr-facet-block{
+    position: relative;
+    padding: 0;
+    margin: 1.25rem 0 0;
+    background: #f8f8f8
+}
+
+.shanti-kmaps-solr-facet-block:first-child{
+    margin-top:0;
+}
+
+.shanti-kmaps-solr-facet-block dd{
+    margin: 0.35rem 0 0;
+    padding: 0 0 0 .7rem;
+    line-height: 1.88em;
+    overflow: hidden;
+    position: relative;
+    white-space: nowrap;
+    font-size:.82em;
+}
+
+.shanti-kmaps-solr-facet-block dd:active::before {
+  background: #fff;
+  box-shadow: 0 0 .2rem .1rem #aaa;
+}
+
+.shanti-kmaps-solr-facet-block a{
+    color:#000;
+    font-size: 1.12em;
+    /*text-transform: capitalize;*/
+}
+
+.shanti-kmaps-solr-facet-block.facets-showing-all dd a:hover{
+    color: #df3d26 !important;
+}
+
+/* alternate Veil method at bottom of long lists, allows checkbox interaction */
+.shanti-kmaps-solr-facet-block:not(.facets-short-list) dd:nth-of-type(4),
+.shanti-kmaps-solr-facet-block:not(.facets-short-list) dd:nth-of-type(4) a{
+    color:#606060;
+}
+.shanti-kmaps-solr-facet-block:not(.facets-short-list) dd:nth-of-type(5),
+.shanti-kmaps-solr-facet-block:not(.facets-short-list) dd:nth-of-type(5) a{
+    color:#888;
+}
+.shanti-kmaps-solr-facet-block:not(.facets-short-list) dd:nth-of-type(6),
+.shanti-kmaps-solr-facet-block:not(.facets-short-list) dd:nth-of-type(6) a{
+    color:#c0c0c0;
+}
+.shanti-kmaps-solr-facet-block.quickfiltered dd,
+.shanti-kmaps-solr-facet-block.quickfiltered dd a,
+.shanti-kmaps-solr-facet-block.facets-showing-all dd,
+.shanti-kmaps-solr-facet-block.facets-showing-all dd a{
+    color:#000 !important;
+}
+
+/*
+.shanti-kmaps-solr-facet-block::after{
+    position: absolute;
+    bottom: 0px;
+    left: 0;
+    right: 0;
+    content: '';
+    height: 45px;
+    background: -owg-linear-gradient(rgba(248,248,248, 0), #f8f8f8);
+    background: -webkit-linear-gradient(rgba(248,248,248, 0), #f8f8f8);
+    background: -moz-linear-gradient(rgba(248,248,248, 0), #f8f8f8);
+    background: -o-linear-gradient(rgba(248,248,248, 0), #f8f8f8);
+    background: linear-gradient(rgba(248,248,248, 0), #f8f8f8)
+}
+
+.facets-short-list.shanti-kmaps-solr-facet-block::after,
+.facets-showing-all.shanti-kmaps-solr-facet-block::after,
+.quickfiltered.shanti-kmaps-solr-facet-block::after,
+.shanti-kmaps-solr-facet-wrapper .shanti-kmaps-solr-facet-block:first-child::after{
+    height:0;
+    overflow:hidden;
+    position:relative;
+}
+*/
+
+
+
+.facet-search-controls {
+    white-space: nowrap;
+    position: absolute;
+    right: 2.5rem;
+    top: 7.9rem;
+}
+    .texts:not(.bhutan) .facet-search-controls,
+    .images:not(.bhutan) .facet-search-controls{
+      position: absolute;
+      top: 7.2rem;
+      right:1.2rem;
+    }
+
+.facet-search-controls a {
+    color: #777;
+    font-size: .75em;
+    font-weight:600;
+    padding: .15rem 1.2rem .025rem;
+    letter-spacing: 0.0475rem;
+}
+
+.shanti-kmaps-solr-facet-item .highlight {
+  text-decoration: underline;
+}
+/* search input element */
+.shanti-kmaps-solr-facet-quicksearch .facet-quicksearch{
+    max-width: 16rem;
+    height: 27px;
+    padding: 0 1.25rem;
+    margin-top: .5rem;
+    margin-bottom: .3rem;
+    font-size: 1.18em;
+    float:left;
+}
+.shanti-kmaps-solr-facet-quicksearch .facet-quicksearch:active,
+.shanti-kmaps-solr-facet-quicksearch .facet-quicksearch:focus{
+    box-shadow: none;
+}
+
+.shanti-kmaps-solr-facet-quicksearch .facet-search-controls {
+    text-align: right;
+}
+
+.shanti-kmaps-solr-facet-quicksearch .facet-quicksearch-count {
+    position: relative;
+    left: 1rem;
+    top: .1rem;
+    display: none;
+}
+
+.shanti-kmaps-solr-facet-quicksearch .facet-quicksearch-reset{
+    position: absolute;
+    left: 14.7rem;
+    top: 1rem;
+    background: transparent;
+    box-shadow: none;
+    border: none;
+    font-size: 1.38em;
+    font-weight: 600;
+    color: #ccc;
+    padding:0;
+    line-height:1;
+}
+
+.shanti-kmaps-solr-facet-quicksearch .facet-quicksearch-reset:hover{
+    color: #888;
+}
+
+#results-media-viewer-modal {
+  width: 99%;
+}
+
+#results-media-viewer-modal .modal-full {
+    width: 98% !important;
+}
+
+
+
+
+
+
+.shanti-kmaps-solr-facet-wrapper{
+    padding-bottom:2rem;
+    padding-right: .5rem;
+}
+
+.shanti-kmaps-solr-facet-block dd a:hover,
+.shanti-kmaps-solr-facet-block dd a:active{
+    color: #df3d26 !important;
+    border-bottom:transparent !important;
+}
+
+
+
+
+.shanti-kmaps-solr-facet-sort.btn-group>.btn.btn-default{
+    font-size:.88em;
+}
+.shanti-kmaps-solr-facet-sort.btn-group>.btn.btn-default.active{
+    background: #777;
+    color:#fff;
+}
+
+.shanti-kmaps-solr-facet-sort.btn-group>.btn:first-child{
+    /*border-top-right-radius: 0;
+    border-bottom-right-radius: 0;*/
+    border-top-left-radius: 1rem;
+    border-bottom-left-radius: 1rem;
+    padding: .3rem .75rem .2rem 1rem;
+}
+.shanti-kmaps-solr-facet-sort.btn-group>.btn:last-child{
+    border-top-right-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+    padding: .3rem 1rem .2rem .75rem;
+    /*border-top-left-radius: 0;
+    border-bottom-left-radius: 0;*/
+}
+
+
+
+
+.shanti-kmaps-solr-facet-block .shanti-kmaps-solr-facet-sort{
+    display:none;
+}
+.shanti-kmaps-solr-facet-block.facets-showing-all .shanti-kmaps-solr-facet-sort{
+    display:inline-block;
+    margin-top: 0.5rem;
+    margin-right: .5rem;
+}
+
+
+@media (max-width:500px) {
+  
+    .terms-definition-node .definition-details-wrapper, 
+    .terms-dictionaries-other-node .definition-details-wrapper{
+      position: relative;
+      top:0;
+    }
 }
 
 

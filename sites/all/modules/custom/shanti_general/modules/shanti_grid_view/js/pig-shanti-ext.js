@@ -38,9 +38,9 @@
         imageSize: '550',
         lightboxSize: '1200',
         // TODO: Convert this to a template in the templates folder
-        template:  '<div class="ppd-expander"><div class="ppd-expander-inner"><span class="ppd-close" role="button" aria-label="Close Gallery Previewer"></span><span class="ppd-status-loading" role="status" style="display:none;"><span></span></span>' +
+        template:  '<div class="ppd-expander"><div class="ppd-expander-inner"><span class="ppd-close" role="button" aria-label="Close Gallery Previewer"></span><span class="ppd-progressive-loading" role="alert" aria-live="assertive" style="display:none;"><span></span></span>' +
                         '<span class="next ppd-nav-arrow"><span class="icon"></span></span><span class="prev ppd-nav-arrow"><span class="icon"></span></span>' +
-                        '<div class="ppd-fullimg"><div class="ppd-img-wrapper"><div class="ppd-loading image"><ul><li></li><li></li><li></li><li></li></ul><div id="ppd-loading-text">Loading&#133;</div></div><img src="#" style="display: none;" /></div></div><div class="ppd-details"><div class="loading-container"><div class="loading"></div></div></div>',
+                        '<div class="ppd-fullimg"><div class="ppd-img-wrapper"><div class="ppd-loading image" role="alert" aria-live="assertive"><ul><li></li><li></li><li></li><li></li></ul><div id="ppd-loading-text" role="alert">Loading&#133;</div></div><img src="#" style="display: none;"></div></div><div class="ppd-details"><div class="loading-container" role="alert" aria-live="assertive"><div class="loading"></div></div></div>',
          imgSelector: '.ppd-fullimg img',
          infoSelector: '.ppd-details',
          infoURL:  '/shanti/grid/info/__TYPE__/__NID__',
@@ -161,8 +161,8 @@
        
         // set active class for displaying loading spinner
         $(document).on('click', '.ppd-details-inner .view-btn', function() {
-            $('body').addClass('status-loading');
-            $('.ppd-status-loading').css('display','block');
+            $(this).parents('.ppd-expander').addClass('progressive-loading');
+            $('.ppd-progressive-loading').css('display','block');
         });         
 
         // reset open and close heights on resize

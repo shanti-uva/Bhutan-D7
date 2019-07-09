@@ -120,4 +120,30 @@
             }
         };
 
+        Drupal.behaviors.userpage = {
+            attach: function (context, settings) {
+                if ($("body").hasClass('page-user')) {
+                    //alert("Hey what's happening!");
+                    $('.view-content td.visibility').each(function() {
+                       var val = $.trim($(this).text());
+                       if (val.indexOf('gp') > -1) {
+                           val = val.replace('gp', '');
+                       } else if (val.indexOf('|') > -1) {
+                           var vpts = val.split('|');
+                           if (vpts[1] == '0') {
+                               val = vpts[0];
+                           } else {
+                               val = vpts[1] * 1 - 1;
+                           }
+                       }
+                       val = val * 1;
+                       if (val == 1) {
+                           $(this).text("Private");
+                       } else {
+                           $(this).text("Public");
+                       }
+                    });
+                }
+            }
+        };
     }(jQuery)); 

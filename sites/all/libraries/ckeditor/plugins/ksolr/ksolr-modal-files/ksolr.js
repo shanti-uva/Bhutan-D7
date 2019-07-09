@@ -160,7 +160,8 @@ ksSolr.prototype.ImportSolrDialog=function(callback, mode)				// SOLR IMPORTER D
 		var str;
 		_this.LoadingIcon(true,64);													// Show loading icon
 		var type=_this.type;														// Get type to show
-		if (type == "Images") type="Picture";										// Images are picture
+		// if (type == "Images") type="Picture";									// Comment out old "Images are picture"
+		if (type == "Picture") type="Images";										// Don't use mms Picture type, use Drupal Images type
 		var search="asset_type%3A%22"+type.toLowerCase()+"%22";						// Add asset type
 		if (_this.filter) {															// If a filter spec'd
 			str="%22*"+_this.filter.toLowerCase()+"*%22";							// Search term

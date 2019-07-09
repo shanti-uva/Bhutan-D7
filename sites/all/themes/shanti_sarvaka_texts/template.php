@@ -2,39 +2,21 @@
 
 define('SHANTI_SARVAKA_TEXTS_PATH',drupal_get_path('theme','shanti_sarvaka_texts'));
 
-/**
- * Alter Breadcrumbs to add Collection before item or if not part of collection, then creators name.
- */
- /*
-function shanti_sarvaka_texts_menu_breadcrumb_alter(&$active_trail, $item)
-{
- if ($active_trail[0]['title'] == 'Home') {
-   array_shift($active_trail);
- }
-}
-*/
+
 function shanti_sarvaka_texts_menu_breadcrumb_alter(&$active_trail, $item) {
-   $map = $item['map']; // Item map tells us about what page we are on
-   if ($map[0] == "node") {
-       /*  Moved to Shanti Sarvaka Theme
-       //dpm($item, 'itme in bc alter');
-       $node = $map[1];
-       // if it's a collection node, add link to all collections before it's name
-       if (in_array($node->type, array('collection', 'subcollection')) || $node->type == 'shivanode' && !empty($node->field_og_collection_ref)) {
-           $collslink = array(
-             'title' => t('Collections'),
-             'href' => 'collections/all',
-             'link_path' => 'collections/all',
-             'localized_options' => array(),
-             'type' => 0,
-           );
-           $newat = array();
-           $newat[0] = array_shift($active_trail);
-           $newat[1] = $collslink;
-           $active_trail = array_merge($newat, $active_trail);
-       }
-       */
-   } else if ($item['path'] == 'collections/all' && count($active_trail) == 3 && $active_trail[1]['link_title'] == "Collections") {
+    if (count($active_trail) == 3) {
+        $href = substr($active_trail[2]['href'], 1);
+        $pth = str_replace('node/', '', drupal_lookup_path('source', $href));
+        if (is_numeric($pth)) {
+            $node = node_load($pth);
+            if ($node->type == 'collection') {
+                $collitem = array_pop($active_trail);
+                array_splice($active_trail, 1, 0, array($collitem));
+            }
+        }
+
+    }
+   if ($item['path'] == 'collections/all' && count($active_trail) == 3 && $active_trail[1]['link_title'] == "Collections") {
        unset($active_trail[1]); // Remove the extra "collections" breadcrumb from user menu set up.
    }
 }
@@ -63,6 +45,7 @@ function shanti_sarvaka_texts_form_alter(&$form, $form_state, $form_id)
 
 function shanti_sarvaka_texts_preprocess_node(&$vars)
 {
+
   if ($vars['type'] == 'book' && $vars['teaser'] == FALSE) {
     // If not top of book, redirect to the book
     // THIS COULD BE HANDLED IN PAGE MANAGER -- SO NOT THEME DEPENDENT
@@ -79,6 +62,14 @@ function shanti_sarvaka_texts_preprocess_node(&$vars)
 		}
 		drupal_goto("node/$bid", array('query' => array('s' => $s), 'fragment' => "shanti-texts-$nid"));
 	}
+    else {
+        // If it's a top level book add the pdf link
+        if (!empty($vars['field_pdf_version'])) {
+            $uri = $vars['field_pdf_version'][LANGUAGE_NONE][0]['uri'];
+            $pdfurl = file_create_url($uri);
+            $vars['pdf_link'] = '<div class="pdflink"><a href="' . $pdfurl . '" target="_blank"><img src="/sites/all/themes/shanti_sarvaka/images/default/pdf-icon.png" class="icon" /></a></div>';
+        }
+    }
     $top_mlid = $vars['book']['p1'];
 
     // Highlight search hits (a bit of a kludge)

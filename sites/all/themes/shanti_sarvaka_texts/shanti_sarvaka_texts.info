@@ -31,7 +31,7 @@ regions[admin_footer]   = Admin Footer
 ;; Stylesheets
 ;;;;;;;;;;;;;;;;;;;;;
 stylesheets[all][] =  css/shanti-main-texts.css
-stylesheets[all][] =  css/shanti-search-texts.css
+; stylesheets[all][] =  css/shanti-search-texts.css
 
 ;; FOAD
 stylesheets[all][] =  css/jquery.ui.tabs.min.css
@@ -40,7 +40,7 @@ stylesheets[all][] =  css/jquery.ui.tabs.min.css
 ;;; Scripts
 ;;;;;;;;;;;;;;;;;;;;;;
 scripts[] = js/shanti-main-texts.js
-scripts[] = js/shanti-search-texts.js
+; scripts[] = js/shanti-search-texts.js
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Theme Settings

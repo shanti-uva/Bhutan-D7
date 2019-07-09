@@ -3035,7 +3035,7 @@ Please note the uploaded image will be converted and saved in a more compact for
   // Exported field_instance: 'node-shanti_image-field_kmap_terms'.
   $field_instances['node-shanti_image-field_kmap_terms'] = array(
     'bundle' => 'shanti_image',
-    'default_value' => NULL,
+    'default_value' => array(),
     'deleted' => 0,
     'description' => '',
     'display' => array(
@@ -3091,7 +3091,7 @@ Please note the uploaded image will be converted and saved in a more compact for
       'active' => 0,
       'module' => 'shanti_kmaps_fields',
       'settings' => array(),
-      'type' => 'kmap_typeahead_term_picker',
+      'type' => 'kmap_typeahead_picker',
       'weight' => 35,
     ),
   );

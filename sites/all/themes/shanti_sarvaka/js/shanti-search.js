@@ -36,8 +36,8 @@ Drupal.behaviors.sarvakaMbextruder = {
 	    // Make it resizeable
 	    try {
 		    if($('#search-flyout .text').length > 0) {
-			    // top-right close button, visible for small mobile screens only - currently set to display on all but kmaps which has it's own script for rendering of the button
-				$('body:not(.kmaps) #search-flyout .text').append( '<span id="btn-collapse-flyout" class="icon shanticon-arrow-end-right btn-collapse-flyout" type="button" aria-label="Close Search Flyout"></span>' );
+			   // top-right close button, visible for small mobile screens only - currently set to display on all but kmaps which has it's own script for rendering of the button
+			   //	$('body:not(.kmaps) #search-flyout .text').append( '<span id="btn-collapse-flyout" class="icon shanticon-arrow-end-right btn-collapse-flyout" type="button" aria-label="Close Search Flyout"></span>' );
 				// Search Results and Flyout Width Integration --------------------
 				$('#btn-collapse-flyout').click(function() {
 					$('#search-flyout').closeMbExtruder();
@@ -177,7 +177,7 @@ Drupal.behaviors.shanti_sarvaka_flyoutupdate = {
                     var flyout_status = 'open';
                     // $('#search-flyout').openMbExtruder();
                   $('#search-flyout.extruder:not(.isOpened) .flap').click();
-                    $('#faceted-search-results').addClass('search-flyout-open');
+                  $('#faceted-search-results').addClass('search-flyout-open');
                 }
                 else {
                     var flyout_status = 'close';
@@ -284,7 +284,7 @@ Drupal.behaviors.searchPanelHeightKMaps = {
 	      $(window).bind('load orientationchange resize searchUpdate extopen', Drupal.ShantiSarvaka.searchTabHeightKMaps);
 
 	      // prevent overscrolling into body
-	      $extruder.find('.view-wrap').scrollLock();
+	      // $extruder.find('.view-wrap').scrollLock("view-wrap");
 	    }
 	    else { // mandala home page
 	      Drupal.ShantiSarvaka.searchTabHeightKMaps = function (e) {
@@ -338,7 +338,7 @@ Drupal.behaviors.searchPanelHeightKMaps = {
 	      $('#search-flyout').on('extopen', Drupal.ShantiSarvaka.searchTabHeightKMaps);
 
 	      // prevent overscrolling into body
-	      $('.km-facet-div > div').scrollLock();
+	      // $('.km-facet-div > div').scrollLock("km-facet-div");
 	    }
 
 	  }

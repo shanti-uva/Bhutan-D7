@@ -11,7 +11,7 @@
   <h3><?php print $title; ?></h3>
 <?php endif; ?>
 
-<ul class="shanti-gallery">
+<ul class="shanti-no-wookmark">
     <?php foreach ($rows as $id => $row): ?>
         <li class="shanti-thumbnail visual <?php if ($classes_array[$id]) { print ' ' . $classes_array[$id];  } ?>">
             <?php print $row; ?>

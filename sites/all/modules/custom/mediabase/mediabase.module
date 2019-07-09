@@ -88,18 +88,6 @@ function mediabase_menu()
   return $items;
 }
 
-function mediabase_menu_local_tasks_alter(&$data, $router_item, $root_path)
-{
-  // Replace title of tab "Group" with "Members"
-  if (!empty($data['tabs'][0]['output'])) {
-    foreach ($data['tabs'][0]['output'] as $n => &$tab) {
-      if ($tab['#link']['path'] == 'node/%/group') {
-        $tab['#link']['title'] = t("Members");
-      }
-    }
-  }
-}
-
 function mediabase_settings_form($form_id, $form_state)
 {
 
@@ -308,6 +296,34 @@ function mediabase_form_alter(&$form, &$form_state, $form_id)
       '#submit' => array('mediabase_node_form_cancel'),
     );
   }
+
+    // When showing user profile form, check if they use shibauth and add authtype to form
+    // This is used in shanti-main-mediabase.js in the miscFunctions behavior
+    if ($form_id == 'user_profile_form') {
+        $usr = $form['#user'];
+        $ds = db_select('authmap', 'am')
+                ->fields('am', array('module'))
+                ->condition('uid', $usr->uid)
+                ->execute();
+        $res = $ds->fetchCol();
+        if (empty($res)) {
+            $form['authtype'] = array(
+                '#type' => 'hidden',
+                '#value' => 'pw',
+                '#attributes' => array(
+                    'class' => array('authtype')
+                ),
+            );
+        } else {
+            $form['authtype'] = array(
+                '#type' => 'hidden',
+                '#value' => 'shib',
+                '#attributes' => array(
+                    'class' => array('authtype')
+                ),
+            );
+        }
+    }
 }
 
 function mediabase_node_form_cancel(&$form, &$form_state)
@@ -482,7 +498,7 @@ function convert_lang_name_to_code($lname)
       return $cd;
     }
   }
-  if ($lname == "Tibetan") {
+  if ($lname == "Tibetan" || $lname == "Dzongkha") {
     return "bo";
   } // Always account for Tibetan even if not installed (hack)
   return FALSE;

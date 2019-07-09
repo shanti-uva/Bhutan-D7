@@ -8,6 +8,22 @@
 *
 */
 
+*[data-tier="dzo_bod"],
+*[data-speaker-display="ss_speaker_bod"],
+*[data-speaker-display="ss_speaker_dzo"],
+*[data-tier='content_bod']{
+  color: #111;
+  letter-spacing: normal !important;
+  text-rendering: optimizeLegibility !important;
+  font-family: Jomolhari,Jomolhari-ID,"Tibetan Machine Uni","TCRC Youtso Unicode","Tib-US Unicode", Kokonor, "Microsoft Himalaya",Arial !important;
+}
+
+.speaker-tiers .tier[data-tier='ts_content_gyal'],
+.speaker-name .speaker-display[data-speaker-display='ss_speaker_gyal']{
+  font-size:1.06em;
+  font-family: 'Doulos SIL', 'Arial Unicode MS';
+}
+
 .av-main-transcript-section{
   padding-left:1rem;
   overflow:hidden;
@@ -20,6 +36,7 @@
   margin-top: 0;
   -webkit-transition: all 100ms ease 0s;
   transition: all 100ms ease 0s;
+  overscroll-behavior: none;
 }
 
 .transcript-container::-webkit-scrollbar {
@@ -264,9 +281,8 @@
   padding: 0.2rem 0.2rem 0.2rem 0.7rem;
 }
 
-.speaker-tiers .tier[data-tier="dzo_bod"]{
-  font-size: 112%;
-  font-family: 'Jomolhari-ID', 'Tibetan Machine Uni';
+.speaker-tiers .tier.bo{
+  font-size:1.06em;
 }
 
 .speaker-tiers .tier[style="display: block;"]:last-of-type{
@@ -277,17 +293,7 @@
   border-bottom-color:transparent;
 }
 
-.speaker-tiers .tier[data-tier='content_bod'],
-.speaker-name .speaker-display[data-speaker-display='ss_speaker_bod']{
-  font-size: 1.18em;
-  font-family: 'Jomolhari-ID', 'Tibetan Machine Uni';
-}
 
-.speaker-tiers .tier[data-tier='ts_content_gyal'],
-.speaker-name .speaker-display[data-speaker-display='ss_speaker_gyal']{
-  font-size:1.06em;
-  font-family: 'Doulos SIL', 'Arial Unicode MS';
-}
 
 .speaker-tiers .tier mark{
   background: rgb(255, 252, 200); /* yellow highlight */
@@ -797,7 +803,7 @@
   width: auto;
   background: transparent;
 }
-
+/*
 .btn-group-transcript .btn.btn-icon .fa {
   font-size: 1.12em;
   opacity: .8;
@@ -823,10 +829,20 @@
   font-family:'shanticon';
   left: .4rem;
 }
-
+*/
 .btn-group-transcript .btn.btn-icon.playpause {
   font-size: 1.06em;
-  /*height: 6rem;*/
+}
+.btn-group-transcript .btn.btn-icon.playpause .icon{
+  font-size:1.12em;
+}
+.btn-group-transcript .btn.btn-icon.playpause .icon::before{
+  position: relative;
+  left:.4rem;
+}
+.btn-group-transcript .btn.btn-icon.playpause .icon.shanticon-pause::before{
+  position: relative;
+  left:.2rem;
 }
 
 .bootstrap-select:not([class*='span']):not([class*='col-']):not([class*='form-control']):not(.input-group-btn) {

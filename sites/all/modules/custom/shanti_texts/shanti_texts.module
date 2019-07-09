@@ -622,6 +622,41 @@ function shanti_texts_delete_node_children_finished($success, $results, $operati
   };
 }
 
+/**
+ * Helper function to determine if a book node is a book
+ *
+ * @return boolean
+ *      - TRUE if the node is a top-level book
+ *      - FALSE if the node is a page within a book or any other type of node
+ */
+function shanti_texts_is_book($node) {
+    if (is_numeric($node)) { $node = node_load($node); }
+    $is_book = FALSE;
+    if (!empty($node->book)) {
+        if ($node->book['nid'] == $node->book['bid']) {
+            $is_book = TRUE;
+        }
+    }
+    return $is_book;
+}
+
+/**
+ * Helper function to determine if a book node is a page
+ *
+ * @return boolean
+ *      - TRUE if the node is a top-level book
+ *      - FALSE if the node is a page within a book or any other type of node
+ */
+function shanti_texts_is_page($node) {
+    if (is_numeric($node)) { $node = node_load($node); }
+    $is_page = FALSE;
+    if (!empty($node->book)) {
+        if ($node->book['nid'] != $node->book['bid']) {
+            $is_page = TRUE;
+        }
+    }
+    return $is_page;
+}
 
 /**
  * Special function to count number of BOOK items in a collection in texts.

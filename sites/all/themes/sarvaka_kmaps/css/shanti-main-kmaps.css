@@ -23,11 +23,6 @@
 }
 
 .page-places .front-list .shanticon-places::before,
-.page-places .view-section .fancytree-container .glyphicon,
-.page-places .view-section .fancytree-container .fancytree-node:hover > .glyphicon,
-.page-places .view-section .fancytree-container .fancytree-node:active > .glyphicon,
-.page-places .view-section .fancytree-node.fancytree-active > .glyphicon,
-.page-places .view-section .fancytree-node.fancytree-selected > .glyphicon,
 .page-places .carousel-feature-slides li.active div a::before,
 .page-places .bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a .check-mark,
 .page-places .bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a:active .check-mark,
@@ -82,11 +77,6 @@
 
 .page-subjects .kmaps-sources-summary .shanticon-texts,
 .page-subjects .front-list .shanticon-places::before,
-.page-subjects .view-section .fancytree-container .glyphicon,
-.page-subjects .view-section .fancytree-container .fancytree-node:hover > .glyphicon,
-.page-subjects .view-section .fancytree-container .fancytree-node:active > .glyphicon,
-.page-subjects .view-section .fancytree-node.fancytree-active > .glyphicon,
-.page-subjects .view-section .fancytree-node.fancytree-selected > .glyphicon,
 .page-subjects .carousel-feature-slides li.active div a::before,
 .page-subjects .input-section .selectpicker .caret::before,
 .page-subjects .bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a .check-mark,
@@ -143,11 +133,6 @@
 
 .page-terms .definition-details-control>span.glyphicon:before,
 .page-terms .navbar-header .site-slogan,
-.page-terms .fancytree-container .glyphicon,
-.page-terms .fancytree-container .fancytree-node:hover>.glyphicon,
-.page-terms .fancytree-container .fancytree-node:active>.glyphicon,
-.page-terms .fancytree-node.fancytree-active>.glyphicon,
-.page-terms .fancytree-node.fancytree-selected>.glyphicon,
 .page-terms .bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a .check-mark,
 .page-terms .bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a:active .check-mark,
 .page-terms .kmaps-sources-summary ul.summary-list>li span.icon.shanticon-essays {
@@ -186,7 +171,6 @@
 */
 
 
-
 .sidebar-first .ajax-progress,
 .sidebar-first .ajax-progress .throbber{
   display:inline-block !important;
@@ -219,8 +203,8 @@
   right: 0.1rem;
   top: 0.1rem;
 }
-
-.shanti-thumbnail-image .icon{
+/* this sets the top-right icon (video or audio) color in Kmaps to gold */
+.shanti-thumbnail-image > a > .icon{
   background-color: #8e752e !important;
 }
 

@@ -708,6 +708,23 @@ display: block;
     line-height: 1.62em;
 }
 
+#shanti-texts-toc > .shanti-texts-record-title .shanti-texts-section-controls {
+  top: 0px;
+}
+
+#shanti-texts-toc .pdflink {
+  width: 20px;
+  height: 20px;
+  top: -58px;
+  position: relative;
+  float: right;
+  margin-right: -5px;
+}
+
+#shanti-texts-toc .pdflink img {
+  width: 16px;
+}
+
 #shanti-texts-toc .shanti-texts-record-title > a::before{
    content:'';
    display:none;

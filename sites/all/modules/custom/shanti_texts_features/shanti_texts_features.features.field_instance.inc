@@ -345,7 +345,7 @@ function shanti_texts_features_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 41,
+      'weight' => 42,
     ),
   );
 
@@ -543,7 +543,7 @@ function shanti_texts_features_field_default_field_instances() {
         'rows' => 15,
       ),
       'type' => 'text_textarea',
-      'weight' => 5,
+      'weight' => 11,
     ),
   );
 
@@ -708,7 +708,7 @@ function shanti_texts_features_field_default_field_instances() {
         'year_range' => '-3:+3',
       ),
       'type' => 'date_text',
-      'weight' => 45,
+      'weight' => 46,
     ),
   );
 
@@ -855,7 +855,7 @@ function shanti_texts_features_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 42,
+      'weight' => 43,
     ),
   );
 
@@ -1069,7 +1069,7 @@ function shanti_texts_features_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 43,
+      'weight' => 44,
     ),
   );
 
@@ -1320,7 +1320,7 @@ function shanti_texts_features_field_default_field_instances() {
         'year_range' => '-3:+3',
       ),
       'type' => 'date_text',
-      'weight' => 47,
+      'weight' => 48,
     ),
   );
 
@@ -1571,7 +1571,7 @@ function shanti_texts_features_field_default_field_instances() {
         'year_range' => '-3:+3',
       ),
       'type' => 'date_text',
-      'weight' => 46,
+      'weight' => 47,
     ),
   );
 
@@ -2018,7 +2018,7 @@ function shanti_texts_features_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 44,
+      'weight' => 45,
     ),
   );
 
@@ -2158,7 +2158,7 @@ function shanti_texts_features_field_default_field_instances() {
       'module' => 'creative_commons',
       'settings' => array(),
       'type' => 'select',
-      'weight' => 49,
+      'weight' => 50,
     ),
   );
 
@@ -2335,7 +2335,7 @@ function shanti_texts_features_field_default_field_instances() {
         'rows' => 5,
       ),
       'type' => 'text_textarea',
-      'weight' => 48,
+      'weight' => 49,
     ),
   );
 
@@ -2629,11 +2629,13 @@ function shanti_texts_features_field_default_field_instances() {
     'label' => 'Places',
     'required' => 0,
     'settings' => array(
-      'entity_translation_sync' => FALSE,
       'kmap_term_limit' => 100,
-      'search_filters' => array(),
-      'search_root_kmap_path' => NULL,
-      'search_root_kmapid' => NULL,
+      'search_filters' => array(
+        'associated_subject' => 'associated_subject',
+        'feature_type' => 'feature_type',
+      ),
+      'search_root_kmap_path' => '',
+      'search_root_kmapid' => '',
       'search_view' => 'alltexts/places/__KMAPID__',
       'user_register_form' => FALSE,
     ),
@@ -2865,8 +2867,8 @@ function shanti_texts_features_field_default_field_instances() {
       'active' => 0,
       'module' => 'shanti_kmaps_fields',
       'settings' => array(),
-      'type' => 'kmap_typeahead_term_picker',
-      'weight' => 14,
+      'type' => 'kmap_typeahead_picker',
+      'weight' => 15,
     ),
   );
 
@@ -3167,7 +3169,7 @@ function shanti_texts_features_field_default_field_instances() {
         'progress_indicator' => 'throbber',
       ),
       'type' => 'file_generic',
-      'weight' => 50,
+      'weight' => 12,
     ),
   );
 
@@ -3244,7 +3246,7 @@ function shanti_texts_features_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_buttons',
-      'weight' => 10,
+      'weight' => 11,
     ),
   );
 

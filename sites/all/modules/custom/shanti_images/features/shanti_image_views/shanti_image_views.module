@@ -4,5 +4,21 @@
  * Code for the Shanti Image Views feature.
  */
 
-
 include_once 'shanti_image_views.features.inc';
+
+
+function shanti_image_views_admin_menu_map() {
+    // Expand content types below Structure > Content types.
+    // The key denotes the dynamic path to expand to multiple menu items.
+    $map['/admin/image/%ent_type'] = array(
+        // Link generated items directly to the "Content types" item.
+        'parent' => 'admin/content',
+        // Create expansion arguments for the '%node_type' placeholder.
+        'arguments' => array(
+            array(
+                '%ent_type' => array('descriptions', 'agents'),
+            ),
+        ),
+    );
+    return $map;
+}

@@ -7,7 +7,10 @@
 * ---------------------------------------------------
 * 
 */
-/**** Facet Blocks ****/
+
+/* all of these styles commented-out on may 28, 2019 mf8yk */
+
+/**** Facet Blocks 
 div.block-facetapi:after {
   border-top: thin solid #a0a0a0;
   width: 60%;
@@ -66,11 +69,16 @@ ul.shivanode-info li .icon {
 ul.shivanode-info li div {
   display: inline-block;
 }
+****/
+
+
+
+
 
 
 
 /** Flyout and Search Styles **/
-
+/*
 .extruder .views-exposed-form .views-exposed-widget{
   width:100%;
   padding-top:0;
@@ -121,7 +129,7 @@ ul.shivanode-info li div {
   border-radius: 25px;
   background-clip: padding-box;
   font-size: 1.06em;
-  height: 35px; /* coordinate with button height below */
+  height: 35px; /* coordinate with button height below -------------------------------------------
   line-height: 1.44em;
   margin: 2.8rem 0 1.6rem;
   padding: 0.2rem 6rem 0 3.2rem;
@@ -131,7 +139,7 @@ ul.shivanode-info li div {
   vertical-align: middle;
   -webkit-box-shadow: 0 2px 5px #eee inset;
   box-shadow: 0 2px 5px #eee inset;
-  border-collapse: separate; /* fix for ie9 shadow */
+  border-collapse: separate; /* fix for ie9 shadow -------------------------------------------
   background: #fff;
   -webkit-transition-property: all;
   -webkit-transition-duration: 400ms;
@@ -143,7 +151,7 @@ ul.shivanode-info li div {
   margin-top:2.8rem;
   border: 1px solid #ccc;
 }
-*/
+--------------------------------------------------------------------------------------
 .extruder .views-exposed-widgets .form-item-search-api-views-fulltext input.form-control:hover {
   border: 1px solid #ccc;
   color: #777;
@@ -156,7 +164,7 @@ ul.shivanode-info li div {
   border-collapse: separate;
 }
 
-/*--- button group ---*/
+/*--- button group -------------------------------------------
 .extruder .views-submit-button {
   width: 4.5rem !important;
   height: 35px;
@@ -175,10 +183,10 @@ ul.shivanode-info li div {
   top: 4.4rem;
 }
 */
-/*--- submit button ---*/
+/*--- submit button -------------------------------------------
 .extruder .views-submit-button .btn.btn-primary {
   display: block;
-  height: 33px; /* 2px less than search input height above */
+  height: 33px; /* 2px less than search input height above -------------------------------------------
   color: #aaa;
   width: 100%;
   border: 1px solid #e5e5e5;
@@ -226,7 +234,7 @@ ul.shivanode-info li div {
   color: #777;
 }
 
-/** Reset Button **/
+/** Reset Button -------------------------------------------
 
 .extruder .views-exposed-widget.views-reset-button{
   padding:0;
@@ -238,12 +246,12 @@ ul.shivanode-info li div {
   right: 7rem;
 }
 
-/** Clearing float for kmap tag list **/
+/** Clearing float for kmap tag list -------------------------------------------
 .extruder .region-search-flyout section.view-section {
   clear: both;
 }
 
-/** Facet Gallery Result styling **/
+/** Facet Gallery Result styling -------------------------------------------
 .kmaps-facets-results .shanti-filters .label {
   display: none;
 }
@@ -284,7 +292,7 @@ ul.shivanode-info li div {
 .view-section .tab-content div{
   overflow-y:visible;
 }
-
+*/
 
 
 /* END search flyout */

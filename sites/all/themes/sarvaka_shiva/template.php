@@ -231,7 +231,7 @@ function sarvaka_shiva_preprocess_shivanode_full(&$vars) {
         'vdate' => date('M j, Y', $vars['created']), 
         'vdata' => $linktxt, 
         'vgroups' => $vgroups, 
-        'vgrpaccess' =>$vgrpaccess . ', ' . $vstatus,
+        'vgrpaccess' =>$vgrpaccess, // removed: . ', ' . $vstatus  as in the process of deprecating shivanode_access
         'vdesc' => $desc, //render($desc), 
         'vfooter' => '', 
      );

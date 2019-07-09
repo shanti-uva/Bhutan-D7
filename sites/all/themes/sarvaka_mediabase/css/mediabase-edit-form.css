@@ -631,26 +631,6 @@ div#edit-group-audience > div.form-item > div.collection-details-audience {
   height: 0;
 }
 
-
-
-.field-name-field-location .kmap-filter{
-  clear:none;
-  float: left;
-  width: 47%;
-  padding-bottom: 0.5rem;
-      margin-top: 1rem;
-}
-
-.field-name-field-location .panel-body .kmap-filter[data-search-filter="feature_type"]{
-  width: 53%;
-  padding-left: 3%;
-  padding-right: 3%;
-}
-
-.field-name-field-location .kmap-filter[data-search-filter="associated_subject"]{
-  padding-left: 1rem;
-}
-
 .field-name-field-location .kmap-filter[data-search-filter="associated_subject"] label{
   text-transform: capitalize;
   font-weight: normal;
@@ -667,23 +647,39 @@ div#edit-group-audience > div.form-item > div.collection-details-audience {
   background-color: #f0f0f0;
 }
 
+.field-name-field-location .kmap-filter,
+.field-name-field-recording-location-new .kmap-filter {
+  float: left;
+  width: 47%;
+  padding-bottom: 0.5rem;
+  margin-top: 1rem;
+}
 
+.panel-body > .kmap-filter[data-search-filter="associated_subject"] {
+  width: 52%;
+  padding-left: 3%;
+  clear: none;
+}
 
+.panel-body > .kmap-filter[data-search-filter="feature_type"] {
+  width: 47%;
+  padding-left: 1rem;
+}
 
 
 
 @media (max-width:768px) {
 
-    .field-name-field-location .kmap-filter[data-search-filter="associated_subject"]{
+    .panel-body > .kmap-filter[data-search-filter="associated_subject"],
+    .panel-body > .kmap-filter[data-search-filter="feature_type"] {
         width: 100%;
         padding-left: 1rem;
+        padding-right: .5rem;
+        margin-top: 0;
     }
 
-    .field-name-field-location .panel-body .kmap-filter[data-search-filter="feature_type"]{
-        width: 100%;
-        padding-left: 1rem;
-        margin-top:0;
-        padding-right: 0;
+    .panel-body > .kmap-filter[data-search-filter="feature_type"]{
+      margin-top:1rem;
     }
 
     .field-name-field-location .kmap-typeahead-picker .shanticon-magnify{
@@ -1283,6 +1279,7 @@ table.sticky-table .filter-guidelines ul li{
 
 .mb-identifier *,
 .field-name-field-identifier-source,
+.field-name-field-identifier-source .field-item,
 .field-name-field-identifier-source .field-items {
     display: inline !important;
     font-size: 1em;

@@ -24,7 +24,9 @@ $edit_widget = shanti_sarvaka_texts_get_edit_widget($variables['nid'],$coll_id);
         </ul>
         <div class="tab-content">
             <div id="shanti-texts-toc" class="tab-pane" role="tabpanel">
+
                 <div class="shanti-texts-record-title" lang="<?php print $langcode; ?>">
+                   <?php print $pdf_link; ?>
                     <a href="#shanti-texts-<?php print $bid; ?>"><?php print $book_title; ?></a>
                     <?php print render($edit_widget); ?>
                 </div>

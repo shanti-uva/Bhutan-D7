@@ -34,16 +34,18 @@
 
   // mixture of http://stackoverflow.com/questions/5802467/prevent-scrolling-of-parent-element
   // and https://gist.github.com/theftprevention/5959411#file-jquery-scrolllock-js
-  $.fn.scrollLock = function () {
-    return $(this).on("DOMMouseScroll mousewheel", function (ev) {
+  $.fn.scrollLock = function (label) {
+    var DEBUG = false;
+
+    var lockFn = function (ev) {
       var $this = $(this),
-        scrollTop = this.scrollTop,
-        scrollHeight = this.scrollHeight,
-        height = $this.innerHeight(),
-        delta = (ev.type == 'DOMMouseScroll' ?
-          ev.originalEvent.detail * -40 :
-          ev.originalEvent.wheelDelta),
-        up = delta > 0;
+          scrollTop = this.scrollTop,
+          scrollHeight = this.scrollHeight,
+          height = $this.innerHeight(),
+          delta = (ev.type === 'DOMMouseScroll' ?
+              ev.originalEvent.detail * -40 :
+              ev.originalEvent.wheelDelta),
+          up = delta > 0;
 
       var prevent = function () {
         ev.stopPropagation();
@@ -52,19 +54,26 @@
         return false;
       };
 
+      if (DEBUG) {
+        console.log("scrollLock: " + label + " up = " + up + " delta = " + delta + " height = " + this.scrollHeight + " top = " + this.scrollTop);
+      }
+
       if (!up && -delta > scrollHeight - height - scrollTop) {
         // Scrolling down, but this will take us past the bottom.
         $this.scrollTop(scrollHeight);
+        if (DEBUG) { console.log("scrollLock: bottom" ); }
         return prevent();
       } else if (up && delta > scrollTop) {
         // Scrolling up, but this will take us past the top.
         $this.scrollTop(0);
+        if (DEBUG) { console.log("scrollLock: top" ); }
         return prevent();
       }
-    });
+    };
+    return $(this).off("DOMMouseScroll mousewheel", lockFn).on("DOMMouseScroll mousewheel", lockFn);
   };
   $.fn.scrollRelease = function () {
-    return $(this).off("DOMMouseScroll mousewheel")
+    return $(this).off("DOMMouseScroll mousewheel");
   };
 
 
@@ -161,7 +170,7 @@
   /**
    *  Settings for the theme
    */
-  Drupal.behaviors.shantiSarvaka = {
+  Drupal.behaviors.shantiSarvakaSettings = {
     attach: function (context, settings) {
       if (context == document) {
         // Initialize settings.
@@ -217,6 +226,8 @@
    */
   Drupal.behaviors.shantiSarvakaIcheck = {
     attach: function (context, settings) {
+      var loc = window.location.pathname;
+      if (loc.indexOf('admin/permissions') > -1) { return; }  // Don't use icheck on group admin permissions pages such as /group/node/37201/admin/permissions
       $("input[type='checkbox'], input[type='radio']", context).not($('.jstree input')).once('icheck').each(function () {
           var self = $(this),
           label = self.next('label');
@@ -242,7 +253,7 @@
            });*/
           }
       });
-  }
+    }
   };
 
   /**
@@ -642,6 +653,30 @@
   }
   };
 
+  /**
+   * Pager trigger listener
+   * Implemented to add loading styling for pager see MANU-5954
+   */
+  Drupal.behaviors.shantiSarvakaPagerListener = {
+    attach: function (context, settings) {
+      var pgrbtns = '.pagerer-pager .pager .pager-first a, .pagerer-pager .pager .pager-previous a, ' +
+                       '.pagerer-pager .pager .pager-next a, .pagerer-pager .pager .pager-last a';
+      $(pgrbtns).click(function(e) {
+        $('body').addClass('event-progress-loading');
+      });
+      var pgrinp = '.pagerer-pager .pager input.pagerer-page';
+      $(pgrinp).keydown(function(e) {
+        var keycode = (e.keyCode ? e.keyCode : e.which);
+        if (keycode == '13') {
+          $('body').addClass('event-progress-loading');
+        }
+      });
+      $(document).ajaxComplete( function () {
+        $('body').removeClass('event-progress-loading');
+      });
+    }
+  };
+
   /*
    Drupal.behaviors.kmapsExplorer = {
    attach: function (context, settings) {
@@ -1005,5 +1040,32 @@ Drupal.behaviors.shantiSarvakaBrokenImages = {
         }
       }
     };
+
+  // Function to add the .bo class to specific element names that contain Tibetan characters.
+  //     Note: this will tag an element that has mixed characters with .bo
+  Drupal.behaviors.shantiSarvakaTibFix = {
+    attach: function (context, settings) {
+        setTimeout(function() {
+          // List of elements to search for Tibetan
+          var els = 'h1, h2, h3, h4, h5, h6, h7, div, p, blockquote, li, span, label, th, td, a, b, strong, i, em, u, s, dd, dl, dt, figure';
+          var repat = /[a-zA-Z0-9\,\.\:\;\-\s]/g;  // the regex patter to strip latin and other characters from string
+          // Iterate through such elements
+          $(els, context).each(function() {
+            //var etxt = $.trim($(this).text());  // get the text of the element
+            var etxt = $(this).clone().children().remove().end().text(); // See https://stackoverflow.com/a/8851526/2911874
+            etxt = etxt.replace(repat, '');  // strip of irrelevant characters
+            var cc1 = etxt.charCodeAt(0);  // get the first character code
+            // If it is within the Tibetan Unicode Range
+            if (cc1 > 3839 &&  cc1 < 4096) {
+              // If it does not already have .bo
+              if (!$(this).hasClass('bo') && !$(this).parents().hasClass('bo')) {
+                $(this).addClass('bo');   // Add .bo
+              }
+            }
+          });
+
+        }, 3000);
+    }
+  };
 
 }(jQuery));

@@ -93,12 +93,12 @@
                 KMapsUtil.trackTypeaheadSelected($filter, filtered[namespace][type]);
                 $el.remove();
                 var fq = KMapsUtil.getFilters(field, filtered[namespace][type], $box.hasClass('kmaps-conjunctive-filters') ? 'AND' : 'OR');
-                $typeahead.kmapsTypeahead('addFilters', fq).kmapsTypeahead('setValue', $typeahead.typeahead('val'), false);
+                $typeahead.kmapsSimpleTypeahead('addFilters', fq).kmapsSimpleTypeahead('setValue', $typeahead.typeahead('val'), false);
                 for (var i=0; i<others.length; i++) {
-                    getFilter(namespace, others[i]).kmapsTypeahead('refetchPrefetch', fq);
+                    getFilter(namespace, others[i]).kmapsSimpleTypeahead('refetchPrefetch', fq);
                 }
-                $filter.kmapsTypeahead('refacetPrefetch', fq);
-                $filter.kmapsTypeahead('setValue', search, false); // 'false' prevents dropdown from re-opening
+                $filter.kmapsSimpleTypeahead('refacetPrefetch', fq);
+                $filter.kmapsSimpleTypeahead('setValue', search, false); // 'false' prevents dropdown from re-opening
             });
 
             $('.kmap-search-filter', context).once('shanti-kmaps').each(function () {
@@ -115,17 +115,19 @@
                 /*  kmaps navigator domain handling
                  var domain = (settings.kmaps_explorer) ? settings.kmaps_explorer.app : 'places';
                  */
-                $filter.kmapsTypeahead({
-                    term_index: admin.shanti_kmaps_admin_server_solr_terms,
+                //console.log(type, namespace, nsettings);
+                $filter.kmapsSimpleTypeahead({
+                    solr_index: admin.shanti_kmaps_admin_server_solr_terms,
                     domain: 'subjects', // always Filter by Subject
                     filters: KMapsUtil.getFilterQueryForFilter(type),
                     ancestors: 'off', 
                     min_chars: 0,
                     selected: 'omit',
                     prefetch_facets: 'on',
-                    prefetch_field: type + 's', //feature_types or associated_subjects
+                    prefetch_field: type + 's_xfacet', //feature_types or associated_subjects
                     prefetch_filters: nsettings.root_kmap_path ? ['tree:' + nsettings.domain, 'ancestor_id_path:' + nsettings.root_kmap_path] : ['tree:' + nsettings.domain],
-                    max_terms: 50
+                    max_terms: 50,
+                    max_defaults: 50
                 }).bind('typeahead:select',
                     function (ev, suggestion) {
                         if (suggestion.count > 0) { // should not be able to select zero-result filters
@@ -138,12 +140,12 @@
                             $box.toggleClass('kmaps-conjunctive-filters', mode == 'AND');
                             KMapsUtil.trackTypeaheadSelected($filter, filtered[namespace][type]);
                             var fq = KMapsUtil.getFilters(field, filtered[namespace][type], mode);
-                            $typeahead.kmapsTypeahead('addFilters', fq).kmapsTypeahead('setValue', $typeahead.typeahead('val'), false);
+                            $typeahead.kmapsSimpleTypeahead('addFilters', fq).kmapsSimpleTypeahead('setValue', $typeahead.typeahead('val'), false);
                             for (var i=0; i<others.length; i++) {
-                                getFilter(namespace, others[i]).kmapsTypeahead('refetchPrefetch', fq);
+                                getFilter(namespace, others[i]).kmapsSimpleTypeahead('refetchPrefetch', fq);
                             }
-                            $filter.kmapsTypeahead('refacetPrefetch', fq);
-                            $filter.kmapsTypeahead('setValue', '', false); // reset filter after selection
+                            $filter.kmapsSimpleTypeahead('refacetPrefetch', fq);
+                            $filter.kmapsSimpleTypeahead('setValue', '', false); // reset filter after selection
                         }
                     }
                 );

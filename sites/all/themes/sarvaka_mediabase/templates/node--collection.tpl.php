@@ -127,7 +127,7 @@ if ($node->type == 'subcollection') {
 	  	<!-- Parent Collection or Subcollections -->
 		<?php if ($type == 'collection'): ?>
             <?php if (user_access('create subcollection content') && (og_is_member('node', $node->nid) || user_access('edit any collection content'))): ?>
-                <a type="button" class="btn btn-primary" href="/node/add/subcollection?<?php echo $og_parent_field;?>=<?php echo $node->nid;?>&amp;destination=node/<?php echo $node->nid;?>">Add Subcollection</a>
+                <a type="button" class="btn btn-primary" href="/node/add/subcollection?<?php echo $og_parent_field;?>=<?php echo $node->nid;?>">Add Subcollection</a>
             <?php endif; ?>
 
             <?php if (user_access('convert shanti_collections') && count(shanti_collections_get_subcollections($node)) == 0): ?>
@@ -149,8 +149,12 @@ if ($node->type == 'subcollection') {
         <h4>Owner</h4>
         <?php
             $og_owner = user_load($node->uid);
-            $og_owner_url = url('user/'.$node->uid);
-            print "<a href='$og_owner_url'>{$og_owner->name}</a>";
+            if (user_is_anonymous()) {
+                print "<a class=\"noclick\">{$og_owner->name}</a>";
+            } else {
+                $og_owner_url = url('user/' . $node->uid);
+                print "<a href='$og_owner_url'>{$og_owner->name}</a>";
+            }
         ?>
 
         <h4><?php print t('Visibility'); ?></h4>

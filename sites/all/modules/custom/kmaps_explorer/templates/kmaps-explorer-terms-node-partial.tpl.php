@@ -34,17 +34,13 @@
     <div class="tab-content">
         <div role="tabpane" class="tab-pane active"
              id="terms-def-<?php echo str_replace('/', '-', $definition->related_definitions_path_s) ?>">
-            <p></p>
             <?php echo $definition->related_definitions_content_s ?>
-            <p></p>
-            <p>
-                <a data-toggle="collapse"
-                   href="#definition-details-<?php echo str_replace('/', '-', $definition->related_definitions_path_s) ?>"
-                   role="button" aria-expanded="false" aria-controls="definition-details"
-                   class="definition-details-control collapsed">
-                    <span class="glyphicon"></span>Further Details
-                </a>
-            </p>
+            <a data-toggle="collapse"
+               href="#definition-details-<?php echo str_replace('/', '-', $definition->related_definitions_path_s) ?>"
+               role="button" aria-expanded="false" aria-controls="definition-details"
+               class="definition-details-control collapsed">
+                <span class="glyphicon"></span>Further Details
+            </a>
             <div id="definition-details-<?php echo str_replace('/', '-', $definition->related_definitions_path_s) ?>"
                  class="definition-details-wrapper collapse" aria-expanded="false" style="height: 0px">
                 <dl>

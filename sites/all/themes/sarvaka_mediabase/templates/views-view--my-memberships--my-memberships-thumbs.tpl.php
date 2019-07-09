@@ -74,7 +74,7 @@
 			    <?php if (strpos($variables['view']->current_display, '_list') > -1): ?>
 			        <?php print $rows;  ?>
 			    <?php else: ?>
-        				<ul class="shanti-gallery">
+        				<ul class="shanti-no-wookmark">
         					<?php print $rows;  ?>
         				</ul>
         			<?php endif; ?>

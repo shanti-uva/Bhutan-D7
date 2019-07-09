@@ -1,0 +1,13 @@
+diff --git a/includes/handlers.inc b/includes/handlers.inc
+index f05cba0e..432fb437 100644
+--- a/includes/handlers.inc
++++ b/includes/handlers.inc
+@@ -1063,7 +1063,7 @@ class views_many_to_one_helper {
+     // should be added via an db_or()/db_and() (TRUE).
+     $add_condition = TRUE;
+     if ($operator == 'or' && empty($options['reduce_duplicates'])) {
+-      if (count($value) > 1) {
++      if (is_array($value) && count($value) > 1) {
+         $operator = 'IN';
+       }
+       else {

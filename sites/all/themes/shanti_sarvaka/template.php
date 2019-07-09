@@ -1214,15 +1214,13 @@ function shanti_sarvaka_breadcrumb($variables) {
         array_pop($breadcrumbs); // doubles up collection name
         $breadcrumbs[] = 'Admin';
     } else if (preg_match('/group\/node\/(\d+)/',$path, $m)) {
-        if (strpos($path, 'add-user') > -1) {
-            array_pop($breadcrumbs);
-            $group = node_load($m[1]);
-            $breadcrumbs[1] = l($group->title, url('node/' . $group->nid));
-        } else {
-            unset($breadcrumbs[2]);  // remove extraneous "People in Group..."
+        array_pop($breadcrumbs);
+        $group = node_load($m[1]);
+        if ($group->type=='subcollection') {
+            $parent = shanti_collections_get_parent_collection($group);
+            $breadcrumbs[] = l($parent->title, url('node/' . $parent->nid));
         }
-
-
+        $breadcrumbs[] = l($group->title, url('node/' . $group->nid));
         $breadcrumbs[] = '<a href="/node/' . $m[1] . '/group">Admin</a>';
         $breadcrumbs[] = 'People';
     }
@@ -1276,20 +1274,19 @@ function shanti_sarvaka_menu_breadcrumb_alter(&$active_trail, $item) {
 					if ($gnode->type == "subcollection") {
 					    $pgid = $gnode->field_og_parent_collection_ref['und'][0]['target_id'];
                         if (!empty($pgid)) {
-                            $pgnode = node_load($pgid);
+                           $pgnode = node_load($pgid);
                            $bc = array( array(
                                 'title' => $pgnode->title,
                                 'href' => url("node/$pgid"),
                                 'localized_options' => array(),
                             ));
-                            array_splice($active_trail, 1, 0, $bc);
+                           array_splice($active_trail, 0, 0, $bc);
                         }
 					}
 				}
-
 			}
 
-            if (in_array($node->type, array('collection', 'subcollection'))) {
+            if (in_array($node->type, array('collection', 'subcollection')) || !empty($node->field_og_collection_ref)) {
                 $collslink = array(
                     'title' => t('Collections'),
                     'href' => 'collections/all',
@@ -1297,10 +1294,15 @@ function shanti_sarvaka_menu_breadcrumb_alter(&$active_trail, $item) {
                     'localized_options' => array(),
                     'type' => 0,
                 );
-                $newat = array();
-                $newat[0] = array_shift($active_trail);
-                $newat[1] = $collslink;
-                $active_trail = array_merge($newat, $active_trail);
+                if (empty($active_trail)) {
+                    $active_trail[] = $collslink;
+                } else {
+                    $newat = array($collslink);
+                    if ($active_trail[0]['href'] == '<front>') {
+                        array_shift($active_trail);
+                    }
+                    $active_trail = array_merge($newat, $active_trail);
+                }
             }
 		}
 		if ($bcsetting == 3 && isset($node->uid)) {
@@ -1312,7 +1314,11 @@ function shanti_sarvaka_menu_breadcrumb_alter(&$active_trail, $item) {
 				'href' => "user/{$uid}",
 				'localized_options' => array(),
 			));
-			array_splice($active_trail, 1, 0, $bc);
+            if (empty($active_trail)) {
+                $active_trail[] = $bc;
+            } else {
+                array_splice($active_trail, 1, 0, $bc);
+            }
 		}
 	}
 }
@@ -1487,7 +1493,7 @@ function shanti_sarvaka_preprocess_apachesolr_search_snippets(&$vars) {
 }
 
 function shanti_sarvaka_transcripts_ui_transcript_navigation($vars) {
-        $out  = "<button type='button' class='btn btn-default btn-icon playpause' title='Play/Pause' data-play-icon='shanticon-play2' data-pause-icon='shanticon-pause'><span class='icon shanticon-play2'></span></button>";
+        $out  = "<button type='button' class='btn btn-default btn-icon playpause' title='Play/Pause' data-play-icon='shanticon-arrow-tri-right' data-pause-icon='shanticon-pause'><span class='icon shanticon-arrow-tri-right'></span></button>";
         $out .= "<button type='button' class='btn btn-default btn-icon previous' title='Previous line'><span class='icon shanticon-arrow-left'></span></button>";
         $out .= "<button type='button' class='btn btn-default btn-icon sameagain' title='Same line'><span class='icon shanticon-spin3'></span></button>";
         $out .= "<button type='button' class='btn btn-default btn-icon next' title='Next line'><span class='icon shanticon-arrow-right'></span></button>";

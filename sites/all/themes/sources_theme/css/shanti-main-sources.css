@@ -191,9 +191,6 @@ table.pagerer{
 }
 
 
-
-
-
 /* list sorting */
 .custom-sort-container .selectpicker>li>a .check-mark{
   float: right;
@@ -202,16 +199,6 @@ table.pagerer{
   color:#ccc;
 }
 
-
-
-
-/**
- *     Home Page styles added by ndg8f (2017-03-04)
- *     can't just use body.front because when sort filters are chosen and parameters added the "front" class is taken off <body> but "page-home" remains
- */
-.page-home #block-shanti-carousel-shanti-carousel-block-1 {
-    padding-bottom: 20px;
-}
 
 .page-home #block-views-exp-biblio-search-api-allpage {
     width: 38%;
@@ -248,9 +235,6 @@ table.pagerer{
 }
 
 
-
-
-
 .page-home #block-sources-views-custom-sort-filter {
     height: 3em;
     padding: 0 1.4rem 0.8rem 0;
@@ -263,7 +247,13 @@ table.pagerer{
     clear: both;
 }
 
-
+@media print{
+  
+  .page-home #block-sources-views-custom-sort-filter,
+  .page-home #block-views-exp-biblio-search-api-allpage{
+    display:none;
+  }
+}
 
 
 
@@ -1475,6 +1465,10 @@ a#long-detail.active {
 .views-exposed-form label,
 .panel.panel-default .panel-heading h6 a{
   font-weight: 400;
+}
+
+.view-sources-content-pages .col-md-5{
+  width: 100%;
 }
 
 

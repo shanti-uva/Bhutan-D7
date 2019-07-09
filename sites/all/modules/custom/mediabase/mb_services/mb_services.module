@@ -568,18 +568,31 @@ function mb_services_embed($nid) {
  * If it doesn't exist use the default image for the thumbnail
  */
 function mb_services_node_thumb($nid) {
+    global $base_path;
+    $redirect_url = $base_path;
     $node = node_load($nid);
     if($node) {
-        $redirect_url = '';
-        if (!empty($node->thumbnail_url) && mb_services_url_exists($node->thumbnail_url)) {
-            $redirect_url = $node->thumbnail_url;
+        $nthumb = $node->thumbnail_url;
+        if (!empty($nthumb) && mb_services_url_exists($nthumb)) {
+            if (substr($nthumb, 0, 4) == 'http') {
+                $redirect_url = $nthumb;
+            } else if (strpos($nthumb, '/sites/') . -1) {
+                $pts = explode('/sites/', $nthumb);
+                $redirect_url .= 'sites/' . array_pop($pts);
+            } else {
+                $redirect_url .= $nthumb;
+            }
         } else {
             $type = $node->type;
             $path = drupal_get_path('module', 'mediabase') . "/images/generic-{$type}-thumb.jpg";
-            $redirect_url = url($path, array('external' => TRUE));
+            $redirect_url .= url($path, array('external' => TRUE));
         }
-        drupal_goto($redirect_url, array(), 301);
+
+    } else {
+        $path = drupal_get_path('module', 'mediabase') . "/images/generic-video-thumb.jpg";
+        $redirect_url .= url($path, array('external' => TRUE));
     }
+    drupal_goto($redirect_url, array(), 301);
 }
 
 /**

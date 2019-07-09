@@ -244,22 +244,6 @@ function shivanode_admin_paths_alter(&$paths)
   $paths['group/node/*/admin/people/*'] = FALSE;
 }
 
-/**
- * Implements hook_menu_local_tasks_alter
- * Changes tab from "Group" to "Members"
- */
-function shivanode_menu_local_tasks_alter(&$data, $router_item, $root_path)
-{
-  // Replace title of tab "Group" with "Members"
-  if (!empty($data['tabs'][0]['output'])) {
-    foreach ($data['tabs'][0]['output'] as $n => &$tab) {
-      if ($tab['#link']['path'] == 'node/%/group') {
-        $tab['#link']['title'] = t("Members");
-      }
-    }
-  }
-}
-
 /***************  Block Functions   ***************************/
 
 /**
@@ -757,7 +741,7 @@ function shivanode_form_shivanode_node_form_alter(&$form, &$form_state, $form_id
   _shivanode_add_ms_metafix(); // MS Explorer work around
   
 	// Node and Chart Info
-	$is_new_el = (isset($form['#node']->nid)) ? FALSE : TRUE;
+  $is_new_el = (isset($form['#node']->nid)) ? FALSE : TRUE;
   $nid = isset($form['#node']->nid) ? $form['#node']->nid : FALSE;
   $sntype = "";
   $snsubtype = "";
@@ -855,7 +839,8 @@ function shivanode_form_shivanode_node_form_alter(&$form, &$form_state, $form_id
   $eltype = '';
   $form['shivanode_element_type']['#weight'] = 1;
   $form['shivanode_access']['#weight'] = 2;
-  
+  $form['shivanode_access'][LANGUAGE_NONE]['#default_value'][0] = 4;  // Set shivanode_access field to "Published" (4)
+  $form['shivanode_access']['#attributes']['class'][] = 'hidden'; // Hide the shivanode_access field as a precursor to deprecating it
   // Determine whether KML submodule is enabled and if so, link to that popup list. Otherwise give alert explanation
   $lnkmu =  '<div id="use-kml-link" style="display: none;"><a onclick="javascript: alert(\'' . 
             t('The Shiva KML module has not been enabled to allow you to upload and use KML files.') . '\')">KML Module not Enabled</a></div>';
@@ -885,7 +870,7 @@ function shivanode_form_shivanode_node_form_alter(&$form, &$form_state, $form_id
     //_shivanode_check_google_login(); only ask when necessary
     drupal_add_js(array('shivanode' => array('isNewEl' => true)), 'setting');
 		
-    $form['shivanode_access']['und']['#default_value'] = 1;
+    //$form['shivanode_access']['und']['#default_value'] = 1;
 	$sntind = (isset($eltypes[$sntind])) ? $sntind : 7;
     $eltype = $eltypes[$sntind];
     $form['shivanode_element_type']['und']['#default_value'] = (string)$sntind; // default value is chart
@@ -1326,7 +1311,7 @@ function shivanode_user_presave(&$edit, $account, $category) {
   if(variable_get('shivanode_username_auto', FALSE)) {
     $host = variable_get('shivanode_whois_host', 'whois.virginia.edu'); 
     $name = $edit['name'];
-    if(count($edit['field_lname']['und']) == 0) {
+    if(empty($edit['field_lname']['und'])) {
       $whois = shell_exec('whois -h ' . $host . ' ' . $name);
       if(preg_match('/Name:\s+([^\n]+)/',$whois, $matches)) {
         $name = $matches[1];

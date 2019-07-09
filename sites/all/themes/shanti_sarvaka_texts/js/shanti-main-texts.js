@@ -82,4 +82,17 @@
       }
     }
   };
+
+    Drupal.behaviors.shantiTextsUserProfile = {
+        attach: function (context) {
+            if (context === document) {
+                if ($('body').hasClass('page-user')) {
+                    $('.profile .field-label').each(function() {
+                        $(this).text($(this).text().replace(':', ''));
+                    });
+                }
+            }
+        }
+    };
+
  }(jQuery));

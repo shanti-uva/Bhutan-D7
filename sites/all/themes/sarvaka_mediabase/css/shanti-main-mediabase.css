@@ -57,11 +57,6 @@
 
 /*** END - colors ***/
 
-/*
-.front #block-system-main.block.block-system{
-  float:left;
-}
-*/
 
 
 /**
@@ -109,14 +104,6 @@
 }
 
 
-/*
-article.main-col{
-  max-width: 100% !important;
-  padding-top: .5rem;
-}
-*/
-
-
 .views-exposed-widgets{
   margin-bottom:0;
 }
@@ -157,6 +144,16 @@ article.main-col{
   top: -5px;
 }
 
+a.noclick::before, a.noclick:hover::before {
+    background-color: transparent!important;
+    color: #333;
+    border-color: #333 !important;
+}
+
+a.noclick, a.noclick:hover {
+    cursor: default;
+    color: #333;
+}
 
 /* Kmaps List page views*/
 /** Are these used anymore? (ndg, 2016-12-08)  */
@@ -218,31 +215,22 @@ article.main-col{
   max-width: 45rem;
 }
 
+
+
 /**
 * ------------------------------
 * Shanti Filters Gallery Header
 * ------------------------------
 */
 
-/*
-.shanti-filters {
-  height: 7.5em;
-}
-
-.shanti-filters .ajax-progress {
-  position: absolute;
-  top: 1.35rem;
-}
-
-.shanti-filters .control-box .ajax-progress {
-  display: none;
-}
-*/
-
 .shanti-filters .control-box-cell-header {
   margin: 0.8rem 0 0 0;
   padding: 0;
   width: 21%;
+}
+
+.collection-page:not(.page-collections-all) .shanti-filters .control-box-cell-header{
+  width: 23%;
 }
 
 .shanti-filters .control-box-cell-header span{
@@ -282,13 +270,9 @@ article.main-col{
   margin-right: 1rem;
 }
 
-.shanti-filters .control-box-cell-filters .bootstrap-select.btn-group:not(.input-group-btn){
-  /* margin:0; */
-}
-
 .shanti-filters .form-item.form-type-select.form-item-sort-by label,
 .shanti-filters .form-item.form-type-select.form-item-sort-order label {
-    display: none;
+  display: none;
 }
 
 .shanti-filters .control-box-cell-filters .view-filters-mb {
@@ -298,14 +282,45 @@ article.main-col{
 .shanti-filters .control-box-cell-pager,
 .shanti-filters .control-box-cell-filters{
   width:100%;
-  margin-top: 2.7rem;
-
 }
 
 .shanti-filters .control-box-cell-pager {
   padding: 0;
   margin: 0;
-    margin-right:3rem;
+  margin-right: 4rem;
+}
+
+.collection-page:not(.page-collections-all) .shanti-filters .control-box-cell-pager{
+  margin-top:3.7rem;
+  margin-right: 0;
+}
+
+.page-collections-all .shanti-filters .control-box-cell-pager{
+  margin-top: 1rem;
+}
+
+.front .shanti-filters .control-box-cell-pager{
+  margin-top: 0;
+}
+
+
+
+
+/* hide shanti-filters sorting filter for controlliong mobile display best*/
+.shanti-filters .views-exposed-widget.views-widget-sort-sort_bef_combine{
+  display: none;
+}
+
+.collection-page:not(.page-collections-all) .shanti-filters .views-exposed-widget.views-widget-sort-sort_bef_combine{
+  display: block;
+}
+
+.collection-page:not(.page-collections-all) .shanti-filters .control-box-cell-filters{
+  padding-right: 0;
+}
+
+.shanti-filters .control-box-cell-filters{
+  margin-top: 2.7rem;
 }
 
 .shanti-filters table.pagerer {
@@ -326,11 +341,11 @@ article.main-col{
   margin-top: 0;
 }
 
-.page-collections .shanti-filters .control-box-cell-pager{
-  margin-top: 3.7rem;
-  /* width: 60% !important;*/
-  /*float:right;*/
+.page-collections .shanti-filters.bottom table.pagerer{
+  margin-top:2rem;
 }
+
+
 
 
 
@@ -344,10 +359,6 @@ article.main-col{
 }
 
 
-
-
-
-
 .navbar nav.navtop .block h2 {
   display: none;
 }
@@ -356,8 +367,6 @@ article.main-col{
   width: 70px;
   margin-left: 20px;
 }
-
-
 
 
 #node_video_form_group_details > .panel-body > div,
@@ -382,8 +391,6 @@ article.main-col{
   padding: 1.25em 0 0 1em;
  /* padding typo override */
 }
-
-
 
 
 #edit-field-pbcore-instantiation-und-0-field-date-created{
@@ -648,6 +655,10 @@ a.hide-annot::before {
     line-height: 2.5em;
   font-weight: 600;
 }
+
+#av-details .field-label-above p{
+  font-weight:400;
+}
 #av-details .field-name-field-format-id-source.field-label-inline {
   padding-left: 14px;
 }
@@ -815,6 +826,16 @@ a.hide-annot::before {
     font-size: 112%;
     letter-spacing: .1rem;
 }
+
+.node-video > .content .field-name-field-description .bo{
+  font-size: 1.12em;
+  line-height: 1.75em;
+}
+
+
+
+
+
 
 /**
 * KALTURA Player
@@ -998,11 +1019,10 @@ fieldset.form-wrapper .f-set > table{
   content:'\e673';
 }
 
-.shanti-gallery .shanti-field-place a {
-  display: inline;
-  font-size: 1.02em;
+/* font size fix for places in thumbnails MANU-5994 */
+.shanti-thumbnail-field.shanti-field-place a {
+    font-size: 1em;
 }
-
 
 /* BEGIN avrating - HIDING THIS CURRENTLY */
 .avrating {
@@ -1231,7 +1251,7 @@ ul.links.inline {
 
 .field-collection-item-field-pbcore-description .pb-desc-label.langname {
     font-size: 1.32rem;
-    font-weight: 500;
+    font-weight: 600;
 }
 
 .page-node-add .node-form .media-field-description {
@@ -1304,6 +1324,12 @@ h4.node-desc-type {
 
 
 
+
+.collections-content h3{
+  margin-top:0;
+}
+
+
 /*-------------------------*/
 /***** BEGIN min-width *****/
 /*-------------------------*/
@@ -1313,10 +1339,6 @@ h4.node-desc-type {
     height: 5.2em;
   }
 
-  .shanti-filters .control-box-cell-pager{
-    width:60%;
-    margin-top: -3.6rem;
-  }
   .collection-page .shanti-filters .control-box-cell-filters .views-exposed-widget,
   .page-collections .shanti-filters .control-box-cell-filters .views-exposed-widget{
     margin-top: 0 !important;
@@ -1329,7 +1351,6 @@ h4.node-desc-type {
     visibility:visible;
   }
 
-  .shanti-filters .control-box-cell-pager,
   .shanti-filters .control-box-cell-filters{
       margin-top: 0;
   }
@@ -1338,10 +1359,20 @@ h4.node-desc-type {
 
 @media screen and (min-width: 700px) {
 
-  .main-content .content-section .view-content,
-  .collection-page .shanti-filters .control-box-cell-pager,
-  .page-collections .shanti-filters .control-box-cell-pager{
+  .main-content .content-section .view-content{
         margin-top: 0;
+  }
+
+  .page-collections-all .shanti-filters .control-box-cell-pager{
+    margin-top: -2.7rem;
+  }
+
+  .front .shanti-filters .control-box-cell-pager{
+    margin-top: -3.7rem;
+  }
+
+  .collection-page:not(.page-collections-all) .shanti-filters .control-box-cell-pager{
+    margin-top: 0;
   }
 }
 
@@ -1367,13 +1398,6 @@ h4.node-desc-type {
     padding-right:15px;
     font-family:'Open Sans','Segoe UI',Tahoma,sans-serif;
   }
-  /* .av-main-transcript-section{
-    padding-left: 1rem;
-    position: absolute;
-    right: 0rem;
-    bottom: 0;
-    top: 0;
-  }*/
 
   .fivestar-basic div.fivestar-widget .star, 
   .fivestar-basic div.fivestar-widget .star a{
@@ -1387,45 +1411,11 @@ h4.node-desc-type {
     width:100% !important;
   }
 
-  .has-transcript .av-main-video-section {
-    /*min-height:750px;*/
-  }
-
   .node-type-audio.has-transcript .av-main-video-section,
   .node-type-video.has-transcript .av-main-video-section {
     width:50% !important;
   }
 
-  .node-type-audio .av-main-video-section {
-   /*width: 100% !important;*/
-  }
-
-  .node-type-audio.has-transcript .av-main-video-section {
-    /*width: 41.66666667% !important;*/
-    /*min-height:600px;*/
-  }
-
-  .node-type-audio .avinfo{
-    /*width: 25% !important;*/
-  }
-
-  .node-type-audio .video-overview{
-   /* padding-right: 0 !important;
-    width: 66.66666667% !important;*/
-  }
-
-  .node-type-audio.has-transcript .video-overview{
-    /*width: 100% !important;*/
-  }
-
-}
-
-
-@media screen and (min-width: 800px) {
-
-  .page-collections .shanti-filters .control-box-cell-pager{
-        margin-top: 1rem;
-  }
 }
 
 
@@ -1440,31 +1430,40 @@ h4.node-desc-type {
   }
 
   .shanti-filters .control-box-cell-pager {
-    margin-right: 4rem;
-    margin-top: 3.7rem;
     width:  25%;
   }
 
-  .front .shanti-filters .control-box-cell-pager{
-    margin-top: 3.7rem;
-  }
-
   .shanti-filters .control-box-cell-filters{
-    width:  50%;
+    width:  40%;
   }
 
-  .collection-page .shanti-filters .control-box-cell-pager,
-  .page-collections .shanti-filters .control-box-cell-pager{
-    padding-right: 0;
-    margin-right:0;
+  .front .shanti-filters .control-box-cell-pager{
+    margin-top: 0;
   }
 
+  .page-collections-all .shanti-filters .control-box-cell-pager{
+    margin-top: 1rem;
+  }
+
+  .collection-page:not(.page-collections-all) .shanti-filters .control-box-cell-pager{
+    /*margin-top: 3.7rem;*/
+    margin-right: 0;
+    width: 33%;
+  }
 }
 
 @media (min-width:1050px) {
 
   .main-content .content-section .view-content{
     margin-top: 0;
+  }
+}
+
+@media (min-width:1100px) {
+
+  /* show-hide shanti-filters sorting filter for controlliong mobile display best*/
+  .shanti-filters .views-exposed-widget.views-widget-sort-sort_bef_combine{
+    display: block;
   }
 }
 
@@ -1525,6 +1524,11 @@ h4.node-desc-type {
     padding-right:0;
     padding-left:0;
   }
+
+  .collection-page:not(.page-collections-all) article.main-col{
+    padding-right: 0;
+    padding-left: 0;
+  }
 }
 
 @media screen and (max-width: 700px) {
@@ -1532,13 +1536,7 @@ h4.node-desc-type {
   .main-content .content-section .view-content{
     margin-top:4rem;
   }
-  .page-collections .shanti-filters .control-box-cell-pager{
-    margin-top: 3.7rem;
-  }
 }
-
-
-
 
 @media screen and (max-width: 600px) {
 
@@ -1550,22 +1548,44 @@ h4.node-desc-type {
     margin-top: 3.5rem;
   }
 
-  .shanti-filters .control-box-cell-pager{
-      margin-top: 3.5rem;
-  }
-
   .shanti-filters .control-box-cell-filters{
         margin-top: 0;
   }
 }
 
-
+/** User Page **/
+.page-user .profile .user-picture img {
+    border-radius: 80px !important;
+}
 
 /** User Edit Form **/
 /** don't display password fields because we use netbadge and simpleSaml **/
 .page-user-edit .form-item-current-pass, .page-user-edit .form-item-pass {
     display: none;
 }
+
+.page-user-edit .form-item-current-pass, .page-user-edit .form-item-pass.show-pass,
+.page-user-edit .form-item-current-pass, .page-user-edit .form-item-pass.show-pass * {
+    display: block;
+}
+
+.profile-content h3 {
+    width: 50%;
+}
+
+.profile-content .field-name-og-group-ref .field-label,
+.profile-content .field-name-realname .field-label {
+    border-bottom: 1px solid #ccc;
+    width: 50%;
+    margin-top: 20px;
+    margin-bottom: 5px;
+    letter-spacing: 0.0175rem;
+    font-weight: 400;
+    color: #444;
+    font-size: 1.32em;
+    text-transform: capitalize;
+}
+
 
 /**
 * --------------
@@ -1574,12 +1594,7 @@ h4.node-desc-type {
 */
 /* Fonts above carousel */
 .front .field-type-text-with-summary h4 {
-  display: none;
-}
-
-.front .field-type-text-with-summary h4 + p {
-  padding: 1.7rem 2rem 0;
-  line-height:1.56em;
+  /*display: none;*/
 }
 
 .page-user .user-picture img{
@@ -1587,18 +1602,9 @@ h4.node-desc-type {
 }
 
 
-
-
-
-
-
 .shanti-view-intro{
   display:none;
 }
-
-
-
-
 
 
 @media screen and (min-width: 1170px) {
@@ -1619,56 +1625,6 @@ h4.node-desc-type {
       width:77%;
     }
 }
-
-@media screen and (min-width: 1600px) {
-
-    .collection-page .collections-content.col-md-9 {
-      /*width:79%;*/
-    }
-}
-
-@media (min-width:1750px) {
-
-    .collection-page .collections-content.col-md-9 {
-      /*width:80%;*/
-    }
-
-    .collection-page section.sidebar-second{
-      /*max-width: 15%;*/
-    }
-}
-
-@media (min-width:1900px) {
-
-    .collection-page .collections-content.col-md-9 {
-      /*width:83%;*/
-    }
-}
-/*
-@media (min-width:2100px) {
-
-    .collection-page .collections-content.col-md-9 {
-      width:84%;
-    }
-}
-
-@media (min-width:2200px) {
-
-    .collection-page .collections-content.col-md-9 {
-      width:85%;
-    }
-}
-*/
-
-
-
-
-
-
-
-
-
-
 
 
 

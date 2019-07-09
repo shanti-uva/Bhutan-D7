@@ -73,6 +73,29 @@ function shanti_collections_add_collection_block() {
 
 /***********  NODE FUNCTIONS ********************/
 
+function shanti_collections_form_node_delete_confirm_alter(&$form, &$form_state, $form_id)
+{
+    array_push($form['#submit'], 'shanti_collections_node_delete_redirect');
+}
+
+function shanti_collections_node_delete_redirect(&$form, &$form_state) {
+    $node = $form['#node'];
+    $ntyp = $node->type;
+    $pth = '';
+    // If it's a book page go back to the book top page
+    if ($ntyp == 'book' && shanti_texts_is_page($node)) {
+        $pth = drupal_get_path_alias('node/' . $node->book['bid']);
+
+    // If it's a subcollection go back to the parent collection
+    } elseif ($ntyp == 'subcollection') {
+        $pth = drupal_get_path_alias('node/' . $node->field_og_parent_collection_ref[LANGUAGE_NONE][0]['target_id']);
+
+    // If it's a node go back to its collection or subcollection
+    } elseif ($ntyp != 'collections' && !empty($node->field_og_collection_ref) ) {
+        $pth = drupal_get_path_alias('node/' . $node->field_og_collection_ref[LANGUAGE_NONE][0]['target_id']);
+    }
+    drupal_goto($pth);
+}
 
 /***********   UTILITY FUNCTIONS ******************/
 
@@ -149,7 +172,7 @@ function shanti_collections_get_groups_for_user($type='update', $add_optgroup = 
  * Moved from mb_structure's get_subcollections_in_collection() function,
  * As it naturally belongs here
  */
-function shanti_collections_get_subcollections($coll = FALSE) {
+function shanti_collections_get_subcollections($coll = FALSE, $include_pvt = TRUE) {
   $nids = array();
   // convert nid to node
   if (is_numeric($coll)) {
@@ -157,13 +180,30 @@ function shanti_collections_get_subcollections($coll = FALSE) {
   }
   // If it's a collection, do query for nodes that have it's nid for og collection ref
   if ($coll->type == "collection") {
-    $result = db_select('og_membership', 'ogm')
-      ->fields('ogm', array('etid'))
-      ->condition('entity_type', 'node')
-      ->condition('field_name', 'field_og_parent_collection_ref')
-      ->condition('gid', $coll->nid)
-      ->execute();
-    $nids = $result->fetchCol();
+    if ($include_pvt) {
+        $result = db_select('og_membership', 'ogm')
+            ->fields('ogm', array('etid'))
+            ->condition('entity_type', 'node')
+            ->condition('field_name', 'field_og_parent_collection_ref')
+            ->condition('gid', $coll->nid)
+            ->execute();
+        $nids = $result->fetchCol();
+    } else {
+        $query = db_select('og_membership', 'ogm');
+        // Joins can't be chained in Drupal 7
+        $query->join('field_data_group_access', 'ga', 'ga.entity_id = ogm.etid');
+        // Add fields
+        $query->fields('ogm', array('etid'))
+              ->addField('ga', 'group_access_value');
+        // Add conditions
+        $query->condition('ogm.entity_type', 'node')
+              ->condition('ogm.entity_type', 'node')
+              ->condition('ogm.field_name', 'field_og_parent_collection_ref')
+              ->condition('ga.group_access_value', '0')
+              ->condition('ogm.gid', $coll->nid);
+        $result = $query->execute();
+        $nids = $result->fetchCol();
+    }
   }
   return $nids;
 }
@@ -192,7 +232,7 @@ function shanti_collections_get_parent_collection($subcoll) {
  *
  * @return the count of nodes or the list of node ids
  */
-function shanti_collections_get_items_in_collection($coll = FALSE, $return = "count", $sort = 'created', $include_subs = TRUE)
+function shanti_collections_get_items_in_collection($coll = FALSE, $return = "count", $sort = 'created', $include_subs = TRUE, $include_pvt=TRUE)
 {
   $nids = array();
   if (is_numeric($coll)) {
@@ -203,22 +243,28 @@ function shanti_collections_get_items_in_collection($coll = FALSE, $return = "co
     $nids[] = $coll->nid;
 
     if ($include_subs) {
-        $nids = array_merge($nids, shanti_collections_get_subcollections($coll));
+        $nids = array_merge($nids, shanti_collections_get_subcollections($coll, $include_pvt));
     }
 
     /**
      * Sample Query:
-     *      select count(etid) from og_membership where entity_type='node' and field_name='field_og_collection_ref' and gid in (3,1721,1725,1769,2228,2258,3498,3939,4836,4835,1760,1748,1841);
+     *      select count(etid) from og_membership where entity_type='node' and field_name='field_og_collection_ref'
+     *             and gid in (3,1721,1725,1748,1760,1769,2228,2258,3498,3939,4835,4836,5059,5586,5591,5596,5911,7971,9531,12281,13481,16526,17076,20761,25416,25421,26211,26331,35846,36736);
      *
      */
     $query = db_select('og_membership', 'ogm');
     $query->join('node', 'n', 'n.nid = ogm.etid');
+    if (!$include_pvt) {
+        $query->join('field_data_group_content_access', 'ac','n.nid = ac.entity_id');
+    }
     $query->fields('ogm', array('etid'))
       ->condition('n.status', 1)
       ->condition('ogm.entity_type', 'node')
       ->condition('ogm.field_name', 'field_og_collection_ref')
       ->condition('ogm.gid', $nids, 'IN');
-
+    if (!$include_pvt) {
+        $query->condition('ac.group_content_access_value', '2', '<');
+    }
     // Add sort params if there
     if (!empty($sort)) {
         $pts = explode(':', $sort);
@@ -242,6 +288,25 @@ function shanti_collections_get_items_in_collection($coll = FALSE, $return = "co
 /***************** END UTILITY FUNCTIONS ********************/
 
 /***************** Hook Alters *************************/
+
+
+/**
+ * Implements hook_menu_local_tasks_alter
+ * Changes tab from "Group" to "Members"
+ */
+function shanti_collections_menu_local_tasks_alter(&$data, $router_item, $root_path)
+{
+    // Replace title of tab "Group" with "Members"
+    if (!empty($data['tabs'][0]['output'])) {
+        foreach ($data['tabs'][0]['output'] as $n => &$tab) {
+            if ($tab['#link']['path'] == 'node/%/group') {
+                $tab['#link']['title'] = t("Members");
+            }
+        }
+    }
+}
+
+
 /**
  * Implements hook_form_alter for group nodes to add an "Add Members" link to the node edit form
  */
@@ -250,13 +315,23 @@ function shanti_collections_form_alter(&$form, &$form_state, $form_id) {
         // Only look at node forms for groups
         if (og_is_group_type('node', $form['#bundle'])) {
             // If it is an existing group node edit form, add link to add users directly to group
-            if (!empty($form['nid']["#value"])) {
-                $url = "/group/node/{$form['nid']["#value"]}/admin/people/add-user";
+            if (!empty($form["#node"])) {
+                $node = $form["#node"];
+                $url = "/group/node/{$node->nid}/admin/people/add-user";
                 $form['add_people_link'] = array(
                     '#markup' => '<div class="group-edit-member-nav add"><a href="' . $url .
                         '">' . t('Add Members') . '</a></div>',
                     '#weight' => -49,
                 );
+            }
+            // Subcollection Edit forms
+            if ($node->type == 'subcollection') {
+                // Check that parent collection is in list of parent collections for form. If not, then add it. See MANU-4979
+                $parent = shanti_collections_get_parent_collection($node);
+                if (!in_array(array_keys($form['field_og_parent_collection_ref'][LANGUAGE_NONE][0]['default']['#options']), $parent->nid)) {
+                    $form['field_og_parent_collection_ref'][LANGUAGE_NONE][0]['default']['#options'][$parent->nid] = $parent->title;
+                    $form['field_og_parent_collection_ref'][LANGUAGE_NONE][0]['default']['#default_value'] = $parent->nid;
+                }
             }
         }
     } else if ($form_id == 'og_ui_add_users') {
@@ -265,15 +340,6 @@ function shanti_collections_form_alter(&$form, &$form_state, $form_id) {
         $form['og_user']['name']['#prefix'] =  '<div class="group-edit-member-nav back"><a href="' . $url . '">' .
                                             t('Return to Collection Page') . '</a></div>';
     }
-}
-
-/**
- * Implements hook_admin_paths_alter().
- */
-function shanti_collections_admin_paths_alter(&$paths)
-{
-    // Make the add members form a sarvaka styled page
-    $paths['group/*/*/admin/*'] = FALSE;
 }
 
 /**

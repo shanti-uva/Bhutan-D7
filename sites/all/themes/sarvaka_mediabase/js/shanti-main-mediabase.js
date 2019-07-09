@@ -262,6 +262,23 @@
 			//$('.mb-av-form .group-required-video-info').find('.panel-collapse').addClass('in');
 			//$('.mb-av-form .group-required-video-info .panel-heading').find('a').removeClass('collapsed');
 
+			if($("body").hasClass('page-user')) {
+				// User profile form
+				// Check for authtype input created by mediabase_form_alter with value of pw or shib
+				var utyp = $('input.authtype').val();
+				if (utyp == 'pw') {
+					// Show password fields
+					$('.form-item-pass').addClass('show-pass');
+				} else {
+					$('.form-type-password.form-item-current-pass').hide();
+					$('#edit-mail').attr('disabled', 'disabled');
+				}
+				$('.field-name-realname .field-label, ' +
+					'.field-name-og-group-ref .field-label').each(function() {
+					$(this).text($(this).text().replace(':', ''));
+				});
+
+			}
 	    }
 	    
         $('.modal-header .close').on('click', function() {
@@ -269,9 +286,46 @@
             // Do this by submitting the form to save any existing data but without av item will return to form with messages
             $('#edit-actions #edit-submit').click();
         });
+
+	    // Alt text for Total on Collection View
+		  if ($("body").hasClass("logged-in") && $("body").hasClass('collection-page')) {
+		  	$(".shanti-filters span.count").attr('title', Drupal.t('Total includes private items'));
+		  }
+
+		  $('.view-display-id-all_collection_list td.views-field-group-access').each(function() {
+		  	var val = $(this).text() * 1;
+		  	switch(val) {
+				case 0:
+					val = 'public';
+					break;
+				case 1:
+					val = 'private';
+					break;
+				case 2:
+					val = 'UVA only';
+					break;
+				default:
+					val = 'na';
+			}
+			if (val != 'na') { $(this).text(val); }
+		  });
+		  $('.view-display-id-all_collection_list .form-item-items-per-page label').hide();
 	  }
 	};
-	
+
+	Drupal.behaviors.shantiAVEditForms = {
+		attach: function (context, settings) {
+			if ($('body').hasClass('page-node-add')) {
+				$('#modalContent').unbind('drop').on('drop', function (e) {
+					alert("Drag and drop is not available here!");
+					e.preventDefault();
+					e.stopPropagation();
+					return false;
+				});
+			}
+		}
+	};
+
 /*
 	Drupal.behaviors.equalHeightTranscriptAV = {
     attach: function (context, settings) {

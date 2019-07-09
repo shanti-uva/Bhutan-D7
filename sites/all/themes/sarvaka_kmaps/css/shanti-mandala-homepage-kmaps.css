@@ -184,11 +184,6 @@
 
 .front .view-section .nav-tabs>li.active>a,
 .front .navbar-brand:hover .site-slogan,
-.front .view-section .fancytree-container .glyphicon,
-.front .view-section .fancytree-container .fancytree-node:hover > .glyphicon,
-.front .view-section .fancytree-container .fancytree-node:active > .glyphicon,
-.front .view-section .fancytree-node.fancytree-active > .glyphicon,
-.front .view-section .fancytree-node.fancytree-selected > .glyphicon,
 .front .carousel-feature-slides li.active div a::before,
 .front .bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a .check-mark,
 .front .bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a:active .check-mark{

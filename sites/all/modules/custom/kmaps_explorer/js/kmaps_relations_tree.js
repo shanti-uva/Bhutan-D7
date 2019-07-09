@@ -28,6 +28,8 @@
       assetIndex: "http://localhost/solr/kmassets_dev",
       tree: "places",
       featuresPath: "/features/%%ID%%",
+      checkbox: false,
+      selectMode: 2,
       domain: "places",
       featureId: 1,
       perspective: "pol.admin.hier",
@@ -70,6 +72,8 @@
         sortBy: plugin.options.sortBy,
         extraFields: plugin.options.extraFields,
         nodeMarkerPredicates: plugin.options.nodeMarkerPredicates,
+        checkbox: plugin.options.checkbox || false,
+        selectMode: plugin.options.selectMode || 2,
       };
       // Place initialization logic here
       // You already have access to the DOM element and the options via the instance,
@@ -81,7 +85,10 @@
           if(plugin.options.initialScrollToActive){
             plugin.scrollToActiveNode();
           }
+          plugin.sendEvent("INIT", event, data);
         },
+        checkbox: plugin.options.checkbox, // plugin.settings.checkboxes,
+        selectMode: plugin.options.selectMode,
         glyph: {
           map: {
             doc: "",
@@ -92,6 +99,9 @@
             // expanderLazy: "glyphicon glyphicon-expand",
             expanderOpen: "glyphicon glyphicon-minus-sign",
             // expanderOpen: "glyphicon glyphicon-collapse-down",
+            checkbox: "glyphicon glyphicon-unchecked",
+            checkboxSelected: "glyphicon glyphicon-check",
+            checkboxUnknown: "glyphicon glyphicon-share",
             folder: "",
             folderOpen: "",
             loading: "glyphicon glyphicon-refresh"
@@ -108,14 +118,33 @@
               window.location.href=node.data.href;
             }
           }
+          plugin.sendEvent("ACTIVATE", event, data);
         },
         lazyLoad: function(event,data){
             data.result = plugin.getDescendantTree(data.node.key,data.node.getKeyPath(),plugin.options.sortBy);
         },
         createNode: function (event, data) {
-          data.node.span.childNodes[2].innerHTML = '<span id="ajax-id-' + data.node.key + '">' +
-            data.node.title + ' ' +
-            ( data.node.data.path || "") + '</span>';
+          // data.node.span.childNodes[2].innerHTML = '<span id="ajax-id-' + data.node.key + '">' +
+          //   data.node.title + ' ' +
+          //   ( data.node.data.path || "") + '</span>';
+
+
+          // Some "interesting" tomfoolery to insert our our drupal ajax special sauce...
+
+          var node = $(data.node.span).find('.fancytree-title');
+          node.attr('id', 'ajax-id-' + data.node.key);
+          node.once('nav', function () {
+            var base = $(this).attr('id');
+            var argument = $(this).attr('argument');
+            var url = location.origin + location.pathname.substring(0, location.pathname.indexOf(plugin.options.domain)) + plugin.options.domain + '/' + data.node.key + '/overview/nojs';
+            Drupal.ajax[base] = new Drupal.ajax(base, this, {
+              url: url,
+              event: 'navigate',
+              progress: {
+                type: 'throbber'
+              }
+            });
+          });
 
           var path = "";//plugin.makeStringPath(data);
           var elem = data.node.span;
@@ -133,7 +162,7 @@
             }
             var current_link = "<a href='"+ancestor.data.href+"'>"+
               current_title+"</a>";
-            if(parentPath == ""){
+            if(parentPath === ""){
               return current_link;
             }
             return parentPath + "/" + current_link;
@@ -152,6 +181,18 @@
           }
           return data;
         },
+
+        // User Event Handlers -- ys2n
+        select: function (event, data) {
+          plugin.sendEvent("SELECT", event, data);
+        },
+        focus: function (event, data) {
+          data.node.scrollIntoView(true);
+          plugin.sendEvent("FOCUS", event, data);
+        },
+        keydown: function (event, data) {
+          plugin.sendEvent("KEYDOWN", event, data);
+        }
       });
 
       function makeStringPath(data) {
@@ -167,8 +208,8 @@
       var active = tree.getActiveNode();
       if (active){
         active.makeVisible().then(function() {
-          var totalOffset =$(active.li).offset().top-$(active.li).closest('.view-wrap').offset().top;
-          $(active.li).closest('.view-wrap').scrollTop(totalOffset);
+          var totalOffset =$(active.li).offset().top-$(active.li).closest('.fancytree-container').offset().top;
+          $(active.li).closest('.fancytree-container').scrollTop(totalOffset);
         });
       }
     },
@@ -191,7 +232,81 @@
         return plugin.options.solrUtils.getDescendantsInPath(ancestorPath.join("/"),ancestorPath.length+1,plugin.options.sortBy,plugin.options.extraFields,plugin.options.nodeMarkerPredicates);
       }
       return plugin.options.solrUtils.getDescendantTree(featureId,plugin.options.descendantsFullDetail,plugin.options.sortBay,plugin.options.extraFields, plugin.options.nodeMarkerPredicates);
-    }
+    },
+
+    // utility functions -- ys2n
+    sendEvent: function (handler, event, data) {
+      function encapsulate(eventtype, event, n) {
+        if (!n) {
+          // console.error("Node data missing...");
+          n = {
+            title: "",
+            key: "",
+            data: {
+              path: "",
+              level: 0,
+              parent: "/"
+            }
+          }
+        }
+        return {
+          eventtype: eventtype, // "useractivate","codeactivate"
+          title: n.title,
+          key: n.key,
+          path: "/" + n.data.path,
+          level: n.data.level,
+          parent: "/" + n.data.parent,
+          event: event
+        };
+      }
+
+      // console.error("HANDLER:  " + handler + " EVENT = " + event);
+
+      if (handler === 'INIT') {
+        $(this.element).trigger("init", encapsulate("init", event));
+      }
+
+
+      if (data.node == null) {
+        return;
+      }
+      var kmapid = data.node.key;
+      var path = "/" + data.node.data.path;
+      var origEvent = (event.originalEvent) ? event.originalEvent.type : "none";
+      var keyCode = "";
+      if (event.keyCode) {
+        keyCode = "(" + event.keyCode + ")";
+      }
+      if (event.type === "fancytreeactivate" && origEvent === "click") {
+        // This was a user click
+        //if (DEBUG) console.error("USER CLICKED: " + data.node.title);
+        $(this.element).trigger("useractivate", encapsulate("useractivate", event, data.node));
+      } else if (event.type === "fancytreekeydown" && origEvent === "keydown") {
+        // This was a user arrow key (or return....)
+        //if (DEBUG) console.error("USER KEYED: " + data.node.tree.getActiveNode() + " with " + event.keyCode);
+        $(this.element).trigger("useractivate", encapsulate("useractivate", event, data.node.tree.getActiveNode()));
+      } else if (event.type === "fancytreefocus" && origEvent === "none") {
+        // if (DEBUG) console.error("FOCUS: " + data.node.title);
+      } else if (event.type === "fancytreeactivate" && origEvent === "none") {
+        // if (DEBUG) console.error("ACTIVATE: " + data.node.title);
+        $(this.element).trigger("activate", encapsulate("codeactivate", event, data.node.tree.getActiveNode()));
+      } else if (event.type === "fancytreeselect" && origEvent === "none") {
+        // console.dir(data.node);
+        if (data.node.selected) {
+          $(this.element).trigger("select", data);
+          console.log("SELECT: " + JSON.stringify(data.node.title));
+          // console.dir(data);
+        } else {
+          $(this.element).trigger("deselect", data);
+          console.log("DESELECT: " + JSON.stringify(data.node.title));
+        }
+
+      } else {
+        log("UNHANDLED EVENT: " + event);
+        console.dir(event);
+      }
+    },
+
   };
 
   // You don't need to change something below:

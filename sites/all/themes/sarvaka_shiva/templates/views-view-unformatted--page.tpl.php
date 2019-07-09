@@ -56,7 +56,7 @@
   <?php if ($rows): ?>
       
       
-      	<ul class="shanti-gallery">
+      	<ul class="shanti-no-wookmark">
            <?php foreach ($rows as $id => $row): ?>
                  <?php print $row; ?>
             <?php endforeach; ?>

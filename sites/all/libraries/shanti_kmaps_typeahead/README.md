@@ -1,5 +1,20 @@
 # KMaps Typeahead
 
+## Update May 2019
+This first version of the plugin written by Ed Garrett has been deprecated though much of the documentation below remains valid. 
+This was updated and "simplified" by Derik Ramerez and the facet filtering was migrated from the first version 
+into the simplified version by Than Grove. The major differences are:
+
+1. The name of the plugin is now `kmapsSimpleTypeahead` and it is called with `$(el).kmapsSimpleTypeahead(...)`
+2. The setting that contains url for the solr index is now called `solr_index` instead of `term_index`
+3. The `root_kmapid` is now replaced by a general setting for `additional_filters` which takes an array of filters. 
+To set a root kmap id add the additional filter: `"ancestor_id_path:1234"` where "1234" is the root kmap's id.
+4. The `case_sensitive` setting takes a boolean: `true` or `false`
+
+The new plugin is found at: https://github.com/shanti-uva/kmaps-typeahead from which the file
+`jquery.kmaps-simple-typeahead.js` has been copied here. Changes to that file should be submitted 
+as pull requests to that repo.
+
 ## Basic Invocation
 
 This is a JQuery plugin which allows SHANTI's KMaps Solr index to be searched using Twitter's typeahead.js.

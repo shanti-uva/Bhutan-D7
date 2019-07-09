@@ -1,0 +1,32 @@
+diff --git a/xmlsitemap.drush.inc b/xmlsitemap.drush.inc
+index d601143..f174029 100644
+--- a/xmlsitemap.drush.inc
++++ b/xmlsitemap.drush.inc
+@@ -7,6 +7,11 @@
+  * @ingroup xmlsitemap
+  */
+ 
++/**
++ * The default batch limit.
++ */
++define('XMLSITEMAP_BATCH_LIMIT', 100);
++
+ /**
+  * Implements hook_drush_command().
+  */
+diff --git a/xmlsitemap.module b/xmlsitemap.module
+index f4cff13..d2fbd08 100644
+--- a/xmlsitemap.module
++++ b/xmlsitemap.module
+@@ -57,11 +57,6 @@ define('XMLSITEMAP_STATUS_DEFAULT', 0);
+  */
+ define('XMLSITEMAP_PRIORITY_DEFAULT', 0.5);
+ 
+-/**
+- * The default batch limit.
+- */
+-define('XMLSITEMAP_BATCH_LIMIT', 100);
+-
+ /**
+  * Implements hook_hook_info().
+  */

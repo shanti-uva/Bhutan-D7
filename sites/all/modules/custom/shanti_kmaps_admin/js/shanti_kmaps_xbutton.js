@@ -14,7 +14,7 @@
                 $xbtn.click(function () {
                     if ($srch.hasClass('kmaps-tt-input')) { // typeahead picker
                         $xbtn.addClass('resetting');
-                        $srch.kmapsTypeahead('setValue', '', false);
+                        $srch.kmapsSimpleTypeahead('setValue', '', false);
                         window.setTimeout(function () {
                             $xbtn.removeClass('resetting');
                             $xbtn.hide();
@@ -38,7 +38,7 @@
                     if (!$xbtn.hasClass('resetting') && $xbtn.parent().find('.searchreset:hover').length > 0) {
                         if ($srch.hasClass('kmaps-tt-input')) { // typeahead picker
                             $xbtn.addClass('resetting');
-                            $srch.kmapsTypeahead('setValue', '', false);
+                            $srch.kmapsSimpleTypeahead('setValue', '', false);
                             window.setTimeout(function () {
                                 $xbtn.removeClass('resetting');
                                 $xbtn.hide();

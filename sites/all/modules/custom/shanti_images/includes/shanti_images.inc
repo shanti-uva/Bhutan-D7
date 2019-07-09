@@ -182,6 +182,43 @@ function _shanti_images_get_node_image($nid) {
 }
 
 /**
+ * Returns boolean whether a type (or node) is an entity reference field for an image
+ *
+ * @param $type : either the node's type or the node itself
+ *
+ * @return boolean
+ */
+function _is_shanti_images_image_entity_field($type) {
+    $img_entity_fields = array('image_descriptions', 'image_agent');
+    if (is_object($type) && isset($type->type)) { $type = $type->type; }
+    return in_array($type, $img_entity_fields);
+}
+
+/**
+ * Return the parent image node for description and agent nodes
+ *
+ * @param $node : the agent or description node or its NID
+ *
+ * @return mixed : boolean if not found or the image node found
+ *
+ **/
+function _shanti_images_get_parent_node($node) {
+    if (is_numeric($node)) { $node = node_load($node); }
+    if ($node->type == 'image_descriptions') {
+        $qrystr = 'select entity_id from {field_data_field_image_descriptions} where field_image_descriptions_target_id = :nid';
+    } elseif ($node->type == 'image_agent') {
+        $qrystr = 'select entity_id from {field_data_field_image_agents} where field_image_agents_target_id = :nid';
+    }
+    $q = db_query($qrystr, array(':nid' => $node->nid));
+    $res = $q->fetchCol();
+    if (count($res) > 0) {
+        return node_load($res[0]);
+    }
+    return FALSE;
+}
+
+
+/**
  * Function to get a list of node ids in sequential order from the view in order to create image carousels.
  *
  * @param $coll
@@ -266,6 +303,10 @@ function _shanti_images_do_upload_to_iiif($file, $i3fid) {
             }
             if (variable_get('shanti_images_debug', FALSE)) {
                 watchdog('shanti_images DEBUG', "Curl cmd: $curlcmd");
+                if (empty($resjson)) {
+                    exec($curlcmd, $out, $ret);
+                    $resjson = "[empty] (Curl error # $ret)";
+                }
                 watchdog('shanti_images DEBUG', "Response: $resjson");
             }
         } else {
@@ -441,15 +482,84 @@ function _shanti_images_image_view($node, $view_mode) {
 }
 
 /**
- * Private function for image description node view. See shanti_images_node_view() above.
+ * Private function for image description node view. See shanti_images_node_view() in module.
  */
 function _shanti_images_desc_view($node, $view_mode, $langcode) {
-    // De-links description titles so they don't link to stand-alone description nodes
-    // TODO: Make this activated by a setting so users can decide if they want to do it this way or in a template
-    $title = $node->title;
-    $node->title_str = $title; // In case needed in template
-    $node->title = '';
-    $node->content['field_description'][0]['#markup'] = '<h2>' . $title . '</h2>' . $node->content['field_description'][0]['#markup'];
+    $obj = menu_get_object('node');
+    if (isset($obj->type) && $obj->type == 'image_descriptions')  {
+        // If this is the image description stand-alone page
+        global $user;
+        // Find parent image node by SQL query
+        $res = db_select('field_data_field_image_descriptions', 'id')
+            ->fields('id', array('entity_id'))
+            ->condition('id.field_image_descriptions_target_id', $node->nid)
+            ->execute()
+            ->fetchAll();
+        // If it has a parent image
+        if ($res && count($res) > 0) {
+            $imagenid = $res[0]->entity_id;
+            if (in_array('administrator', $user->roles)) {
+                // Show parent image to admins
+                drupal_set_title("Shanti Image Description");
+                $image = node_load($imagenid);
+                $node->imgparent = $image;
+            } else {
+                // Redirect non-admin users to the image node
+                $redirect = drupal_get_path_alias('node/' . $imagenid);
+                drupal_goto($redirect);
+            }
+        } else {
+            // If it doesn't have a parent image, warn admins or show not found to others
+            if (in_array('administrator', $user->roles)) {
+                drupal_set_message(t("This orphaned description not attached to an image node!"), 'warning');
+            } else {
+                drupal_not_found();
+            }
+        }
+    } else {
+        // TODO: Make this activated by a setting so users can decide if they want to do it this way or in a template
+        $title = $node->title;
+        $node->title_str = $title; // In case needed in template
+        $node->title = '';
+        $node->content['field_description'][0]['#markup'] = '<h2>' . $title . '</h2>' . $node->content['field_description'][0]['#markup'];
+    }
+}
+
+
+/**
+ * Private function for image agents node (full) view. See shanti_images_node_view() in module.
+ */
+function _shanti_images_agents_view($node, $view_mode) {
+    if ($view_mode == 'full') {
+        global $user;
+        // Use SQL to get parent image note
+        $res = db_select('field_data_field_image_agents', 'ia')
+            ->fields('ia', array('entity_id'))
+            ->condition('ia.field_image_agents_target_id', $node->nid)
+            ->execute()
+            ->fetchAll();
+        // If it has a parent image node
+        if ($res && count($res) > 0) {
+            $imagenid = $res[0]->entity_id;
+            if (in_array('administrator', $user->roles)) {
+                // Show admins the creator with link to parent image
+                drupal_set_title("Shanti Image Agent");
+                $image = node_load($imagenid);
+                $node->imgparent = $image;
+            } else {
+                // Redirect non-admins to the image node
+                $redirect = drupal_get_path_alias('node/' . $imagenid);
+                drupal_goto($redirect);
+            }
+        // If it doesn't have parent image node, warn admins, show not found to all others
+        } else {
+            if (in_array('administrator', $user->roles)) {
+                drupal_set_message(t("This orphaned agent not attached to an image node!"), 'warning');
+            } else {
+                drupal_not_found();
+            }
+        }
+    }
 }
 
 
@@ -540,7 +650,7 @@ function _shanti_images_get_ratio($id, $col) {
 /**
  * Shanti Image Table Access Functions
  */
-function _shanti_images_create_record($nid, $fid=0, $filename='', $width=0, $height=0, $uid=FALSE) {
+function _shanti_images_create_record($nid, $fid=0, $filename='', $width=0, $height=0, $uid=FALSE, $mmsid=0) {
     global $user;
     if (empty($uid)) { $uid = $user->uid; }
     $fields = array(
@@ -552,6 +662,7 @@ function _shanti_images_create_record($nid, $fid=0, $filename='', $width=0, $hei
         'width' => $width,
         'height' => $height,
         'created' => time(),
+        'mmsid' => $mmsid,
     );
     try {
         $siid = db_insert('shanti_images')

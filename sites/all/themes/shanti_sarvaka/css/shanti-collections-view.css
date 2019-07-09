@@ -28,6 +28,10 @@
   padding-top:0.5rem;
 }
 
+.collections-content h3{
+  margin-top:0;
+}
+
 /* image hack for IMG wrapper img-thumnail class */
 .field-type-image.img-thumbnail{ /* AV & TEXTS */
   box-shadow:none;
@@ -45,7 +49,7 @@
 .field-type-text-with-summary{
   max-width:1100px !important;
   font-family: 'EB Garamond', serif;
-  font-size: 1.18em;
+  font-size: 1.25em;
 }
 .field-type-text-with-summary .show-more a{
   font-size: .75em;
@@ -88,7 +92,7 @@
 
 .page-collections-all .shanti-filters .control-box-cell-header span, 
 .page-collections-all-list .shanti-filters .control-box-cell-header span {
-    margin: 0px;
+    /*margin: 0px;*/
 }
 
 .page-collections-all .other-view a, 
@@ -377,4 +381,44 @@
 
 /**
 * END Collections Sidebar */
+
+/** Collections Admin Pages **/
+/* such as /group/node/37201/admin/permissions */
+
+table#permissions th {
+  display: table-cell;
+  font-size: 1em;
+  font-weight: bold;
+  vertical-align: bottom;
+  padding: 0 5px;
+}
+table#permissions tr {
+  padding: 3px 0;
+}
+
+table#permissions td {
+  padding: 5px 0;
+}
+
+table#permissions td.checkbox {
+  display: table-cell;
+  font-size: 0.8em;
+}
+
+table#permissions .sticky-table tr .form-item {
+  min-height: 0;
+}
+
+.page-group-node-admin-roles #og-ui-admin-new-role table {
+  min-width: 70%;
+}
+
+.page-group-node-admin-roles #og-ui-admin-new-role table th {
+  font-weight: bold;
+  padding: 4px;
+}
+
+.page-group-node-admin-roles #og-ui-admin-new-role table td {
+  padding: 4px;
+}
 

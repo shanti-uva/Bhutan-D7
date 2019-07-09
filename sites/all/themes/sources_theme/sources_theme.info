@@ -29,7 +29,7 @@ regions[admin_footer]   = Admin Footer
 ;;;;;;;;;;;;;;;;;;;;;
 
 stylesheets[all][] =  css/shanti-main-sources.css
-stylesheets[all][] =  css/shanti-search-sources.css
+; stylesheets[all][] =  css/shanti-search-sources.css
 
 ; stylesheets[all][] =  css/sources-theme.css
 ; stylesheets[all][] =  css/sources-theme-search-bibliography.css
@@ -42,8 +42,8 @@ stylesheets[all][] =  css/shanti-search-sources.css
 ;;; Scripts
 ;;;;;;;;;;;;;;;;;;;;;;
 
-; scripts[] = js/shanti-main-sources.js
-scripts[] = js/shanti-search-sources.js
+scripts[] = js/shanti-main-sources.js
+; scripts[] = js/shanti-search-sources.js
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Theme Settings

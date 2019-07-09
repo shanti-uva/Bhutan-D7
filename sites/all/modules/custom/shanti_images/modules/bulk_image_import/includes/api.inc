@@ -28,6 +28,7 @@ function bulk_image_import_api_post() {
   $node = null;
   $width = 0;
   $height = 0;
+  $mmsid = 0;
 
   if(isset($_POST['repair']) && $_POST['repair']) {
     $nid = $_POST['nid'];
@@ -44,6 +45,7 @@ function bulk_image_import_api_post() {
       return;
     }
     if (isset($siobj)) {
+      if (isset($siobj->mmsid)) { $mmsid = $siobj->mmsid; }
       _shanti_images_delete_record($siobj->getID());
     }
   } else {
@@ -81,7 +83,9 @@ function bulk_image_import_api_post() {
     $file->fid,
     $file->filename,
     $width,
-    $height
+    $height,
+    FALSE,
+      $mmsid
   );
   $res = shanti_images_upload_iiif($node->nid, $file->fid, $siid);
   if (!$res) {

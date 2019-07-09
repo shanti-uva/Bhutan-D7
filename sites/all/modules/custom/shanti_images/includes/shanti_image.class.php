@@ -384,6 +384,9 @@ class ShantiImage
             if (!empty($rec->width) && !empty($rec->height)) {
                 $this->setDimensions($rec->width, $rec->height);
             }
+            if (!empty($rec->mmsid)) {
+                $this->mmsid = $rec->mmsid;
+            }
             return TRUE;
         } else {
             return FALSE;

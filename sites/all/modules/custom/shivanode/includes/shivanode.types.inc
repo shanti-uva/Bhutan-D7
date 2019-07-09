@@ -43,10 +43,10 @@ function _get_sn_type_array() {
 			'deprecated' => FALSE,
 			'uses_data' => TRUE,
 			'player' => 'shiva',
-			'help_url' => 'https://wiki.shanti.virginia.edu/display/KB/Use+the+Charts+Tool',
+			'help_url' => 'https://wiki.shanti.virginia.edu/display/KB/Charts',
 			'image' => 'sngen-chart-default',
 			'subtypes' => array(
-				1 => array(t('Timeline Chart'), 'AnnotatedTimeLine', 'sngen-chart-antime', 'https://wiki.shanti.virginia.edu/display/KB/Annotated+Time+Line'),
+				1 => array(t('Timeline Chart'), 'AnnotatedTimeLine', 'sngen-chart-antime', 'https://wiki.shanti.virginia.edu/display/KB/Timeline+Chart'),
 			  2 => array(t('Area Chart'), 'AreaChart', 'sngen-chart-area', 'https://wiki.shanti.virginia.edu/display/KB/Area+Chart'),
 			  3 => array(t('Bar Chart'), 'BarChart', 'sngen-chart-bar', 'https://wiki.shanti.virginia.edu/display/KB/Bar+Chart'),
 			  4 => array(t('Candlestick Chart'), 'CandlestickChart', 'sngen-chart-candle', 'https://wiki.shanti.virginia.edu/display/KB/Candlestick+Chart'),

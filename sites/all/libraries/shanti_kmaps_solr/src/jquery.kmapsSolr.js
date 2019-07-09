@@ -5,6 +5,7 @@
   var DEBUG = false;
   var TEXT_SEARCH_FIELD = 'text';
   var JOINQ_LOGIC = "OR";
+  const ALL_ASSET_TYPES = [ "all", "subjects", "terms", "places", "images", "audio-video", "texts", "sources", "visuals"];
 
   // ys2n:  how do we combine the kmap selection and other searches?
   // are we using filtering (AND) or are we adding to the result set (OR)
@@ -688,7 +689,7 @@
           }
           try {
             this.state.filters = options.defaultFilterState;
-            if (options.loadedFromURL) {
+            if (options.preloadedState) {
               // if loaded from URL then assume the state should be considered "not changed".
               console.log("state loaded from URL: assumed not changed");
               this.state.lastStateJSON = JSON.stringify(options.defaultFilterState);
@@ -706,7 +707,16 @@
       // execute a default query and then any afterInit() functions
       // This is primarily to get a default set of facets
       // Uses JQuery promise.
-      this.search().then(
+
+
+      var initQuery = {};
+      if ($.type(this.settings.defaultAssetTypeList) === 'array' ) {
+        initQuery.assetTypeList = this.settings.defaultAssetTypeList;
+      } else if ($.type(this.settings.defaultAssetTypeList) === 'string') {
+        initQuery.assetTypeList = this.settings.defaultAssetTypeList.split(',');
+      }
+
+      this.search(initQuery).then(
         // pre-fetch then run afterInit();
         function () {
           if (self.settings.afterInit !== null && $.type(self.settings.afterInit) === "function") {
@@ -851,7 +861,8 @@
         // if ($.inArray("texts", asset_types) > -1){ asset_types.push("document"); }
         // if ($.inArray("audio-video", asset_types) > -1 ) { asset_types.push("video"); }
         // if ($.inArray("sources", asset_types) > -1 ) { asset_types.push("onlineresource"); }
-        if ($.inArray("all", asset_types) > -1 || asset_types.length === 0 ) { asset_types = [ "all","subjects","terms","places","images","audio-video","texts","sources","visuals" ]; }
+        if ($.inArray("all", asset_types) > -1 || asset_types.length === 0 ) {
+          asset_types = ALL_ASSET_TYPES; }
         asset_types = asset_types.join(" ");
 
       }
@@ -1216,16 +1227,31 @@
       } else if ( typeof showAssetTypes === "string" && showAssetTypes.length > 0 ) {
         assetTypeList = showAssetTypes.split(/\s+/);
       } else if ( showAssetTypes === "" ) {
-        assetTypeList = [ "all","places", "subjects", "terms", "audio-video", "images", "sources", "texts", "visuals" ];
+        assetTypeList = ALL_ASSET_TYPES;
       }
+
+      // adjust asset type list according to default if empty here.
+
+      if ($.type(this.settings.defaultAssetTypeList) === 'array' ) {
+        assetTypeList = this.settings.defaultAssetTypeList;
+      } else if ($.type(this.settings.defaultAssetTypeList) === 'string') {
+        assetTypeList = this.settings.defaultAssetTypeList.split(',');
+      }
+
+      // fix "all" asset type query
+      if ($.type(assetTypeList) === "array" && assetTypeList[0] === "all") {
+        assetTypeList = ALL_ASSET_TYPES;
+      }
+
+
 
       if (assetTypeList !== null) {
         self.state.assetTypeList = assetTypeList;
         if (DEBUG) console.log("setting state.assetTypeList : " + JSON.stringify(assetTypeList) );
       }
 
-      if (!assetTypeList || assetTypeList === null || assetTypeList.length === 0 ) {
-        assetTypeList = [ "all","places", "subjects", "terms", "audio-video", "images", "sources", "texts", "visuals" ];
+      if (!assetTypeList || assetTypeList === null || assetTypeList.length === 0) {
+        assetTypeList = ALL_ASSET_TYPES;
       }
       if (DEBUG)  { console.error("assetTypeList = " + JSON.stringify(assetTypeList)); }
 
@@ -1842,6 +1868,7 @@
 
     clearAll: function() {
       this.state.filters = { };
+      this.state.assetTypeList = this.settings.defaultAssetTypeList;
       return this.search();
     },
 
@@ -1985,6 +2012,8 @@
           requested_kids = $.grep(requested_kids, function(x) {
             if (Drupal.settings.kmapsSolr.state.kmapsLabelCache[x]) {
               if (DEBUG) console.error(x + " exists in cache. skipping...");
+              // console.dir(Drupal.settings.kmapsSolr.state.kmapsLabelCache[x]);
+
               // var cached = {
               //   uid: x,
               //   header: Drupal.settings.kmapsSolr.state.kmapsLabelCache[x]

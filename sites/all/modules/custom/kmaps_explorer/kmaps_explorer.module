@@ -2640,7 +2640,7 @@ function kmaps_explorer_terms_overview($type = 'ajax', $termId, $app) {
   }
 
   //Get data for audio and pronunciations
-  $audioURL = "https://dev-terms.kmaps.virginia.edu/features/{$termId}/recordings.json";
+  $audioURL = "https://terms.kmaps.virginia.edu/features/{$termId}/recordings.json";
   $audioCache = save_to_cache('audio_data', $asset, $termId, $audioURL);
   $audio_data = json_decode($audioCache);
   $audio_data = (count($audio_data->recordings) > 0) ? $audio_data->recordings: [];

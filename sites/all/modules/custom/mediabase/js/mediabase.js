@@ -212,7 +212,6 @@
     
      Drupal.behaviors.mediabaseForms={
         attach: function(context){
-
             var spinner = '<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate" role="status"></span>';
 
             // Hide Add Media Button after audio or video is added for MANU-4900

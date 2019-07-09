@@ -1,0 +1,1001 @@
+<?php
+/**
+* @file
+* Block Module for displaying a Kmaps Navigator
+*/
+
+/**
+ * Constants
+ */
+define('kmaps_integrated_search_BLOCK_NUMBER', 2);
+define('kmaps_integrated_search_USE_BS_TABS', TRUE);
+define('kmaps_integrated_search_KMAPS_LINK', FALSE);
+define('kmaps_integrated_search_SHOW_COUNTS', TRUE);
+define('kmaps_integrated_search_HIDE_ZEROS', TRUE);
+define('kmaps_integrated_search_AUTO_SHOW', FALSE);
+define('kmaps_integrated_search_ITEMS_PER_PAGE', 60);
+
+/**
+ * Module Init Function (hook_init)
+ */
+function kmaps_integrated_search_init() {
+	global $base_url, $base_path;
+    $cp = current_path();
+    if (!path_is_admin($cp)) {
+    	   libraries_load('json2');
+    	   $res = libraries_load('fancytree','source');
+        libraries_load('ajaxsolr');
+        libraries_load('shanti_kmaps_solr');
+    }
+    drupal_add_library('system', 'drupal.ajax');  //Add Ajax library
+
+	$modhome = drupal_get_path('module', 'kmaps_integrated_search');
+	/*  Added in .info file
+     * drupal_add_css($modhome . "/css/kmaps_integrated_search.css");
+    drupal_add_js($modhome . "/js/kmaps_integrated_search.js",array( 'group' => JS_THEME, ));
+	*/
+	drupal_add_js(array(
+			'kmaps_integrated_search' => array(
+				'mod_home' => $base_url . $base_path . $modhome,
+				'ajaxUrl' => url('kmaps/facets'),
+				/*'resTypes' => kmaps_integrated_search_get_selected_resource_types(),*/
+				'loadFacetsFromURL' => false,
+				'hideZeros' => variable_get('kmaps_integrated_search_hide_zeros', kmaps_integrated_search_HIDE_ZEROS),
+			),
+		),
+	'setting');
+
+	if ( module_exists("shanti_kmaps_facets")) {
+	  drupal_set_message(t('The shanti_kmaps_facets module should be DISABLED to avoid conflicts with the kmaps_integrated_search module.'), 'error');
+  }
+
+}
+
+/**
+ * Implements hook_help
+ */
+function kmaps_integrated_search_help($path, $arg) {
+    switch ($path) {
+        case "admin/help#kmaps_integrated_search":
+            return '<p>' . t("Kmaps Search and Navigation:  So Helpful!") . '</p>';
+            break;
+    }
+}
+
+function kmaps_integrated_search_menu() {
+
+  $items = array();
+
+    // Kmaps Facets Settings form defaults to display tab
+    $items['admin/config/user-interface/kmaps_integrated_search'] = array(
+        'title' => 'Kmaps Facets Settings',
+        'type' => MENU_NORMAL_ITEM,
+        'description' => 'Configure Kmaps Facets Module',
+        'access arguments' => array('administer site configuration'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('kmaps_integrated_search_settings_admin'),
+        'access arguments' => array('administer site configuration'),
+     );
+
+   // Path for the kmap tree by block
+   $items['kmaps/facettree/block/%'] = array(
+    'title' => '',
+    'description' => 'Return data for a block tree',
+    'page callback' => 'kmaps_integrated_search_block_tree',
+    'page arguments' => array(3),
+    'access arguments' => array('access content'),
+   );
+
+	 // Path for Module Settings form
+	 // http://www.codesidekick.com/blog/ajax-commands-drupal-7
+   $items['kmaps/facets/%/%'] = array(
+        'type' => MENU_CALLBACK,
+        'description' => 'Kmap Facet Search',
+        'page callback' => 'kmaps_integrated_search_gallery',
+        'page arguments' => array(2, 3),
+        'access arguments' => array('access content'),
+   );
+
+   // Same path with search filter (search string if param 4, "ajax" is param 5)
+   $items['kmaps/facets/%/search/%/%'] = array(
+        'type' => MENU_CALLBACK,
+        'description' => 'Kmap Facet Search',
+        'page callback' => 'kmaps_integrated_search_gallery',
+        'page arguments' => array(2,5,4),
+        'access arguments' => array('access content'),
+   );
+  return $items;
+}
+
+/**
+ * Kmaps Facets Admin Settings Form
+ * Default page
+ */
+function kmaps_integrated_search_settings_admin(array $form, array &$form_state) {
+    $form = array();
+
+    $form['kmaps_integrated_search_block_count'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Number of Kmap Facet Blocks'),
+        '#default_value' => variable_get('kmaps_integrated_search_block_count', kmaps_integrated_search_BLOCK_NUMBER),
+        '#size' => 2,
+        '#maxlength' => 2,
+        '#description' => t("The number of Kmap facet blocks to have on this site"),
+        '#required' => TRUE,
+    );
+
+    $form['kmaps_integrated_search_use_bs_tabs'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Use Bootstrap Tabs for SHANTI Flyout'),
+        '#default_value' => variable_get('kmaps_integrated_search_use_bs_tabs', kmaps_integrated_search_USE_BS_TABS),
+        '#description' => t("Use Bootstrap tabs (markup/js) for displaying facet blocks in SHANTI Sarvaka flyout"),
+    );
+
+    $form['kmaps_integrated_search_resource_types'] = array(
+        '#type' => 'checkboxes',
+        '#title' => t('Resource types to count'),
+        '#description' => t("Select which resource types you want to reflect in the counts"),
+        '#default_value' => variable_get('kmaps_integrated_search_resource_types', array()),
+        '#options' => drupal_map_assoc(array('audio-video', 'picture', 'sources', 'texts', 'visuals')),
+    );
+    $form['kmaps_integrated_search_resource_types']['#options']['picture'] = 'images';  // indexed in Solr as 'picture' but we want to call 'images
+
+    $form['kmaps_integrated_search_kmaps_link'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Link tree Nodes to Kmaps'),
+        '#default_value' => variable_get('kmaps_integrated_search_kmaps_link', kmaps_integrated_search_KMAPS_LINK),
+        '#description' => t("When this is checked, tree nodes will link their Kmaps page in Mandala on the same server"),
+    );
+
+    $form['kmaps_integrated_search_show_counts'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Show resource counts next to nodes'),
+        '#default_value' => variable_get('kmaps_integrated_search_show_counts', kmaps_integrated_search_SHOW_COUNTS),
+        '#description' => t("Show the number of resources in a particular category next to the tree node"),
+    );
+
+    $form['kmaps_integrated_search_hide_zeros'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Hide nodes with no resources'),
+        '#default_value' =>  variable_get('kmaps_integrated_search_hide_zeros', kmaps_integrated_search_HIDE_ZEROS),
+        '#description' => t("Hide nodes with no associated resources"),
+    );
+
+    $form['kmaps_integrated_search_items_per_page'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Items per page in gallery'),
+        '#default_value' => variable_get('kmaps_integrated_search_items_per_page', kmaps_integrated_search_ITEMS_PER_PAGE),
+        '#size' => 2,
+        '#maxlength' => 2,
+        '#description' => t("The number of nodes to view per page on the results page for a certain facet"),
+        '#required' => TRUE,
+    );
+
+  $form['kmaps_integrated_search_auto_show'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Auto Show Results Panel'),
+    '#default_value' => variable_get('kmaps_integrated_search_auto_show', kmaps_integrated_search_AUTO_SHOW),
+    '#description' => t("Whether to auto-show the results panel"),
+    '#required' => FALSE,
+  );
+
+    return system_settings_form($form);
+}
+
+/**
+ * Validate module settings, block number must be an integer and >= 1
+ */
+function kmaps_integrated_search_settings_validate($form, &$form_state) {
+    $blockct = $form_state['values']['kmaps_integrated_search_block_count'];
+    if (!is_numeric($blockct)) {
+        form_set_error('kmaps_integrated_search_block_count', t('You must enter an integer for the number of Kmap facet blocks.'));
+    }
+    elseif ($blockct <= 0) {
+        form_set_error('kmaps_integrated_search_block_count', t('Maximum number of blocks must be at least 1.'));
+    }
+}
+
+/**
+ *  Implements hook_get_selected_resource_types, defined in kmaps_views but also used here for tree display
+ *
+ *  Get selected resource types in SOLR query syntax
+ *    Gets all the array values from the admin form settings for kmaps_integrated_search_resource_types'. Values are e.g. "audio-video" if selected of "0" if not selected.
+ *    Then gets unique values to remove duplicate "0" values
+ *    Then filters out "0" value using array_diff with an array('0')
+ *    Finally returns comma-deimited string of remaining (selected) values
+ */
+function kmaps_integrated_search_get_selected_resource_types() {
+    $resource_types = array_values(variable_get('kmaps_integrated_search_resource_types', array('all')));
+    $resource_types = array_unique($resource_types);
+    $resource_types = array_diff($resource_types, array('0')); // remove the 0 (not chosen) value
+    return implode(",", $resource_types);
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function kmaps_integrated_search_block_info() {
+    $blocks = array();
+
+    // KMAPS BLOCKS
+    for ($i = 1; $i <= variable_get("kmaps_integrated_search_block_count", kmaps_integrated_search_BLOCK_NUMBER); $i++) {
+       $kmaps = "kmaps_" . $i;
+       $blocks[$kmaps]['info'] = variable_get('kmaps_integrated_search_block_name_' . $kmaps, 'Kmaps Facets ' . $i);
+       // We have too many things changing per user, per page to cache.
+       $blocks[$kmaps]['cache'] = DRUPAL_NO_CACHE;
+    }
+
+    //  Setup the results block
+    $blocks["results"]['info'] = "Kmaps Integrated Search Results";
+    $blocks["results"]['cache'] = DRUPAL_NO_CACHE;
+
+    // Setup the facets block
+    $blocks["kmaps_facets"]['info'] = "Kmaps Integrated Search Facets";
+    $blocks["kmaps_facets"]['cache'] = DRUPAL_NO_CACHE;
+
+  return $blocks;
+}
+
+/**
+ *  Implements hook_block_configure($delta)
+ *  Creates configure form for each kmap nav block
+ */
+
+function kmaps_integrated_search_block_configure($delta = 1) {
+	$form['kmaps_integrated_search_block_delta'] = array(
+		'#type' => 'hidden',
+		'#value' => $delta,
+	 );
+
+     $form['kmaps_integrated_search_block_name_' . $delta] = array(
+        '#type' => 'textfield',
+        '#title' => t('Block name'),
+        '#default_value' => variable_get('kmaps_integrated_search_block_name_' . $delta, 'Kmaps Integrated Search Block ' . $delta),
+      );
+
+      if ($delta == 'results') {
+        $form['kmaps_integrated_search_block_type_' . $delta] = array(
+          '#type' => 'select',
+          '#title' => t('Kmap Tree Type'),
+          '#description' => t('Type of Kmap Navigator Tree to Show in Block'),
+          '#default_value' => variable_get('kmaps_integrated_search_block_type_' . $delta, 'results'),
+          '#options' => drupal_map_assoc(array('results')),
+        );
+      } else if ($delta == 'kmaps_facets') {
+        $form['kmaps_integrated_search_block_type_' . $delta] = array(
+          '#type' => 'select',
+          '#title' => t('Kmap Tree Type'),
+          '#description' => t('Type of Kmap Navigator Tree to Show in Block'),
+          '#default_value' => variable_get('kmaps_integrated_search_block_type_' . $delta, 'facets'),
+          '#options' => drupal_map_assoc(array('facets')),
+        );
+      } else {
+        $form['kmaps_integrated_search_block_type_' . $delta] = array(
+          '#type' => 'select',
+          '#title' => t('Kmap Tree Type'),
+          '#description' => t('Type of Kmap Navigator Tree to Show in Block'),
+          '#default_value' => variable_get('kmaps_integrated_search_block_type_' . $delta, 'places'),
+          '#options' => drupal_map_assoc(array('places', 'subjects', 'terms')),
+        );
+      }
+
+
+      if ($delta != 'results' && $delta != 'kmaps_facets') {
+        $form['kmaps_integrated_search_block_click_action_' . $delta] = array(
+          '#type' => 'select',
+          '#title' => t('Click Action'),
+          '#description' => t('Behavior when you click an entry'),
+          '#default_value' => 'navigate',
+          '#options' => drupal_map_assoc(array('navigate', 'add_facet')),
+        );
+
+        $form['kmaps_integrated_search_block_root_' . $delta] = array(
+          '#type' => 'textfield',
+          '#title' => t('Kmap Root Path'),
+          '#description' => t('Enter the KMap ID for the Root Node of the nav-tree in this block.'),
+          '#default_value' => variable_get('kmaps_integrated_search_block_root_' . $delta, ''),
+          '#required' => FALSE,
+        );
+      }
+
+  return $form;
+}
+
+/**
+ * Function to validate kmap facet block settings to make sure kmaps root id either FALSE or a positive integer
+ */
+function kmaps_integrated_search_block_validate(&$form, $form_state) {
+ /*
+  * Removing to allow multiple roots PER MANU-2881
+    // TODO: Add check with kmaps server to make sure root id is a valid kmap id for that type.
+    if (isset($form_state['values']['kmaps_integrated_search_block_delta'])) {
+        $delta = $form_state['values']['kmaps_integrated_search_block_delta'];
+        $root = $form_state['values']["kmaps_integrated_search_block_root_{$delta}"];
+        $root = preg_replace('/[\,\/]/', '', $root); // remove slashes and commas
+        if (empty($root)) {
+            form_set_error("kmaps_integrated_search_block_root_{$delta}", t('You must give a root KMap Id Path for this tree block'));
+        } else if (is_numeric($root)) {
+            $root = $root * 1;
+            if ($root < 1) {
+                form_set_error("kmaps_integrated_search_block_root_{$delta}", t('Root KMap Ids must be positive integers'));
+            }
+        } else {
+                form_set_error("kmaps_integrated_search_block_root_{$delta}", t('Root KMap Ids must be integers'));
+        }
+    }
+  * */
+}
+
+
+/**
+ * Implements hook_block_save(). Saves info from hook_block_configure.
+ */
+function kmaps_integrated_search_block_save($delta, $edit) {
+    variable_set('kmaps_integrated_search_block_name_' . $delta, $edit['kmaps_integrated_search_block_name_' . $delta]);
+    // Type of block (subjects/places)
+    $blktype = $edit['kmaps_integrated_search_block_type_' . $delta];
+    variable_set('kmaps_integrated_search_block_type_' . $delta, $blktype);
+    // Set block root to full kmaps path to id
+    $blkroot = $edit['kmaps_integrated_search_block_root_' . $delta];
+    if ($edit['kmaps_integrated_search_block_root_' . $delta] == "") {
+        $edit['kmaps_integrated_search_block_root_' . $delta] = FALSE;
+    }
+    /* Removing to allow multiple roots. See MANU-2881
+     * else {
+        if (substr($blkroot, 0, 1) != '/') {
+            $edit['kmaps_integrated_search_block_root_' . $delta] = kmaps_integrated_search_get_path($blktype, $blkroot);
+        }
+     *
+    } */
+    variable_set('kmaps_integrated_search_block_root_' . $delta, trim($edit['kmaps_integrated_search_block_root_' . $delta]));
+    variable_set('kmaps_integrated_search_block_click_action_ ' . $delta, trim($edit['kmaps_integrated_search_block_click_action_' . $delta]));
+}
+
+/**
+ * Gets a kmap ids full path from solr
+ */
+function kmaps_integrated_search_get_path($domain, $kid) {
+    $solr = variable_get('shanti_kmaps_admin_server_solr_terms') . '/select?q=id:' . $domain . '-' . $kid
+                        . '&wt=json&indent=true&fl=ancestor_ids_default,ancestor_ids_pol.admin.hier&indent=true&wt=json&rows=1';
+    $sres = file_get_contents($solr);
+    $json = json_decode($sres, TRUE);
+    $kpath = FALSE;
+    if (isset($json['response']['docs'][0]['ancestor_ids_default'])) {
+        $kpath = '/' . implode('/', $json['response']['docs'][0]['ancestor_ids_default']);
+    } else if (isset($json['response']['docs'][0]['ancestor_ids_pol.admin.hier'])) {
+        $kpath = '/' . implode('/', $json['response']['docs'][0]['ancestor_ids_pol.admin.hier']);
+    }
+    return $kpath;
+}
+
+/* Old deprecated function to get list of kmap fields
+function kmaps_integrated_search_get_kmap_field_list() {
+    $finfo = field_info_field_map();
+    $kmfields = array();
+    foreach($finfo as $fnm => $fstats) {
+      if($fstats['type'] == 'shanti_kmaps_fields_default') {
+            $types = array();
+            foreach ($fstats['bundles']['node'] as $ctype) {
+                $types[] = $ctype;
+            }
+            $kmfields[$fnm] = "$fnm (" . implode(', ', $types) . ")";
+      }
+    }
+    return $kmfields;
+}
+*/
+
+/**
+ * Block admin form alter to add validation for kmap facet block settings form
+ */
+function kmaps_integrated_search_form_block_admin_configure_alter(&$form, &$form_state, $form_id) {
+  if ($form['module']['#value'] == 'kmaps_integrated_search') {
+    $form['#validate'][] = 'kmaps_integrated_search_block_validate';
+  }
+}
+
+/**
+ * Implements hook_block_view().
+ *
+ * Prepares the contents of the block.
+ */
+function kmaps_integrated_search_block_view($delta = 1) {
+    global $base_url, $base_path;
+
+    kmaps_integrated_search_load_library('json2');
+    kmaps_integrated_search_load_library('fancytree','source');
+    kmaps_integrated_search_load_library('ajaxsolr');
+    kmaps_integrated_search_load_library('shanti_kmaps_tree');
+    kmaps_integrated_search_load_library('shanti_kmaps_typeahead');
+
+   /* drupal_add_css(drupal_get_path('module', 'kmaps_navigator') . "/stylesheets/kmaps_navigator.css",array(
+        'group' => JS_THEME,
+    ));*/
+    drupal_add_js(array(
+        'kmaps_integrated_search' => array(
+            'folder_path' => drupal_get_path('module', 'kmaps_integrated_search'),
+            'resource_types' =>kmaps_integrated_search_get_selected_resource_types(),
+            'kmaps_link' => variable_get('kmaps_integrated_search_kmaps_link', kmaps_integrated_search_KMAPS_LINK),
+            'show_counts' => variable_get('kmaps_integrated_search_show_counts', kmaps_integrated_search_SHOW_COUNTS),
+            'auto_show' => variable_get('kmaps_integrated_search_auto_show', kmaps_integrated_search_AUTO_SHOW),
+            'items_per_page' => variable_get('kmaps_integrated_search_items_per_page', kmaps_integrated_search_ITEMS_PER_PAGE),
+        )
+    ), 'setting');
+    drupal_add_js(drupal_get_path('module', 'kmaps_integrated_search') . "/js/kmaps_integrated_search.js",array(
+        'group' => JS_THEME,
+    ));
+
+    //Add Ajax library
+    drupal_add_library('system', 'drupal.ajax');
+    $kmtype = variable_get('kmaps_integrated_search_block_type_' . $delta, 'places');
+    $kmroot = variable_get('kmaps_integrated_search_block_root_' . $delta, FALSE);
+    $kmclick = variable_get('kmaps_integrated_search_block_click_action_' . $delta, "navigate");
+
+    if ($delta == 'results') {
+      $block = array(
+        'subject' => '',
+        'content' => theme('kmaps_integrated_search_block_results', array(
+          'delta' => $delta,
+          'kmtype' => $kmtype,
+          'kmroot' => $kmroot,
+          'kmclick' => $kmclick,
+          'treeurl' => 'null', // maybe unnecessary leftover from previous version
+        )),
+      );
+    } else if ($delta == 'kmaps_facets') {
+      $block = array(
+        'subject' => '',
+        'content' => theme('kmaps_integrated_search_block_facets', array(
+          'delta' => $delta,
+          'kmtype' => $kmtype,
+          'kmroot' => $kmroot,
+          'kmclick' => $kmclick,
+          'treeurl' => 'null', // maybe unnecessary leftover from previous version
+        )),
+      );
+    } else {
+      $block = array(
+        'subject' => '',
+        'content' => theme('kmaps_integrated_search_block', array(
+          'delta' => $delta,
+          'kmtype' => $kmtype,
+          'kmroot' => $kmroot,
+          'kmclick' => $kmclick,
+          'treeurl' => 'null', // maybe unnecessary leftover from previous version
+        )),
+      );
+    }
+    return $block;
+}
+
+/**
+ * Extending Libraries libraries_load function to catch when library is not loaded and provide a message (Libraries module should do this but doesn't).
+ */
+function kmaps_integrated_search_load_library($a, $b=NULL) {
+    $res = libraries_load($a, $b);
+    if (!$res['loaded']) {
+        drupal_set_message(t("The library @libname could not be loaded: @errmsg", array('@libname' => $a, '@errmsg' => strip_tags($res['error message']))));
+    }
+}
+
+/**
+ * Implements hook_theme()
+ *
+ */
+function kmaps_integrated_search_theme() {
+    $module_path = drupal_get_path('module', 'kmaps_integrated_search');
+    $base = array(
+        'path' => "{$module_path}/templates",
+    );
+    $ret = array(
+      'kmaps_integrated_search_block' => $base + array(
+                // I could define here anything I want
+                // It would be called from inside the subpath theme in the module path
+                // as file abc.tpl.php
+                'template' => 'kmaps_integrated_search_block',
+                // To override I need file
+                // 'block--<MODULE_NAME>--<DELTA>.tpl.php'
+                // somewhere in my theme's folder
+                // (with '-' for '_' in <MODULE_NAME> and <DELTA>)
+                // <DELTA> comes from array keys in hook_block_info
+                // in this case
+                // block--my-module--my-module-block1.tpl.php
+
+                'variables' => array(
+                    'delta' => NULL, 'kmtype' => NULL,
+                ),
+                '#attached' => array(
+                    'libraries_load' => array(
+                        array(
+                            'fancytree'
+                        ),
+                        array(
+                            'ajaxsolr'
+                        )
+                    ),
+                    'library' => array(
+                        'system', 'drupal.ajax'
+                    ),
+                )
+            ),
+      'kmaps_integrated_search_block_results' => $base + array(
+          'template' => 'kmaps_integrated_search_block_results',
+          'variables' => array(
+            'delta' => NULL, 'kmtype' => NULL,
+          ),
+          '#attached' => array(
+            'libraries_load' => array(
+              array(
+                'fancytree'
+              ),
+              array(
+                'ajaxsolr'
+              )
+            ),
+            'library' => array(
+              'system', 'drupal.ajax'
+            ),
+          )
+        ),
+      'kmaps_integrated_search_block_facets' => $base + array(
+          'template' => 'kmaps_integrated_search_block_facets',
+          'variables' => array(
+            'delta' => NULL, 'kmtype' => NULL,
+          ),
+          '#attached' => array(
+            'libraries_load' => array(
+              array(
+                'fancytree'
+              ),
+              array(
+                'ajaxsolr'
+              )
+            ),
+            'library' => array(
+              'system', 'drupal.ajax'
+            ),
+          )
+        )
+    );
+//     error_log("kmaps_integrated_search_theme returning: " . print_r($ret,true));
+    return $ret;
+
+}
+
+/**
+ * Implements hook_theme_registry_alter().
+ */
+function kmaps_integrated_search_theme_registry_alter(&$theme_registry) {
+  // Defined path to the current module.
+  $module_path = drupal_get_path('module', 'kmaps_integrated_search');
+  // Find all .tpl.php files in this module's folder recursively.
+  $template_file_objects = drupal_find_theme_templates($theme_registry, '.tpl.php', $module_path);
+  // Iterate through all found template file objects.
+  foreach ($template_file_objects as $key => $template_file_object) {
+    // If the template has not already been overridden by a theme.
+    if (!isset($theme_registry[$key]['theme path']) || !preg_match('#/themes/#', $theme_registry[$key]['theme path'])) {
+      // Alter the theme path and template elements.
+      $theme_registry[$key]['theme path'] = $module_path;
+      $theme_registry[$key] = array_merge($theme_registry[$key], $template_file_object);
+      $theme_registry[$key]['type'] = 'module';
+    }
+  }
+}
+
+/**
+ * Returns data for the tree in each block
+ *      Checks cache for json definition of kmaps tree for each block ($delta). If not found, then calls subjectproxy.php to query the kmaps site
+ *      designated by Shanti Kmaps Admin and get JSON def for subject tree, which is then save to cache. In either case, JSON for the tree is output
+ *      to the browser.
+ */
+ function kmaps_integrated_search_block_tree($delta) {
+     global $base_url;
+     $cache_name = "kmaps_facet_tree_block_{$delta}";
+     if ($cache = cache_get($cache_name)) {
+         drupal_json_output(json_decode($cache->data));
+     } else {
+         $km_type = variable_get('kmaps_integrated_search_block_type_' . $delta, 'places');
+         $km_root = variable_get('kmaps_integrated_search_block_root_' . $delta, FALSE);
+         $admin_vars = shanti_kmaps_admin_get_vars();
+         $server = $admin_vars['shanti_kmaps_admin_server_' . $km_type];
+         if ($km_root != '') { $km_root .= '/'; }
+         $dataurl = $server . "/features/" . $km_root . "fancy_infested.json";
+         if ($km_type == 'subjects' && $km_root == '') {
+             $dataurl = $base_url . '/' . drupal_get_path('module', 'kmaps_integrated_search') .  '/subjectproxy.php?server=' . $server;
+         }
+         $json_data = file_get_contents($dataurl);
+         cache_set($cache_name, $json_data, 'cache');
+         drupal_json_output(json_decode($json_data));
+     }
+ }
+
+/**
+ * New Search Flyout Preprocess used with Shanti_Kmap_facets
+ * When used with a Shanti Sarvaka based theme in the search flyout region,
+ * this sets up the proper code to display the tree blocks in Bootstrap tabs
+ */
+function kmaps_integrated_search_preprocess_region(&$vars)
+{
+  if ($vars['region'] == 'search_flyout' && variable_get('kmaps_integrated_search_use_bs_tabs', kmaps_integrated_search_USE_BS_TABS)) {
+    // For search flyout in mediabase, sniff out facet api blocks so that they can be placed in tabs
+    $elements = &$vars['elements'];
+    $children = element_children($elements);
+    $facettabs = '<section class="view-section"><div class="facet-search-messages"><div class="facet-search-error">This is the message section</div></div><div id="kmfacet-list" class="active-kmfaceted-list kmap-filter-box shanti-kmaps-processed" style="display:none;"></div><ul class="nav nav-tabs">';
+    $firstblk = false; // id of the first facet block
+    $lastblk = '';        // id of the last facet block
+    foreach ($children as $ename) {
+      if ((strpos($ename, 'kmaps_integrated_search_kmaps') > -1)) {
+        $active = "";
+        if (!$firstblk) {
+          $firstblk = $ename;
+          $active = " active";
+        }
+        $lastblk = $ename;
+        $el = &$elements[$ename];
+        $flabel = $el['#block']->title;
+        $srflabel = str_replace('_', '-', $ename);
+        $el['#prefix'] = '<div class="km-facet-div ' . $srflabel . ' treeview tab-pane' . $active . '">';
+        $el['#suffix'] = '</div>';
+        $facettabs .= '<li class="km-facet-tab ' . $srflabel . $active . '"><a href=".' . $srflabel . '" data-toggle="tab">' . $flabel . '</a></li>';
+      }
+    }
+    $facettabs .= '</ul>';
+    $elements[$firstblk]['#prefix'] = $facettabs . '<div class="tab-content">' . $elements[$firstblk]['#prefix'];
+    $elements[$lastblk]['#suffix'] .= '</div></section>';
+    $vars['content'] = '';
+    foreach ($children as $ename) {
+      if (strpos($ename, 'kmaps_integrated_search_kmaps') > -1) {
+        $blkcnt = render($vars['elements'][$ename]);
+        $blkcnt = str_replace('--2"', '"', $blkcnt); // Added because rendered a second time which adds an extraneous "--2" to the class
+        $blkcnt = preg_replace('/<h2>[^<]+<\/h2>/', '', $blkcnt); // Forcibly hide the block header, which is used as the tab's title
+        $vars['content'] .= $blkcnt;
+      } else {
+        $vars['content'] .= render($vars['elements'][$ename]);
+      }
+    }
+  }
+}
+
+/**
+ * Creates an array of all kmap data for given block by delta on kmap id with each id having an array of nodes tagged with it
+ * Deprecated in
+ */
+function kmaps_integrated_search_facet_info($delta, $tally_ancestors = TRUE) {
+    $field_name =  variable_get('kmaps_integrated_search_block_field_' . $delta, FALSE);
+    $kmapres = array();
+    if ($field_name) {
+        $tbl = 'field_data_' . $field_name;
+        $col = $field_name . '_id';
+        $raw = $field_name . '_raw';
+
+        $q = db_select($tbl, 't')->fields('t'); //, array('entity_id', $col)
+        $filters = _kmaps_integrated_search_get_filter_info();
+        $active_facet = 0;
+        if (isset($filters[$delta]) && is_array($filters[$delta])) {
+            foreach($filters[$delta] as $kid) {
+                $q->condition($field_name . '_raw', "%<{$kid}>%", "LIKE");
+                $active_facet = $kid;
+            }
+        }
+        drupal_add_js(array('kmaps_integrated_search' => array('facet_info' => array("block-$delta" => $active_facet))), 'setting');
+        $res = $q->execute();
+        $alltags = $res->fetchAll();
+
+        foreach ($alltags as $tinfo) {
+            if ($tally_ancestors) {
+                $anc = shanti_kmaps_fields_parse_raw($tinfo->{$raw});
+                $nid = $tinfo->entity_id;
+                foreach ($anc as $kid) {
+                    $kmapres[$kid][] = $nid;
+                }
+            } else {
+                $nid = $tinfo->entity_id;
+                $kid = $tinfo->{$col};
+                $kmapres[$kid][] = $nid;
+            }
+        }
+        foreach ($kmapres as $key => $karray) {
+            $univals = array_unique($karray);
+            $kmapres[$key] = array_values($univals);
+        }
+    } else {
+        watchdog('kmaps_integrated_search', "Kmaps Integrated Search $delta does not have a field associated with it. Cannot show tree!");
+    }
+    return $kmapres;
+}
+
+/**
+ * Get filter info from the url
+ */
+function _kmaps_integrated_search_get_filter_info() {
+    $mypath = current_path();
+    $fctstr = str_replace('kmaps/facets/', '', $mypath);
+    $fctpts = explode('/', $fctstr);
+    $facets = array();
+    for($n = 0; $n < count($fctpts) - 1; $n += 2) {
+        $bn = $fctpts[$n];
+        $kid = $fctpts[$n+1];
+        if (isset($facets[$bn])) {
+            $facets[$bn][] = $kid;
+        } else {
+            $facets[$bn] = array($kid);
+        }
+    }
+    return $facets;
+}
+
+/**
+ * Display a page of facet results
+ * @param $delta int
+ *  The delta number of the block from which the facet came
+ *
+ * @param $kidstr
+ *      The kmaps id string can either be a single ID in format domain-id (e.g. subjects-6403)
+ *      or a list of such kmids separated by underscores, e.g. subjects-6403_places-13533
+ */
+function kmaps_integrated_search_gallery($kidstr, $type = 'ajax', $qstr="") {
+    // Process $kidstr into an array of kids adding "old" kids from current path
+    $showall = FALSE;
+    if ($kidstr == "all" ) {
+        $showall = TRUE;
+        $kidstr = "*";
+    }
+
+    $qstr = trim($qstr);
+    $kids = (strpos($kidstr, '_') > -1) ? explode("_", $kidstr) : array($kidstr);
+    $cp = current_path();
+    $pathpts = explode('/', $cp);
+    $oldkids = explode('_', $pathpts[2]);
+    $kids += $oldkids;
+
+    // Get page settings
+    $items_per_page = variable_get('kmaps_integrated_search_items_per_page', kmaps_integrated_search_ITEMS_PER_PAGE); //
+    $params = drupal_get_query_parameters();
+    $pg = (isset($params['page'])) ? $params['page'] : 0;
+    $start = $pg * $items_per_page;
+    $startdisplay = $start + 1;
+
+    // Make and Process Solr Call for Term Names
+    // example: https://ss558499-us-east-1-aws.measuredsearch.com/solr/kmterms_predev/select?q=id:subjects-947
+    $solrtermbase = variable_get('shanti_kmaps_admin_server_solr_terms', FALSE);
+    if (!$solrtermbase) {
+        drupal_set_message(t("Solr Term Index URL is not set in Kmaps Admin", "warning"));
+        drupal_not_found();
+    }
+
+    // Set the page title with kmap headers from calls to term index
+    $kidheads = array();
+    $page_title = '';
+    if ($showall) {
+        $page_title = trim(t('@slogan: All Resources', array('@slogan' => variable_get('site_slogan', ''))), ' :');
+    } else {
+        foreach($kids as $kid) {
+            $solrurl = $solrtermbase . '/select?q=id:' . $kid . '&wt=json';
+            $jsonstr = file_get_contents($solrurl);
+            $jsondata = json_decode($jsonstr);
+            $kidheads[] = $jsondata->response->docs[0]->header; // . ' (' . $kid . ')';
+        }
+        $page_title = t('Resources Tagged with @kmheadlist', array(
+            '@kmheadlist' => implode(', ', $kidheads),
+        ));
+    }
+
+    // Make and Process Solr Call for Tagged Assets
+    $solrurl = variable_get('shanti_kmaps_admin_server_solr', FALSE);
+    if (!$solrurl) {
+        drupal_set_message(t("Solr Asset Index URL is not set in Kmaps Admin", "warning"));
+        drupal_not_found();
+    }
+
+    $ids = array();
+    $jsondata = FALSE;
+
+    $asset_types = str_replace(',', ' OR ', kmaps_integrated_search_get_selected_resource_types());
+
+    $qinfo = (!empty($qstr)) ? module_invoke_all('node_facet_hits', $qstr, $kids) : FALSE; // get hits for custom search if exists uses hook. See kmaps_integrated_search.api.php for details
+
+    if ($qinfo && !empty($qinfo['qids'])) {
+        $solrurl .= '/select?q=asset_type:(' . $asset_types . ')%20AND%20kmapid:(' . implode('%20AND%20', $kids) . ')&start=0&rows=10000&fl=id&wt=json';
+        $jsonstr = file_get_contents($solrurl);
+        $jsondata = json_decode($jsonstr);
+        $nids = array();
+        foreach($jsondata->response->docs as $doc) {
+            $nids[] = $doc->id;
+        }
+
+        $ids = (empty($kids) || $kidstr == "*") ? $qinfo['qids'] : array_intersect($qinfo['qids'], $nids);
+        $total = count($ids);
+        if ($total > $items_per_page) {
+            $ids = array_slice($ids, $start, $items_per_page);
+        }
+    } else {
+        $solrurl .= '/select?q=asset_type:(' . $asset_types . ')%20AND%20kmapid:(' . implode('%20AND%20', $kids) . ')&start=' . $start . '&rows=' . $items_per_page . '&fl=id&wt=json';
+        $jsonstr = file_get_contents($solrurl);
+        $jsondata = json_decode($jsonstr);
+        foreach($jsondata->response->docs as $doc) {
+            $ids[] = $doc->id;
+        }
+        $total = $jsondata->response->numFound;
+    }
+
+   $end = ($total < $items_per_page) ? $total : $start + $items_per_page;
+
+    $nodes = node_load_multiple($ids);
+    $items = '';
+    if (count($nodes) == 0 && count($ids) > 0 && $total > 0) {
+        $items = '<div>No nodes found on this site.</p>';
+        drupal_set_message(t('Nodes indexed in SOLR were not found on the site. Please have your administrator reindex kmap ids.'), 'warning');
+    }
+    foreach ($nodes as $nid => $node) {
+        $ndview = node_view($node, 'teaser');
+        $items .= drupal_render($ndview);
+    }
+    // Content wrapper divs (Drupal's divitis symptoms)
+
+   $content = '';
+    if ($total == 0) {
+        $content = '<article class="tab-pane main-col active"><section class="row row-offcanvas row-offcanvas-right" role="main">
+                                <div class="kmaps-facets-no-results clearfix">' . t('No results were found.') . '</div></section></article>';
+    } else {
+        $content = '<article class="tab-pane main-col active"><section class="row row-offcanvas row-offcanvas-right" role="main">
+                            <div class="tab-content container-fluid">
+                                <div class="region region-content">
+                                    <div id="block-system-main" class="block block-system">
+                                        <div class="content">
+                                            <div id="kmaps-facets-results" class="kmaps-facets-results">';
+
+        if (!empty($qstr)) {
+            $content .= '<div class="search-query-filter"><h4>' . t('Search on “@qstr”', array('@qstr' => $qstr)) . '</h4><div>';
+        }
+
+        // Beginning of shanti-filters div
+        $content .= '<div class="shanti-filters clearfix">';
+        // Result summary div
+        $ressummary = t('Displaying @st - @end of @total', array(
+                                    '@st' => $startdisplay,
+                                    '@end' => $end,
+                                    '@total' => $total,
+                                ));
+        $content .= '<div class="control-box-cell-header col-xs-12 col-md-3"><span class="label">' . t("Results") . '</span> 
+                                <span class="count">(' . $ressummary . ')</span></div>' ;
+
+        // Filters div
+        $content .= '<div class="control-box-cell-filters col-xs-12 col-md-5" style=""> <div class="view-filters-mb">     </div> </div>';
+
+        // Pager div
+        $pager = '';
+        if ($total > $items_per_page) {
+            // Initialize and get pager markup (with Pagerer properly installed it will supply default)
+            pager_default_initialize($total, $items_per_page);
+            $quantity = ceil($total / $items_per_page);
+            $vars = array(  'quantity' => $quantity, );
+            $pager = theme('pager', $vars);
+            // Change links from /ajax to /nojs and add "use-ajax" class so that ajax behaviors are automatically added.
+            $pager = str_replace('href=', 'class="use-ajax" href=', $pager);
+            $pager = str_replace('/ajax?page', '/nojs?page', $pager);
+        }
+        $content .= '<div class="control-box-cell-pager col-xs-6 col-md-4">' . $pager . '</div>';
+        $content .= '</div>'; // end of shanti-filters
+        // Shanti Gallery Markup
+        $content .= '<div class="kmaps-facets-result-list clearfix"><ul class="shanti-gallery">'   . $items . '</ul>';
+        $content .= '</div></div></div></div></div></div></section></article>';
+    }
+
+    if ($type == 'ajax') {
+        // Ajax command array
+        $commands = array();
+        $commands[] = ajax_command_replace('article.tab-pane.main-col', $content);  // Replace content
+        $commands[] = ajax_command_remove('div.messages');                                     // Remove any messages from before
+        $commands[] = ajax_command_html('.page-title span:last-child', $page_title);   // Change the page title
+        $facet_data = ($qinfo) ? $qinfo['facet_data'] : "";
+        $commands[] = ajax_command_invoke(NULL, "updateKmapFacetCounts", array(json_encode($facet_data)) );
+
+        // Add a custom command to update the history (taken from kmaps_explorer but renamed)
+        $pgstr = ($pg > 0) ? '?page=' . $pg: '';
+        if ($kids[0] == '*') { $kids[0] = 'all'; }
+
+        $srchpath = (empty($qstr)) ? "" : "/search/$qstr";
+        $commands[] = kmaps_integrated_search_ajax_command_addhistory('#kmaps-facets-results', $content, null,
+                                       base_path() . 'kmaps/facets/' . implode('_', $kids) . $srchpath .  '/nojs' . $pgstr);
+
+        // Create and deliver Ajax page array
+        $page = array('#type' => 'ajax', '#commands' => $commands);
+        ajax_deliver($page);
+    } else {
+        // Non-Ajax page (i.e. direct link from bookmark, etc.)
+        drupal_set_title($page_title);      // Set the title of the page
+        $kiddata = array();
+        if (!empty($oldkids) && $oldkids[0] != "all") {
+            foreach($oldkids as $kid) {
+                $solrurl = $solrtermbase . '/select?q=id:' . $kid . '&wt=json';
+                $jsonstr = file_get_contents($solrurl);
+                $jsondata = json_decode($jsonstr);
+                $kiddata[] = array(
+                    'kmid' => $kid,
+                    'title' => $jsondata->response->docs[0]->header,
+                 );
+            }
+            $jssettings = array( 'kmaps_integrated_search' => array(
+                'loadFacetsFromURL' => json_encode($kiddata),
+                'core_search' => (empty($qstr)) ? FALSE : TRUE,
+                'core_search_query' => (empty($qstr)) ?  "" : '{"q": "' . $qstr . '"}',
+                'search_filter_data' => (!empty($qinfo)) ? json_encode($qinfo['facet_data']) : FALSE,
+            ));
+            drupal_add_js($jssettings, 'setting');
+        }
+        return $content;  // Return the content
+    }
+}
+
+/**
+ * Custom ajax function to supplement the ajax_command_html command with
+ * html5 history pushState.
+ */
+function kmaps_integrated_search_ajax_command_addhistory($selector, $html, $settings = NULL, $url_path = '')
+{
+    return array(
+        'command' => 'insert_history',
+        'method' => 'html',
+        'selector' => $selector,
+        'data' => $html,
+        'settings' => $settings,
+        'url_path' => $url_path,
+    );
+}
+
+/** Orphaned function from previous attempt
+function kmaps_integrated_search_process_facets(&$facets, $node, $km_field) {
+    $fi = field_get_items('node', $node, $km_field);
+    $nid = $node->nid;
+    foreach ($fi as $n => $item) {
+        $ancestors = shanti_kmaps_fields_parse_raw($item['raw']);
+        foreach ($ancestors as $n => $kid) {
+            if (is_array($facets[$kid])) {
+                $facets[$kid][] = $nid;
+            } else {
+                $facets[$kid] = array($nid);
+            }
+        }
+    }
+    foreach ($facets as $kid => $karray) {
+        $facets[$kid] = array_unique($karray);
+    }
+}
+*/
+
+
+
+function kmaps_integrated_search_form_alter(&$form, &$form_state, $form_id) {
+    if ($form_id == 'search_block_form') {
+        $form['search_block_form']['#prefix'] = ' <label><span>Search: </span>Mandala Collections</label>';
+        $form['shanti_options'] = array(
+          'mandalascope' => array(
+              '#type' => 'radios',
+              '#default_value' => 0,
+/*              '#options' => array(0 => t('Wingo'), 1 => t('Dingo'), 2 => t('Bingo')), */
+              '#options' => array(), // Added by ndg8f (10/9/18) otherwise fills log with warnings.
+              '#attributes' => array('class' => array('shanti-options'))
+          ),
+        );
+        $form['actions']['submit']['#submit'][] = 'kmaps_integrated_search_search_submit';
+        $form['#validate'] = array('shanti_kmaps_facet_search_validate');
+        $form['#attributes']= array('autocomplete' => 'off');
+    }
+}
+
+
+    function kmaps_integrated_search_search_submit($form, &$form_state)
+    {
+
+    }
+    function kmaps_integrated_search_validate($form, &$form_state)
+    {
+
+    }
+
+
+
+
+
+
+

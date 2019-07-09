@@ -198,6 +198,13 @@ function shanti_images_init() {
        'access callback' => TRUE,
      );
 
+     $items['search/nid/%'] = array(
+         'title' => 'Shanti Image ID Lookup',
+         'description' => 'Return the page for a specific Node ID',
+         'page callback' => 'shanti_images_nid_lookup',
+         'page arguments' => array(2),
+         'access callback' => TRUE,
+     );
      /**
       * Given an mms id return its iiif file name
       */
@@ -261,6 +268,17 @@ function shanti_images_node_access($node, $op, $account)
             }
         return NODE_ACCESS_IGNORE;
     }
+    // For Agents and Descs check if user can edit the parent img not
+    if (_is_shanti_images_image_entity_field($node)) {
+        if ($op == 'update' || $op == 'delete') {
+            $imgnode = _shanti_images_get_parent_node($node);
+            if (node_access($op, $imgnode, $account)) {
+                return NODE_ACCESS_ALLOW;
+            } else {
+                return NODE_ACCESS_DENY;
+            }
+        }
+    }
 }
 
 /**
@@ -284,7 +302,7 @@ function shanti_images_preprocess_views_view(&$vars) {
     if ($vars['view']->name == 'shanti_image_list_view') {
         $me = $base_path . drupal_get_path('module', 'shanti_images');
         drupal_add_css($me . '/css/shanti-image-list-view.css', 'external');
-        drupal_add_js($me . '/js/shanti-image-list-view.js', 'file');
+        drupal_add_js($me . '/js/shanti-image-list-view.js', 'external');
     }
 }
 
@@ -846,6 +864,10 @@ function shanti_images_get_license_title($license_url) {
         case 'image_descriptions':
             _shanti_images_desc_view($node, $view_mode, $langcode);
             break;
+
+        case 'image_agent':
+            _shanti_images_agents_view($node, $view_mode);
+            break;
     }
  }
 
@@ -957,7 +979,13 @@ function shanti_images_info_api($imgid, $col='mmsid') {
     if (in_array($col, $fnms)) {
         $si = _shanti_images_get_record($imgid, $col);
         if (!empty($si)) {
-            //if (!empty($si->))
+            $si->node_title = '';
+            if (!empty($si->nid)) {
+                $node = node_load($si->nid);
+                if ($node) {
+                    $si->node_title = $node->title;
+                }
+            }
             drupal_json_output($si);
             return;
         }
@@ -1014,6 +1042,20 @@ function shanti_images_siid_lookup($siid) {
   } else {
     drupal_not_found();
   }
+}
+
+/**
+ * Given a particular Shanti Image Node ID redirect to the Drupal node page if it exists
+ *
+ * @param $siid
+ */
+function shanti_images_nid_lookup($nid) {
+    $alias = drupal_get_path_alias("node/$nid");
+    if (!empty($alias)) {
+        drupal_goto($alias);
+    } else {
+        drupal_not_found();
+    }
 }
 
 /**
@@ -1139,9 +1181,17 @@ function shanti_images_upload_iiif($nid, $fid, $sid) {
 // Inline entity forms
 function shanti_images_inline_entity_form_entity_form_alter(&$entity_form, &$form_state) {
     if ($entity_form['#bundle'] == 'image_agent') {
-        //dpm($entity_form, 'agent entity form');
-        $entity_form['#title'] = t('Add new agent');
+        if ($entity_form['#op'] == 'edit') {
+            $entity_form['actions']['ief_edit_save']['#value'] = t("Update agent");
+        } else {
+            $entity_form['#title'] = t('Add new agent');
+        }
+    } elseif ($entity_form['#bundle'] == 'image_descriptions' && $entity_form['#op'] == 'edit') {
+        $entity_form['actions']['ief_edit_save']['#value'] = t("Update description");
+    } else {
+
     }
+
 }
 
 /**** Theming *******/
@@ -1152,22 +1202,27 @@ function shanti_images_inline_entity_form_entity_form_alter(&$entity_form, &$for
  function shanti_images_inline_entity_form_table_fields_alter(&$fields, $context) {
     // IEF is managing products on a node form.
     // For Image Descriptions
+
     if ($context['field_name'] == 'field_image_descriptions') {
+        unset($fields['status']); // Removing status
         $fields['field_summary'] = array(
             'type' => 'property',
             'label' => t('Summary'),
             'weight' => 5,
         );
+        /* Language does not work so reinstating summary
         $fields['field_language'] = array(
             'type' => 'property',
             'label' => t('Language'),
             'weight' => 10,
         );
+        /* removing author field as unnecesarry
         $fields['field_author'] = array(
             'type' => 'property',
             'label' => t('Author'),
             'weight' => 15,
         );
+        */
     }
     if ($context['field_name'] == 'field_image_agents') {
         unset($fields['status']);

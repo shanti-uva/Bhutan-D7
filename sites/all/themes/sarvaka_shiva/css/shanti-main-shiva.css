@@ -49,7 +49,8 @@
 ::selection { background: #9B4151 !important; }
 /*** END - colors ***/
 
-.page-collection-all article.main-col{
+.page-collection-all article.main-col,
+.page-examples.visuals article.main-col{
   max-width:100%;
 }
 
@@ -113,7 +114,7 @@ font-size: 0.62em;
 .front article div.pager-top{
     float: right; 
     position: relative;
-    top: 2rem;
+    top: 1.5rem;
 }
 
 .front article .view-content {
@@ -155,19 +156,21 @@ fieldset.form-wrapper{
   margin-top:3rem;
 }
 
-.main-col fieldset.form-wrapper:first-child{
-  margin-top: 1.5rem;
+.page-create .content > fieldset:first-of-type,
+.page-explore .content > fieldset:first-of-type{
+  margin-top:0;
 }
+
 .page-create .main-col legend,
 .page-explore .main-col legend{
   border-bottom-width: 0;
-      line-height: 3rem;
+  line-height: 3rem;
+  margin-bottom: 1rem;
 }
 .page-create .main-col .fieldset-legend,
 .page-explore .main-col .fieldset-legend {
   margin-top: 20px;
   margin-bottom: 0;
-  margin-right:1rem;
   letter-spacing: 0.015rem;
   font-size:1.44em;
   display:block;
@@ -190,6 +193,7 @@ fieldset.form-wrapper{
 .page-explore .panel-body .sn-explore-list {
   padding-left: 0;
 }
+
 
 .page-groups .pane-menu-menu-groups .pane-content {
   margin-left: -0.3rem;
@@ -243,10 +247,10 @@ fieldset.form-wrapper{
 
 /** so that gallery doesn't go over filters **/
 .front ul.shanti-gallery {
-    clear: both;
+    /*clear: both;*/
 }
 
-.shanti-gallery,
+/*.shanti-gallery,
 .shanti-gallery2,
 .sn-explore-list {
   width: 100%;
@@ -260,7 +264,7 @@ fieldset.form-wrapper{
   -webkit-margin-end: 0;
   -webkit-padding-start: 0;
 }
-
+*/
 .sn-explore-list ul.links {
   padding: 0;
   margin: 0 auto;
@@ -269,18 +273,24 @@ fieldset.form-wrapper{
 
 .sn-explore-list ul.links li {
   text-align: center;
+  line-height: 1.75em !important;
 }
 
-.page-create .sn-create-link a {
+.sn-explore-list ul.links li a{
+  font-weight:normal;
+  font-size:1.25em;
+}
+
+.sn-explore-list .sn-create-link a {
   width: 100%;
-  margin-top: 1.3rem !important;
-  font-size: 1.5rem;
   font-weight: bold;
   color: #fff;
   border-radius: 3px;
   background-clip: padding-box;
-  font-size: 1.32em;
+  position: relative;
+  top: 1rem;
 }
+
 
 .sn-explore-list .sn-create-link a:hover {
   color: #fff;
@@ -321,22 +331,12 @@ fieldset.form-wrapper{
 }
 
 .sn-explore-list .shanti-thumbnail {
-  max-width: 175px;
+  /*max-width: 175px;*/
   height: 17.5em;
 }
 
 .page-explore .shanti-thumbnail{
   height:22rem;
-}
-
-.shanti-gallery2 .shanti-thumbnail,
-.page-create .shanti-thumbnail,
-.sn-explore-list .shanti-thumbnail {
-  margin: 0.75rem 1rem;
-}
-
-.visuals.page-collections-all .shanti-thumbnail{
-  /*height:18.5em;*/
 }
 
 .sn-explore-list .shanti-thumbnail-image {
@@ -363,7 +363,7 @@ fieldset.form-wrapper{
 
 .page-create .shanti-thumbnail .body-wrap,
 .page-explore .shanti-thumbnail .body-wrap{
-  padding-top: 0.75rem;
+  padding-top: 0.2rem;
 }
 
 .page-create ul .icon.shanticon-visuals,
@@ -379,10 +379,7 @@ fieldset.form-wrapper{
   overflow-x: auto;
 }
 
-.sn-explore-list .shanti-thumbnail .body-wrap ul.links li a {
-  font-size: 1.25em;
-  font-weight: normal;
-}
+
 
 /* thumbnail footer */
 .shanti-field-agent > span::before,
@@ -1246,3 +1243,20 @@ input.form-control.kmap-search-term,
   top: .3rem;
 }
 
+
+/** User Page Styles **/
+.page-user .user-details {
+  width: 100%;
+}
+
+.page-user .panels-flexible-row-6-main-row-middle {
+  width: 50%;
+}
+
+.page-user .user-picture img {
+  border-radius: 50px;
+}
+
+.page-user .pane-user-created-content-page-user-created-content-pane h2 {
+  font-size:120%;
+}

@@ -298,6 +298,27 @@ function sarvaka_images_preprocess_image_agent(&$vars) {
         unset($vars['content']['field_agent_place']);
         unset($vars['content']['field_agent_dates']);
 
+    } else {
+        // For Image Agent page
+        $imp = $vars['node']->imgparent;
+        if (!empty($imp)) {
+
+            $vars['content']['agent_name'] = array(
+                '#type' => 'markup',
+                '#markup' => '<div class="field field-name-field-agent-name field-type-list-text field-label-inline clearfix">' .
+                '<div class="field-label">Agent’s Name:&nbsp;</div>' .
+                '<div class="field-items"><div class="field-item even">' . $vars['node']->title .
+                '</div></div></div>',
+                '#weight' => -49,
+            );
+            $vars['content']['imgparent'] = array(
+                '#type' => 'markup',
+                '#markup' => '<div class="field field-name-field-parent-image field-type-list-text field-label-inline clearfix">' .
+                    '<div class="field-label">Parent Image:&nbsp;</div>' .
+                    '<div class="field-items"><div class="field-item even">' . l($imp->title, drupal_get_path_alias('node/' . $imp->nid)) .
+                    '</div></div></div>',
+            );
+        }
     }
 
     // For image agent (hide title in template) use role field changing title of role field (label) to its value and its value to the title (the name)
@@ -358,6 +379,29 @@ function sarvaka_images_preprocess_image_descriptions(&$vars) {
             }
             $vars['description_markup'] = $mkup . '</p></div>';
         }
+    } else if ($vars['view_mode'] == 'full') {
+        // For Image Description full view page
+        // Only allow admins to see
+        $imp = $vars['node']->imgparent;
+        if (!empty($imp)) {
+
+            $vars['content']['desc_title'] = array(
+                '#type' => 'markup',
+                '#markup' => '<h2>' . $vars['node']->title . '</h2>',
+                '#weight' => -49,
+            );
+            $vars['content']['imgparent'] = array(
+                '#type' => 'markup',
+                '#markup' => '<div class="field field-name-field-parent-image field-type-list-text field-label-inline clearfix">' .
+                    '<div class="field-label">Description for:&nbsp;</div>' .
+                    '<div class="field-items"><div class="field-item even">' . l($imp->title, drupal_get_path_alias('node/' . $imp->nid)) .
+                    '</div></div></div>',
+                '#weight' => -48,
+            );
+        }
+        $vars['content'][] = field_view_field('node', $vars['node'], 'field_author');
+        $vars['content'][] = field_view_field('node', $vars['node'], 'field_description', array('label' => 'hidden'));
+        $vars['content'][] = field_view_field('node', $vars['node'], 'field_language');
     }
 }
 

@@ -332,11 +332,15 @@
   right: 0rem;
   z-index: 10;
   width: 2.2rem;
-  height: 2,2rem;
+  height: 2.2rem;
   background: #555;
   text-align: center;
   padding-top: .15rem;
   border: 1px solid #aaa;
+  color:#fff;
+}
+.search-results-gallery-node .btn-gallery-popup-icon:hover{
+  background-color: #4d59ca;
 }
 .search-results-gallery-node .fa-info-circle{
   font-size: 1.56rem;
@@ -648,7 +652,6 @@
 
 .main-wrapper ul.pager li.active>a{
   top: .01rem !important;
-      cursor: pointer;
 }
 
 
@@ -984,8 +987,9 @@
 .toggle-results-node{
   position: absolute;
   left: -2.25rem;
-  top: -0.15rem;
+  top: 0.75rem;
   display: inline-block;
+  color:#888;
 }
 .toggle-results-node .fa-plus{
   border-radius: 50%;
@@ -1613,8 +1617,9 @@
 /* Definitions */
 
 .results-node-kmaps-definitions-wrapper{
-  margin-top: 0.25em;
+  margin-top: 1.25em;
   margin-bottom: 1em;
+  float: left;
 }
 
 .results-node-kmaps-definitions{
@@ -1897,7 +1902,9 @@
   height: 2.32em;
 }
 
-
+.search-results-list-container .shanti-gallery .footer-wrap:hover{
+  background-color: rgba(142, 117, 46, 0.85);
+}
 
 
 

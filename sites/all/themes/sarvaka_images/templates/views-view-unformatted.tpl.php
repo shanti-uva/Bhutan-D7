@@ -11,7 +11,7 @@
 <?php if (!empty($title)): ?>
   <h3><?php print $title; ?></h3>
 <?php endif; ?>
-<ul <?php if (!strstr($view->name, '_search')) { print 'class="shanti-gallery"'; }?>>
+<ul <?php if (!strstr($view->name, '_search')) { print 'class="shanti-no-wookmark"'; }?>>
     <?php foreach ($rows as $id => $row): ?>
         <?php if (strstr($view->name, '_search')): ?>
             <li<?php if ($classes_array[$id]) { print ' class="' . $classes_array[$id] .'"';  } ?>>

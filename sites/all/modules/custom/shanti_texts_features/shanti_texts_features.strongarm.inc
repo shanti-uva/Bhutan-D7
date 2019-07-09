@@ -115,6 +115,9 @@ function shanti_texts_features_strongarm() {
         'path' => array(
           'weight' => '7',
         ),
+        'redirect' => array(
+          'weight' => '30',
+        ),
       ),
       'display' => array(),
     ),

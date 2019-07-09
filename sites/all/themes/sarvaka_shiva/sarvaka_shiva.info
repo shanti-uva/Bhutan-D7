@@ -30,14 +30,14 @@ regions[admin_footer]   = Admin Footer
 ;;;;;;;;;;;;;;;;;;;;;
 
 stylesheets[all][] =  css/shanti-main-shiva.css
-stylesheets[all][] =  css/shanti-search-shiva.css
+; stylesheets[all][] =  css/shanti-search-shiva.css
 
 ;;;;;;;;;;;;;;;;;;;;;;
 ;;; Scripts
 ;;;;;;;;;;;;;;;;;;;;;;
 
 scripts[] = js/shanti-main-shiva.js
-scripts[] = js/shanti-search-shiva.js
+; scripts[] = js/shanti-search-shiva.js
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Theme Settings

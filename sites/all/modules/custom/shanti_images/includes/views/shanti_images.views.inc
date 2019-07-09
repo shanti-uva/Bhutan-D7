@@ -6,6 +6,7 @@
 
 function shanti_images_views_data() {
     $data = array();
+    // Shanti Images Table
     $data['shanti_images']['table']['group'] = t('Shanti Images');
 
     $data['shanti_images']['table']['base'] = array(
@@ -182,6 +183,5 @@ function shanti_images_views_data() {
           'handler' => 'views_handler_argument_string',
         ),
     );
-
     return $data;
 }

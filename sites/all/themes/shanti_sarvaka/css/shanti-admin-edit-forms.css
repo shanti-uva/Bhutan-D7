@@ -333,7 +333,7 @@ font-size: 1.12em;
 .kmap-filter-box,
 .kmap-result-box{
   position: relative;
-  left: 0.7rem;
+  left: 2rem;
   padding-top:0.2rem;
 }
 .kmap-filter-box{ 
@@ -889,12 +889,64 @@ button#edit-delete:hover{
 
 
 
+/**
+Delete Confirmation
+ */
 
+form#node-delete-confirm {
+  background: #555;
+  padding: 30px 0;
+  min-height: 600px;
+}
 
+form#node-delete-confirm > div {
+  width: 60%;
+  margin-left: 20%;
+  background: #EEEEEE;
+  min-height: 300px;
+}
 
+form#node-delete-confirm div {
+  text-align: center;
+}
 
+.alerthead {
+  background: white;
+  height: 150px;
+  padding: 12px;
+}
 
+.alerthead img {
+  width: 60px;
+}
 
+.alertbody {
+  margin: 12px;
+}
+
+form#node-delete-confirm div#edit-actions #edit-submit {
+  background: #a50303;
+  margin-right: 100px;
+}
+
+form#node-delete-confirm div#edit-actions #edit-submit:hover {
+  background: #cf3333;
+}
+
+#edit-cancel {
+  display: inline-block;
+  border: thin solid #333;
+  border-radius: 3px;
+  width: 82px;
+  height: 32px;
+  padding: 6px 18px 5px;
+  color: #555;
+}
+
+#edit-cancel:hover {
+  color: #03038E;
+  border: thin solid #03038E;
+}
 
 /**
 * Collections-Main Edit Form 
@@ -1430,6 +1482,16 @@ html body.admin-menu {
   }
 }  
 
+.region-admin-footer {
+  padding: 1rem 1rem 1rem 2.5rem;
+  background: #707070;
+  color: #eee;
+  border-top: 1px solid #aaa;
+  height:140px;
+    z-index: 2;
+    position: relative;
+}
+
 .region-admin-footer h1,
 .region-admin-footer h2 {
   color: #ddd;
@@ -1447,14 +1509,6 @@ html body.admin-menu {
 
 .region-admin-footer h2{
   margin-top:0;
-}
-
-.region-admin-footer {
-  padding: 1rem 1rem 1rem 2.5rem;
-  background: #707070;
-  color: #eee;
-  border-top: 1px solid #aaa;
-  height:140px;
 }
 
 .region-admin-footer a,
@@ -1773,16 +1827,9 @@ html body.admin-menu {
   margin-left:1.5rem;
 }
 
-
+/* for Searchf forms, NOT Filters w/typeahead */
 .field-name-field-location #field_location-typeahead-wrapper .kmaps-tt-menu .kmaps-tt-suggestion::before{
   right: -1rem;
-}
-
-
-
-
-.field-name-field-recording-location-new .kmaps-tt-menu .kmaps-tt-suggestion::before{
-   right: -1rem;
 }
 
 

@@ -68,7 +68,7 @@
 	<div class="<?php print $classes; ?>">
 	  <?php if ($rows): ?>
 		    <div class="view-content">
-			    <ul class="shanti-gallery">
+			    <ul class="shanti-no-wookmark">
 						<?php print $rows; //dpm($rows, 'rows')?>
 					</ul>
 		    </div>

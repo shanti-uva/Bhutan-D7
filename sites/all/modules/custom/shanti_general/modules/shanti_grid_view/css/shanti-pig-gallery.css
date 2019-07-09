@@ -380,14 +380,14 @@ font-weight: normal;
 
 
 .ppd-expander .ppd-details .view-btn{
-    background: #333;
-    border: 1px solid #888 !important;
-    color: #eee;
-    border-radius: .25em;
-    background-clip: padding-box;
-    box-shadow: none;
-    font-weight: 400;
-    letter-spacing: 0.275rem;
+  background: #333;
+  border: 1px solid #888 !important;
+  color: #eee;
+  border-radius: .25em;
+  background-clip: padding-box;
+  box-shadow: none;
+  font-weight: 400;
+  letter-spacing: 0.275rem;
       padding: 1.2rem 1.5rem 1.1rem 2rem;
   display: inline;
 }
@@ -403,14 +403,14 @@ font-weight: normal;
   border: 1px solid #aaa !important;
 }
 .ppd-expander .ppd-details .view-btn .icon {
-    font-size: 1.5em;
-    position: relative;
-    top: 0.3rem;
+  font-size: 1.5em;
+  position: relative;
+  top: 0.3rem;
   left: -.15rem;
-    font-style: normal;
-    opacity: .6;
-    -webkit-transition: all 0.3s ease-in-out;
-    transition: all 0.3s ease-in-out;
+  font-style: normal;
+  opacity: .6;
+  -webkit-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
   width: 1.5rem;
   height: auto;
   display: inline-block;
@@ -422,7 +422,7 @@ font-weight: normal;
   left:.25rem;
 }
 
-body.status-loading .ppd-status-loading{
+.progressive-loading .ppd-progressive-loading{
   display: block;
   position: absolute;
   left: 0;
@@ -433,7 +433,7 @@ body.status-loading .ppd-status-loading{
   height: 100%;
   opacity: .4;
 }
-body.status-loading .ppd-status-loading span {
+.progressive-loading .ppd-progressive-loading span {
     vertical-align: text-bottom;
     border: .25em solid #d49805;
     border-right-color: transparent;
@@ -448,7 +448,7 @@ body.status-loading .ppd-status-loading span {
     position: relative;
     left: -10rem;
 }
-body.status-loading .ppd-status-loading span::before{
+.progressive-loading .ppd-progressive-loading span::before{
   content:'';
 }
 /*
@@ -477,8 +477,8 @@ body.status-loading .ppd-status-loading span::before{
   width: 1.25em;
   font-size: 1.12em;
   top: 0.1rem;
-    animation: spinloader 1s infinite linear;
-    -webkit-animation: spinloader2 1s infinite linear;
+  animation: spinloader 1s infinite linear;
+  -webkit-animation: spinloader2 1s infinite linear;
 }
 .ppd-expander .ppd-details .view-btn.spinner-loader .icon::before{
   content:'\e64f';
@@ -958,7 +958,7 @@ body:after {
 
 .loading-container {
   position: relative;
-  top: 20rem;
+  top: 20rem !important;
 }
 
 @media screen and (max-width: 767px) {
@@ -970,7 +970,7 @@ body:after {
 
     .loading-container {
       position: relative;
-      top: 27rem;
+      top: 27rem !important;
     }
 
     .loading.details {
@@ -1201,7 +1201,7 @@ body:after {
       top: 100px;
     }
 
-    body.status-loading .ppd-status-loading span {
+    .progressive-loading .ppd-progressive-loading span {
       left: -9.5rem;
     }
 }

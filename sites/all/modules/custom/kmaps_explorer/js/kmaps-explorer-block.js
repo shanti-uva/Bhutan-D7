@@ -286,9 +286,9 @@
 
         if (search) {
           var $listview = $('.listview > .view-wrap');
-          $typeahead.kmapsTypeahead({
+          $typeahead.kmapsSimpleTypeahead({
             menu: $listview,
-            term_index: admin.shanti_kmaps_admin_server_solr_terms,
+            solr_index: admin.shanti_kmaps_admin_server_solr_terms,
             domain: domain,
             root_kmapid: root_kmapid,
             ancestors: 'off', //don't display ancestry in search results
@@ -301,7 +301,7 @@
             empty_sort: 'header_ssort ASC', // sortable header field
             sort: 'header_ssort ASC', // sort even when there's a search term
             filters: admin.shanti_kmaps_admin_solr_filter_query ? admin.shanti_kmaps_admin_solr_filter_query : ''
-          }).kmapsTypeahead('onSuggest',
+          }).kmapsSimpleTypeahead('onSuggest',
             function () {
               $('a[href=".listview"]').tab('show');
               $('.kmaps-tt-suggestion', $listview).each(function() {
@@ -309,7 +309,7 @@
                 decorateElementWithPopover(this, $sugg.attr('data-id'), $sugg.find('.kmaps-place-name, .kmaps-term').html(), $sugg.attr('data-path'), '');
               });
             }
-          ).kmapsTypeahead('onFilterChange',
+          ).kmapsSimpleTypeahead('onFilterChange',
             function (filters) {
               Drupal.ShantiSarvaka.searchTabHeightKMaps();
             }

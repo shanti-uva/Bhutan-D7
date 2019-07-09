@@ -31,8 +31,8 @@
 ?>
 
      <fieldset>
-
         <div class="search-group">
+
           <div class="input-group">
 				  	<?php print $search['search_block_form']; ?>
               <span class="icon shanticon-magnify"></span>
@@ -42,40 +42,7 @@
 				  	</div>
 
 				  	<?php print $search['hidden']; ?>
-
 				  </div>
 
-           <!-- search scope -->
-           <?php if(isset($search['shanti_options'])): ?>
-             <div class="form-group">
-             		<?php print render($search['shanti_options']); ?>
-                <a href="#" class="advanced-link toggle-link"><span class="icon"></span><?php print t('Advanced'); ?></a>
-             </div>
-           <?php endif; ?>
 				</div>
-
-         <div id="notification-wrapper"></div>
-
-<!--         <section class="advanced-view">-->
-<!--            <div class="form-group">-->
-<!--              <label class="radio-inline" for="radios-0">-->
-<!--                <input type="radio" name="radios" id="radios-0" value="1" checked="checked">-->
-<!--                  All Text</label>-->
-<!--              <label class="radio-inline" for="radios-1">-->
-<!--                <input type="radio" name="radios" id="radios-1" value="2">-->
-<!--                  Name </label>-->
-<!--            </div>-->
-<!---->
-<!--            <div class="form-group">-->
-<!--              <label class="radio-inline" for="radios-2">-->
-<!--                <input type="radio" name="radios2" id="radios-2" value="3" checked="checked">-->
-<!--                  Contains</label>-->
-<!--              <label class="radio-inline" for="radios-3">-->
-<!--                <input type="radio" name="radios2" id="radios-3" value="4">-->
-<!--                  Starts With</label>-->
-<!--              <label class="radio-inline" for="radios-4">-->
-<!--                <input type="radio" name="radios2" id="radios-4" value="5">-->
-<!--                  Exactly</label>-->
-<!--            </div>-->
-<!--				</section>-->
-			</fieldset>
+		</fieldset>

@@ -247,7 +247,7 @@ function visuals_additional_fields_field_default_field_instances() {
       'active' => 0,
       'module' => 'shanti_kmaps_fields',
       'settings' => array(),
-      'type' => 'kmap_typeahead_term_picker',
+      'type' => 'kmap_typeahead_picker',
       'weight' => 12,
     ),
   );

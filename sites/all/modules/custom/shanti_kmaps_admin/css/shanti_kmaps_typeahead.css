@@ -6,6 +6,7 @@
     overflow-y: auto;
     overflow-x: hidden;
     border-radius: 0.7rem;
+    overscroll-behavior: none;
 }
 .kmaps-tt-menu,
 .twitter-typeahead {

@@ -52,7 +52,7 @@
   <?php endif; ?>
 
   <?php if ($rows): ?>
-  	<ul class="shanti-gallery">
+  	<ul class="shanti-no-wookmark">
       <?php print $rows; ?>
     </ul>
   <?php elseif ($empty): ?>

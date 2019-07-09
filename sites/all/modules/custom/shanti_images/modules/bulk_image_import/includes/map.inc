@@ -94,39 +94,39 @@ function bulk_image_import_map_xml_to_node($xml) {
     bulk_image_import_link_kmaps_term($node, 'subjects', $matches['id']);
   }
   $matches = NULL;
-  $match = preg_match('/\{(?<id>\d+)\}/', (string) $xml->AnnotationFields->Category, $matches);
+  $match = preg_match('/\{[Ff]?(?<id>\d+)\}/', (string) $xml->AnnotationFields->Category, $matches);
   if($match) {
     bulk_image_import_link_kmaps_term($node, 'places', $matches['id']);
   }
 
-  $agent = FALSE;
-  $response = db_query(
-    "SELECT * FROM node where type = 'image_agent' AND title = :title",
-    array('title' => _bulk_image_import_clean_field($xml->AnnotationFields->Author))
-  )->fetchAssoc();
-  if($response) {
-    $agent = node_load($response['nid']);
+  $agent = new stdClass();
+  $agent->type = 'image_agent';
+  $agent->title = _bulk_image_import_clean_field($xml->AnnotationFields->Author);
+  $agent->status = 1;
+  node_object_prepare($agent);
+  $agent_wrapper = entity_metadata_wrapper('node', $agent);
+  $capture_date = _bulk_image_import_clean_date_field($xml->MetaDataFields->CaptureDate);
+  if(empty($capture_date)) {
+    $capture_date = _bulk_image_import_clean_date_field($xml->AssetProperites->Created);
   }
-  if(!$agent) {
-    $agent = new stdClass();
-    $agent->type = 'image_agent';
-    $agent->title = _bulk_image_import_clean_field($xml->AnnotationFields->Author);
-    $agent->field_agent_dates = _bulk_image_import_clean_date_field($xml->MetaDataFields->CaptureDate);
-    $agent->status = 1;
-    node_object_prepare($agent);
-    node_save($agent);
-  }
+  $agent_wrapper->field_agent_dates->set(array(
+    'value' => $capture_date
+  ));
+  $agent_wrapper->save();
   $node->field_image_agents['und'][0]['target_id'] = $agent->nid;
   $node->field_image_agents['und'][0]['target_type'] = 'image_agent';
 
   $caption = new stdClass();
   $caption->type = 'image_descriptions';
   $caption->title = _bulk_image_import_clean_field($xml->UserFields->UserField_4);
-  $caption->field_description =_bulk_image_import_clean_field($xml->AnnotationFields->Caption);
+  $caption->format = 'filtered_html';
   node_object_prepare($caption);
   node_save($caption);
   $node->field_image_descriptions['und'][0]['target_id'] = $caption->nid;
   $node->field_image_descriptions['und'][0]['target_type'] = 'image_descriptions';
+  $caption = node_load($caption->nid);
+  $caption->field_description['und'][0]['value'] = _bulk_image_import_clean_field($xml->AnnotationFields->Caption);
+  node_save($caption);
 
   node_save($node);
   shanti_kmaps_fields_node_insert($node);
@@ -193,45 +193,56 @@ function bulk_image_import_map_meta_to_node(&$meta) {
   $node_wrapper->field_general_note->set(_bulk_image_import_clean_field($meta['GeneralNote']));
   $node_wrapper->field_private_note->set(_bulk_image_import_clean_field($meta['PrivateNote']));
 
+
   $matches = NULL;
-  $match = preg_match('/\{(?<id>\d+)\}/', (string) $meta['SubjectReference'], $matches);
-  if($match) {
-    bulk_image_import_link_kmaps_term($node, 'subjects', $matches['id']);
+  if (!is_array($meta['SubjectReference'])) {
+    $meta['SubjectReference'] = array($meta['SubjectReference'], );
+  }
+  foreach($meta['SubjectReference'] as $ref) {
+    $match = preg_match('/\{(?<id>\d+)\}/', (string) $ref, $matches);
+    if($match) {
+      bulk_image_import_link_kmaps_term($node, 'subjects', $matches['id']);
+    }
   }
   $matches = NULL;
-  $match = preg_match('/\{(?<id>\d+)\}/', (string) $meta['Category'], $matches);
-  if($match) {
-    bulk_image_import_link_kmaps_term($node, 'places', $matches['id']);
+  if (!is_array($meta['Category'])) {
+    $meta['Category'] = array($meta['Category'], );
+  }
+  foreach($meta['Category'] as $cat) {
+    $match = preg_match('/\{[Ff]?(?<id>\d+)\}/', (string) $cat, $matches);
+    if($match) {
+      bulk_image_import_link_kmaps_term($node, 'places', $matches['id']);
+    }
   }
 
-  $agent = FALSE;
-  $response = db_query(
-    "SELECT * FROM node where type = 'image_agent' AND title = :title",
-    array('title' => _bulk_image_import_clean_field($meta['Author']))
-  )->fetchAssoc();
-  if($response) {
-    $agent = node_load($response['nid']);
+  $agent = new stdClass();
+  $agent->type = 'image_agent';
+  $agent->title = _bulk_image_import_clean_field($meta['Author']);
+  $agent->status = 1;
+  node_object_prepare($agent);
+  $agent_wrapper = entity_metadata_wrapper('node', $agent);
+  $capture_date = _bulk_image_import_clean_date_field($meta['CaptureDate']);
+  if(empty($capture_date)) {
+    $capture_date = _bulk_image_import_clean_date_field($meta['Created']);
   }
-  if(!$agent) {
-    $agent = new stdClass();
-    $agent->type = 'image_agent';
-    $agent->title = _bulk_image_import_clean_field($meta['Author']);
-    $agent->field_agent_dates = _bulk_image_import_clean_date_field($meta['CaptureDate']);
-    $agent->status = 1;
-    node_object_prepare($agent);
-    node_save($agent);
-  }
+  $agent_wrapper->field_agent_dates->set(array(
+    'value' => $capture_date
+  ));
+  $agent_wrapper->save();
   $node->field_image_agents['und'][0]['target_id'] = $agent->nid;
   $node->field_image_agents['und'][0]['target_type'] = 'image_agent';
 
   $caption = new stdClass();
   $caption->type = 'image_descriptions';
   $caption->title = _bulk_image_import_clean_field($meta['Title']);
-  $caption->field_description =_bulk_image_import_clean_field($meta['Caption']);
+  $caption->format = 'filtered_html';
   node_object_prepare($caption);
   node_save($caption);
   $node->field_image_descriptions['und'][0]['target_id'] = $caption->nid;
   $node->field_image_descriptions['und'][0]['target_type'] = 'image_descriptions';
+  $caption = node_load($caption->nid);
+  $caption->field_description['und'][0]['value'] = _bulk_image_import_clean_field($meta['Caption']);
+  node_save($caption);
 
   node_save($node);
   shanti_kmaps_fields_node_insert($node);

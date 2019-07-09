@@ -629,7 +629,7 @@ button#edit-clear.btn.btn-primary.form-submit{
 .view-section .view-wrap,
 .view-section .tab-content .tab-pane,
 .taxonomy-list-tree .ui-fancytree{
-  overflow-y: scroll;
+  /*overflow-y: scroll;*/
 }
 
 .taxonomy-list-tree .fancytree-container .glyphicon{

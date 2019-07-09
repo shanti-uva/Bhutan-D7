@@ -171,17 +171,6 @@ function sources_misc_node_access($node, $op, $account)  {
 }
 
 /**
-* Implements hook admin paths
- *
- *  Define custom paths that are either admins or not. Use Shanti theme and JS for group admin
- */
-function sources_misc_admin_paths_alter(&$paths) {
-	$paths['node/*/group'] = FALSE;
-	$paths['group/*/*/admin/*'] = FALSE;
-}
-
-
-/**
  * Adding validation to biblio nodes
  */
 function sources_misc_node_validate($node, $form, &$form_state) {

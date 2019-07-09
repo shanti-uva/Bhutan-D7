@@ -201,10 +201,12 @@ function biblio_long_fields_field_default_field_instances() {
     'label' => 'Places',
     'required' => 0,
     'settings' => array(
-      'entity_translation_sync' => FALSE,
       'kmap_term_limit' => 100,
-      'search_filters' => array(),
-      'search_root_kmap_path' => NULL,
+      'search_filters' => array(
+        'associated_subject' => 'associated_subject',
+        'feature_type' => 'feature_type',
+      ),
+      'search_root_kmap_path' => '',
       'search_root_kmapid' => '',
       'search_view' => '',
       'user_register_form' => FALSE,
@@ -327,7 +329,7 @@ function biblio_long_fields_field_default_field_instances() {
       'active' => 0,
       'module' => 'shanti_kmaps_fields',
       'settings' => array(),
-      'type' => 'kmap_typeahead_term_picker',
+      'type' => 'kmap_typeahead_picker',
       'weight' => 71,
     ),
   );

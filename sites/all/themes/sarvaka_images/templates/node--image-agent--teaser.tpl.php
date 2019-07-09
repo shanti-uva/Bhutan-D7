@@ -86,6 +86,5 @@
           hide($content['comments']);
           hide($content['links']);
           hide($content['field_agent_notes']);
-          //dpm($content, 'agent content');
           print render($content);
         ?>

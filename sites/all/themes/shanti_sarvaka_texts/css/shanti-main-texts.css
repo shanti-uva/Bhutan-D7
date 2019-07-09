@@ -137,7 +137,7 @@ body:not(.front) article.main-col{
 }
 
 .front #block-system-main .front-overview p {
-    padding: 2rem 2rem 0;
+    padding: 0 2rem 0;
     line-height: 1.5em;
     font-size: .93em;
     font-style: italic;
@@ -246,13 +246,14 @@ body:not(.front) article.main-col{
   color:#111;
 }
 
+
+/* 
 .view-text-collections .views-row,
 .view-text-collections-by-users .views-row {
-  height: 123px;
+  height: 127px;
 }
 
 .view-text-collections .views-field-type{
-  text-transform:uppercase;
       padding-bottom: .2rem !important;
 }
 
@@ -276,10 +277,47 @@ body:not(.front) article.main-col{
 
 .view-text-collections .views-field-field-og-parent-collection-ref {
   clear: both;
-  /*margin-top: -5px;*/
   position: absolute;
     bottom: .2rem;
 }
+ REPLACED THE ABOVE WITH THE FOLLOWING SINGLE SELECTOR */
+
+/* this breaks the collection all page because .page-collection is a body style
+.page-collections {
+  height: 127px;
+}
+*/
+
+.page-collections .views-row {
+  height: 127px;
+}
+
+.page-collections .views-field-type{
+      padding-bottom: .2rem !important;
+}
+
+.page-collections .views-field-type {
+  float: left;
+  padding-top: 3px;
+}
+
+.page-collections .views-field-php {
+  padding-top: 3px;
+}
+.page-collections .views-field-body{
+  padding-bottom:.7rem;
+}
+.page-collections .views-field-body {
+  clear: both;
+}
+
+.page-collections .views-field-field-og-parent-collection-ref {
+  clear: both;
+  position: absolute;
+  bottom: .2rem;
+}
+
+
 
 .views-row .views-field.empty::before{
   content:'';
@@ -289,7 +327,7 @@ body:not(.front) article.main-col{
 .views-field-title h3 {
   font-size: 1.38em;
   font-weight: 500;
-  line-height: 1.12em;
+  line-height: 1.18em;
   margin: 0;
   width: 100%;
   padding: .2rem 0 0.1rem 0;
@@ -306,6 +344,10 @@ body:not(.front) article.main-col{
   filter: alpha(opacity=100);
   opacity: 1;
   color: #df3d26;
+}
+
+.views-field-title h3.bo{
+  font-size:1.5em;
 }
 
 .views-field-title h3 .icon {
@@ -350,6 +392,10 @@ body:not(.front) article.main-col{
   text-overflow: ellipsis;
   overflow: hidden;
   display: block;
+}
+
+.views-field-field-book-author.bo{
+  font-size: 1.38em;
 }
 
 .views-field-field-book-author::before{
@@ -516,12 +562,19 @@ body:not(.front) article.main-col{
 }
 
 /* User Page Styles */
+
+
 .page-user .profile .field-name-realname {
   margin-bottom: 8px;
 }
 
+.page-user .profile .field-name-realname .field-items {
+  display: block;
+  clear: both;
+}
+
 .page-user .profile h3 {
-  display: none;
+  width: 50%;
 }
 
 .page-user .profile dt, .page-user .profile dd {
@@ -546,6 +599,18 @@ body:not(.front) article.main-col{
 }
 .page-user .profile .field-name-og-user-node1 .field-item {
   margin-left: 24px;
+}
+
+.page-user .field-label {
+  border-bottom: 1px solid #ccc;
+  width: 50%;
+  margin-top: 20px;
+  margin-bottom: 5px;
+  letter-spacing: 0.0175rem;
+  font-weight: 400;
+  color: #444;
+  font-size: 1.32em;
+  text-transform: capitalize;
 }
 
 /*-----------------*/

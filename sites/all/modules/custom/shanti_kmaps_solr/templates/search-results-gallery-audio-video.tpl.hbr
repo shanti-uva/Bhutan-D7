@@ -43,7 +43,7 @@
           </div> <!-- end body-wrap -->
 
           <div class="footer-wrap">
-            <div data-toggle="popover" data-content="add as a filter" data-trigger="click" data-placement="auto right" class="shanti-field shanti-field-group-audience">
+            <div class="shanti-field shanti-field-group-audience">
               <div class="shanti-field-content">{{{collection_title}}}</div>
             </div>
           </div> <!-- end footer -->

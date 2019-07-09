@@ -29,13 +29,13 @@ regions[admin_footer]   = Admin Footer
 ;;;;;;;;;;;;;;;;;;;;;
 stylesheets[all][] =  css/shanti-images-gallery.css
 stylesheets[all][] =  css/shanti-main-images.css
-stylesheets[all][] =  css/shanti-search-images.css
+; stylesheets[all][] =  css/shanti-search-images.css
 
 ;;;;;;;;;;;;;;;;;;;;;;
 ;;; Scripts
 ;;;;;;;;;;;;;;;;;;;;;;
 scripts[] = js/shanti-main-images.js
-scripts[] = js/shanti-search-images.js
+; scripts[] = js/shanti-search-images.js
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Theme Settings

@@ -52,6 +52,7 @@ function shanti_texts_features_field_group_info() {
     'weight' => '1',
     'children' => array(
       0 => 'field_book_content',
+      1 => 'field_pdf_version',
     ),
     'format_type' => 'tab',
     'format_settings' => array(
@@ -90,7 +91,6 @@ function shanti_texts_features_field_group_info() {
       9 => 'field_book_editor',
       10 => 'field_book_translator',
       11 => 'field_dc_lang_code',
-      12 => 'field_pdf_version',
     ),
     'format_type' => 'tab',
     'format_settings' => array(

@@ -29,7 +29,7 @@ regions[admin_footer]   = Admin Footer
 ;;;;;;;;;;;;;;;;;;;;;
 
 stylesheets[all][] =  css/shanti-main-mediabase.css
-stylesheets[all][] =  css/shanti-search-mediabase.css
+; stylesheets[all][] =  css/shanti-search-mediabase.css
 stylesheets[all][] =  css/shanti-av-transcript.css
 stylesheets[all][] =  css/mediabase-edit-form.css
 
@@ -38,7 +38,7 @@ stylesheets[all][] =  css/mediabase-edit-form.css
 ;;;;;;;;;;;;;;;;;;;;;;
 
 scripts[] = js/shanti-main-mediabase.js
-scripts[] = js/shanti-search-mediabase.js
+; scripts[] = js/shanti-search-mediabase.js
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Theme Settings   

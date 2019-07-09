@@ -1,0 +1,24 @@
+name = Kmaps Integrated Search
+description = A new drupal module from the Shanti project to provide blocks that display custom kmap trees to use as facets.
+core = 7.x
+package = Shanti
+version = 2.0-alpha
+
+dependencies[] = libraries (>=2.1)
+dependencies[] = fancytree
+dependencies[] = shanti_kmaps_solr
+dependencies[] = ajaxsolr
+dependencies[] = shanti_kmaps_admin
+dependencies[] = kmaps_explorer
+; dependencies[] = shanti_kmaps_fields  ; uncomment if actually required
+
+configure = admin/config/user-interface/kmaps_integrated_search
+
+scripts[]   =  js/custom-ajax.js
+scripts[]   =  js/jquery.justifiedGallery.js
+scripts[]   =  js/lz-string.min.js
+scripts[]   =  js/jquery.getUrlParam.js
+scripts[]   =  js/kmaps_integrated_search.js
+
+stylesheets[all][] = css/kmaps_integrated_search.css
+stylesheets[all][] = css/justified-gallery.css

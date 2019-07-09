@@ -35,7 +35,7 @@ KMapsUtil.getLevelFacetResults = function (facet_fields) {
 
 KMapsUtil.trackTypeaheadSelected = function ($typeahead, pickList) {
   if ($typeahead.length !== 0) {
-    $typeahead.kmapsTypeahead('trackSelected', Object.keys(pickList).map(
+    $typeahead.kmapsSimpleTypeahead('trackSelected', Object.keys(pickList).map(
       function (val) {
         return pickList[val].id;
       })
@@ -58,7 +58,7 @@ KMapsUtil.removeFilters = function ($typeahead, solrField, pickList) {
   // to be safe, remove both 'OR' and 'AND'
   var fq = KMapsUtil.getFilters(solrField, pickList, 'OR');
   if (fq.length > 0) {
-    $typeahead.kmapsTypeahead('removeFilters', fq.concat(KMapsUtil.getFilters(solrField, pickList, 'AND')));
+    $typeahead.kmapsSimpleTypeahead('removeFilters', fq.concat(KMapsUtil.getFilters(solrField, pickList, 'AND')));
   }
 };
 

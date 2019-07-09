@@ -462,7 +462,7 @@
           var TERMS_TEMPLATE = "search-results-details-terms";
           if (DEBUG) console.log("chooseTemplate: asset_type = " + asset_type);
           if (asset_type === "subjects" || asset_type === "places") {
-            console.log("USING " + KMAPS_TEMPLATE);
+            // console.log("USING " + KMAPS_TEMPLATE);
             return KMAPS_TEMPLATE;
           } else if(asset_type === "terms") {
             // console.log("USING " + TERMS_TEMPLATE);
@@ -477,11 +477,18 @@
           var DEFAULT_TEMPLATE = "search-results-gallery-default";
           if (DEBUG) console.log("chooseGallery: view_type = " + view_type);
 
+          if (view_type === "A/V") {
+            view_type = "audio-video";
+          }
+
           // see if a template with this name exists
           var mapped_template = $('#search-results-gallery-' + view_type);
 
           var template = DEFAULT_TEMPLATE;
           if(mapped_template[0]) {
+            if (view_type === "A/V") {
+              view_type = "audio-video";
+            }
             template = "search-results-gallery-" + view_type;
           }
           // console.log("Returning template " + template);
@@ -575,7 +582,7 @@
                 $('#faceted-search-results').on('extopen extclose', function(evt) {
                   // console.log("extruder event: " + evt.type);
                   // console.error("attachBehaviors: on extopen extclose");
-                  // Drupal.attachBehaviors('#faceted-search-results');
+                  Drupal.attachBehaviors('#faceted-search-results');
                 });
 
 
@@ -648,11 +655,13 @@
                   //   console.dir(window.location);
                   // }
 
+                  var preloadedState = false;
                   var defaultFilterState = null;
                   try {
                     if ($.cookie('defaultFilterState')) {
                       if (DEBUG) console.log("restoring defaultFilterState... " + JSON.stringify($.cookie('defaultFilterState')));
                       defaultFilterState = JSON.parse($.cookie('defaultFilterState'));
+                      preloadedState = true;
                     }
                   } catch (err) {
                     console.log("Error deserializing defaultFilterState: " + err);
@@ -666,8 +675,14 @@
                     if (true) { console.log("LOADED FILTER STATE = " + JSON.stringify(defaultFilterState)); }
                     // since we loaded the state from the url.  Assume that lastStateJSON and the new filter state should be the same
                     // this will result in last code to NOT see this as a state change.
-                    loadedFromURL = true;
+                    preloadedState = true;
                   }
+
+                  // Let's also choose an assetType
+                  var defaultAssetType = grokDefaultAssetType();
+
+                  // console.log("defaultAssetType = " + defaultAssetType);
+
                   var path = document.location.pathname; // path without hash or queryString
                   var hash = document.location.hash;
                   if (hash) {
@@ -919,601 +934,661 @@
 
                   });
 
-                  Drupal.settings.kmapsSolr = $.kmapsSolr(
-                    {
-                      'pageSize': 100,
-                      'overFetch': 100,
-                      'solrBase': $solrBase,
-                      'solrPath': $solrPath,
-                      'assetIndex': $assetIndex,
-                      'termIndex': $termIndex,
-                      'kmapFilterQuery': kmapFilters,
-                      'assetFilterQuery': assetFilters,
-                      // update handler is called whenever a search is completed
-                      updateHandler: function (blob) {
-                        var start = Date.now();
-                        var now = start;
-                        var last = now;
-                        if (PROFILING) console.error("elapsed A: " + Number(now - last) );
-                        last = now;
 
-                        // console.log("RESULTS: " + JSON.stringify(blob.results, undefined, 2));
-                        // TODO: ys2n: These should be confgurable (or derivable).
-                        var $flist = $("#facetpicker");
-                        var SKSFLtemplate = Handlebars.compile($('#shantiKmapsSolrFacetList').html());
+                  if (!Drupal.settings.kmapsSolr) {
+                    Drupal.settings.kmapsSolr = $.kmapsSolr(
+                      {
+                        'pageSize': 100,
+                        'overFetch': 100,
+                        'solrBase': $solrBase,
+                        'solrPath': $solrPath,
+                        'assetIndex': $assetIndex,
+                        'termIndex': $termIndex,
+                        'kmapFilterQuery': kmapFilters,
+                        'assetFilterQuery': assetFilters,
+                        'defaultAssetTypeList' : [ defaultAssetType ],
 
-                        if (DEBUG) console.log("SEE IF WE SHOULD TRIGGER LABEL UPDATES");
+                        // update handler is called whenever a search is completed
+                        updateHandler: function (blob) {
+                          var start = Date.now();
+                          var now = start;
+                          var last = now;
+                          if (PROFILING) console.error("elapsed A: " + Number(now - last));
+                          last = now;
 
-                        if (blob.facets && blob.facets.places && blob.facets.places.buckets ) {
+                          // console.log("RESULTS: " + JSON.stringify(blob.results, undefined, 2));
+                          // TODO: ys2n: These should be confgurable (or derivable).
+                          var $flist = $("#facetpicker");
+                          var SKSFLtemplate = Handlebars.compile($('#shantiKmapsSolrFacetList').html());
 
-                          var ups = $.merge($.merge([], blob.facets.places.buckets.slice(0, 50)), blob.facets.subjects.buckets.slice(0, 50));
+                          if (DEBUG) console.log("SEE IF WE SHOULD TRIGGER LABEL UPDATES");
 
-                          var chunky = $.map(ups, function (x) {
-                            return x.value;
+                          if (blob.facets && blob.facets.places && blob.facets.places.buckets) {
+
+                            var ups = $.merge($.merge([], blob.facets.places.buckets.slice(0, 50)), blob.facets.subjects.buckets.slice(0, 50));
+
+                            var chunky = $.map(ups, function (x) {
+                              return x.value;
+                            });
+
+                            if (DEBUG) console.dir(chunky);
+
+                            var unique = [];
+                            $.each(chunky, function (i, el) {
+                              if ($.inArray(el, unique) === -1) unique.push(el);
+                            });
+
+                            settings.kmapsSolr.updateKmapLabels(unique);
+
+                          }
+
+                          // blob.facets.subjects.buckets;
+
+                          // settings.kmapsSolr.updateKmapLabels
+
+                          // use the filters to mark the chosen facets
+                          if (DEBUG) console.dir({
+                            'filters': blob.filters,
+                            'facets': blob.facets
                           });
 
-                          if (DEBUG) console.dir(chunky);
+                          $flist.html(SKSFLtemplate({
+                            facets: blob.facets,
+                            numShown: numShown
+                          }));
 
-                          var unique = [];
-                          $.each(chunky, function(i, el){
-                            if($.inArray(el, unique) === -1) unique.push(el);
+                          // hide facet list items beyond numShown
+                          $('.shanti-kmaps-solr-facet-block').each(function (_, item) {
+                            $(item).find('.shanti-kmaps-solr-facet-list')
+                              .show()
+                              .slice(numShown)
+                              .hide();
                           });
 
-                          settings.kmapsSolr.updateKmapLabels(unique);
+                          now = Date.now();
+                          if (PROFILING) console.error("elapsed B: " + Number(now - last));
+                          last = now;
 
-                        }
+                          // attach listeners to slide-expand-show truncated list on click
+                          $('.shanti-kmaps-solr-facet-title').each(function (_, item) {
 
-                        // blob.facets.subjects.buckets;
+                            var veil_threshold = numShown;
 
-                        // settings.kmapsSolr.updateKmapLabels
-
-                        // use the filters to mark the chosen facets
-                        if (DEBUG) console.dir( {
-                          'filters': blob.filters,
-                          'facets' : blob.facets
-                        });
-
-                        $flist.html(SKSFLtemplate({
-                          facets: blob.facets,
-                          numShown: numShown
-                        }));
-
-                        // hide facet list items beyond numShown
-                        $('.shanti-kmaps-solr-facet-block').each(function (_, item) {
-                          $(item).find('.shanti-kmaps-solr-facet-list')
-                            .show()
-                            .slice(numShown)
-                            .hide();
-                        });
-
-                        now = Date.now();
-                        if (PROFILING) console.error("elapsed B: " + Number(now - last) );
-                        last = now;
-
-                        // attach listeners to slide-expand-show truncated list on click
-                        $('.shanti-kmaps-solr-facet-title').each(function (_, item) {
-
-                          var veil_threshold = numShown;
-
-                          // find facet block
-                          var $block = $($(item).closest('.shanti-kmaps-solr-facet-block'));
-                          // mark short lists with .facets-short-list
-                          if (
-                            $block
-                              .find('.shanti-kmaps-solr-facet-list')
-                              .size() < veil_threshold + 1) {
-                            $block.addClass("facets-short-list");
-                          } else {
-                            $block.removeClass("facets-short-list");
-                          }
-                        });
-
-
-                        // attach listeners to add the facets to the facet list when selected.
-                        $('.shanti-kmaps-solr-facet-item').on('click', function (){
-                          var $this = $(this);
-                          var facetType = $this.attr('data-facet-type');
-                          var facetLabel = $this.attr('data-facet-label');
-                          var facetId = $this.attr('data-facet-id');
-                          addFacetTagToList(facetType + ': ' + facetLabel, facetId);
-                          settings.kmapsSolr.selectFacet(facetId);
-                        });
-
-                        // attach facet sort listeners
-                        $('.shanti-kmaps-solr-facet-sort').on('click', function (x) {
-                          var mode = $(x.target).find('input').data('sort');
-                          var $block = $(this).closest('.shanti-kmaps-solr-facet-block');
-
-                          if (mode === 'alpha') {
-                            $block.find('.shanti-kmaps-solr-facet-list').sort(function (a, b) {
-                              var $a = String($($(a).find('.shanti-kmaps-solr-facet-item')[0]).data('facet-label'));
-                              var $b = String($($(b).find('.shanti-kmaps-solr-facet-item')[0]).data('facet-label'));
-                              return $a.localeCompare($b);
-                            }).appendTo($block);
-
-                          } else { // mode === 'count'
-                            $block.find('.shanti-kmaps-solr-facet-list').sort(function (a, b) {
-                              var $a = Number($($(a).find('.shanti-kmaps-solr-facet-item')[0]).data('facet-count'));
-                              var $b = Number($($(b).find('.shanti-kmaps-solr-facet-item')[0]).data('facet-count'));
-                              return $b - $a;
-                            }).appendTo($block);
-                          }
-                        });
-
-                        // search string handling
-                        var searchString;
-                        if (Drupal.settings.kmapsSolr &&
-                          Drupal.settings.kmapsSolr.getState().filters &&
-                          Drupal.settings.kmapsSolr.getState().filters.searchString) {
-                          searchString = Drupal.settings.kmapsSolr.getState().filters.searchString.replace('text:', '');
-                        }
-
-                        var total_count = 0;
-                        for (var n in blob.asset_counts) {
-                          if (blob.asset_counts.hasOwnProperty(n) && n !== "all") {
-                            total_count += blob.asset_counts[n];
-                          }
-                        }
-                        if (blob.asset_counts) {
-                          blob.asset_counts['all'] = total_count;
-                        }
-
-                        if (DEBUG) console.dir(blob.asset_counts);
-
-                        var decorated_counts = {};
-                        if (blob.asset_counts) {
-                          for(var f in ASSET_TYPE_LIST) {
-                            var field = ASSET_TYPE_LIST[f];
-                            var value = blob.asset_counts[field];
-
-                            if ($.type(value) === 'undefined') { value = 0; };
-
-                            if (DEBUG) console.log("field = " + field + " count = " + value);
-
-                            var assetTypes = ['all'];
-
-                            if (DEBUG) console.error("assetType List: " + JSON.stringify(Drupal.settings.kmapsSolr.getState().assetTypeList, undefined, 2));
-
-                            if (Drupal.settings.kmapsSolr.getState().assetTypeList) {
-                              assetTypes = Drupal.settings.kmapsSolr.getState().assetTypeList;
-                              if (assetTypes.length === 0 || assetTypes[0] === 'all') {
-
-                                var defaultAssetType = "all";
-
-                                // override default asset type per app.
-
-                                var defaultAssetType = grokDefaultAssetType();
-
-                                if (defaultAssetType === "audio-video") {
-                                  defaultAssetType = "A/V";
-                                }
-                                assetTypes = [ defaultAssetType ];
-                              }
+                            // find facet block
+                            var $block = $($(item).closest('.shanti-kmaps-solr-facet-block'));
+                            // mark short lists with .facets-short-list
+                            if (
+                              $block
+                                .find('.shanti-kmaps-solr-facet-list')
+                                .size() < veil_threshold + 1) {
+                              $block.addClass("facets-short-list");
                             }
-                            var selected = ($.inArray(field, assetTypes) > -1) ? "selected" : "";
-                            var label = (field === "audio-video")?"A/V":field;
-                            // TODO: ys2n: refactor to abstract this logic
-                            var hide = (value === 0 && selected !== "selected");
-                            var icon = (field === 'all')?"shanticon-logo-shanti":"shanticon-" + field;
+                            else {
+                              $block.removeClass("facets-short-list");
+                            }
+                          });
+
+
+                          // attach listeners to add the facets to the facet list when selected.
+                          $('.shanti-kmaps-solr-facet-item').on('click', function () {
+                            var $this = $(this);
+                            var facetType = $this.attr('data-facet-type');
+                            var facetLabel = $this.attr('data-facet-label');
+                            var facetId = $this.attr('data-facet-id');
+                            addFacetTagToList(facetType + ': ' + facetLabel, facetId);
+                            settings.kmapsSolr.selectFacet(facetId);
+                          });
+
+                          // attach facet sort listeners
+                          $('.shanti-kmaps-solr-facet-sort').on('click', function (x) {
+                            var mode = $(x.target).find('input').data('sort');
+                            var $block = $(this).closest('.shanti-kmaps-solr-facet-block');
+
+                            if (mode === 'alpha') {
+                              $block.find('.shanti-kmaps-solr-facet-list').sort(function (a, b) {
+                                var $a = String($($(a).find('.shanti-kmaps-solr-facet-item')[0]).data('facet-label'));
+                                var $b = String($($(b).find('.shanti-kmaps-solr-facet-item')[0]).data('facet-label'));
+                                return $a.localeCompare($b);
+                              }).appendTo($block);
+
+                            }
+                            else { // mode === 'count'
+                              $block.find('.shanti-kmaps-solr-facet-list').sort(function (a, b) {
+                                var $a = Number($($(a).find('.shanti-kmaps-solr-facet-item')[0]).data('facet-count'));
+                                var $b = Number($($(b).find('.shanti-kmaps-solr-facet-item')[0]).data('facet-count'));
+                                return $b - $a;
+                              }).appendTo($block);
+                            }
+                          });
+
+                          // search string handling
+                          var searchString;
+                          if (Drupal.settings.kmapsSolr &&
+                            Drupal.settings.kmapsSolr.getState().filters &&
+                            Drupal.settings.kmapsSolr.getState().filters.searchString) {
+                            searchString = Drupal.settings.kmapsSolr.getState().filters.searchString.replace('text:', '');
+                          }
+
+                          var total_count = 0;
+                          for (var n in blob.asset_counts) {
+                            if (blob.asset_counts.hasOwnProperty(n) && n !== "all") {
+                              total_count += blob.asset_counts[n];
+                            }
+                          }
+                          if (blob.asset_counts) {
+                            blob.asset_counts['all'] = total_count;
+                          }
+
+                          if (DEBUG) console.dir(blob.asset_counts);
+
+                          var decorated_counts = {};
+                          if (blob.asset_counts) {
+                            for (var f in ASSET_TYPE_LIST) {
+                              var field = ASSET_TYPE_LIST[f];
+                              var value = blob.asset_counts[field];
+
+                              if ($.type(value) === 'undefined') {
+                                value = 0;
+                              }
+
+                              if (DEBUG) console.log("field = " + field + " count = " + value);
+
+                              var assetTypes = ['all'];
+
+                              if (DEBUG) console.error("assetType List: " + JSON.stringify(Drupal.settings.kmapsSolr.getState().assetTypeList, undefined, 2));
+
+                              if (Drupal.settings.kmapsSolr.getState().assetTypeList) {
+                                assetTypes = Drupal.settings.kmapsSolr.getState().assetTypeList;
+                                if (assetTypes.length === 0 || assetTypes[0] === 'all') {
+
+                                  var defaultAssetType = "all";
+
+                                  // override default asset type per app.
+
+                                  defaultAssetType = grokDefaultAssetType();
+
+                                  if (defaultAssetType === "audio-video") {
+                                    defaultAssetType = "A/V";
+                                  }
+
+                                  if (assetTypes[0] === "all") {
+                                    assetTypes = ["all"];
+                                  }
+                                  else {
+                                    assetTypes = [defaultAssetType];
+                                  }
+                                }
+                              }
+                              var selected = ($.inArray(field, assetTypes) > -1) ? "selected" : "";
+                              var label = (field === "audio-video") ? "A/V" : field;
+                              // TODO: ys2n: refactor to abstract this logic
+                              var hide = (value === 0 && selected !== "selected");
+                              var icon = (field === 'all') ? "shanticon-logo-shanti" : "shanticon-" + field;
+
+                              // ROUNDING:  if the count is over a threshhold, round the number to the nearest 1K
+                              var rounding_threshhold = 1000;
+                              var count = value;
+                              if (count > rounding_threshhold) {
+                                count = Math.round(count / 1000) + "K";
+                              }
+
+                              var obj = {
+                                field: field,
+                                count: count,
+                                icon: icon,
+                                label: label,
+                                selected: selected,
+                                hide: hide
+                              };
+                              decorated_counts[field] = obj;
+                            }
+                          }
+
+                          if (DEBUG) {
+                            console.log("DECORATED COUNTS:");
+                            console.log(JSON.stringify(decorated_counts, undefined, 2));
+                          }
+                          //
+
+                          var filterJson = JSON.stringify(blob.filters);
+                          var encodedFilters = LZString.compressToEncodedURIComponent(filterJson);
+
+                          if (DEBUG) {
+                            console.error("filterJson = " + filterJson);
+                            console.error("encodedFilters = " + encodedFilters);
+                          }
+
+                          // groom asset_results
+                          if (blob.asset_results && blob.asset_results.docs) {
+                            $.each(blob.asset_results.docs, function (ii) {
+
+                              // TODO: ys2n:  refactor this!
+                              // FIX URLS for DEVELOPMENT
+                              var hst = window.location.hostname;
+                              if (hst.indexOf('.dd') > -1 || hst.indexOf('-dev') > -1 || hst.indexOf('-predev') > -1) {
+                                var thumb = this.url_thumb;
+                                if (thumb && thumb.match(/shanti-image(-stage)?-\d+/)) {
+                                  thumb = thumb.replace('-test', '');
+                                }
+                              }
+
+                              // insert image proxy
+                              // TODO:  ys2n: refactor this!  Right now its a kludge.
+                              if (this.url_thumb) {
+                                this.url_thumb = this.url_thumb.replace(/iiif\.lib\.virginia\.edu/, "cicada.shanti.virginia.edu/images");
+                                // console.error("url_thumb = " + this.url_thumb);
+                              }
+
+                              // DISPLAY LABEL LOGIC
+                              var display_label = "Bloomers!";
+                              if (this.header) {
+                                display_label = this.header;
+                              }
+                              else if (this.caption) {
+                                display_label = this.caption
+                              }
+                              else if (this.title[0]) {
+                                display_label = this.title[0];
+                              }
+                              else if (this.names_txt[0]) {
+                                display_label = this.names_txt[0];
+                              }
+                              else if (this.names_txt[1]) {
+                                display_label = this.names_txt[1];
+                              }
+
+                              // if its a subject or a place, append the kmapid
+                              // if (this.asset_type === "subjects" || this.asset_type === "places") {
+                              //   display_label = display_label  + " (" + this.uid + ")";
+                              // }
+
+                              // remove markup.
+                              this.display_label = $("<i>" + display_label + "</i>").text();
+
+                              //
+                              // Asset View URL's
+                              //
+
+                              if (Drupal.settings.shanti_kmaps_admin.shanti_kmaps_admin_search_navigation_mode === "app") {
+                                if (this.asset_type === "subjects" || this.asset_type === "places" || this.asset_type === "terms") {
+                                  // this.url_asset_nav = "/" + this.asset_type + "/" + this.id + "/overview/nojs?f=" + encodedFilters;
+                                  this.url_asset_nav = new Handlebars.SafeString(this.url_html + "?f=" + encodedFilters);
+                                }
+                                else if (this.asset_type === "texts") {
+                                  // this.url_asset_nav = ASSET_VIEWER_PATH + "text_node/" + this.id + "/nojs?f=" + encodedFilters;
+                                  this.url_asset_nav = new Handlebars.SafeString(this.url_html + "?f=" + encodedFilters);
+                                }
+                                else if (this.asset_type === "visuals") {
+                                  // this.url_asset_nav = ASSET_VIEWER_PATH + "visuals/node/" + this.id + "/nojs?f=" + encodedFilters;
+                                  this.url_asset_nav = new Handlebars.SafeString(this.url_html + "?f=" + encodedFilters);
+                                }
+                                else if (this.asset_type === "sources") {
+                                  // this.url_asset_nav = ASSET_VIEWER_PATH + "sources/node/" + this.id + "/nojs?f=" + encodedFilters;
+                                  this.url_asset_nav = new Handlebars.SafeString(this.url_html + "?f=" + encodedFilters);
+                                }
+                                else if (this.asset_type === "images") {
+                                  // this.url_asset_nav = ASSET_VIEWER_PATH + "photos_node/" + this.id + "/nojs?f=" + encodedFilters;
+                                  var xx = $('<img/>');
+                                  xx.src = this.url_thumb;
+                                  $('document').append(xx); // silliness, perhaps.
+                                  // console.log("prefetching " +ii + ": " + this.url_thumb);
+                                  this.url_asset_nav = new Handlebars.SafeString(this.url_html + "?f=" + encodedFilters);
+                                }
+                                else if (this.asset_type === "picture") {
+                                  // this.url_asset_nav = ASSET_VIEWER_PATH + "photos_node/" + this.id + "/nojs?f=" + encodedFilters;
+                                  this.url_asset_nav = new Handlebars.SafeString(this.url_html + "?f=" + encodedFilters);
+                                }
+                                else if (this.asset_type === "audio-video") {
+                                  var url = this.url_html;
+                                  this.url_asset_nav = new Handlebars.SafeString(url + "?f=" + encodedFilters);
+                                }
+                                else {
+                                  console.error("ERROR unknown asset type! " + this.asset_type + " for " + this.uid);
+                                  console.dir(this);
+                                  this.asset_type = 'unknown';
+                                  this.tree = 'unknown';
+                                }
+                              }
+                              else /* if (Drupal.settings.shanti_kmaps_admin.shanti_kmaps_admin_search_navigation_mode === "local") */ {
+                                //check if there is a kmaps_id available and if not then use the default setting for asset_viewer_path
+                                if (typeof Drupal.settings.kmaps_explorer !== 'undefined' && typeof Drupal.settings.kmaps_explorer.kmaps_id !== 'undefined') {
+                                  ASSET_VIEWER_PATH = '/' + Drupal.settings.kmaps_explorer.app + '/' + Drupal.settings.kmaps_explorer.kmaps_id + '/';
+                                }
+                                if (this.asset_type === "subjects" || this.asset_type === "places" || this.asset_type === "terms") {
+                                  this.url_asset_nav = "/" + this.asset_type + "/" + this.id + "/overview/nojs";
+                                }
+                                else if (this.asset_type === "texts") {
+                                  this.url_asset_nav = ASSET_VIEWER_PATH + "text-node/" + this.id + "/nojs";
+                                }
+                                else if (this.asset_type === "visuals") {
+                                  this.url_asset_nav = ASSET_VIEWER_PATH + "visuals-node/" + this.id + "/nojs";
+                                }
+                                else if (this.asset_type === "sources") {
+                                  this.url_asset_nav = ASSET_VIEWER_PATH + "sources-node/" + this.id + "/nojs";
+                                }
+                                else if (this.asset_type === "images") {
+                                  this.url_asset_nav = ASSET_VIEWER_PATH + "image-node/" + this.id + "/nojs";
+                                }
+                                else if (this.asset_type === "picture") {
+                                  this.url_asset_nav = ASSET_VIEWER_PATH + "image-node/" + this.id + "/nojs?mms";
+                                }
+                                else if (this.asset_type === "audio-video") {
+                                  var path = this.url_html.split('/');
+                                  var last = path.pop();
+                                  var type = path.pop();
+                                  this.url_asset_nav = ASSET_VIEWER_PATH + "audio-video-node/" + this.id + "/nojs";
+                                }
+                                else {
+                                  console.error("ERROR unknown asset type! " + this.asset_type);
+                                }
+
+                              }
+                            });
+                          }
+
+                          // truncate the list (limit list when using overfetch)
+                          blob.asset_results.docs = blob.asset_results.docs.slice(0, this.pageSize);
+
+                          var hbcontext = {
+                            encodedFilters: encodedFilters,
+                            searchString: searchString,
+                            data: blob.asset_results,
+                            asset_counts: decorated_counts,
+                            rangeStart: Drupal.settings.kmapsSolr.getRangeStart(),
+                            rangeEnd: Drupal.settings.kmapsSolr.getRangeEnd()
+                          };
+                          // Add pager to the context
+                          if (blob.asset_results && blob.asset_results.numFound) {
+                            // TODO: ys2n refactor to glean the kmapSolr instance via more flexible means
+                            hbcontext.pager = getPagerMarkup(Drupal.settings.kmapsSolr);
+                          }
+
+                          // Decorate menu with counts and hints
+                          if (blob.asset_results && blob.asset_results.numFound) {
+                            // update the search badge count
 
                             // ROUNDING:  if the count is over a threshhold, round the number to the nearest 1K
                             var rounding_threshhold = 1000;
-                            var count = value;
-                            if (count > rounding_threshhold) {
-                              count = Math.round(count/1000) + "K";
+                            var count = blob.asset_results.numFound;
+
+                            if (blob.asset_results.numFound > rounding_threshhold) {
+                              count = Math.round(count / 1000) + "K";
                             }
 
-                            var obj = {field: field, count: count, icon: icon, label: label, selected: selected, hide: hide};
-                            decorated_counts[field] = obj;
-                          }
-                        }
+                            $('#results-count-badge').html(count);
+                            // $('.search .search-hint').html("search hint");
 
-                        if (DEBUG) {
-                          console.log("DECORATED COUNTS:");
-                          console.log(JSON.stringify(decorated_counts, undefined,2));
-                        }
-                        //
-
-                        var filterJson = JSON.stringify(blob.filters);
-                        var encodedFilters = LZString.compressToEncodedURIComponent(filterJson);
-
-                        if (DEBUG) {
-                          console.error("filterJson = " + filterJson);
-                          console.error("encodedFilters = " + encodedFilters);
-                        }
-
-                        // groom asset_results
-                        if (blob.asset_results && blob.asset_results.docs) {
-                          $.each(blob.asset_results.docs, function(ii) {
-
-                            // TODO: ys2n:  refactor this!
-                            // FIX URLS for DEVELOPMENT
-                            var hst = window.location.hostname;
-                            if (hst.indexOf('.dd') > -1 || hst.indexOf('-dev') > -1 || hst.indexOf('-predev') > -1) {
-                              var thumb = this.url_thumb;
-                              if (thumb && thumb.match(/shanti-image(-stage)?-\d+/)) {
-                                thumb=thumb.replace('-test', '');
-                              }
-                            }
-
-                            // insert image proxy
-                            // TODO:  ys2n: refactor this!  Right now its a kludge.
-                            if (this.url_thumb) {
-                              this.url_thumb = this.url_thumb.replace(/iiif\.lib\.virginia\.edu/, "cicada.shanti.virginia.edu/images");
-                              // console.error("url_thumb = " + this.url_thumb);
-                            }
-
-                            // DISPLAY LABEL LOGIC
-                            var display_label = "Bloomers!";
-                            if (this.header) {
-                              display_label = this.header;
-                            } else if (this.caption) {
-                              display_label = this.caption
-                            } else if(this.title[0]) {
-                              display_label = this.title[0];
-                            } else if (this.names_txt[0]) {
-                              display_label = this.names_txt[0];
-                            } else if (this.names_txt[1]) {
-                              display_label = this.names_txt[1];
-                            }
-
-                            // if its a subject or a place, append the kmapid
-                            // if (this.asset_type === "subjects" || this.asset_type === "places") {
-                            //   display_label = display_label  + " (" + this.uid + ")";
+                            // if (blob && blob.results) {
+                            //   // cache results data for use later
+                            //   $.each(blob.results.docs,
+                            //     function (n, doc) {
+                            //       cacheDoc(doc);
+                            //     }
+                            //   );
+                            // } else {
+                            //   console.error("blob.results is not defined!");
                             // }
-
-                            // remove markup.
-                            this.display_label = $("<i>" + display_label + "</i>").text();
-
-                            //
-                            // Asset View URL's
-                            //
-
-                            if (Drupal.settings.shanti_kmaps_admin.shanti_kmaps_admin_search_navigation_mode === "app") {
-                              if (this.asset_type === "subjects" || this.asset_type === "places" || this.asset_type === "terms") {
-                                // this.url_asset_nav = "/" + this.asset_type + "/" + this.id + "/overview/nojs?f=" + encodedFilters;
-                                this.url_asset_nav = new Handlebars.SafeString(this.url_html + "?f=" + encodedFilters);
-                              } else if (this.asset_type === "texts") {
-                                // this.url_asset_nav = ASSET_VIEWER_PATH + "text_node/" + this.id + "/nojs?f=" + encodedFilters;
-                                this.url_asset_nav = new Handlebars.SafeString(this.url_html + "?f=" + encodedFilters);
-                              } else if (this.asset_type === "visuals") {
-                                // this.url_asset_nav = ASSET_VIEWER_PATH + "visuals/node/" + this.id + "/nojs?f=" + encodedFilters;
-                                this.url_asset_nav = new Handlebars.SafeString(this.url_html + "?f=" + encodedFilters);
-                              } else if (this.asset_type === "sources") {
-                                // this.url_asset_nav = ASSET_VIEWER_PATH + "sources/node/" + this.id + "/nojs?f=" + encodedFilters;
-                                this.url_asset_nav = new Handlebars.SafeString(this.url_html + "?f=" + encodedFilters);
-                              } else if (this.asset_type === "images") {
-                                // this.url_asset_nav = ASSET_VIEWER_PATH + "photos_node/" + this.id + "/nojs?f=" + encodedFilters;
-                                var xx = $('<img/>');
-                                xx.src = this.url_thumb;
-                                $('document').append(xx); // silliness, perhaps.
-                                // console.log("prefetching " +ii + ": " + this.url_thumb);
-                                this.url_asset_nav = new Handlebars.SafeString(this.url_html + "?f=" + encodedFilters);
-                              } else if (this.asset_type === "picture") {
-                                // this.url_asset_nav = ASSET_VIEWER_PATH + "photos_node/" + this.id + "/nojs?f=" + encodedFilters;
-                                this.url_asset_nav = new Handlebars.SafeString(this.url_html + "?f=" + encodedFilters);
-                              } else if (this.asset_type === "audio-video") {
-                                var url = this.url_html;
-                                this.url_asset_nav = new Handlebars.SafeString(url + "?f=" + encodedFilters);
-                              } else {
-                                console.error("ERROR unknown asset type! " + this.asset_type + " for " + this.uid);
-                                console.dir(this);
-                                this.asset_type = 'unknown';
-                                this.tree = 'unknown';
-                              }
-                            } else /* if (Drupal.settings.shanti_kmaps_admin.shanti_kmaps_admin_search_navigation_mode === "local") */ {
-                              //check if there is a kmaps_id available and if not then use the default setting for asset_viewer_path
-                              if (typeof Drupal.settings.kmaps_explorer !== 'undefined' && typeof Drupal.settings.kmaps_explorer.kmaps_id !== 'undefined') {
-                                  ASSET_VIEWER_PATH = '/' + Drupal.settings.kmaps_explorer.app + '/' + Drupal.settings.kmaps_explorer.kmaps_id + '/';
-                              }
-                              if (this.asset_type === "subjects" || this.asset_type === "places" || this.asset_type === "terms") {
-                                this.url_asset_nav =  "/" + this.asset_type + "/" + this.id + "/overview/nojs";
-                              } else if (this.asset_type === "texts") {
-                                this.url_asset_nav = ASSET_VIEWER_PATH + "text-node/" + this.id + "/nojs";
-                              } else if (this.asset_type === "visuals") {
-                                this.url_asset_nav = ASSET_VIEWER_PATH + "visuals-node/" + this.id + "/nojs";
-                              } else if (this.asset_type === "sources") {
-                                this.url_asset_nav = ASSET_VIEWER_PATH + "sources-node/" + this.id + "/nojs";
-                              } else if (this.asset_type === "images") {
-                                this.url_asset_nav = ASSET_VIEWER_PATH + "image-node/" + this.id + "/nojs";
-                              } else if (this.asset_type === "picture") {
-                                this.url_asset_nav = ASSET_VIEWER_PATH + "image-node/" + this.id + "/nojs?mms";
-                              } else if (this.asset_type === "audio-video") {
-                                var path = this.url_html.split('/');
-                                var last = path.pop();
-                                var type = path.pop();
-                                this.url_asset_nav = ASSET_VIEWER_PATH + "audio-video-node/" + this.id + "/nojs";
-                              } else {
-                                console.error("ERROR unknown asset type! " + this.asset_type);
-                              }
-
-                            }
-                          });
-                        }
-
-                        // truncate the list (limit list when using overfetch)
-                        blob.asset_results.docs = blob.asset_results.docs.slice(0,this.pageSize);
-
-                        var hbcontext = {
-                          encodedFilters: encodedFilters,
-                          searchString: searchString,
-                          data: blob.asset_results,
-                          asset_counts: decorated_counts,
-                          rangeStart: Drupal.settings.kmapsSolr.getRangeStart(),
-                          rangeEnd: Drupal.settings.kmapsSolr.getRangeEnd()
-                        };
-                        // Add pager to the context
-                        if (blob.asset_results && blob.asset_results.numFound) {
-                          // TODO: ys2n refactor to glean the kmapSolr instance via more flexible means
-                          hbcontext.pager = getPagerMarkup(Drupal.settings.kmapsSolr);
-                        }
-
-                        // Decorate menu with counts and hints
-                        if (blob.asset_results && blob.asset_results.numFound) {
-                          // update the search badge count
-
-                          // ROUNDING:  if the count is over a threshhold, round the number to the nearest 1K
-                          var rounding_threshhold = 1000;
-                          var count = blob.asset_results.numFound;
-
-                          if (blob.asset_results.numFound > rounding_threshhold) {
-                            count = Math.round(count/1000) + "K";
+                          }
+                          else {
+                            $('#results-count-badge').html("");
+                            $('.search .search-hint').html("");
                           }
 
-                          $('#results-count-badge').html( count );
-                          // $('.search .search-hint').html("search hint");
 
-                          // if (blob && blob.results) {
-                          //   // cache results data for use later
-                          //   $.each(blob.results.docs,
-                          //     function (n, doc) {
-                          //       cacheDoc(doc);
-                          //     }
-                          //   );
-                          // } else {
-                          //   console.error("blob.results is not defined!");
-                          // }
-                        } else {
-                          $('#results-count-badge').html("");
-                          $('.search .search-hint').html("");
-                        }
+                          now = Date.now();
+                          if (PROFILING) console.error("elapsed C: " + Number(now - last));
+                          last = now;
 
+                          // render template:  see search_main_template retrieval above
+                          if (search_main_template) {
 
-                        now = Date.now();
-                        if (PROFILING) console.error("elapsed C: " + Number(now - last) );
-                        last = now;
+                            if (DEBUG) console.log("HBCONTEXT asset_counts: " + JSON.stringify(hbcontext.asset_counts, undefined, 2));
 
-                        // render template:  see search_main_template retrieval above
-                        if (search_main_template) {
+                            // view-mode
+                            var viewMode = {
+                              'places': 'list',
+                              'subjects': 'list',
+                              'audio-video': 'gallery',
+                              'images': 'gallery',
+                              'visuals': 'gallery',
+                              'all': 'list',
+                              'texts': 'list',
+                              'sources': 'list'
+                            };
 
-                          if(DEBUG) console.log("HBCONTEXT asset_counts: " + JSON.stringify(hbcontext.asset_counts, undefined, 2));
-
-                          // view-mode
-                          var viewMode = {
-                            'places': 'list',
-                            'subjects': 'list',
-                            'audio-video': 'gallery',
-                            'images': 'gallery',
-                            'visuals': 'gallery',
-                            'all': 'list',
-                            'texts': 'list',
-                            'sources': 'list'
-                          };
-
-                          var vmc = $.cookie('search-results-view-mode');
-                          if (vmc) {
-                            // console.log("vmc = " + JSON.stringify(vmc));
-                            try {
-                              viewMode = JSON.parse(vmc);
-                            } catch (e) {
-                              console.error("bailing on parsing " + vmc)
+                            var vmc = $.cookie('search-results-view-mode');
+                            if (vmc) {
+                              // console.log("vmc = " + JSON.stringify(vmc));
+                              try {
+                                viewMode = JSON.parse(vmc);
+                              }
+                              catch (e) {
+                                console.error("bailing on parsing " + vmc)
+                                $.cookie('search-results-view-mode', JSON.stringify(viewMode));
+                              }
+                            }
+                            else {
+                              console.error("saving " + JSON.stringify(viewMode));
                               $.cookie('search-results-view-mode', JSON.stringify(viewMode));
                             }
-                          } else {
-                            console.error ("saving " + JSON.stringify(viewMode));
-                            $.cookie('search-results-view-mode', JSON.stringify(viewMode));
-                          }
 
-                          // Let's force viewMode for certain types
-                          viewMode['places'] = 'list';
-                          viewMode['subjects'] = 'list';
-                          viewMode['all'] = 'list';
-                          viewMode['texts'] = 'list';
-                          viewMode['sources'] = 'list';
+                            // Let's force viewMode for certain types
+                            viewMode['places'] = 'list';
+                            viewMode['subjects'] = 'list';
+                            viewMode['all'] = 'list';
+                            viewMode['texts'] = 'list';
+                            viewMode['sources'] = 'list';
 
-                          // if (true) console.error("GUGUGUGUGUGUUGUPPU");
-                          // if (true) console.dir({ "viewMode":viewMode });
+                            // if (true) console.error("GUGUGUGUGUGUUGUPPU");
+                            // if (true) console.dir({ "viewMode":viewMode });
 
-                          // We use the first item in the array
-                          // The implicit assumption here is that this is a radio-button selector
-                          // and there will always only be one assetType selected at a time.
-                          var current = (assetTypes)?assetTypes[0]: defaultAssetType;
+                            // We use the first item in the array
+                            // The implicit assumption here is that this is a radio-button selector
+                            // and there will always only be one assetType selected at a time.
+                            var current = (assetTypes) ? assetTypes[0] : defaultAssetType;
 
-                          hbcontext.view_mode = current;
+                            hbcontext.view_mode = current;
 
-                          if ( viewMode[current] === "gallery" ) {
-                            hbcontext.list_mode_selected = ""
-                            hbcontext.gallery_mode_selected = "selected";
-                          } else {
-                            hbcontext.list_mode_selected = "selected";
-                            hbcontext.gallery_mode_selected = "";
-                          }
-
-                          // console.error("CURRENT: " + current);
-
-                          if (current === "all" || current === "subjects" || current === "places" || current === "terms" || current === "texts" || current === "sources") {
-                            hbcontext.no_gallery = true;
-                            $('body').addClass('results-display-no-gallery');
-                          } else {
-                            hbcontext.no_gallery = false;
-                            $('body').removeClass('results-display-no-gallery');
-                          }
-
-                          if (current === "audio-video") {
-                            hbcontext.av_gallery = 1;
-                            hbcontext.default_gallery = 0;
-                          } else {
-                            hbcontext.av_gallery = 0;
-                            hbcontext.default_gallery = 1;
-                          }
-
-                          var markup = search_main_template(hbcontext);
-
-                          now = Date.now();
-                          if (PROFILING) console.error("elapsed D: " + Number(now - last) );
-                          last = now;
-
-                          // TODO: ys2n: this should be configurable
-                          $('#faceted-search-results').html(markup);
-
-                          now = Date.now();
-                          if (PROFILING) console.error("elapsed E1: " + Number(now - last) );
-                          last = now;
-
-                          //  apply customized popovers
-                          $('#faceted-search-results [data-toggle="popover"]').popover({
-                            content: function() {
-                              var idx = $(this).closest('.search-results-gallery-node').data('lookup-index');
-                              var ctx = hbcontext.data.docs[idx];
-                              return search_results_popover_template(ctx);
-                            },
-                            trigger: 'hover',
-                            html: true
-                          }).mouseleave(function() {
-                            $(this).popover('hide');
-                          });
-
-                          now = Date.now();
-                          if (PROFILING) console.error("elapsed E2: " + Number(now - last) );
-                          last = now;
-
-                          // // attach gallery behaviors (e.g. wookmark)
-                          // setTimeout( function() {
-                          //   console.error("SHANTI GALLERY BEHAVIORS ATTACHED");
-                          //   Drupal.attachBehaviors('.shanti-gallery');
-                          // }, 500);
-
-                          now = Date.now();
-                          if (PROFILING) console.error("elapsed E3: " + Number(now - last) );
-                          last = now;
-
-                          // if the results are unfiltered, lets hide the results-tab
-                          if($.isEmptyObject(blob.filters)){
-                            $('#btn-show-search-results').hide('fast');
-                          }
-
-                          // This is a debug block that can be used to develop the UI.   Of course,
-                          // this shouldn't be displayed to users in the end.
-                          // if (false) {
-                          //   // useful debugging
-                          //   $('.search-results-facets').append("<pre>" + JSON.stringify({
-                          //     filters: blob.filters,
-                          //     results: blob.results.numFound + " documents"
-                          //   }, undefined, 3) + "</pre>");
-                          // }
-
-                          // set or unset "filters-applied" class
-                          // console.log("FILTERS: " + JSON.stringify(blob.filters));
-                          if (($.type(blob.filters) === "undefined") || $.isEmptyObject(blob.filters)) {
-                            // console.log("filters-applied OFF")
-                            $('#faceted-search-results').removeClass("filters-applied");
-                            $('.input-section .clearall').slideUp();
-                          } else {
-                            // console.log("filters-applied ON");
-                            $('#faceted-search-results').addClass("filters-applied");
-                            $('.input-section .clearall').slideDown();
-                          }
-
-                          $('#faceted-search-results').addClass('initialized');
-
-                          $('.search-results-list-wrapper').scrollLock();
-
-                          // update the facet count badges
-                          $('.shanti-kmaps-solr-facet-title').each(function (i, x) {
-                            var cnt = $(x).data("bucket-count");
-
-                            // TODO: ys2n: THIS SHOULD BE CONFIGURABLE LIMIT (passed from jquery.solr.js?)
-                            if (Number(cnt) > (300 - 1)) {
-                              cnt = cnt + '+';
+                            if (viewMode[current] === "gallery") {
+                              hbcontext.list_mode_selected = ""
+                              hbcontext.gallery_mode_selected = "selected";
+                            }
+                            else {
+                              hbcontext.list_mode_selected = "selected";
+                              hbcontext.gallery_mode_selected = "";
                             }
 
-                            // make sure the badge is there
-                            if ($(x).find('.badge').length < 1) {
-                              $(x).append("<span class='badge'></span>");
+                            // console.error("CURRENT: " + current);
+
+                            if (current === "all" || current === "subjects" || current === "places" || current === "terms" || current === "texts" || current === "sources") {
+                              hbcontext.no_gallery = true;
+                              $('body').addClass('results-display-no-gallery');
                             }
-                            $(x).find('.badge').text(cnt);
-                          });
-
-                          // asset filter handling
-                          $('.results-list-asset-type-filter').on('click',function() {
-                            // console.error("PROCESS ASSET TYPE");
-                            $(this).toggleClass('selected');
-
-                            var singleMode = true;
-                            if (singleMode) {
-                              $(this).siblings('.results-list-asset-type-filter').removeClass('selected');
+                            else {
+                              hbcontext.no_gallery = false;
+                              $('body').removeClass('results-display-no-gallery');
                             }
 
-                            if (DEBUG) console.log("result asset type filter clicked: " + $(this).data('asset-type') + " selected=" + $(this).hasClass('selected'));
+                            if (current === "audio-video") {
+                              hbcontext.av_gallery = 1;
+                              hbcontext.default_gallery = 0;
+                            }
+                            else {
+                              hbcontext.av_gallery = 0;
+                              hbcontext.default_gallery = 1;
+                            }
 
-                            var selected_nodes = $('.results-list-asset-type-filter.selected');
-                            var selected_asset_types = $.map(selected_nodes, function(x){
-                              var type = $(x).data('asset-type');
-                              return type;
+                            var markup = search_main_template(hbcontext);
+
+                            now = Date.now();
+                            if (PROFILING) console.error("elapsed D: " + Number(now - last));
+                            last = now;
+
+                            // TODO: ys2n: this should be configurable
+                            $('#faceted-search-results').html(markup);
+
+                            now = Date.now();
+                            if (PROFILING) console.error("elapsed E1: " + Number(now - last));
+                            last = now;
+
+                            //  apply customized popovers
+                            $('#faceted-search-results [data-toggle="popover"]').popover({
+                              content: function () {
+                                var idx = $(this).closest('.search-results-gallery-node').data('lookup-index');
+                                var ctx = hbcontext.data.docs[idx];
+                                return search_results_popover_template(ctx);
+                              },
+                              trigger: 'hover',
+                              html: true
+                            }).mouseleave(function () {
+                              $(this).popover('hide');
+                            });
+
+                            now = Date.now();
+                            if (PROFILING) console.error("elapsed E2: " + Number(now - last));
+                            last = now;
+
+                            // // attach gallery behaviors (e.g. wookmark)
+                            // setTimeout( function() {
+                            //   console.error("SHANTI GALLERY BEHAVIORS ATTACHED");
+                            //   Drupal.attachBehaviors('.shanti-gallery');
+                            // }, 500);
+
+                            now = Date.now();
+                            if (PROFILING) console.error("elapsed E3: " + Number(now - last));
+                            last = now;
+
+                            // if the results are unfiltered, lets hide the results-tab
+                            if ($.isEmptyObject(blob.filters)) {
+                              $('#btn-show-search-results').hide('fast');
+                            }
+
+                            // This is a debug block that can be used to develop the UI.   Of course,
+                            // this shouldn't be displayed to users in the end.
+                            // if (false) {
+                            //   // useful debugging
+                            //   $('.search-results-facets').append("<pre>" + JSON.stringify({
+                            //     filters: blob.filters,
+                            //     results: blob.results.numFound + " documents"
+                            //   }, undefined, 3) + "</pre>");
+                            // }
+
+                            // set or unset "filters-applied" class
+                            // console.log("FILTERS: " + JSON.stringify(blob.filters));
+                            if (($.type(blob.filters) === "undefined") || $.isEmptyObject(blob.filters)) {
+                              // console.log("filters-applied OFF")
+                              $('#faceted-search-results').removeClass("filters-applied");
+                              $('.input-section .clearall').slideUp();
+                            }
+                            else {
+                              // console.log("filters-applied ON");
+                              $('#faceted-search-results').addClass("filters-applied");
+                              $('.input-section .clearall').slideDown();
+                            }
+
+                            $('#faceted-search-results').addClass('initialized');
+
+                            $('.search-results-list-wrapper').scrollLock("search-results-list-wrapper");
+
+                            // update the facet count badges
+                            $('.shanti-kmaps-solr-facet-title').each(function (i, x) {
+                              var cnt = $(x).data("bucket-count");
+
+                              // TODO: ys2n: THIS SHOULD BE CONFIGURABLE LIMIT (passed from jquery.solr.js?)
+                              if (Number(cnt) > (300 - 1)) {
+                                cnt = cnt + '+';
                               }
-                            );
-                            if (DEBUG) console.log("SELECTED_ASSET_TYPES: " + selected_asset_types);
-                            settings.kmapsSolr.showAssetTypes(selected_asset_types);
 
-                          });
-
-                          if (!$.isEmptyObject(blob.filters)) {
-                            if ($('#faceted-search-results').hasClass('initialized')) {
-                              // console.log("should we auto-open search results? " + window.location);
-                              if (window.location && window.location.pathname.startsWith(ASSET_VIEWER_PATH) || window.location.hash === "#search") {
-                                showResultsTab();
-                              } else {
-                                showResultsTab();
+                              // make sure the badge is there
+                              if ($(x).find('.badge').length < 1) {
+                                $(x).append("<span class='badge'></span>");
                               }
-                            } else {
-                              showResultsTab();
-                            }
-                          }
+                              $(x).find('.badge').text(cnt);
+                            });
 
+                            // asset filter handling
+                            $('.results-list-asset-type-filter').on('click', function () {
+                              // console.error("PROCESS ASSET TYPE");
+                              $(this).toggleClass('selected');
 
-                          now = Date.now();
-                          if (PROFILING) console.error("elapsed F: " + Number(now - last) );
-                          last = now;
+                              var singleMode = true;
+                              if (singleMode) {
+                                $(this).siblings('.results-list-asset-type-filter').removeClass('selected');
+                              }
 
-                          //  kludge logic for seeing if the search has been updated:
-                          var stateChange = false;
-                          var newStateJSON = JSON.stringify(Drupal.settings.kmapsSolr.getState());
-                          if(Drupal.settings.kmapsSolr.lastStateJSON) {
-                            stateChange = (Drupal.settings.kmapsSolr.lastStateJSON !== newStateJSON);
-                          }
-                          Drupal.settings.kmapsSolr.lastStateJSON = newStateJSON;
+                              if (DEBUG) console.log("result asset type filter clicked: " + $(this).data('asset-type') + " selected=" + $(this).hasClass('selected'));
 
-                          if (!$.isEmptyObject(blob.filters)) {
-                            if ($('#faceted-search-results').hasClass('initialized')) {
-                              // console.log("should we auto-open search results? " + window.location);
-                              if (window.location && window.location.pathname.startsWith(ASSET_VIEWER_PATH) || window.location.hash === "#search") {
-                                showResultsTab();
-                              } else {
-                                if (stateChange) {
-                                  openSearchResults();
-                                } else {
+                              var selected_nodes = $('.results-list-asset-type-filter.selected');
+                              var selected_asset_types = $.map(selected_nodes, function (x) {
+                                  var type = $(x).data('asset-type');
+                                  return type;
+                                }
+                              );
+                              if (DEBUG) console.log("SELECTED_ASSET_TYPES: " + selected_asset_types);
+                              settings.kmapsSolr.showAssetTypes(selected_asset_types);
+
+                            });
+
+                            if (!$.isEmptyObject(blob.filters)) {
+                              if ($('#faceted-search-results').hasClass('initialized')) {
+                                // console.log("should we auto-open search results? " + window.location);
+                                if (window.location && window.location.pathname.startsWith(ASSET_VIEWER_PATH) || window.location.hash === "#search") {
+                                  showResultsTab();
+                                }
+                                else {
                                   showResultsTab();
                                 }
                               }
-                            } else {
-                              showResultsTab();
+                              else {
+                                showResultsTab();
+                              }
                             }
-                          }
-                          now = Date.now();
-                          if (PROFILING) console.error("elapsed G: " + Number(now - last) );
-                          last = now;
 
-                          // apply the justified gallery script
+
+                            now = Date.now();
+                            if (PROFILING) console.error("elapsed F: " + Number(now - last));
+                            last = now;
+
+                            //  kludge logic for seeing if the search has been updated:
+                            var stateChange = false;
+                            var newStateJSON = JSON.stringify(Drupal.settings.kmapsSolr.getState().filters);
+                            if (Drupal.settings.kmapsSolr.lastStateJSON) {
+                              stateChange = (Drupal.settings.kmapsSolr.lastStateJSON !== newStateJSON);
+
+                              // if (stateChange) {
+                              //   console.log("STATE CHANGE");
+                              //   console.dir(Drupal.settings.kmapsSolr.lastStateJSON);
+                              //   console.dir(newStateJSON);
+                              // }
+
+                            }
+                            Drupal.settings.kmapsSolr.lastStateJSON = newStateJSON;
+
+                            if (!$.isEmptyObject(blob.filters)) {
+                              if ($('#faceted-search-results').hasClass('initialized')) {
+                                // console.log("should we auto-open search results? " + window.location);
+                                if (window.location && window.location.pathname.startsWith(ASSET_VIEWER_PATH) || window.location.hash === "#search") {
+                                  showResultsTab();
+                                }
+                                else {
+                                  if (stateChange) {
+                                    // console.log("opening search results... stateChange: " + stateChange );
+                                    openSearchResults();
+                                  }
+                                  else {
+                                    showResultsTab();
+                                  }
+                                }
+                              }
+                              else {
+                                showResultsTab();
+                              }
+                            }
+                            now = Date.now();
+                            if (PROFILING) console.error("elapsed G: " + Number(now - last));
+                            last = now;
+
+                            // apply the justified gallery script
                             $('#search-results-gallery.justified-gallery').justifiedGallery({
                               waitThumbnailsLoad: false,
                               rowHeight: 110,
@@ -1521,178 +1596,192 @@
                               margins: 3,
                             });
 
-                          now = Date.now();
-                          if (PROFILING) console.error("elapsed H: " + Number(now - last) );
-                          last = now;
+                            now = Date.now();
+                            if (PROFILING) console.error("elapsed H: " + Number(now - last));
+                            last = now;
 
 
-                        } // end if (search_main_template)
-                      }, // end updateHandler
+                          } // end if (search_main_template)
+                        }, // end updateHandler
 
-                      beforeSearch: function(x) {
-                        startBusyState("beforeSearch");
-                      },
-                      
-                      afterSearch: function(x) {
+                        beforeSearch: function (x) {
+                          startBusyState("beforeSearch");
+                        },
 
-                        try {
-                          var serializedFilterState = JSON.stringify(x.filters);
-                          if (DEBUG) console.log("Saving defaultFilterState: " + serializedFilterState);
-                          $.cookie("defaultFilterState", serializedFilterState, { expires: 1 , path: "/" })
-                        } catch (err) {
-                          console.error("Failed to serialize and save filter state: " + err);
-                        }
+                        afterSearch: function (x) {
 
-                        $('#faceted-search-results').trigger("searchUpdate");
-                        endBusyState("afterSearch");
-                        // $('#faceted-search-results').removeClass("search-active")
-                        // $('.search-results-list-wrapper').removeClass("search-results-loading");
-                        // $('.search-results-node-preview').removeClass("search-results-loading");
-                        // $('.view-section .tab-content.active-loading').removeClass("active-loading");
-                        // // console.log("afterSearch: overlayMask hide")
-                        // $('.extruder-content').overlayMask('hide');
-
-                        // start kmapsUpdates
-                        var checkKmapUpdates = function() {
-                          var $needUpdates = $('.no_label');
-                          var update_list = $needUpdates.map(function (n, item) {
-                            // console.log($(item).text());
-                            var $text=null;
-                            if ($(item).text().length !== 0 ) {
-                              $text = $(item).text();
-                            }
-                            return $text;
-                          });
-                          var $kmap_updates = update_list.toArray();
-                          if ($kmap_updates.length > 0) {
-
-                            if (DEBUG) console.log("kmap updates: " + $kmap_updates.length);
-                            if (DEBUG) console.dir($kmap_updates);
-
-                            settings.kmapsSolr.updateKmapLabels($kmap_updates);
-                            setTimeout(checkKmapUpdates, 5000);
-                          } else {
-                            if (DEBUG) console.log("No more updates!");
-                            setTimeout(checkKmapUpdates, 60000);
+                          try {
+                            var serializedFilterState = JSON.stringify(x.filters);
+                            if (DEBUG) console.log("Saving defaultFilterState: " + serializedFilterState);
+                            $.cookie("defaultFilterState", serializedFilterState, {
+                              expires: 1,
+                              path: "/"
+                            })
                           }
-                        }
-
-                        checkKmapUpdates();
-                      },
-
-                      afterError: function(state) {
-                         endBusyState("afterError");
-                      },
-
-                      afterInit: function (xxx) {
-                        $(function () {
-                          // console.error("dEBUG: " + JSON.stringify(xxx.getState().filters, undefined, 3));
-                          var $filters = xxx.getState().filters;
-                          if (!$filters) { $filters = {}; }
-                          // console.dir($filters);
-
-                          var tagList = [], pathLists = {};
-
-                          if (DEBUG) {
-                            console.error("FILTERS");
-                            console.dir($filters);
+                          catch (err) {
+                            console.error("Failed to serialize and save filter state: " + err);
                           }
-                          $.each($filters, function (x, v) {
-                            // console.error("floop:" + x);
-                            if (x === "kmaps") {
-                              $.each(v, function (xid, i) {
-                                var data = JSON.parse(storage.getItem(xid));
-                                var $id, $label, $path;
-                                if (data) {
-                                  $label = data.header;
-                                  $id = data.uid;
-                                  $path = data.path;
-                                } else {
-                                  $label = xid;
-                                  $id = xid;
-                                }
-                                tagList.push({ 'label': $label, 'id': $id });
 
-                                var kpts = $id.split('-'),
-                                  kmtype = kpts[0],
-                                  id = kpts[1];
+                          $('#faceted-search-results').trigger("searchUpdate");
+                          endBusyState("afterSearch");
+                          // $('#faceted-search-results').removeClass("search-active")
+                          // $('.search-results-list-wrapper').removeClass("search-results-loading");
+                          // $('.search-results-node-preview').removeClass("search-results-loading");
+                          // $('.view-section .tab-content.active-loading').removeClass("active-loading");
+                          // // console.log("afterSearch: overlayMask hide")
+                          // $('.extruder-content').overlayMask('hide');
 
-                                if ($.type(pathLists[kmtype]) !== 'array') {
-                                  pathLists[kmtype] = [];
-                                }
-                                pathLists[kmtype].push($path);
-                              });
-                            } else {
-                              if (xxx.getState() && xxx.getState().facetHash && x !== 'searchString') {
-                                var ent = xxx.getState().facetHash[x];
-
-                                if (ent) {
-                                  tagList.push({
-                                    'label': ent.type + ":" + ent.label,
-                                    'id': ent.id
-                                  });
-                                }
-                                // addFacetTagToList(ent.type + ": " + ent.label, ent.id);
-                              } else {
-                                console.error("Hmmm:  unknown facet: " + x);
+                          // start kmapsUpdates
+                          var checkKmapUpdates = function () {
+                            var $needUpdates = $('.no_label');
+                            var update_list = $needUpdates.map(function (n, item) {
+                              // console.log($(item).text());
+                              var $text = null;
+                              if ($(item).text().length !== 0) {
+                                $text = $(item).text();
                               }
-                            }
+                              return $text;
+                            });
+                            var $kmap_updates = update_list.toArray();
+                            if ($kmap_updates.length > 0) {
 
-                            // process the lists
-                            $.each(tagList, function(i,tag) {
-                              addFacetTagToList(tag.label, tag.id);
+                              if (DEBUG) console.log("kmap updates: " + $kmap_updates.length);
+                              if (DEBUG) console.dir($kmap_updates);
+
+                              settings.kmapsSolr.updateKmapLabels($kmap_updates);
+                              setTimeout(checkKmapUpdates, 5000);
+                            }
+                            else {
+                              if (DEBUG) console.log("No more updates!");
+                              setTimeout(checkKmapUpdates, 60000);
+                            }
+                          }
+
+                          checkKmapUpdates();
+                        },
+
+                        afterError: function (state) {
+                          endBusyState("afterError");
+                        },
+
+                        afterInit: function (xxx) {
+                          $(function () {
+                            // console.error("dEBUG: " + JSON.stringify(xxx.getState().filters, undefined, 3));
+                            var $filters = xxx.getState().filters;
+                            if (!$filters) {
+                              $filters = {};
+                            }
+                            // console.dir($filters);
+
+                            var tagList = [], pathLists = {};
+
+                            if (DEBUG) {
+                              console.error("FILTERS");
+                              console.dir($filters);
+                            }
+                            $.each($filters, function (x, v) {
+                              // console.error("floop:" + x);
+                              if (x === "kmaps") {
+                                $.each(v, function (xid, i) {
+                                  var data = JSON.parse(storage.getItem(xid));
+                                  var $id, $label, $path;
+                                  if (data) {
+                                    $label = data.header;
+                                    $id = data.uid;
+                                    $path = data.path;
+                                  }
+                                  else {
+                                    $label = xid;
+                                    $id = xid;
+                                  }
+                                  tagList.push({'label': $label, 'id': $id});
+
+                                  var kpts = $id.split('-'),
+                                    kmtype = kpts[0],
+                                    id = kpts[1];
+
+                                  if ($.type(pathLists[kmtype]) !== 'array') {
+                                    pathLists[kmtype] = [];
+                                  }
+                                  pathLists[kmtype].push($path);
+                                });
+                              }
+                              else {
+                                if (xxx.getState() && xxx.getState().facetHash && x !== 'searchString') {
+                                  var ent = xxx.getState().facetHash[x];
+
+                                  if (ent) {
+                                    tagList.push({
+                                      'label': ent.type + ":" + ent.label,
+                                      'id': ent.id
+                                    });
+                                  }
+                                  // addFacetTagToList(ent.type + ": " + ent.label, ent.id);
+                                }
+                                else {
+                                  console.error("Hmmm:  unknown facet: " + x);
+                                }
+                              }
+
+                              // process the lists
+                              $.each(tagList, function (i, tag) {
+                                addFacetTagToList(tag.label, tag.id);
+                              });
+
+                              for (var kmtype in pathLists) {
+                                var pathList = pathLists[kmtype];
+                                var $tree = $('.kmapfacetedtree[data-kmtype="' + kmtype + '"]').fancytree('getTree');
+                                $tree.loadKeyPath(pathList).done(function () {
+                                  $.each(pathList, function (i, path) {
+                                    var id = path.split('/').pop();
+                                    if (DEBUG) console.log("selecting " + id);
+                                    var $node = $tree.getNodeByKey(id);
+                                    if (DEBUG) console.log("found node " + $node);
+                                    if ($node) {
+                                      $node.setSelected(true);
+                                    }
+                                    else {
+                                      console.error("We looked for a node " + id + " which didn't exist in tree " + $tree);
+                                    }
+                                  });
+                                }).fail(function () {
+                                  console.error("Fail callback called with arguments " + JSON.stringify(arguments));
+                                  alert('fail: ' + JSON.stringify(arguments));
+                                });
+                              }
                             });
 
-                            for (var kmtype in pathLists) {
-                              var pathList = pathLists[kmtype];
-                              var $tree = $('.kmapfacetedtree[data-kmtype="' + kmtype + '"]').fancytree('getTree');
-                              $tree.loadKeyPath(pathList) .done( function() {
-                                $.each(pathList, function (i,path) {
-                                  var id = path.split('/').pop();
-                                  if(DEBUG) console.log("selecting " + id);
-                                  var $node = $tree.getNodeByKey(id);
-                                  if(DEBUG) console.log("found node " + $node);
-                                  if ($node) {
-                                    $node.setSelected(true);
-                                  } else {
-                                    console.error("We looked for a node " + id + " which didn't exist in tree " + $tree );
-                                  }
-                                });
-                              }).fail(function() {
-                                console.error("Fail callback called with arguments " + JSON.stringify(arguments));
-                                alert('fail: ' + JSON.stringify(arguments));
-                              });
+                            if ($filters.searchString) {
+                              // TODO: ys2n: kinda icky way to do this.... refactor
+                              $(select_searchInput).val($filters.searchString.replace('text:*', '').replace('*', ''));
                             }
+
+                            // ys2n: the kmapsLabelCacheUpdate event is triggered by jquery.kmapsSolr.js when a new kmap name has been
+                            // mapped to a kmapid.  This finds any facet that lists that kmapid and updates it.
+                            $(Drupal.settings.kmapsSolr).on('kmapsLabelCacheUpdate', function (evt, data) {
+                              if (DEBUG) console.error("kmapsLabelCacheUpdate event: ")
+                              var uid = data.uid;
+                              var header = data.header;
+                              var display_label = header;
+
+                              // update the label and the data-facet-label
+                              $(".shanti-kmaps-solr-facet-label[data-kmid='" + uid + "']").removeClass('no_label').text(display_label);
+                              $(".shanti-kmaps-solr-facet-label[data-kmid='" + uid + "']").attr("data-facet-label", display_label).attr("data-full-label", true);
+
+                              // Also relabel the facet-item so that the javascript sort works when the labels are updated.
+                              $(".shanti-kmaps-solr-facet-item[data-kmid='" + uid + "']").removeClass('no_label');
+                              $(".shanti-kmaps-solr-facet-item[data-kmid='" + uid + "']").attr("data-facet-label", display_label).attr("data-full-label", true);
+
+                            });
                           });
-
-                          if ($filters.searchString) {
-                            // TODO: ys2n: kinda icky way to do this.... refactor
-                            $(select_searchInput).val($filters.searchString.replace('text:*', '').replace('*', ''));
-                          }
-
-                          // ys2n: the kmapsLabelCacheUpdate event is triggered by jquery.kmapsSolr.js when a new kmap name has been
-                          // mapped to a kmapid.  This finds any facet that lists that kmapid and updates it.
-                          $(Drupal.settings.kmapsSolr).on('kmapsLabelCacheUpdate', function(evt, data) {
-                            if (DEBUG) console.error("kmapsLabelCacheUpdate event: ")
-                            var uid = data.uid;
-                            var header = data.header;
-                            var display_label = header;
-
-                            // update the label and the data-facet-label
-                            $(".shanti-kmaps-solr-facet-label[data-kmid='" + uid + "']").removeClass('no_label').text(display_label);
-                            $(".shanti-kmaps-solr-facet-label[data-kmid='" + uid + "']").attr("data-facet-label",display_label).attr("data-full-label",true);
-
-                            // Also relabel the facet-item so that the javascript sort works when the labels are updated.
-                            $(".shanti-kmaps-solr-facet-item[data-kmid='" + uid + "']").removeClass('no_label');
-                            $(".shanti-kmaps-solr-facet-item[data-kmid='" + uid + "']").attr("data-facet-label",display_label).attr("data-full-label",true);
-
-                          });
-                        });
+                        }
+                      },
+                      {
+                        'defaultFilterState': defaultFilterState,
+                        'preloadedState': preloadedState
                       }
-                    },
-                    { 'defaultFilterState': defaultFilterState,
-                      'loadedFromURL': loadedFromURL }
-                  );
+                    );
+                  }
 
 
                   // // override default asset type per app.
@@ -1702,8 +1791,8 @@
 
                     setTimeout(function () {
                       // $('.' + defaultAssetType + '.results-list-asset-type-filter').click();
-                      Drupal.settings.kmapsSolr.showAssetTypes([ defaultAssetType ]);
-                      Drupal.settings.kmapsSolr.search( {} );
+                      // Drupal.settings.kmapsSolr.showAssetTypes([ defaultAssetType ]);
+                      // Drupal.settings.kmapsSolr.search( {} );
 
                       // also select flyout tab
                       if (defaultAssetType === "subjects" || defaultAssetType === "places" || defaultAssetType === "terms" ) {
@@ -2184,6 +2273,8 @@
       } else {
         console.log("filters-applied not found! NOT SHOWING RESULTS TAB");
       }
+      // Drupal.attachBehaviors('#faceted-search-results');
+
     }
 
     // encapsulate searchResults open

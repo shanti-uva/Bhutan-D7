@@ -55,6 +55,45 @@
     /*padding-left: 25px;*/
 }
 
+/**
+*  Add Descriptions forms and entity ref table
+ */
+.field-type-entityreference .ief-entity-table {
+    width: 100%;
+}
+
+.field-type-entityreference .ief-entity-table th {
+    color: #777;
+    font-weight: bold;
+}
+
+.field-name-field-image-descriptions span.fieldset-legend
+{
+    font-size: 1em;
+    text-transform: uppercase;
+}
+
+.ief-entity-table .btn-sm.btn-icon.btn-delete {
+    margin-top: 1.5em;
+}
+
+/* Hide fields in description entity table that shouldn't be used */
+.ief-entity-table .form-item-field-image-descriptions-und-entities-0-form-status,
+.ief-entity-table .redirect-list {
+    display: none;
+}
+
+.field-name-field-image-descriptions > div > fieldset > legend > span.fieldset-legend,
+.field-name-field-image-notes .text-format-wrapper > .form-item > label,
+.field-name-field-admin-notes .text-format-wrapper > .form-item > label {
+    color: #777;
+    font-size: 1.1em;
+    font-weight: bold;
+    letter-spacing: 0.02em;
+}
+
+/* End of description form styles */
+
 #field-copyright-date-add-more-wrapper .form-wrapper legend {
     border: none;
     font-weight: normal;

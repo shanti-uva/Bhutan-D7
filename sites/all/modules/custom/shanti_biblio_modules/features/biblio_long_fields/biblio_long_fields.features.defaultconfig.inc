@@ -238,10 +238,12 @@ function biblio_long_fields_defaultconfig_field_default_fields() {
       'label' => 'Places',
       'required' => 0,
       'settings' => array(
-        'entity_translation_sync' => FALSE,
         'kmap_term_limit' => 100,
-        'search_filters' => array(),
-        'search_root_kmap_path' => NULL,
+        'search_filters' => array(
+          'associated_subject' => 'associated_subject',
+          'feature_type' => 'feature_type',
+        ),
+        'search_root_kmap_path' => '',
         'search_root_kmapid' => '',
         'search_view' => '',
         'user_register_form' => FALSE,

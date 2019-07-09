@@ -4,6 +4,21 @@
  * Shanti General Module began as a feature. This is blank except for auxiliary or Shanti general functions
  */
 
+/*********************  Menu Functions **********************/
+
+
+/**
+ * Implements hook admin paths
+ *
+ *  Define group admin paths as not admin
+ */
+function shanti_general_admin_paths_alter(&$paths)
+{
+    $paths['node/*/group'] = FALSE;
+    $paths['group/*/*/admin/*'] = FALSE;
+    $paths['group/*/*/admin/*/*'] = FALSE;
+}
+
  /********************  Node Functions **********************/
  /**
   * Hook node submit
@@ -41,6 +56,23 @@
      } else if ($form_state['clicked_button']['#id'] == 'edit-delete') {
          form_clear_error();
      } 
+ }
+
+ function shanti_general_form_node_delete_confirm_alter(&$form, &$form_state, $form_id) {
+     $type = ucwords(str_replace('_', ' ', $form['#node']->type));
+     if ($form['#node']->type == 'book' && shanti_texts_is_page($form['#node'])) {
+         $type .= ' Page';
+     }
+     $form['description']['#markup'] = '
+                                            <div class="alerthead">
+                                                <img src="/sites/all/themes/shanti_sarvaka/images/default/generic-alert-icon.png">
+                                                <h2>Delete the ' . $type . ' “' . $form['#node']->title . '”?</h2>
+                                            </div>
+                                            <div class="alertbody">
+                                                <p><strong>Warning: this cannot be undone.</strong></p>
+                                            </div>
+                            ';
+     $form['description']['#weight'] = -49;
  }
 
  /*******************  Utility Functions ****************************/

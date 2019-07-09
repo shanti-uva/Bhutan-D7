@@ -17,28 +17,27 @@
             <div role="tabpanel" class="tab-pane terms-intro active" id="terms-intro">
                 <div class="row">
                     <div class="col-xs-12">
-                        <dl>
-                            <div class="term-definition-title">
-                                <dt class="sr-only">
-                                    <dfn><?php echo isset($term_data->header) ? $term_data->header : $term_data->{'name_roman.scholar'} ?></dfn>
-                                </dt>
+                            <div class="term-definition-title sr-only">
+                                <dfn><?php echo isset($term_data->header) ? $term_data->header : $term_data->{'name_roman.scholar'} ?></dfn>
                             </div>
                             <div class="terms-kmaps-id">
-                                <dt>ID:</dt>
-                                <dd>T<?php echo explode('-', $term_data->id)[1] ?></dd>
+                                <dl>
+                                    <dt>ID:</dt>
+                                    <dd>T<?php echo explode('-', $term_data->id)[1] ?></dd>
+                                </dl>
                             </div>
-                            <ul style="margin:0; margin-top: 5px;">
+                            <ul>
                               <?php foreach ($names_data as $name): ?>
                                 <?php if ($name->related_names_level_i === 1): ?>
-                                      <li style="margin-left:1em; list-style:none;">
+                                      <li>
                                     <span class="<?php echo $name->related_names_writing_system_code_s === 'tibt' ? 'bo' : ''; ?>">
                                       <?php echo $name->related_names_header_s ?>
                                     </span>
                                         <?php echo term_names($name) ?>
-                                          <ul style="margin:0; margin-top: 5px;">
+                                          <ul>
                                             <?php foreach ($names_data as $name2): ?>
                                               <?php if ($name2->related_names_level_i === 2 && in_array($name->related_names_path_s, explode('/', $name2->related_names_path_s))): ?>
-                                                    <li style="margin-left:1em; list-style:none;">
+                                                    <li>
                                                         <b>></b>&nbsp;
                                                       <?php echo $name2->related_names_header_s ?> <?php echo term_names($name2) ?>
                                                     </li>
@@ -77,7 +76,6 @@
                                 </div>
                             </div>
                             <?php endif; ?>
-                        </dl>
                       <?php if (!empty($definitions)): ?>
                           <div class="terms-definition-list-wrapper">
                               <!-- BEGIN terms-definitions -->
@@ -120,13 +118,13 @@
                                           <?php foreach ($dict as $subdict): ?>
                                               <li>
                                                   <p><?php echo str_replace(['<p>', '</p>'], '', $subdict->related_definitions_content_s) ?></p>
-                                                  <p><a data-toggle="collapse" href="#<?php echo $subdict->id ?>"
+                                                  <div class="def-details-list-toggle"><a data-toggle="collapse" href="#<?php echo $subdict->id ?>"
                                                         role="button"
                                                         aria-expanded="false" aria-controls="definition-details"
                                                         class="definition-details-control collapsed">
                                                           <span class="glyphicon"></span>Further Details
                                                       </a>
-                                                  </p>
+                                                  </div>
                                                   <div id="<?php echo $subdict->id ?>"
                                                        class="definition-details-wrapper collapse" aria-expanded="false"
                                                        style="height: 0px;">
@@ -140,12 +138,12 @@
                                         </ul>
                                     <?php else: ?>
                                         <p><?php echo str_replace(['<p>', '</p>'], '', $dict[0]->related_definitions_content_s) ?></p>
-                                        <p><a data-toggle="collapse" href="#<?php echo $dict[0]->id ?>" role="button"
+                                        <div class="def-details-list-toggle"><a data-toggle="collapse" href="#<?php echo $dict[0]->id ?>" role="button"
                                               aria-expanded="false" aria-controls="definition-details"
                                               class="definition-details-control collapsed">
                                                 <span class="glyphicon"></span>Further Details
                                             </a>
-                                        </p>
+                                        </div>
                                         <div id="<?php echo $dict[0]->id ?>"
                                              class="definition-details-wrapper collapse" aria-expanded="false"
                                              style="height: 0px;">

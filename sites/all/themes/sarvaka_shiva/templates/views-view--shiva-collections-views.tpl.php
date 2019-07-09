@@ -59,7 +59,7 @@
 
   <?php if ($rows): ?>
     <?php if ($view->current_display == 'collection_content_pane'): ?>
-        <ul class="shanti-gallery">
+        <ul class="shanti-no-wookmark">
             <?php print $rows; ?>
         </ul>
     <?php else: ?>
